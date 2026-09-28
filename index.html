@@ -172,7 +172,8 @@ function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
   try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
-  if(!r)throw new Error(NOACC);let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}return check(d)}
+  if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){}
+   throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}return check(d)}
  const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
  if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
@@ -635,6 +636,7 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
   async readAbs(path){const r=await call(DBX.content+'files/download',{method:'POST',headers:{'Dropbox-API-Arg':asciiJson({path})}});
    if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
    let meta={};try{meta=JSON.parse(r.headers.get('Dropbox-API-Result')||'{}')}catch(e){}return {text:await r.text(),rev:meta.rev||null}},
+  async existsAbs(path){try{await rpc('files/get_metadata',{path});return true}catch(e){if(e.status==409)return false;throw e}},
   read(path){return A.readAbs(full(path))},
   async write(path,text,opt){opt=opt||{};const mode=opt.mode=='update'?{'.tag':'update',update:opt.rev}:(opt.mode=='add'?{'.tag':'add'}:{'.tag':'overwrite'});
    const r=await call(DBX.content+'files/upload',{method:'POST',headers:{'Content-Type':'application/octet-stream','Dropbox-API-Arg':asciiJson({path:full(path),mode,autorename:false,mute:true,strict_conflict:true})},body:String(text)});
