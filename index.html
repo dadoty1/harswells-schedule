@@ -576,7 +576,7 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
  J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length});
  return J}
 function listRow(J,old){const t=J.tasks.filter(x=>x.source!='TRACKER');return Object.assign({},old,{stage:(J.info||{}).status||J.stage,pm:(J.info||{}).pm||'',client:(J.info||{}).client||'',start:J.summary.start||'',finish:J.summary.finish||'',tasks:J.tasks.length,
- bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
+ bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:(old&&old.closed)?0:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
 /* split a snapshot job into raw schedule rows + read-only tracker rows */
 const TRACKER_ID=/^(BID|ORD|DLV)-/;
 function splitJob(j){const base=[],trk=[];(j.tasks||[]).forEach(t=>{if(t.source=='TRACKER'&&TRACKER_ID.test(t.id))trk.push(t);else{const r={};FIELDS.forEach(f=>r[f]=t[f]==null?'':String(t[f]));base.push(r)}});return {rows:base,trackerRows:trk}}
@@ -1483,7 +1483,7 @@ function attSlugs(){return Object.keys(DATA.jobs||{})}
 function attInfo(slug){const J=attJ(slug);return (J&&J.info)||{}}
 function attBase(slug){const a=AT();return a&&a.baseline&&a.baseline.jobs&&a.baseline.jobs[slug]||null}
 function attStale(slug){const b=attBase(slug);return !!(b&&b.quality=='stale')}
-function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');if(/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
+function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];if(closed.indexOf(slug)>=0||/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
  return slug!='general'&&!/complet|closeout|overhead|company/i.test(J.stage||'')}
 function attOwn(){return (AT()&&AT().owner)||{}}
 function attSig(){return attOwn().name||''}
@@ -1853,7 +1853,7 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
  ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span><span>${chip(j.bt_status=='in Buildertrend'?'BT':'not in BT',j.bt_status=='in Buildertrend'?'inbt':'notbt')}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
- <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
+ <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
 /* ---------- boot ---------- */
