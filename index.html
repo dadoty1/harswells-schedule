@@ -137,6 +137,9 @@ body.busy{cursor:progress}body.busy .main{opacity:.8}
 @media print{.tabbar,.pact,.hbtn{display:none!important}body.has-tabs{padding-bottom:0}}
 header.top select{-webkit-appearance:none;appearance:none;background:#23344f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9d3e3'/%3E%3C/svg%3E") no-repeat right 8px center;padding-right:24px;color:#fff}
 .grow>span.c-lk{padding:0;overflow:visible}
+/* live sync indicator (live.js) */
+.lv{font-weight:600;white-space:nowrap}.lv.on{color:#1a7f37}.lv.sv{color:#9a6700}.lv.off{color:#6e7781}.lv.err{color:#cf222e}
+.pill.livepill{font-size:12px;background:#f6f8fa;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
@@ -158,7 +161,7 @@ const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
 const okSource=c=>!!c&&(c.source=='dropbox-api'||(DEV&&c.source=='same-origin'));
 let cfg={};try{cfg=JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){}
 if(!okSource(cfg))cfg={};
-let data=null,syncedAt=null,lastErr=null,syncing=false;
+let data=null,syncedAt=null,lastErr=null,syncing=false,dataRev=null;
 function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
@@ -171,32 +174,36 @@ const NOACC='Your Dropbox account can\u2019t see the Harswells schedule data (Ha
 function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
+  /* 3.6 MB: download only when the Dropbox rev changed (one small get_metadata call otherwise) */
+  if(data&&dataRev){try{const m=await A.metaAbs(HWSSync.CFG.dropbox.dataPath);if(m&&m.rev===dataRev)return {same:true}}catch(e){}}
   try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
   if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){}
-   throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}return check(d)}
+   throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}check(d);d.__rev=r.rev||null;return d}
  const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
  if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
  return check(d)}
 async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
- try{const d=await fetchData();const changed=!data||d.built!==data.built;data=d;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt,src:srcKey()})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ try{const d=await fetchData();if(d.same){syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
+  const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);data=d;dataRev=rev;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt,src:srcKey(),rev})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
  catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
 function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
  const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
  history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
 const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const W={onUpdate:null,preview:false,
+const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=>syncedAt,
  data:()=>data,
  async init(){if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
-  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt}}catch(e){}}
+  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
   window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
-  setInterval(()=>{if(!document.hidden)sync()},10*60e3);
+  document.addEventListener('visibilitychange',()=>{if(!W.liveMode&&!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
+  setInterval(()=>{if(!W.liveMode&&!document.hidden)sync()},10*60e3); /* live mode: the Dropbox cursor/longpoll says when data.json changes */
   if(data){sync()}else if(sourceUrl()||cfg.source=='dropbox-api'){try{await sync(true)}catch(e){}}},
  statusHtml(){if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
+  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>`;
   return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
   ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
@@ -205,7 +212,7 @@ const W={onUpdate:null,preview:false,
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
   const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();cfg={source:'dropbox-api'};saveCfg();
    {const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
-   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;openStore();await syncBoot()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
+   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;await syncBoot();openStore();startLive()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
  _dev:DEV};
 window.WSData=W;
 })();
@@ -445,6 +452,7 @@ root.HWSEngine=E;if(typeof module!=='undefined'&&module.exports)module.exports=E
 (function(root){
 'use strict';
 const E=root.HWSEngine;
+function devId(){try{return (root.HWSSync&&root.HWSSync.device().id)||''}catch(e){return ''}}
 function nowAZ(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,19).replace('T',' ')} // Arizona = UTC-7 all year (no DST)
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function storageOk(){try{const k='__hws_t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
@@ -466,6 +474,11 @@ function unzipFind(buf,want){const u=new Uint8Array(buf),v=new DataView(buf);let
  while(p+30<=u.length&&v.getUint32(p,true)==0x04034b50){const method=v.getUint16(p+8,true),size=v.getUint32(p+18,true),nl=v.getUint16(p+26,true),xl=v.getUint16(p+28,true);const name=dec.decode(u.subarray(p+30,p+30+nl));const st=p+30+nl+xl;
   if(want(name)){if(method!==0)throw new Error('zip entry is compressed; import the changes .json instead');return dec.decode(u.subarray(st,st+size))}p=st+size}return null}
 function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra||null;const KEY='hws-edits-v1:'+version;
+ /* LIVE mode (hosted app + Dropbox sign-in): each job's shared log lives in Dropbox (live/<slug>.json, see live.js). r.live = last
+    downloaded copy {entries,rev}; r.log = this device's entries not uploaded yet (the offline queue). Replay = live entries (sorted
+    by time) + queued entries; 'undo' entries cancel their target; ids the office already applied (common.live_applied) are skipped
+    and ids it renumbered (common.live_idmap) are remapped. */
+ const LIVE=!!o.live;const CM=data.common||{};const APPLIED=new Set(CM.live_applied||[]);const IDMAP=CM.live_idmap||{};
  const persist=storageOk();let rec=null;
  if(persist){try{rec=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){rec=null}}
  if(!rec||rec.v!==1)rec={v:1,version,built:data.built,jobs:{}};
@@ -473,34 +486,59 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function save(){rec.updated=nowAZ();if(!persist)return;try{localStorage.setItem(KEY,JSON.stringify(rec));lastSaveErr=null}catch(e){lastSaveErr=e.message;if(o.onSaveError)o.onSaveError(e)}}
  function jr(slug){return rec.jobs[slug]||(rec.jobs[slug]={log:[],remote:[]})}
  function who(){try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
+ function liveSeq(r){if(!r)return [];const ids=new Set(),out=[];((r.live||{}).entries||[]).forEach(e=>{if(e&&e.id&&!ids.has(e.id)){ids.add(e.id);out.push(e)}});r.log.forEach(e=>{if(e&&e.id&&!ids.has(e.id)){ids.add(e.id);out.push(e)}});return out}
+ function undoneSet(seq){return new Set(seq.filter(e=>e.kind=='undo').map(e=>e.target))}
+ function effective(seq){const u=undoneSet(seq);return seq.filter(e=>e.kind!='undo'&&!u.has(e.id)&&!APPLIED.has(e.id))}
+ function remapOps(slug,ops){const m=IDMAP[slug];if(!m||!Object.keys(m).length)return ops;const pat=new RegExp('\\b('+Object.keys(m).map(k=>k.replace(/[^A-Za-z0-9]/g,'\\$&')).join('|')+')\\b','g');const fix=v=>typeof v=='string'?v.replace(pat,x=>m[x]):v;
+  return ops.map(op=>{op=E.clone(op);if('id' in op)op.id=fix(op.id);['fields','row'].forEach(k=>{if(op[k]&&typeof op[k]=='object'&&'depends_on' in op[k])op[k].depends_on=fix(op[k].depends_on)});return op})}
+ function touchKeys(e){const k=[];if(e.kind=='settings'){Object.keys(e.settings||{}).forEach(x=>{if(x=='info')Object.keys(e.settings.info||{}).forEach(y=>k.push('info:'+y));else if(x!='phase_colors')k.push('settings:'+x)});return k}
+  (e.ops||[]).forEach(op=>{if(!op.id)return;if(op.op=='move')k.push(op.id+'|dates');else if(op.op=='update')Object.keys(op.fields||{}).forEach(f=>k.push(op.id+'|'+(['start','finish','duration'].includes(f)?'dates':f)));else if(op.op=='pct'||op.op=='complete')k.push(op.id+'|progress');else if(op.op=='delete')k.push(op.id+'|deleted')});return k}
+ /* "Needs review": an edit that no longer applies, or two people changing the same task field at nearly the same time (the later
+    edit wins in the schedule; both are listed so someone can check). Only the last 3 days are considered. */
+ function reviews(eff){const out=[];const now=Date.now(),win=3*864e5;
+  eff.forEach(e=>{if(e.failed&&now-(e.ts_ms||now)<win*10)out.push({severity:'high',kind:'needs review',title:`Needs review: an edit by ${e.who||'someone'} could not be applied`,detail:`${e.summary||''} — ${e.failed}`,task:((e.ops||[])[0]||{}).id||''})});
+  for(let i=0;i<eff.length;i++){const b=eff[i];if(!b.ts_ms||now-b.ts_ms>win)continue;const kb=touchKeys(b);if(!kb.length)continue;
+   for(let j=0;j<i;j++){const a=eff[j];if(!a.ts_ms||(a.device||a.who)===(b.device||b.who))continue;if(!((a.up||a.ts_ms)>b.ts_ms-2000&&a.ts_ms<=b.ts_ms+2000))continue;
+    const same=touchKeys(a).filter(x=>kb.includes(x));if(!same.length)continue;const [tid,field]=same[0].split('|');
+    out.push({severity:'medium',kind:'needs review',title:`Needs review: ${a.who||'someone'} and ${b.who||'someone'} both changed ${field?tid+' '+field:same[0]} at the same time`,detail:`${a.who||'?'}: ${a.summary||''} · then ${b.who||'?'}: ${b.summary||''} (the later edit is what the schedule shows)`,task:field?tid:''});break}}
+  return out}
  function baseOf(slug){const j=data.jobs[slug];if(!j)return null;const c=data.common||{};const sp=E.splitJob(j);
   const base=Object.assign({},j,{modules:c.modules,mod_cols:c.mod_cols,mod_files:c.mod_files,all_jobs:c.all_jobs,built:data.built,today:data.today,trackerRows:sp.trackerRows});
   return {base,rows:sp.rows}}
  function ctx(settings,e){return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||''}}
  function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null});
   const h=[];let n=0;const r=rec.jobs[slug];
+  if(LIVE){const seq=liveSeq(r);const u=undoneSet(seq);const q=new Set(r?r.log.map(e=>e.id):[]);
+   seq.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:u.has(e.id),failed:e.failed,where:q.has(e.id)?'waiting to upload':(APPLIED.has(e.id)?'in the office schedule':'saved to Dropbox')}));
+   J.history=h;J.pending=r?r.log.length:0;if(c.review&&c.review.length)J.conflicts=c.review.concat(J.conflicts||[]);J.review=c.review||[];
+   const l=(r&&r.live)||{};J.live={by:l.by||'',ms:l.ms||0,rev:l.rev||null};return J}
   if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:false,failed:e.failed,where:'checked in'+(cs.who?' by '+cs.who:'')})));
    r.log.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:e.undone,failed:e.failed,where:'this browser'}))}
   J.history=h;J.pending=r?r.log.filter(e=>!e.undone).length:0;return J}
  function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[]};
   let settings={saturday:!!(b.base.settings||{}).saturday,holidays:(b.base.settings||{}).holidays||'construction',cascade_bt:!!(b.base.settings||{}).cascade_bt,info:E.clone(b.base.info||{}),phase_colors:E.clone(b.base.phase_colors||{})};
-  const r=rec.jobs[slug];const entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
+  const r=rec.jobs[slug];let entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));if(LIVE)entries=entries.concat(effective(liveSeq(r)));else r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
   entries.forEach(e=>{if(e.kind=='settings'){settings=mergeSettings(settings,e.settings||{});return}
-   try{const x=E.applyEdit(state,e.ops,ctx(settings,e));state=x.state;delete e.failed}catch(err){e.failed=err.message}});
-  const c={base:b.base,state,settings};c.J=derive(slug,c);cache[slug]=c;return c}
+   try{const x=E.applyEdit(state,LIVE?remapOps(slug,e.ops||[]):e.ops,ctx(settings,e));state=x.state;delete e.failed}catch(err){e.failed=err.message}});
+  const c={base:b.base,state,settings};if(LIVE&&r)c.review=reviews(effective(liveSeq(r)));c.J=derive(slug,c);cache[slug]=c;return c}
  function get(slug){return cache[slug]||build(slug)}
  const S={KEY,persist,version,
   saveError:()=>lastSaveErr,
   who,setWho(n){try{localStorage.setItem('hws-who',String(n||'').trim().slice(0,60))}catch(e){}},
   getJob(slug){const c=get(slug);return c?c.J:null},
   edit(slug,ops){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:E.clone(ops)};
+   if(LIVE){e.ts_ms=Date.now();e.device=devId();const taken=new Set(c.state.rows.map(r=>r.id));e.ops.forEach(op=>{if(op.op=='add'&&!op.new_id){let n;do{n='N'+(10000+Math.floor(Math.random()*89999))}while(taken.has(n));taken.add(n);op.new_id=n}})}
    const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e));let k=0;e.ops.forEach(op=>{if(op.op=='add')op.new_id=x.result.new_ids[k++]});
    e.summary=x.result.summary;jr(slug).log.push(e);save();c.state=x.state;c.J=derive(slug,c);return {J:c.J,result:x.result}},
-  undo(slug){const r=rec.jobs[slug];const last=r&&r.log.slice().reverse().find(e=>e.kind=='edit'&&!e.undone);if(!last)throw new Error('nothing to undo (only edits made in this browser and not yet checked in can be undone)');
+  undo(slug){if(LIVE){const r=rec.jobs[slug];const seq=liveSeq(r);const u=undoneSet(seq);const me=who(),d=devId();
+    const last=seq.slice().reverse().find(e=>(e.kind=='edit'||e.kind=='settings')&&!u.has(e.id)&&!APPLIED.has(e.id)&&(e.device?e.device===d:e.who===me));
+    if(!last)throw new Error('nothing to undo (you can undo your own edits made on this device)');
+    const x={id:uid(),ts:nowAZ(),ts_ms:Date.now(),who:me,device:d,kind:'undo',target:last.id,summary:'Undid: '+last.summary};jr(slug).log.push(x);save();delete cache[slug];const c=build(slug);return {J:c.J,summary:x.summary}}
+   const r=rec.jobs[slug];const last=r&&r.log.slice().reverse().find(e=>e.kind=='edit'&&!e.undone);if(!last)throw new Error('nothing to undo (only edits made in this browser and not yet checked in can be undone)');
    last.undone=true;last.undone_at=nowAZ();save();delete cache[slug];const c=build(slug);return {J:c.J,summary:'Undid: '+last.summary}},
-  setSettings(slug,body){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'settings',settings:E.clone(body),summary:'settings changed'};jr(slug).log.push(e);save();c.settings=mergeSettings(c.settings,body);c.J=derive(slug,c);return c.J},
-  getList(){const L=Object.assign({},data.list,{built:data.built});L.jobs=data.list.jobs.map(row=>{const r=rec.jobs[row.slug];if(!r||(!r.remote.length&&!r.log.some(e=>!e.undone)))return row;const J=S.getJob(row.slug);return J?E.listRow(J,row):row});return L},
-  pending(slug){const r=rec.jobs[slug];return r?r.log.filter(e=>!e.undone).length:0},
+  setSettings(slug,body){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'settings',settings:E.clone(body),summary:'settings changed'};if(LIVE){e.ts_ms=Date.now();e.device=devId()}jr(slug).log.push(e);save();c.settings=mergeSettings(c.settings,body);c.J=derive(slug,c);return c.J},
+  getList(){const L=Object.assign({},data.list,{built:data.built});L.jobs=data.list.jobs.map(row=>{const r=rec.jobs[row.slug];if(!r||(!r.remote.length&&!r.log.some(e=>!e.undone)&&!((r.live||{}).entries||[]).length))return row;const J=S.getJob(row.slug);return J?E.listRow(J,row):row});return L},
+  pending(slug){const r=rec.jobs[slug];return r?(LIVE?r.log.length:r.log.filter(e=>!e.undone).length):0},
   pendingTotal(){return Object.keys(rec.jobs).reduce((a,s)=>a+S.pending(s),0)},
   editedJobs(){return Object.keys(rec.jobs).filter(s=>S.pending(s)||rec.jobs[s].remote.length)},
   diff(slug){const b=baseOf(slug);const c=get(slug);const o={};b.rows.forEach(r=>o[r.id]=r);const n={};c.state.rows.forEach(r=>n[r.id]=r);
@@ -523,7 +561,8 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
    save();let failed=0;jobsTouched.forEach(s=>{build(s);failed+=rec.jobs[s].log.filter(e=>e.failed&&!e.undone).length});return {added,jobs:jobsTouched.length,failed,otherSnapshot:obj.snapshot_built!==data.built}},
   importText(text){return S.importObj(JSON.parse(text))},
   importBuffer(buf){const u=new Uint8Array(buf);if(u[0]==0x50&&u[1]==0x4b){const t=unzipFind(buf,n=>/(^|\/)changes\.json$/.test(n));if(!t)throw new Error('no changes.json in that zip');return S.importText(t)}return S.importText(new TextDecoder().decode(u))},
-  reset(slug){if(slug){delete rec.jobs[slug];delete cache[slug]}else{rec={v:1,version,built:data.built,jobs:{}};Object.keys(cache).forEach(k=>delete cache[k])}save();if(!slug&&persist){try{localStorage.removeItem(KEY)}catch(e){}}},
+  reset(slug){if(LIVE){/* live: shared edits stay in Dropbox; only this device's unsent queue is discarded */(slug?[slug]:Object.keys(rec.jobs)).forEach(k=>{if(rec.jobs[k])rec.jobs[k].log=[];delete cache[k]});save();return}
+   if(slug){delete rec.jobs[slug];delete cache[slug]}else{rec={v:1,version,built:data.built,jobs:{}};Object.keys(cache).forEach(k=>delete cache[k])}save();if(!slug&&persist){try{localStorage.removeItem(KEY)}catch(e){}}},
   /* shared check-out / check-in support */
   checkout(slug){return (rec.jobs[slug]||{}).checkout||null},
   setCheckout(slug,co){const r=jr(slug);if(co)r.checkout=co;else delete r.checkout;save()},
@@ -534,6 +573,22 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   knownRemote(slug){return new Set(((rec.jobs[slug]||{}).remote||[]).map(c=>c.name))},
   otherVersions(){if(!persist)return [];const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('hws-edits-v1:')&&k!==KEY){const r=JSON.parse(localStorage.getItem(k)||'null');if(r&&r.jobs){const n=Object.values(r.jobs).reduce((a,j)=>a+(j.log||[]).filter(e=>!e.undone).length,0);if(n)out.push({key:k,n,built:r.built})}}}}catch(e){}return out},
   adoptVersion(key){const r=JSON.parse(localStorage.getItem(key)||'null');if(!r)return 0;const obj={format:'harswells-schedule-changes',jobs:{}};Object.entries(r.jobs).forEach(([s,j])=>obj.jobs[s]={entries:(j.log||[])});return S.importObj(obj)},
+  /* live mode (see live.js) */
+  live:LIVE,
+  liveJobs(){return Object.keys(rec.jobs).filter(s=>rec.jobs[s].log.length)},
+  liveRev(slug){return ((rec.jobs[slug]||{}).live||{}).rev||null},
+  liveKnown(slug){return !!((rec.jobs[slug]||{}).live||{}).checked},
+  liveInfo(slug){if(slug){const l=(rec.jobs[slug]||{}).live||{};return {by:l.by||'',ms:l.ms||0,slug}}let best={by:'',ms:0,slug:''};Object.entries(rec.jobs).forEach(([s,r])=>{const l=r.live||{};if((l.ms||0)>best.ms)best={by:l.by||'',ms:l.ms,slug:s}});return best},
+  /* newest copy of the job's shared log (obj = parsed live/<slug>.json or null when the file does not exist). Returns true when it changed. */
+  setRemote(slug,obj,rev,force){if(!data.jobs[slug])return false;const r=jr(slug);const l=r.live||(r.live={entries:[],rev:null});
+   if(!force&&l.checked&&(l.rev||null)===(rev||null))return false;
+   l.entries=obj&&Array.isArray(obj.entries)?obj.entries.filter(e=>e&&e.id):[];l.rev=rev||null;l.checked=true;l.by=(obj&&obj.updated_by)||'';l.ms=(obj&&obj.updated_ms)||0;
+   const have=new Set(l.entries.map(e=>e.id));r.log=r.log.filter(e=>!have.has(e.id));save();delete cache[slug];return true},
+  /* shared log + this device's queue, time-ordered, for the next upload (entries the office applied > 14 days ago are dropped) */
+  mergeForUpload(slug){const r=jr(slug);const l=r.live||{entries:[]};const now=Date.now();const ids=new Set((l.entries||[]).map(e=>e.id));
+   const add=r.log.filter(e=>!ids.has(e.id)).map(e=>Object.assign({},e,{up:now}));
+   const all=(l.entries||[]).concat(add).filter(e=>!(APPLIED.has(e.id)&&now-(e.ts_ms||0)>14*864e5)).sort((a,b)=>((a.ts_ms||0)-(b.ts_ms||0))||(a.id<b.id?-1:1));
+   all.forEach(e=>{delete e.failed});return {entries:all,ids:add.map(e=>e.id)}},
   nowAZ,uid};
  return S}
 root.HWSStore={create,nowAZ,uid,zip,unzipFind,crc32};
@@ -556,8 +611,8 @@ class ConflictError extends Error{constructor(m){super(m);this.name='ConflictErr
 class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
 class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
-const CFG=Object.assign({lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
-try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours}}catch(e){}
+const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
+try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours;if('live' in ov)CFG.live=!!ov.live}}catch(e){}
 const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* tiny IndexedDB kv (directory handles are structured-cloneable, not JSON) */
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('hws-sync',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
@@ -590,7 +645,7 @@ function FsaBackend(handle){let dir=handle||null,perm=handle?'granted':'none';/*
   async ensureLayout(){await sub('locks/.keep',true);await sub('changes/.keep',true)}};
  return A}
 /* ---------------------------------------------------------------- back end (b): Dropbox HTTP API + OAuth PKCE */
-const DBX={auth:'https://www.dropbox.com/oauth2/authorize',token:'https://api.dropboxapi.com/oauth2/token',api:'https://api.dropboxapi.com/2/',content:'https://content.dropboxapi.com/2/'};
+const DBX={auth:'https://www.dropbox.com/oauth2/authorize',token:'https://api.dropboxapi.com/oauth2/token',api:'https://api.dropboxapi.com/2/',content:'https://content.dropboxapi.com/2/',notify:'https://notify.dropboxapi.com/2/'};
 const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b64u(a.buffer).slice(0,n)}
 const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
@@ -637,9 +692,11 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
    if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
    let meta={};try{meta=JSON.parse(r.headers.get('Dropbox-API-Result')||'{}')}catch(e){}return {text:await r.text(),rev:meta.rev||null}},
   async existsAbs(path){try{await rpc('files/get_metadata',{path});return true}catch(e){if(e.status==409)return false;throw e}},
+  async metaAbs(path){try{return await rpc('files/get_metadata',{path})}catch(e){if(e.status==409)return null;throw e}},
   read(path){return A.readAbs(full(path))},
-  async write(path,text,opt){opt=opt||{};const mode=opt.mode=='update'?{'.tag':'update',update:opt.rev}:(opt.mode=='add'?{'.tag':'add'}:{'.tag':'overwrite'});
-   const r=await call(DBX.content+'files/upload',{method:'POST',headers:{'Content-Type':'application/octet-stream','Dropbox-API-Arg':asciiJson({path:full(path),mode,autorename:false,mute:true,strict_conflict:true})},body:String(text)});
+  write(path,text,opt){return A.writeAbs(full(path),text,opt)},
+  async writeAbs(path,text,opt){opt=opt||{};const mode=opt.mode=='update'?{'.tag':'update',update:opt.rev}:(opt.mode=='add'?{'.tag':'add'}:{'.tag':'overwrite'});
+   const r=await call(DBX.content+'files/upload',{method:'POST',headers:{'Content-Type':'application/octet-stream','Dropbox-API-Arg':asciiJson({path,mode,autorename:false,mute:true,strict_conflict:true})},body:String(text)});
    if(r.status==409){const e=await err(r);if(/conflict/.test(e))throw new ConflictError(path+': '+e);throw new Error('Dropbox upload: '+e)}if(!r.ok)throw new Error('Dropbox upload: HTTP '+r.status);const m=await r.json();return {rev:m.rev}},
   async remove(path,opt){opt=opt||{};const body={path:full(path)};if(opt.rev)body.parent_rev=opt.rev;
    try{await rpc('files/delete_v2',body)}catch(e){if(e.status!=409)throw e;const cur=await A.read(path);if(!cur)return;if(opt.rev&&cur.rev!==opt.rev)throw new ConflictError(path+' changed since it was read');throw e}},
@@ -647,6 +704,16 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
    const rel=x=>path.replace(/\/$/,'')+(x.path_display||x.path_lower||'').slice(base.length);
    for(;;){(j.entries||[]).forEach(x=>{if(x['.tag']=='file')out.push({name:x.name,path:rel(x),rev:x.rev})});if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}
    return out.sort((a,b)=>a.path<b.path?-1:1)},
+  /* live sync (instant refresh): cursor + longpoll on the Live Schedule folder (team path root on every call except the
+     longpoll itself, which Dropbox serves unauthenticated on notify.dropboxapi.com) */
+  async listAbs(path){let j;try{j=await rpc('files/list_folder',{path,recursive:false})}catch(e){if(e.status==409&&/not_found/.test(e.summary||''))return [];throw e}const out=[];
+   for(;;){(j.entries||[]).forEach(x=>{if(x['.tag']=='file')out.push({name:x.name,path_lower:x.path_lower,rev:x.rev})});if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}return out},
+  async latestCursor(path){return (await rpc('files/list_folder/get_latest_cursor',{path,recursive:true,include_deleted:true})).cursor},
+  async changes(cursor){let j;try{j=await rpc('files/list_folder/continue',{cursor})}catch(e){if(e.status==409&&/reset/.test(e.summary||'')){const x=new Error('cursor reset');x.reset=true;throw x}throw e}
+   let out=[];for(;;){out=out.concat(j.entries||[]);if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}return {entries:out,cursor:j.cursor}},
+  async longpoll(cursor,timeout){let r;try{r=await fetch(DBX.notify+'files/list_folder/longpoll',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cursor,timeout:timeout||30}),credentials:'omit'})}catch(e){const x=new Error('longpoll unreachable ('+e.message+')');x.net=true;throw x}
+   if(!r.ok){const x=new Error('longpoll HTTP '+r.status);x.status=r.status;throw x}return r.json()},
+  who(){return auth&&auth.name?String(auth.name).split(' ')[0]:''},
   /* The check-out folder must be the SAME folder for everyone (the owner's "Harswells Live Schedule/sync", shared with each editor).
      If it is missing in the signed-in account we do NOT silently create a private copy (that would give each person their own
      locks); the UI asks first (SetupError). Once present, missing READMEs are added with overwrite uploads (never 409). */
@@ -681,6 +748,87 @@ function Locks(adapter,opts){const hours=opts.lockHours||CFG.lockHours||12;const
   async release(slug,co){await adapter.remove(lp(slug),{rev:co&&co.rev})}};
  return L}
 root.HWSSync={CFG,ConflictError,LockedError,AuthError,SetupError,FsaBackend,DropboxBackend,Locks,device,LS};
+})(typeof window!=='undefined'?window:globalThis);
+
+/* Harswells instant sync ("live mode": hosted app + Dropbox sign-in, 9/27 5:40 PM request).
+   Files in the Harswells team space, next to data/data.json:
+     live/<job>.json  = {format:'harswells-live-log',v:1,job,entries:[…edit/settings/undo entries…],updated_ms,updated_by}
+   Save:  each edit is queued on the device (HWSStore log, localStorage) and uploaded ~1 s later with files/upload mode=update+rev
+          (mode=add when the file is new). A 409 conflict means someone else saved first: re-download, merge (union by entry id,
+          time order), retry. Offline: the queue stays on the device and is sent on the 'online' event / next focus.
+   Watch: cursor from files/list_folder/get_latest_cursor on the Live Schedule folder (recursive, team path root), then
+          files/list_folder/longpoll on notify.dropboxapi.com; on a change, list_folder/continue says which files moved and only
+          those are downloaded (a job log is a few KB; data.json only when the office publishes a new snapshot). Also re-checks on
+          focus / visibilitychange / pageshow / online. If the longpoll endpoint is unreachable it falls back to polling every 5 s. */
+(function(root){
+'use strict';
+const FORMAT='harswells-live-log';
+function create(o){const A=o.A,c=A.CFG;const dataPath=c.dataPath;const base=(c.liveBase||dataPath.replace(/\/[^\/]+\/[^\/]+$/,''));const liveDir=c.liveRoot||(base+'/live');
+ const lp=slug=>liveDir+'/'+slug+'.json';const DEB=o.debounce==null?1000:o.debounce;
+ const st={state:'connecting',err:'',cursor:null,running:false,lpFails:0,mode:'longpoll',checkedAt:0,lastRemote:null};
+ const timers={},inflight={};let wakeFns=[];
+ const S=()=>o.store();
+ function status(p){Object.assign(st,p||{});try{o.onStatus&&o.onStatus(st)}catch(e){}}
+ function sleep(ms){return new Promise(r=>{const t=setTimeout(done,ms);function done(){clearTimeout(t);wakeFns=wakeFns.filter(f=>f!==done);r()}wakeFns.push(done)})}
+ function wake(){wakeFns.slice().forEach(f=>f())}
+ function parse(text){try{const j=JSON.parse(text);if(j&&j.format===FORMAT&&Array.isArray(j.entries))return j}catch(e){}return {format:FORMAT,v:1,entries:[]}}
+ async function pull(slug){const r=await A.readAbs(lp(slug));const s=S();if(!s)return false;return s.setRemote(slug,r?parse(r.text):null,r?r.rev:null)}
+ function jobsIn(){return (o.data()||{}).jobs||{}}
+ async function pullAll(){const files=await A.listAbs(liveDir);const s=S();const changed=[];const seen=new Set();
+  for(const f of files){const m=/^(.+)\.json$/.exec(f.name);if(!m||!jobsIn()[m[1]])continue;seen.add(m[1]);if(s.liveKnown(m[1])&&s.liveRev(m[1])===f.rev)continue;if(await pull(m[1]))changed.push(m[1])}
+  Object.keys(jobsIn()).forEach(slug=>{if(!seen.has(slug)&&(!s.liveKnown(slug)||s.liveRev(slug))){const had=s.liveRev(slug);if(s.setRemote(slug,null,null)&&had)changed.push(slug)}});
+  if(changed.length)notify(changed,'pull')}
+ function notify(slugs,why){const s=S();const info=s?s.liveInfo():null;st.lastRemote=info;try{o.onChange&&o.onChange(slugs,why)}catch(e){console.warn(e)}}
+ /* ---------------- save */
+ async function flushOnce(slug){const s=S();if(!s||!s.pending(slug))return;if(!navigator.onLine){status({state:'offline'});return}
+  status({state:'saving'});
+  for(let attempt=0;attempt<6;attempt++){
+   if(!s.liveKnown(slug))await pull(slug);
+   const rev=s.liveRev(slug);const m=s.mergeForUpload(slug);if(!m.ids.length)return;
+   const obj={format:FORMAT,v:1,job:slug,entries:m.entries,updated_ms:Date.now(),updated_by:o.who()||'',app:'harswells-schedule'};
+   try{const w=await A.writeAbs(lp(slug),JSON.stringify(obj),rev?{mode:'update',rev}:{mode:'add'});S().setRemote(slug,obj,w.rev,true);st.saved=(st.saved||0)+1;notify([slug],'saved');return}
+   catch(e){if(e.name==='ConflictError'){st.conflicts=(st.conflicts||0)+1;await pull(slug);notify([slug],'merge');await new Promise(r=>setTimeout(r,150*attempt));continue}throw e}}
+  throw new Error('Dropbox was busy; will retry')}
+ function flush(slug){if(inflight[slug]){inflight[slug].again=true;return inflight[slug].p}
+  const job={again:false};job.p=(async()=>{try{do{job.again=false;await flushOnce(slug)}while(job.again)}finally{delete inflight[slug]}})();inflight[slug]=job;return job.p}
+ let retryT=null;
+ function fail(e){status({state:navigator.onLine?'error':'offline',err:e&&e.message||String(e)});clearTimeout(retryT);if(navigator.onLine)retryT=setTimeout(()=>flushAll(),8000)}
+ async function flushAll(){const s=S();if(!s)return;try{for(const slug of s.liveJobs())await flush(slug);idle()}catch(e){fail(e)}}
+ function idle(){const s=S();if(!s)return;if(!navigator.onLine)status({state:'offline'});else if(s.pendingTotal()){if(!Object.keys(timers).length&&!Object.keys(inflight).length)status({state:'pending'})}else status({state:'live',err:''})}
+ function schedule(slug,ms){clearTimeout(timers[slug]);status({state:navigator.onLine?'pending':'offline'});
+  timers[slug]=setTimeout(()=>{delete timers[slug];flush(slug).then(idle,fail)},ms==null?DEB:ms)}
+ /* ---------------- watch */
+ async function applyCursor(){if(!st.cursor)return;let res;
+  try{res=await A.changes(st.cursor)}catch(e){if(e.reset){st.cursor=await A.latestCursor(base);await pullAll();return}throw e}
+  st.cursor=res.cursor;st.checkedAt=Date.now();const s=S();if(!s)return;const ld=liveDir.toLowerCase()+'/';const dp=dataPath.toLowerCase();let snap=false;const changed=[];
+  for(const x of res.entries){const p=x.path_lower||'';
+   if(p===dp&&x['.tag']==='file')snap=true;
+   else if(p.startsWith(ld)&&/\.json$/.test(p)){const slug=p.slice(ld.length).replace(/\.json$/,'');if(!jobsIn()[slug])continue;
+    if(x['.tag']==='deleted'){if(s.setRemote(slug,null,null))changed.push(slug)}else if(x['.tag']==='file'&&s.liveRev(slug)!==x.rev){if(await pull(slug))changed.push(slug)}}}
+  if(changed.length)notify(changed,'remote');if(snap&&o.onSnapshot)await o.onSnapshot()}
+ async function loop(){if(st.running)return;st.running=true;
+  while(st.running){
+   try{
+    if(!navigator.onLine){status({state:'offline'});await sleep(30000);continue}
+    if(!st.cursor){st.cursor=await A.latestCursor(base);await pullAll();st.checkedAt=Date.now();await flushAll();idle()}
+    if(document.hidden){await sleep(60000);continue}
+    if(st.mode==='poll'){await sleep(5000);await applyCursor();if(Date.now()-(st.pollSince||0)>60e3){st.mode='longpoll';st.lpFails=0}continue}
+    let r=null;try{r=await A.longpoll(st.cursor,30);st.lpFails=0}
+    catch(e){if(e.status===400||e.status===409){st.cursor=null;continue}st.lpFails++;if(st.lpFails>=2){st.mode='poll';st.pollSince=Date.now()}await sleep(2000);continue}
+    if(r&&r.changes)await applyCursor();
+    if(r&&r.backoff)await sleep(r.backoff*1000);
+    if(st.state==='error'&&!S().pendingTotal())idle()
+   }catch(e){status({state:navigator.onLine?'error':'offline',err:e.message});await sleep(5000)}}}
+ let lastCheck=0;
+ async function checkNow(why){wake();if(!navigator.onLine){idle();return}if(Date.now()-lastCheck<1500)return;lastCheck=Date.now();
+  try{if(st.cursor)await applyCursor();await flushAll()}catch(e){fail(e)}}
+ function start(){if(st.started)return;st.started=true;
+  window.addEventListener('online',()=>{status({state:'pending'});checkNow('online')});window.addEventListener('offline',()=>status({state:'offline'}));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkNow('visible')});window.addEventListener('focus',()=>checkNow('focus'));window.addEventListener('pageshow',()=>checkNow('pageshow'));
+  loop()}
+ function stop(){st.running=false;wake()}
+ return {start,stop,schedule,flush,flushAll,checkNow,pullAll,applyCursor,status:()=>st,paths:{base,liveDir}}}
+root.HWSLive={create,FORMAT};
 })(typeof window!=='undefined'?window:globalThis);
 
 /* Harswells job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
@@ -721,14 +869,18 @@ function prevWd(s){for(let i=0;i<30&&!isWd(s);i++)s=addD(s,-1);return s}
 function wdCount(a,b){if(!a||!b||b<a)return 0;let n=0;for(let s=a;s<=b;s=addD(s,1))if(isWd(s))n++;return n}
 /* ---------- editing (local engine) ---------- */
 function syncOn(){return !!(SY.A&&SY.A.ready())}
-function canEditJob(){if(!J||!STORE)return false;if(syncOn()){const co=STORE.checkout(J.slug);return !!(co&&co.kind==SY.kind)}return true}
+/* live mode = hosted app signed in to Dropbox: every edit saves to the shared Dropbox right away (live.js), no check-out */
+function liveOn(){return MODE!=='share'&&SY.kind=='dropbox'&&syncOn()&&HWSSync.CFG.live!==false&&!!window.HWSLive}
+function canEditJob(){if(!J||!STORE)return false;if(liveOn())return true;if(syncOn()){const co=STORE.checkout(J.slug);return !!(co&&co.kind==SY.kind)}return true}
 function edit(ops,okMsg){if(!canEditJob()){needCheckout();return}
- try{const r=STORE.edit(J.slug,ops);J=r.J;renderJob();toast(okMsg||r.result.summary)}catch(e){toast('Not saved: '+e.message);renderJob()}}
-function undo(){if(!J)return;if(!canEditJob()){needCheckout();return}try{const r=STORE.undo(J.slug);J=r.J;renderJob();toast(r.summary)}catch(e){toast('Undo: '+e.message)}}
+ try{const r=STORE.edit(J.slug,ops);J=r.J;renderJob();toast(okMsg||r.result.summary);liveSaved(J.slug)}catch(e){toast('Not saved: '+e.message);renderJob()}}
+function undo(){if(!J)return;if(!canEditJob()){needCheckout();return}try{const r=STORE.undo(J.slug);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}}
+function liveSaved(slug){if(LIVE&&STORE&&STORE.live)LIVE.schedule(slug)}
 function needCheckout(){toast(syncOn()?'Check out this job first (tap “Check out”), so nobody else edits it at the same time.':'Editing is not available here.')}
 /* ---------- shell ---------- */
 function builtShort(){return String((DATA&&DATA.built)||'').replace(/^[A-Z][a-z]{2} /,'').replace(/ AZ$/,'')}
 function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
+ if(STORE&&STORE.live)return `<div class="banner" id="banner"><b>Data as of ${esc(builtShort())} AZ</b> · edits save to the shared Harswells Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
  const main=MODE==='share'?`<b>Snapshot as of ${esc(builtShort())} AZ</b> · your edits save in this browser only · Export to send changes back to the office`
   :`<b>Data as of ${esc(builtShort())} AZ</b> · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
@@ -738,13 +890,13 @@ function topHtml(){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];cons
  return `<header class="top"><a class="brand" href="${homeHref()}" aria-label="All jobs">Harswells</a><a href="${homeHref()}" class="small hide-sm">All jobs</a><span class="sp"></span>
  ${jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${jobs.map(x=>`<option value="${esc(x.slug)}" ${J&&J.slug==x.slug?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}
  <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
- <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe()):'saved in this browser'}</span></header>${bannerHtml()}`}
+ <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe())+(STORE&&STORE.live?' · live':''):'saved in this browser'}</span></header>${bannerHtml()}`}
 function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value,isPhone()?'schedule':curMod())};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule','📅'],['todos','To-Dos','☑️'],['selections','Selections','🎨'],['conflicts','Conflicts','⚠️'],['more','More','☰']];
 const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,logs:mLogs,messages:mMsgs,todos:mTodos,conflicts:mConf,exports:mExports,settings:mSettings,history:mHistory});
-function lockPill(){if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
+function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
  return `${other}<button class="pri small" id="co">Check out to edit</button>`}
@@ -1010,9 +1162,9 @@ function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show
 function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, BT vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
  bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
 
-function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)',`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo}
+function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
- M.innerHTML=panel('Job settings',EDIT?'saved with your edits (export / check in to send them)':(syncOn()?'check out to change':'view-only'),`<form id="sf" class="pb"><div class="fg">
+ M.innerHTML=panel('Job settings',EDIT?(STORE.live?'saved to the shared Dropbox automatically':'saved with your edits (export / check in to send them)'):(syncOn()?'check out to change':'view-only'),`<form id="sf" class="pb"><div class="fg">
  <label>Work week<select name="saturday" ${dis}><option value="0" ${s.saturday?'':'selected'}>Mon–Fri</option><option value="1" ${s.saturday?'selected':''}>Mon–Sat</option></select></label>
  <label>Holidays<select name="holidays" ${dis}>${[['construction','Major US holidays (New Year, Memorial, July 4, Labor, Thanksgiving + Fri, Christmas)'],['federal','All 11 US federal holidays'],['none','No holidays']].map(([k,l])=>`<option value="${k}" ${s.holidays==k?'selected':''}>${l}</option>`).join('')}</select></label>
  <label class="cb w"><input type="checkbox" name="cascade_bt" ${s.cascade_bt?'checked':''} ${dis}> Buildertrend tasks follow their links when a predecessor is moved here (off = BT rows are locked facts and get flagged instead)</label>
@@ -1023,7 +1175,7 @@ function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'dis
  ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>`);
  if(!EDIT)return;$('#sf').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const pc={};M.querySelectorAll('[data-pc]').forEach(x=>{if(x.value!=(J.phase_colors||{})[x.dataset.pc])pc[x.dataset.pc]=x.value});
   const body={saturday:f.get('saturday')=='1',holidays:f.get('holidays'),cascade_bt:!!f.get('cascade_bt'),info:{pm:f.get('pm'),client:f.get('client'),status:f.get('status'),contract:f.get('contract'),notes:f.get('notes')},phase_colors:pc};
-  try{J=STORE.setSettings(J.slug,body);renderJob();toast('Settings saved; schedule recomputed')}catch(err){toast('Not saved: '+err.message)}}}
+  try{J=STORE.setSettings(J.slug,body);renderJob();toast('Settings saved; schedule recomputed');liveSaved(J.slug)}catch(err){toast('Not saved: '+err.message)}}}
 /* ---------- exports ---------- */
 function csvText(rows,cols){return E.csvText(rows,cols)}
 function download(name,data,mime){try{const b=data instanceof Blob?data:new Blob([data],{type:mime||'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Downloaded '+name)}catch(e){toast('Download failed: '+e.message)}}
@@ -1042,7 +1194,7 @@ function stampName(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,
 function whoSlug(){const w=(STORE.who()||'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'');return w?w+'-':''}
 function exportChanges(){if(!STORE.pendingTotal()&&!STORE.editedJobs().length){toast('No edits to export yet');return}const x=STORE.exportFiles();download(`Harswells-changes-${whoSlug()}${stampName()}.zip`,x.zip)}
 function exportJson(){const o=STORE.exportObj();download(`Harswells-changes-${whoSlug()}${stampName()}.json`,JSON.stringify(o,null,1),'application/json')}
-function importFile(file){const r=new FileReader();r.onload=()=>{try{const res=STORE.importBuffer(r.result);J=null;route();
+function importFile(file){const r=new FileReader();r.onload=()=>{try{const res=STORE.importBuffer(r.result);J=null;route();if(LIVE&&STORE.live)LIVE.flushAll();
   toast(`Imported ${res.added} edit(s) in ${res.jobs} job(s)`+(res.failed?` · ${res.failed} could not be applied (see History)`:'')+(res.otherSnapshot?' · note: made on a different snapshot':''))}catch(e){toast('Import failed: '+e.message)}};r.onerror=()=>toast('Could not read that file');r.readAsArrayBuffer(file)}
 function ensureName(then){if(STORE.who()){then();return}openModal(`<h2>Your name</h2><p class="small mut">Shown on your edits, exports and check-outs so the office knows who changed what.</p><form id="wf"><input name="n" placeholder="Your first name" required style="width:100%" autocomplete="name"><div class="mbtns"><button class="pri" type="submit">Continue</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
  m=>{m.querySelector('#wf').onsubmit=e=>{e.preventDefault();STORE.setWho(new FormData(e.target).get('n'));closeModal();then()}})}
@@ -1053,25 +1205,30 @@ function openChanges(){const eds=STORE.editedJobs();const n=STORE.pendingTotal()
  <p class="small">${STORE.persist?`Saved in this browser (localStorage, key <code>${esc(STORE.KEY)}</code>).`:'<b class="red">This viewer blocks storage: edits are lost when you close it. Export them first.</b>'} <b>${n}</b> unsent edit${n==1?'':'s'}${eds.length?' in '+eds.length+' job'+(eds.length>1?'s':''):''}.</p>
  ${eds.length?`<div class="list">${eds.map(s=>`<div class="it"><div class="bd"><a href="${jobHref(s)}" data-close class="t">${esc(names[s]||s)}</a> <span class="small mut">${STORE.pending(s)} unsent</span></div><button class="small" data-rj="${esc(s)}">Reset job</button></div>`).join('')}</div>`:''}
  ${others.length?`<div class="note small">Edits from an older snapshot/version are still in this browser (${others.map(o=>o.n+' from '+esc(o.built||'?')).join(', ')}). <button class="small" id="adopt">Bring them over</button></div>`:''}
- <div class="mbtns"><button class="pri" id="xc">Export my changes</button><button id="xj">JSON only</button><label class="btn filebtn">Import changes<input type="file" id="imp" accept=".json,.zip,application/json,application/zip" hidden></label><span class="sp"></span><button class="danger" id="rst">Reset to original</button></div>
+ <div class="mbtns"><button class="pri" id="xc">Export my changes</button><button id="xj">JSON only</button><label class="btn filebtn">Import changes<input type="file" id="imp" accept=".json,.zip,application/json,application/zip" hidden></label><span class="sp"></span>${STORE.live?(n?'<button class="danger" id="rst">Discard unsent edits</button>':'<span id="rst"></span>'):'<button class="danger" id="rst">Reset to original</button>'}</div>
+ ${STORE.live?`<h3 class="sh">Live sync</h3><div class="small">Connected: <b>${esc(SY.A.describe())}</b></div><div class="small" style="margin-top:4px">${liveBadge(J&&J.slug)}</div>
+  <p class="small mut">Every edit is saved to the shared Harswells Dropbox about a second after you make it and shows up on everyone else’s open app within seconds. Nothing to check out or check in. Offline edits wait on this device and are sent automatically when you’re back online. If two people change the same task at the same moment, both edits are kept, the later one shows, and the job’s Conflicts tab lists it as “Needs review”.</p>
+  <div class="mbtns"><button id="lvchk">Check for updates now</button><button id="sdis">Disconnect Dropbox</button></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`:`
  <h3 class="sh">Shared check-out <span class="mut small">(optional; lets your team take turns editing a job)</span></h3>
  <div class="small">${syncOn()?`Connected: <b>${esc(SY.A.describe())}</b>`:(SY.A&&SY.A.needsPermission()?`Folder access needs your OK again.`:'Not connected: edits stay in this browser until you export them.')}</div>
  ${J&&syncOn()?`<div class="small" style="margin-top:6px">${esc(J.name)}: ${co&&co.kind==SY.kind?`<b>checked out by you</b> since ${esc(co.lock.checked_out_at)} (expires ${esc(co.lock.expires_at)})`:(ls?(ls.state=='free'?'available':(ls.state=='other'?`checked out by <b>${esc(ls.lock.holder)}</b> since ${esc(ls.lock.checked_out_at)}`:(ls.state=='expired'?`lock by ${esc(ls.lock.holder)} expired`:'')))  :'checking…')}</div>
   <div class="mbtns">${co&&co.kind==SY.kind?`<button class="pri" id="sci">Check in${J.pending?' ('+J.pending+')':''}</button><button id="srl">Cancel check-out</button>`:`<button class="pri" id="sco">Check out ${esc(J.name)}</button>`}<button id="spl">Refresh</button></div>`:''}
  <div class="mbtns">${syncOn()||(SY.A&&SY.A.needsPermission())?`${SY.A&&SY.A.needsPermission()?'<button class="pri" id="sgrant">Allow folder access</button>':''}<button id="sdis">Disconnect ${esc(SY.A.label)}</button>`:`${HWSSync.FsaBackend().available()?'<button id="sfsa">Use a shared folder…</button>':''}<button id="sdbx">Sign in with Dropbox</button>`}</div>
  <p class="small mut">${MODE==='share'?'Shared folder works in desktop Chrome/Edge (pick the Dropbox-synced “Harswells Live Schedule/sync” folder). Dropbox sign-in from this file opens Dropbox in a new tab and asks you to paste the code it shows. On iPhone use the hosted app.':'Dropbox sign-in keeps your check-outs and change sets in the shared Dropbox folder (locks/ and changes/ folders).'}</p>
- <div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,m=>{
-  const g=s=>m.querySelector(s);g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};
+ <div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`}`,m=>{
+  const g=s=>m.querySelector(s);const b0=(id,f)=>{const x=g(id);if(x)x.onclick=f};g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};
   g('#xc').onclick=exportChanges;g('#xj').onclick=exportJson;g('#imp').onchange=e=>{const f=e.target.files[0];if(f){closeModal();importFile(f)}};
-  g('#rst').onclick=()=>{if(confirm('Reset to the original snapshot? This deletes every unsent edit in this browser (export first if you need them).')){STORE.reset();closeModal();J=null;route();toast('Reset to the original snapshot')}};
+  b0('#lvchk',()=>{LIVE&&LIVE.checkNow('button');toast('Checking for updates…')});
+  g('#rst').onclick=()=>{if(STORE.live){if(confirm('Discard the edits on this device that have not been sent to Dropbox yet?')){STORE.reset();closeModal();safeRender();paintLive();toast('Unsent edits discarded')}return}
+   if(confirm('Reset to the original snapshot? This deletes every unsent edit in this browser (export first if you need them).')){STORE.reset();closeModal();J=null;route();toast('Reset to the original snapshot')}};
   m.querySelectorAll('[data-rj]').forEach(b=>b.onclick=()=>{if(confirm('Discard your unsent edits for this job?')){STORE.reset(b.dataset.rj);closeModal();J=null;route();toast('Job reset')}});
-  const ad=g('#adopt');if(ad)ad.onclick=()=>{others.forEach(o=>STORE.adoptVersion(o.key));closeModal();J=null;route();toast('Older edits brought over (check History for anything that could not apply)')};
+  const ad=g('#adopt');if(ad)ad.onclick=()=>{others.forEach(o=>STORE.adoptVersion(o.key));closeModal();J=null;route();if(LIVE&&STORE.live)LIVE.flushAll();toast('Older edits brought over (check History for anything that could not apply)')};
   const b=(id,f)=>{const x=g(id);if(x)x.onclick=f};
   b('#sco',()=>{closeModal();doCheckout(J.slug)});b('#sci',()=>{closeModal();doCheckin(J.slug)});b('#srl',()=>{closeModal();doRelease(J.slug)});b('#spl',()=>{closeModal();refreshLock(J.slug,true).then(()=>openChanges())});
   b('#sfsa',async()=>{try{await setBackend('fsa',true);closeModal();J=null;route();toast('Shared folder connected')}catch(e){if(e.name!='AbortError')toast('Folder: '+e.message)}});
   b('#sgrant',async()=>{try{await SY.A.connect();closeModal();J=null;route()}catch(e){toast(e.message)}});
   b('#sdbx',async()=>{try{const r=await setBackend('dropbox',true);if(r=='paste'){closeModal();pasteCode()}else if(r!=='redirect'){closeModal();J=null;route()}}catch(e){toast(e.message)}});
-  b('#sdis',async()=>{if(!confirm('Disconnect? Unsent edits stay in this browser.'))return;await SY.A.disconnect();HWSSync.LS.set('hws-sync-kind',null);SY.A=null;SY.kind=null;SY.locks=null;closeModal();J=null;route()})})}
+  b('#sdis',async()=>{if(!confirm('Disconnect? Unsent edits stay in this browser.'))return;if(LIVE){LIVE.stop();LIVE=null;if(window.WSData)WSData.liveMode=false}await SY.A.disconnect();HWSSync.LS.set('hws-sync-kind',null);SY.A=null;SY.kind=null;SY.locks=null;closeModal();J=null;route()})})}
 function pasteCode(){openModal(`<h2>Finish Dropbox sign-in</h2><p class="small">Dropbox opened in a new tab. Approve access, then copy the code it shows and paste it here.</p><form id="pc"><input name="c" required style="width:100%" autocomplete="off" placeholder="Access code"><div class="mbtns"><button class="pri" type="submit">Sign in</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
  m=>{m.querySelector('#pc').onsubmit=async e=>{e.preventDefault();try{await SY.A.finishPaste(new FormData(e.target).get('c'));closeModal();J=null;route();toast('Signed in to Dropbox')}catch(err){toast(err.message)}}})}
 /* ---------- sync state ---------- */
@@ -1082,7 +1239,7 @@ async function setBackend(kind,interactive){const A=kind=='fsa'?HWSSync.FsaBacke
 async function syncRedirect(){if(HWSSync.LS.get('hws-sync-kind')!=='dropbox')return;try{const A=HWSSync.DropboxBackend();if(await A.handleRedirect())toast('Signed in to Dropbox'+(A.describe()?': '+A.describe():''))}catch(e){toast(e.message)}}
 async function syncBoot(){const kind=HWSSync.LS.get('hws-sync-kind');if(!kind)return;const A=kind=='fsa'?HWSSync.FsaBackend():HWSSync.DropboxBackend();
  try{await A.restore()}catch(e){}SY.A=A;SY.kind=kind;SY.locks=HWSSync.Locks(A,{who:()=>STORE.who(),built:DATA&&DATA.built})}
-async function refreshLock(slug,force){if(!syncOn())return;if(!force&&lockCache[slug]&&Date.now()-lockCache[slug].at<60e3)return;try{const s=await SY.locks.status(slug);s.at=Date.now();lockCache[slug]=s;
+async function refreshLock(slug,force){if(!syncOn()||liveOn())return;if(!force&&lockCache[slug]&&Date.now()-lockCache[slug].at<60e3)return;try{const s=await SY.locks.status(slug);s.at=Date.now();lockCache[slug]=s;
   const co=STORE.checkout(slug);if(co&&co.kind==SY.kind&&s.state!='mine'){STORE.setCheckout(slug,null);toast('Your check-out of this job is no longer valid'+(s.lock?` (${s.lock.holder} has it)`:''))}
   if(J&&J.slug==slug&&!modalEl)renderJob()}catch(e){lockCache[slug]={state:'unknown',at:Date.now()}}}
 async function doCheckout(slug,force){if(!syncOn()){openChanges();return}ensureName(async()=>{busy(true);try{const r=await SY.locks.checkout(slug,force);
@@ -1120,13 +1277,37 @@ function route(){closeModal();if(!DATA)return;const p=parseHash();
  else{J=null;L=STORE.getList();renderList()}}
 window.addEventListener('hashchange',route);
 let lastPhone=isPhone();window.addEventListener('resize',()=>{const p=isPhone();if(p!==lastPhone){lastPhone=p;if(!modalEl)route()}});
-function openStore(){STORE=HWSStore.create({data:DATA,version:MODE==='share'?B.version:('pwa-'+String(DATA.built).replace(/[^0-9A-Za-z]+/g,'')),extra:DATA.extra,onSaveError:e=>toast('Could not save in this browser: '+e.message+' (export your changes)')})}
+function openStore(){const live=liveOn();STORE=HWSStore.create({data:DATA,live,version:MODE==='share'?B.version:(live?'pwa-live':'pwa-'+String(DATA.built).replace(/[^0-9A-Za-z]+/g,'')),extra:DATA.extra,onSaveError:e=>toast('Could not save in this browser: '+e.message+' (export your changes)')})}
+/* ---------- live mode (instant sync, live.js) ---------- */
+let LIVE=null,rrT=null,ptrDown=false;
+['pointerdown','touchstart'].forEach(t=>document.addEventListener(t,()=>{ptrDown=true},true));['pointerup','pointercancel','touchend','touchcancel'].forEach(t=>document.addEventListener(t,()=>{setTimeout(()=>{ptrDown=false},50)},true));
+function relTime(ms){const s=Math.max(0,(Date.now()-ms)/1000);if(s<45)return 'just now';if(s<3600)return Math.round(s/60)+' min ago';const d=new Date(ms);const t=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'});return (s<20*3600?'at ':d.toLocaleDateString('en-US',{month:'numeric',day:'numeric',timeZone:'America/Phoenix'})+' ')+t}
+function liveBadge(slug){const s=LIVE?LIVE.status():{state:'connecting'};const q=STORE?STORE.pendingTotal():0;
+ if(!navigator.onLine||s.state=='offline')return `<span class="lv off">● Offline</span>${q?` · ${q} edit${q>1?'s':''} waiting, sent when back online`:' · showing the last copy on this device'}`;
+ if(s.state=='saving'||s.state=='pending')return `<span class="lv sv">● Saving…</span>`;
+ if(s.state=='error')return `<span class="lv err">● Not saved yet</span> · retrying${q?` (${q} waiting)`:''}`;
+ if(s.state=='connecting')return `<span class="lv sv">● Connecting…</span>`;
+ const i=STORE?STORE.liveInfo(slug):null;const upd=i&&i.ms?` · Updated ${relTime(i.ms)}${i.by?' by '+esc(i.by):''}`:'';
+ return `<span class="lv on">● Live</span>${upd}`}
+function paintLive(){document.querySelectorAll('#livepill').forEach(x=>{x.innerHTML=liveBadge(J&&J.slug)});const sb=document.getElementById('syncbar');if(sb&&window.WSData&&WSData.liveMode){sb.innerHTML=WSData.statusHtml();WSData.bind()}}
+setInterval(()=>{if(LIVE)paintLive()},20000);
+function busyTyping(){if(modalEl||ptrDown)return true;const a=document.activeElement;const r=document.getElementById('root');return !!(a&&a!==document.body&&r&&r.contains(a)&&(a.tagName=='TEXTAREA'||a.tagName=='SELECT'||(a.tagName=='INPUT'&&!/^(checkbox|radio|button|submit|range|color)$/.test(a.type))))}
+/* re-render after a remote change without touching an open edit sheet or a field someone is typing in (retries until they are done) */
+function safeRender(){clearTimeout(rrT);if(busyTyping()){rrT=setTimeout(safeRender,700);return}if(!DATA||!STORE)return;const p=parseHash();const y=window.scrollY;
+ if(p.slug&&DATA.jobs[p.slug]){J=STORE.getJob(p.slug);renderJob()}else if(!p.slug){J=null;L=STORE.getList();renderList()}window.scrollTo(0,y)}
+function dataUpdated(){const pend=STORE?STORE.pendingTotal():0;DATA=WSData.data();openStore();if(!STORE.live&&pend&&!STORE.pendingTotal())toast('New data arrived; open “Changes” to bring your unsent edits over');J=null;if(LIVE)safeRender();else route()}
+function startLive(){if(!liveOn()||!STORE||!STORE.live){if(window.WSData)WSData.liveMode=false;return}if(!STORE.who()&&SY.A.who)STORE.setWho(SY.A.who());if(LIVE)return;
+ if(window.WSData)WSData.liveMode=true;
+ LIVE=HWSLive.create({A:SY.A,store:()=>STORE,data:()=>DATA,who:()=>STORE&&STORE.who(),onStatus:()=>paintLive(),
+  onChange:(slugs,why)=>{const p=parseHash();if(why=='saved'){paintLive();if(p.slug&&slugs.includes(p.slug)&&J&&J.pending){safeRender()}return}if(!p.slug||slugs.includes(p.slug))safeRender();paintLive()},
+  onSnapshot:async()=>{if(window.WSData)await WSData.sync(true)}});
+ window.LIVE_DBG=LIVE;LIVE.start()}
 async function boot(){try{
   await syncRedirect();
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
-  else{await WSData.init();WSData.onUpdate=()=>{const pend=STORE?STORE.pendingTotal():0;DATA=WSData.data();openStore();J=null;route();if(pend&&!STORE.pendingTotal())toast('New data arrived; open “Changes” to bring your unsent edits over')};DATA=WSData.data();
+  else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  openStore();await syncBoot();route();
+  await syncBoot();openStore();route();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>
