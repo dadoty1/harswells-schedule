@@ -1339,7 +1339,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
   <div class="cards">${L.map(b=>`<div class="bcard${b.pastDue?' late':''}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
-   <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.due?' · due '+dchip(b.due,S.td):''}${b.owner?' · '+esc(b.owner):''}${b.amount?' · <b>'+esc(b.amount)+'</b>':''}</div>
+   <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''}${b.amount?' · <b>'+esc(b.amount)+'</b>':''}</div>
    ${(b.links||[]).length?`<div class="lbtns">${b.links.map(x=>lbtn(x)).join('')}</div>`:'<div class="ls none2">No file or email on file yet</div>'}</div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
  if(sub=='orders'){const extra=h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id));
   const openO=h.orders.filter(o=>(o.flags||[]).length&&!/not ordered/i.test(o.status||''));
@@ -1363,7 +1363,7 @@ function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().com
  let body='';
  if(q){const words=q.split(/\s+/);const hits=fileIndex().filter(x=>{const s=[x.label,x.sub,x.job,x.grp].join(' ').toLowerCase();return words.every(w=>s.includes(w))});const by={};hits.forEach(x=>(by[x.job]=by[x.job]||[]).push(x));
   body=`<div class="hint">${hits.length} match${hits.length==1?'':'es'}</div>`+Object.entries(by).map(([j,l])=>`<h2 class="sh2">${esc(j)} <span>${l.length}</span></h2><div class="rows">${l.slice(0,60).map(x=>lrow(x)).join('')}</div>`).join('')}
- else{const quick=[];C.forEach(g=>(g.items||[]).forEach(x=>{if(x.kind=='app'||/Dashboard \(sheet\)/.test(x.label))quick.push(x)}));
+ else{const quick=[];C.forEach(g=>(g.items||[]).forEach(x=>{if(x.quick)quick.push(x)}));
   const jobs=((DATA.common||{}).all_jobs||[]).filter(j=>JLs[j.slug]);
   body=`<div class="quick">${quick.map(x=>lbtn(x,true)).join('')}</div>
   <h2 class="sh2">Job folders <span>${jobs.length}</span></h2><div class="jfold">${jobs.map(j=>{const L=JLs[j.slug];const fold=(L.items||[]).find(x=>x.kind=='dropbox'&&x.label=='Job folder');const n=(L.items||[]).length+(L.permits||[]).length;
@@ -1515,7 +1515,7 @@ function liveBadge(slug){const s=LIVE?LIVE.status():{state:'connecting'};const q
  if(s.state=='saving'||s.state=='pending')return `<span class="lv sv">● Saving…</span>`;
  if(s.state=='error')return `<span class="lv err">● Not saved yet</span> · retrying${q?` (${q} waiting)`:''}`;
  if(s.state=='connecting')return `<span class="lv sv">● Connecting…</span>`;
- const i=STORE?STORE.liveInfo(slug):null;const upd=i&&i.ms?` · Updated ${relTime(i.ms)}${i.by?' by '+esc(i.by):''}`:'';
+ if(!slug&&document.body.classList.contains('hubp'))return `<span class="lv on">● Live</span> · shared Harswells Dropbox`;const i=STORE?STORE.liveInfo(slug):null;const upd=i&&i.ms?` · Updated ${relTime(i.ms)}${i.by?' by '+esc(i.by):''}`:'';
  return `<span class="lv on">● Live</span>${upd}`}
 function paintLive(){document.querySelectorAll('#livepill').forEach(x=>{x.innerHTML=liveBadge(J&&J.slug)});const sb=document.getElementById('syncbar');if(sb&&window.WSData&&WSData.liveMode){sb.innerHTML=WSData.statusHtml();WSData.bind()}}
 setInterval(()=>{if(LIVE)paintLive()},20000);
