@@ -227,6 +227,7 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
  .hello{padding:2px 2px 10px}.hello h1{font-size:23px}.hello .date{font-size:14px}
 }
 .tile{align-content:start}
+.hundo{margin-top:6px;min-height:36px;padding:6px 12px;border:1px solid #c9d2e3;border-radius:8px;background:#fff;color:#1f3a68;font-weight:600;cursor:pointer}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
@@ -596,7 +597,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null});
   const h=[];let n=0;const r=rec.jobs[slug];
   if(LIVE){const seq=liveSeq(r);const u=undoneSet(seq);const q=new Set(r?r.log.map(e=>e.id):[]);
-   seq.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:u.has(e.id),failed:e.failed,where:q.has(e.id)?'waiting to upload':(APPLIED.has(e.id)?'in the office schedule':'saved to Dropbox')}));
+   seq.forEach(e=>h.push({n:++n,id:e.id,auto:e.device==='auto-adjust'&&e.kind=='edit',ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:u.has(e.id),failed:e.failed,where:q.has(e.id)?'waiting to upload':(APPLIED.has(e.id)?'in the office schedule':'saved to Dropbox')}));
    J.history=h;J.pending=r?r.log.length:0;if(c.review&&c.review.length)J.conflicts=c.review.concat(J.conflicts||[]);J.review=c.review||[];
    const l=(r&&r.live)||{};J.live={by:l.by||'',ms:l.ms||0,rev:l.rev||null};return J}
   if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:false,failed:e.failed,where:'checked in'+(cs.who?' by '+cs.who:'')})));
@@ -623,6 +624,10 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
     const x={id:uid(),ts:nowAZ(),ts_ms:Date.now(),who:me,device:d,kind:'undo',target:last.id,summary:'Undid: '+last.summary};jr(slug).log.push(x);save();delete cache[slug];const c=build(slug);return {J:c.J,summary:x.summary}}
    const r=rec.jobs[slug];const last=r&&r.log.slice().reverse().find(e=>e.kind=='edit'&&!e.undone);if(!last)throw new Error('nothing to undo (only edits made in this browser and not yet checked in can be undone)');
    last.undone=true;last.undone_at=nowAZ();save();delete cache[slug];const c=build(slug);return {J:c.J,summary:'Undid: '+last.summary}},
+  undoEntry(slug,id){if(!LIVE)throw new Error('only in live mode');const r=rec.jobs[slug];const seq=liveSeq(r);const u=undoneSet(seq);const me=who(),d=devId();
+    const t=seq.find(e=>e.id===id);if(!t||t.kind!='edit'||u.has(id)||APPLIED.has(id))throw new Error('that edit cannot be undone');
+    if(!(t.device==='auto-adjust'||(t.device?t.device===d:t.who===me)))throw new Error('you can undo automatic edits and your own edits');
+    const x={id:uid(),ts:nowAZ(),ts_ms:Date.now(),who:me,device:d,kind:'undo',target:id,summary:'Undid: '+t.summary};jr(slug).log.push(x);save();delete cache[slug];const c=build(slug);return {J:c.J,summary:x.summary}},
   setSettings(slug,body){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'settings',settings:E.clone(body),summary:'settings changed'};if(LIVE){e.ts_ms=Date.now();e.device=devId()}jr(slug).log.push(e);save();c.settings=mergeSettings(c.settings,body);c.J=derive(slug,c);return c.J},
   getList(){const L=Object.assign({},data.list,{built:data.built});L.jobs=data.list.jobs.map(row=>{const r=rec.jobs[row.slug];if(!r||(!r.remote.length&&!r.log.some(e=>!e.undone)&&!((r.live||{}).entries||[]).length))return row;const J=S.getJob(row.slug);return J?E.listRow(J,row):row});return L},
   pending(slug){const r=rec.jobs[slug];return r?(LIVE?r.log.length:r.log.filter(e=>!e.undone).length):0},
@@ -1280,6 +1285,7 @@ function H(){return (DATA&&DATA.common&&DATA.common.hub)||{bids:[],orders:[],ord
 function HL(){return (DATA&&DATA.common&&DATA.common.links)||{company:[]}}
 function JL(slug){return ((DATA&&DATA.common&&DATA.common.job_links)||{})[slug]||{items:[],permits:[]}}
 function hubToday(){return H().today||(DATA&&DATA.today)||iso(Date.now()-7*3600e3)}
+function jobSearch(slug){const j=slug&&((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j&&j.search||''}
 function jobName(slug){const j=((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j?j.name:''}
 /* ---- aggregates (tasks come from STORE so live edits count) ---- */
 function allTasks(){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{let J2=null;try{J2=STORE?STORE.getJob(slug):DATA.jobs[slug]}catch(e){J2=DATA.jobs[slug]}
@@ -1335,7 +1341,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
  if(sub=='today'){const sec=(t,l,cls)=>l.length?`<h2 class="sh2 ${cls||''}">${t} <span>${l.length}</span></h2><div class="rows">${l.slice(0,80).map(x=>hrow(jobHref(x.slug),esc(x.t.task),esc(x.job)+(x.t.phase?' · '+esc(x.t.phase):''),dchip(x.t.overdue||x.t.finish<S.td?x.t.finish:x.t.start,S.td))).join('')}</div>`:'';
   body=sec('Overdue',S.overdue.sort((a,b)=>a.t.finish<b.t.finish?-1:1),'red')+sec('Today',S.today)+sec('This week',S.week.sort((a,b)=>a.t.start<b.t.start?-1:1))||'<div class="none">Nothing scheduled this week</div>'}
  if(sub=='bids'){const f=st.hbF||'due';const q=(st.bq||'').toLowerCase();
-  const L0={due:S.bPast.concat(S.bWeek),open:S.bOpen,in:S.bIn,all:h.bids}[f]||[];const L=L0.filter(b=>!q||[b.vendor,b.trade,b.job,b.owner].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
+  const L0={due:S.bPast.concat(S.bWeek),open:S.bOpen,in:S.bIn,all:h.bids}[f]||[];const L=L0.filter(b=>!q||[b.vendor,b.trade,b.job,b.owner,jobSearch(b.slug)].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
   <div class="cards">${L.map(b=>`<div class="bcard${b.pastDue?' late':''}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
@@ -1361,7 +1367,7 @@ function fileIndex(){const idx=[];(HL().company||[]).forEach(g=>(g.items||[]).fo
  H().bids.forEach(b=>(b.links||[]).filter(x=>x.kind=='dropbox-file').forEach(x=>idx.push(Object.assign({job:b.job,slug:b.slug},x,{sub:'Bid · '+b.vendor+' · '+b.trade}))));return idx}
 function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().company||[];const JLs=(DATA.common||{}).job_links||{};
  let body='';
- if(q){const words=q.split(/\s+/);const hits=fileIndex().filter(x=>{const s=[x.label,x.sub,x.job,x.grp].join(' ').toLowerCase();return words.every(w=>s.includes(w))});const by={};hits.forEach(x=>(by[x.job]=by[x.job]||[]).push(x));
+ if(q){const words=q.split(/\s+/);const hits=fileIndex().filter(x=>{const s=[x.label,x.sub,x.job,x.grp,jobSearch(x.slug)].join(' ').toLowerCase();return words.every(w=>s.includes(w))});const by={};hits.forEach(x=>(by[x.job]=by[x.job]||[]).push(x));
   body=`<div class="hint">${hits.length} match${hits.length==1?'':'es'}</div>`+Object.entries(by).map(([j,l])=>`<h2 class="sh2">${esc(j)} <span>${l.length}</span></h2><div class="rows">${l.slice(0,60).map(x=>lrow(x)).join('')}</div>`).join('')}
  else{const quick=[];C.forEach(g=>(g.items||[]).forEach(x=>{if(x.quick)quick.push(x)}));
   const jobs=((DATA.common||{}).all_jobs||[]).filter(j=>JLs[j.slug]);
@@ -1390,7 +1396,7 @@ function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
 function renderHub(p){const pg=p.page;if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
-function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo}
+function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
  M.innerHTML=panel('Job settings',EDIT?(STORE.live?'saved to the shared Dropbox automatically':'saved with your edits (export / check in to send them)'):(syncOn()?'check out to change':'view-only'),`<form id="sf" class="pb"><div class="fg">
  <label>Work week<select name="saturday" ${dis}><option value="0" ${s.saturday?'':'selected'}>Mon–Fri</option><option value="1" ${s.saturday?'selected':''}>Mon–Sat</option></select></label>
@@ -1488,7 +1494,7 @@ async function doRelease(slug){const co=STORE.checkout(slug);if(STORE.pending(sl
  busy(true);try{await SY.locks.release(slug,co)}catch(e){if(e.name!='ConflictError'){toast('Could not release: '+e.message);busy(false);return}}STORE.setCheckout(slug,null);lockCache[slug]={state:'free',at:Date.now()};if(J&&J.slug==slug)renderJob();toast('Check-out cancelled');busy(false)}
 let busyN=0;function busy(on){busyN+=on?1:-1;document.body.classList.toggle('busy',busyN>0)}
 /* ---------- landing (all jobs) ---------- */
-function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const jobs=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage).toLowerCase().includes(q));
+function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const jobs=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage+' '+(j.search||'')).toLowerCase().includes(q));
  const hi=L.jobs.reduce((a,j)=>a+j.high,0),od=L.jobs.reduce((a,j)=>a+j.overdue,0);document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
  $('#root').innerHTML=topHtml('jobs')+`<main class="main hub-jobs" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div><div class="lcards"><div class="lcard"><div class="n">${L.jobs.length}</div><div class="b">Jobs</div><div class="small mut">each has its own schedule workspace</div></div>
  <div class="lcard red"><div class="n">${od}</div><div class="b">Overdue tasks</div><div class="small mut">not complete, past finish</div></div><div class="lcard red"><div class="n">${hi}</div><div class="b">High conflicts</div><div class="small mut">across all jobs</div></div>
