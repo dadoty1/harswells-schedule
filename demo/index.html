@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#15233b"><meta name="format-detection" content="telephone=no"><title>Harswells</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2315233b%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27Arial%27 font-weight=%27bold%27%3EH%3C/text%3E%3C/svg%3E">
-<link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Harswells">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png"><link rel="icon" sizes="192x192" href="icons/icon-192.png">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#15233b"><meta name="format-detection" content="telephone=no"><title>Sample Builders · Demo hub</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2315233b%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27Arial%27 font-weight=%27bold%27%3EH%3C/text%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Demo hub">
+<link rel="apple-touch-icon" sizes="180x180" href="../icons/icon-180.png"><link rel="icon" sizes="192x192" href="../icons/icon-192.png">
+<style>.demob,#syncbar .demob{background:#b54708;color:#fff!important;border-radius:6px;padding:2px 8px;letter-spacing:.02em}#demoreset{margin-left:6px}</style>
 <style>:root{--bg:#f4f5f7;--card:#fff;--ink:#1d2330;--mut:#667085;--line:#e3e6ea;--blue:#2563eb;--red:#d92d20;--amber:#dc8a00;--green:#12a150;--hdr:#15233b}
 *{box-sizing:border-box}html,body{margin:0;overflow-x:hidden}body{font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
 a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
@@ -289,13 +290,58 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .wdph .abtn{min-height:44px;padding:0 12px}.wdem{display:flex;flex-wrap:wrap;gap:8px}.wdem .abtn{min-height:44px;padding:0 12px}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
-<h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
+<h2 style="margin:0 0 8px">Sample Builders schedule</h2><p>Loading&hellip;</p>
 <p style="color:#667085;font-size:13px">If this message stays, this viewer cannot run the app (for example the iPhone Mail or Files <i>preview</i>).
-Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswells app on iPhone.</p></div></div>
+Open the file on a computer in Chrome, Edge or Safari, or use the hosted Sample Builders app on iPhone.</p></div></div>
 <noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
 
-<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Team Folder/Harswells Live Schedule/sync","dataPath":"/Harswells Team Folder/Harswells Live Schedule/data/data.json","pathRoot":"root"},"lockHours":12};const BOOT={"mode":"pwa"};</script>
-<script>/* Harswells Schedule PWA data layer (editable edition). The app shell holds NO job data.
+<script>window.HWS_CONFIG={"dropbox":{"appKey":"","syncRoot":"","dataPath":"","pathRoot":"root"},"lockHours":12,"live":false,"demo":true};const BOOT={"mode":"pwa"};</script>
+<script>/* DEMO MODE shim (runs before the app). The demo shows 3 made-up jobs from demo-data.json next to this page.
+   It can never reach Dropbox or any other service:
+   - every network call that is not this site (fetch, XHR, sendBeacon, WebSocket, EventSource) is refused, and anything
+     naming dropbox is refused even on this site;
+   - localStorage / IndexedDB are namespaced ("hws-demo:" / "hws-demo-"), so the real app's sign-in, settings and edits on
+     this same site are invisible to the demo and untouched by it;
+   - the app config has no Dropbox app key, so sign-in and sync are off.
+   Edits stay in this browser (localStorage) until "Reset demo". Dates are shifted so the sample "today" is the viewer's today. */
+(function(){
+'use strict';
+window.HWS_DEMO=true;
+const NS='hws-demo:';
+const real=window.localStorage;
+function keys(){const out=[];try{for(let i=0;i<real.length;i++){const k=real.key(i);if(k&&k.startsWith(NS))out.push(k.slice(NS.length))}}catch(e){}return out}
+const ls={getItem:k=>real.getItem(NS+k),setItem:(k,v)=>real.setItem(NS+k,String(v)),removeItem:k=>real.removeItem(NS+k),
+ clear(){keys().forEach(k=>real.removeItem(NS+k))},key:i=>keys()[i]==null?null:keys()[i],get length(){return keys().length}};
+try{Object.defineProperty(window,'localStorage',{configurable:true,enumerable:true,get:()=>ls})}catch(e){}
+try{const io=indexedDB.open.bind(indexedDB);const del=indexedDB.deleteDatabase.bind(indexedDB);
+ indexedDB.open=(n,v)=>v==null?io('hws-demo-'+n):io('hws-demo-'+n,v);indexedDB.deleteDatabase=n=>del('hws-demo-'+n)}catch(e){}
+const blocked=[];window.HWS_DEMO_BLOCKED=blocked;
+function allowed(u){try{const x=new URL(String(u),location.href);return x.origin===location.origin&&!/dropbox/i.test(x.href)}catch(e){return false}}
+function refuse(u){blocked.push(String(u).slice(0,200));console.warn('Demo mode: network call refused',String(u).slice(0,120))}
+const f0=window.fetch.bind(window);
+window.fetch=function(input,init){const u=typeof input=='string'?input:(input&&input.url)||String(input);if(!allowed(u)){refuse(u);return Promise.reject(new TypeError('Demo mode: network is off'))}return f0(input,init)};
+const xo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){if(!allowed(u)){refuse(u);throw new TypeError('Demo mode: network is off')}return xo.apply(this,arguments)};
+if(navigator.sendBeacon){const sb=navigator.sendBeacon.bind(navigator);navigator.sendBeacon=(u,d)=>{if(!allowed(u)){refuse(u);return false}return sb(u,d)}}
+['WebSocket','EventSource'].forEach(n=>{if(window[n])window[n]=function(u){refuse(u);throw new TypeError('Demo mode: network is off')}});
+/* default viewer = the demo owner, so owner-only buttons (approve / reset baseline) show */
+const DAY=864e5;
+const azToday=()=>new Date(Date.now()-7*3600e3).toISOString().slice(0,10);
+const dn=s=>{const [y,m,d]=s.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/DAY)};
+const isoN=n=>new Date(n*DAY).toISOString().slice(0,10);
+const DRE=/^(\d{4}-\d{2}-\d{2})(.*)$/;
+function shift(o,k){if(typeof o=='string'){const m=DRE.exec(o);return m?isoN(dn(m[1])+k)+m[2]:o}
+ if(Array.isArray(o))return o.map(x=>shift(x,k));
+ if(o&&typeof o=='object'){const r={};for(const key in o){r[key]=key=='holidays'?o[key]:shift(o[key],k)}return r}return o}
+window.__HWS_DEMO=async function(){
+ const r=await fetch('demo-data.json',{cache:'no-cache',credentials:'omit'});if(!r.ok)throw new Error('demo data HTTP '+r.status);
+ const d=await r.json();const today=azToday();const k=dn(today)-dn(d.today);const out=k?shift(d,k):d;
+ const dd=new Date(dn(today)*DAY);const lbl=dd.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+ out.built=lbl+' 7:00 AM AZ';out.list.built=out.built;Object.values(out.jobs).forEach(j=>j.built=out.built);
+ try{if(!ls.getItem('hws-who'))ls.setItem('hws-who',(out.common.demo||{}).owner||'Demo owner')}catch(e){}
+ return out};
+window.HWS_DEMO_RESET=function(){keys().forEach(k=>real.removeItem(NS+k));try{indexedDB.deleteDatabase('hws-demo-hws-pwa');indexedDB.deleteDatabase('hws-demo-hws-sync')}catch(e){}location.hash='#/';location.reload()};
+})();
+</script><script>/* Sample Builders Schedule PWA data layer (editable edition). The app shell holds NO job data.
    Data source: "Sign in with Dropbox" ONLY (OAuth PKCE, see HWSSync.DropboxBackend), reading HWS_CONFIG.dropbox.dataPath with
    files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
    Dev only: on a loopback host (127.0.0.1 / localhost) #setup=same-origin reads data/data.json next to the app, for the local
@@ -317,7 +363,7 @@ function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
 function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');
  if(!Object.keys(d.jobs).length)throw new Error('The schedule data file in Dropbox has no jobs yet (placeholder). Ask the office to publish the schedule data, then tap Sync now.');return d}
-const NOACC='Your Dropbox account can\u2019t see the Harswells schedule data (Harswells Team Folder \u203a Harswells Live Schedule). Sign in with your Harswells Dropbox account, or ask the office to give you access to the Harswells Team Folder.';
+const NOACC='Your Dropbox account can\u2019t see the Sample Builders schedule data (Sample Builders Team Folder \u203a Sample Builders Live Schedule). Sign in with your Sample Builders Dropbox account, or ask the office to give you access to the Sample Builders Team Folder.';
 function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
@@ -355,8 +401,8 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
   if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>`;
   return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
-  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
-  <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
+  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
+  <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Sample Builders schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const dr=document.getElementById('demoreset');if(dr)dr.onclick=()=>{if(confirm('Reset the demo? This clears your demo edits, flags and approvals in this browser.'))window.HWS_DEMO_RESET()};
   const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
@@ -367,7 +413,7 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
 window.WSData=W;
 })();
 </script>
-<script>/* Harswells schedule engine (browser port of jobcal.py + sched.py + jobs.apply_edit + the schedule-derived parts of
+<script>/* Sample Builders schedule engine (browser port of jobcal.py + sched.py + jobs.apply_edit + the schedule-derived parts of
    modules.py). Pure functions, no DOM. Used by the share file and the PWA so edits behave like the live server. */
 (function(root){
 'use strict';
@@ -596,7 +642,7 @@ const E={DAY,dn,isoN,addDays,makeCal,holidaysForYear,FIELDS,parseDeps,fmtDeps,co
 root.HWSEngine=E;if(typeof module!=='undefined'&&module.exports)module.exports=E;
 })(typeof window!=='undefined'?window:globalThis);
 
-/* Harswells local change store: every edit is an entry in a per-job log kept in localStorage (key per file/data version).
+/* Sample Builders local change store: every edit is an entry in a per-job log kept in localStorage (key per file/data version).
    The job shown = snapshot + checked-in change sets (from the shared folder / Dropbox) + this browser's entries, replayed
    through HWSEngine (same rules as the live server). Undo = mark the last local entry undone and replay. */
 (function(root){
@@ -707,9 +753,9 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
    Object.keys(obj.jobs).forEach(slug=>{const J=S.getJob(slug);const cols=(J.mod_cols||{}).schedule;if(cols)files.push({name:`${slug}-schedule.csv`,data:E.csvText(J.tasks,cols)});
     files.push({name:`${slug}-buildertrend-schedule.csv`,data:E.btCsv(J)});const d=obj.jobs[slug].diff;
     files.push({name:`${slug}-changed-tasks.csv`,data:E.csvText(d.changed.concat(d.added.map(r=>({id:r.id,task:r.task,field:'(added)',before:'',after:`${r.start} → ${r.finish}`})),d.deleted.map(r=>({id:r.id,task:r.task,field:'(deleted)',before:'',after:''}))),['id','task','field','before','after'])})});
-   files.push({name:'README.txt',data:`Harswells schedule changes exported ${obj.exported_at} by ${obj.exported_by||'(name not set)'}\r\nSnapshot: ${obj.snapshot_built}\r\n\r\nchanges.json  = every edit (same format as the live app's edit API) - Import it back into the file, or apply it on the office box.\r\n<job>-schedule.csv = the whole schedule after the edits\r\n<job>-changed-tasks.csv = only what changed vs the snapshot\r\n<job>-buildertrend-schedule.csv = Buildertrend import shape\r\n`});
+   files.push({name:'README.txt',data:`Sample Builders schedule changes exported ${obj.exported_at} by ${obj.exported_by||'(name not set)'}\r\nSnapshot: ${obj.snapshot_built}\r\n\r\nchanges.json  = every edit (same format as the live app's edit API) - Import it back into the file, or apply it on the office box.\r\n<job>-schedule.csv = the whole schedule after the edits\r\n<job>-changed-tasks.csv = only what changed vs the snapshot\r\n<job>-buildertrend-schedule.csv = Buildertrend import shape\r\n`});
    return {obj,files,zip:zip(files)}},
-  importObj(obj){if(!obj||obj.format!=='harswells-schedule-changes'||!obj.jobs)throw new Error('not a Harswells changes file');let added=0;const jobsTouched=[];
+  importObj(obj){if(!obj||obj.format!=='harswells-schedule-changes'||!obj.jobs)throw new Error('not a Sample Builders changes file');let added=0;const jobsTouched=[];
    Object.entries(obj.jobs).forEach(([slug,j])=>{if(!data.jobs[slug])return;const r=jr(slug);const have=new Set(r.log.map(e=>e.id).concat(...r.remote.map(cs=>cs.entries.map(e=>e.id))));
     (j.entries||[]).forEach(e=>{if(!e||!e.id||have.has(e.id))return;if(e.kind!='edit'&&e.kind!='settings')return;r.log.push(E.clone(e));added++});jobsTouched.push(slug);delete cache[slug]});
    save();let failed=0;jobsTouched.forEach(s=>{build(s);failed+=rec.jobs[s].log.filter(e=>e.failed&&!e.undone).length});return {added,jobs:jobsTouched.length,failed,otherSnapshot:obj.snapshot_built!==data.built}},
@@ -748,10 +794,10 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
 root.HWSStore={create,nowAZ,uid,zip,unzipFind,crc32};
 })(typeof window!=='undefined'?window:globalThis);
 
-/* Harswells shared check-out / check-in.
+/* Sample Builders shared check-out / check-in.
    ONE storage-adapter interface, two back ends with the same semantics:
      fsa     : a folder picked with the File System Access API (desktop Chrome/Edge; e.g. the Dropbox-synced
-               "Harswells Live Schedule/sync" folder on the computer)
+               "Sample Builders Live Schedule/sync" folder on the computer)
      dropbox : the Dropbox HTTP API, signed in with OAuth 2 PKCE (no secret; needs a registered App key)
    Adapter:  read(path)->{text,rev}|null · write(path,text,{mode:'add'|'update'|'overwrite',rev})->{rev} (throws ConflictError)
              remove(path,{rev}) (throws ConflictError when the rev moved) · list(dir)->[{name,path,rev}]
@@ -765,7 +811,7 @@ class ConflictError extends Error{constructor(m){super(m);this.name='ConflictErr
 class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
 class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
-const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
+const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Sample Builders Team Folder/Sample Builders Live Schedule/sync',dataPath:'/Sample Builders Team Folder/Sample Builders Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
 try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours;if('live' in ov)CFG.live=!!ov.live}}catch(e){}
 const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* tiny IndexedDB kv (directory handles are structured-cloneable, not JSON) */
@@ -868,14 +914,14 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
   async longpoll(cursor,timeout){let r;try{r=await fetch(DBX.notify+'files/list_folder/longpoll',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cursor,timeout:timeout||30}),credentials:'omit'})}catch(e){const x=new Error('longpoll unreachable ('+e.message+')');x.net=true;throw x}
    if(!r.ok){const x=new Error('longpoll HTTP '+r.status);x.status=r.status;throw x}return r.json()},
   who(){return auth&&auth.name?String(auth.name).split(' ')[0]:''},
-  /* The check-out folder must be the SAME folder for everyone (the owner's "Harswells Live Schedule/sync", shared with each editor).
+  /* The check-out folder must be the SAME folder for everyone (the owner's "Sample Builders Live Schedule/sync", shared with each editor).
      If it is missing in the signed-in account we do NOT silently create a private copy (that would give each person their own
      locks); the UI asks first (SetupError). Once present, missing READMEs are added with overwrite uploads (never 409). */
   async ensureLayout(allowCreate){const k='hws-dbx-layout:'+c.syncRoot+':'+((auth&&auth.account_id)||'');if(LS.get(k))return;const base=full('').replace(/\/$/,'');
    let have=null;if(A._missing===c.syncRoot){if(!allowCreate)throw new SetupError(`The shared check-out folder “${c.syncRoot}” is not in ${auth&&auth.name?auth.name+'\u2019s':'this'} Dropbox.`,c.syncRoot)}else try{let j=await rpc('files/list_folder',{path:base,recursive:true});have=new Set();for(;;){(j.entries||[]).forEach(x=>have.add((x.path_lower||'').slice(base.length).toLowerCase()));if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}}
    catch(e){if(!(e.status==409&&/not_found/.test(e.summary||'')))throw e;A._missing=c.syncRoot}
    if(!have&&!allowCreate)throw new SetupError(`The shared check-out folder “${c.syncRoot}” is not in ${auth&&auth.name?auth.name+'\u2019s':'this'} Dropbox.`,c.syncRoot);
-   const note='Harswells schedule check-out/check-in store. locks/<job>.json = who has a job checked out; changes/<job>/*.json = checked-in edit sets. Managed by the Harswells app; do not edit by hand.\n';
+   const note='Sample Builders schedule check-out/check-in store. locks/<job>.json = who has a job checked out; changes/<job>/*.json = checked-in edit sets. Managed by the Sample Builders app; do not edit by hand.\n';
    for(const p of ['README.txt','locks/README.txt','changes/README.txt'])if(!have||!have.has('/'+p.toLowerCase()))await A.write(p,note,{mode:'overwrite'});A._missing=null;LS.set(k,1)},
   setRoot(p){p='/'+String(p||'').trim().replace(/^\/+|\/+$/g,'');c.syncRoot=p;A._missing=null;let ov={};try{ov=JSON.parse(localStorage.getItem('hws-config-override')||'{}')||{}}catch(e){}ov.dropbox=Object.assign({},ov.dropbox||{},{syncRoot:p});try{localStorage.setItem('hws-config-override',JSON.stringify(ov))}catch(e){}}};
  return A}
@@ -904,8 +950,8 @@ function Locks(adapter,opts){const hours=opts.lockHours||CFG.lockHours||12;const
 root.HWSSync={CFG,ConflictError,LockedError,AuthError,SetupError,FsaBackend,DropboxBackend,Locks,device,LS};
 })(typeof window!=='undefined'?window:globalThis);
 
-/* Harswells instant sync ("live mode": hosted app + Dropbox sign-in, 9/27 5:40 PM request).
-   Files in the Harswells team space, next to data/data.json:
+/* Sample Builders instant sync ("live mode": hosted app + Dropbox sign-in, 9/27 5:40 PM request).
+   Files in the Sample Builders team space, next to data/data.json:
      live/<job>.json  = {format:'harswells-live-log',v:1,job,entries:[…edit/settings/undo entries…],updated_ms,updated_by}
    Save:  each edit is queued on the device (HWSStore log, localStorage) and uploaded ~1 s later with files/upload mode=update+rev
           (mode=add when the file is new). A 409 conflict means someone else saved first: re-download, merge (union by entry id,
@@ -985,7 +1031,7 @@ function create(o){const A=o.A,c=A.CFG;const dataPath=c.dataPath;const base=(c.l
 root.HWSLive={create,FORMAT};
 })(typeof window!=='undefined'?window:globalThis);
 
-/* Harswells job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
+/* Sample Builders job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
    unchanged). Edits run through HWSEngine (same rules as the live server) and are stored by HWSStore; optional shared
    check-out/check-in through HWSSync (File System Access folder or Dropbox API). */
 'use strict';
@@ -1034,14 +1080,14 @@ function needCheckout(){toast(syncOn()?'Check out this job first (tap “Check o
 /* ---------- shell ---------- */
 function builtShort(){return String((DATA&&DATA.built)||'').replace(/^[A-Z][a-z]{2} /,'').replace(/ AZ$/,'')}
 function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
- if(STORE&&STORE.live)return `<div class="banner" id="banner"><b>Data as of ${esc(builtShort())} AZ</b> · edits save to the shared Harswells Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
+ if(STORE&&STORE.live)return `<div class="banner" id="banner"><b>Data as of ${esc(builtShort())} AZ</b> · edits save to the shared Sample Builders Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
  const main=(window.WSData&&WSData.demo)?`<b>Sample data</b> · edits stay in this browser`:MODE==='share'?`<b>Snapshot as of ${esc(builtShort())} AZ</b> · your edits save in this browser only · Export to send changes back to the office`
   :`<b>Data as of ${esc(builtShort())} AZ</b> · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
  const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
  return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
 function topHtml(page){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];const n=STORE?STORE.pendingTotal():0;
- return `<header class="top"><a class="brand" href="${homeHref()}" aria-label="Home">Harswells</a>${dnavHtml(page||(J?'jobs':'home'))}<span class="sp"></span>
+ return `<header class="top"><a class="brand" href="${homeHref()}" aria-label="Home">Sample Builders</a>${dnavHtml(page||(J?'jobs':'home'))}<span class="sp"></span>
  ${jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${jobs.map(x=>`<option value="${esc(x.slug)}" ${J&&J.slug==x.slug?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}
  <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
  <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe())+(STORE&&STORE.live?' · live':''):'saved in this browser'}</span></header>${bannerHtml()}`}
@@ -1072,7 +1118,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const co=$('#co');if(co)co.onclick=()=>doCheckout(J.slug);const ci=$('#ci');if(ci)ci.onclick=()=>doCheckin(J.slug);
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
- document.title=J.name+' · Harswells';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
+ document.title=J.name+' · Sample Builders';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
 function openMore(){const c=J.counts||{};const items=[['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']];
  openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${c[k]||(k=='history'?(J.history||[]).length||'':'')}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
  m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
@@ -1316,7 +1362,7 @@ function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show
 function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, BT vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
  bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
 
-/* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
+/* Sample Builders employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
 const HUB_PAGES=['home','jobs','trackers','files','chat','attention'];
 const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
@@ -1394,7 +1440,7 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
   <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
  hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
- <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);document.title='Harswells · Home'}
+ <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);document.title='Sample Builders · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['fups','Follow-ups'],['conflicts','Conflicts']];
 function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
@@ -1421,7 +1467,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
  hubShell('trackers',`<div class="hph"><h1>Trackers</h1><a class="small" href="${esc(safeUrl(((HL().company||[]).find(g=>/Trackers/.test(g.title))||{items:[{}]}).items[0].url||''))}" target="_blank" rel="noopener">Open sheets ${ico('ext','sm')}</a></div>${seg}${body}`);
  document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{st.hbF=b.dataset.bf;saveUi();renderTrackers('bids')});
  const bq=$('#bq');if(bq)bq.oninput=e=>{st.bq=e.target.value;saveUi();const p=bq.selectionStart;renderTrackers('bids');const n=$('#bq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
- document.title='Harswells · Trackers'}
+ document.title='Sample Builders · Trackers'}
 /* ---- Files ---- */
 function fileIndex(){const idx=[];(HL().company||[]).forEach(g=>(g.items||[]).forEach(x=>idx.push(Object.assign({job:'Company',grp:g.title},x))));
  const JLs=(DATA.common||{}).job_links||{};Object.keys(JLs).forEach(slug=>{const nm=jobName(slug)||slug;(JLs[slug].items||[]).forEach(x=>{if(!/\(all jobs\)/.test(x.label))idx.push(Object.assign({job:nm,slug},x))});
@@ -1439,9 +1485,9 @@ function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().com
    <div class="rows">${jobLinkRows(j.slug,true)}</div></details>`}).join('')}</div>
   ${C.filter(g=>g.title!='Apps').map(g=>`<h2 class="sh2">${esc(g.title)} <span>${(g.items||[]).length}</span></h2><div class="rows">${(g.items||[]).map(x=>lrow(x)).join('')}</div>`).join('')}`}
  hubShell('files',`<div class="hph"><h1>Files</h1></div><label class="sbox big">${ico('search')}<input type="search" id="fq" placeholder="Search files, permits, bids, forms" value="${esc(st.fq||'')}" autocomplete="off"></label>${body}
- <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Harswells account). Google links follow the sheet's sharing.</div>`);
+ <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account). Google links follow the sheet's sharing.</div>`);
  const fq=$('#fq');fq.oninput=e=>{st.fq=e.target.value;saveUi();const p=fq.selectionStart;renderFiles();const n=$('#fq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
- document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));document.title='Harswells · Files'}
+ document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));document.title='Sample Builders · Files'}
 function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!compact||!/\(all jobs\)/.test(x.label));
  const permits=(L.permits||[]).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
  return permits.join('')+it.map(x=>lrow(x)).join('')||'<div class="none">No links on file for this job yet</div>'}
@@ -1452,10 +1498,10 @@ function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp
  M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
  ${Object.entries(grp).map(([g,l])=>`<h3 class="sh3">${esc(g)}</h3><div class="rows">${l.map(x=>lrow(x)).join('')}</div>`).join('')||'<div class="none">No links on file for this job yet</div>'}
  ${bids.length?`<h3 class="sh3">Bid files <span class="mut">${bids.length}</span></h3><div class="rows">${bids.map(b=>b.links.filter(x=>x.kind=='dropbox-file').map(x=>lrow(x,b.vendor+' · '+b.trade)).join('')).join('')}</div>`:''}
- <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Harswells account).</div></div>`}
+ <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account).</div></div>`}
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
- hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
+ hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Sample Builders · Chat'}
 function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
 /* Attention screen (owner request 9/27 7:51 PM): ONE place for what needs attention today vs this week. Phone-first.
@@ -1591,14 +1637,14 @@ function renderAttention(sub){if(!AT()){hubShell('attention',`<div class="hph"><
    stale:'Buildertrend schedules where most items are past due and never marked complete. Left out of the counts until the schedule is rebuilt.',flagged:'Items you flagged (tap to see the note or clear it).'}[key]||'';
   body=`<h2 class="sh2 first">${esc(ATT_KEYS[key])}${jf?' · '+esc((attJ(jf)||{}).name||jf):''} <span>${n}</span></h2>${note?`<div class="hint">${note}</div>`:''}<div class="rows">${rows||'<div class="none">Nothing here</div>'}</div>`}
  hubShell('attention',`<div class="hph"><h1>Attention</h1><span class="small mut">${esc(longDate(td))}</span></div>${seg}${body}`);
- attBind(document);document.title='Harswells · Attention'}
+ attBind(document);document.title='Sample Builders · Attention'}
 function attBind(root){root.querySelectorAll('[data-ai]').forEach(b=>b.onclick=()=>{const [slug,kind,id]=b.dataset.ai.split('|');attOpenItem(slug,kind,id)});
  root.querySelectorAll('[data-aj]').forEach(b=>b.onclick=()=>{const [slug,kind]=b.dataset.aj.split('|');attOpenJob(slug,kind)})}
 /* ---- item sheet (task / inspection / delivery / bid / follow-up) with actions + Related */
 function attFind(slug,kind,id){return attItems().find(i=>i.slug==slug&&i.kind==kind&&String(i.id)==id)||null}
 function attMsg(sub,ctxText){if(!sub)return `<span class="nocontact">No sub assigned · no contact on file</span>`;
  const b=[];const body=encodeURIComponent(ctxText);if(sub.phone){const p=String(sub.phone).replace(/[^\d+]/g,'');b.push(`<a class="abtn" href="sms:${esc(p)}?&body=${body}">${ico('chat')}Text ${esc(sub.name.split(' ')[0])}</a>`);b.push(`<a class="abtn" href="tel:${esc(p)}">${ico('user')}Call</a>`)}
- if(sub.email)b.push(`<a class="abtn" href="mailto:${esc(sub.email)}?subject=${encodeURIComponent('Harswells: '+ctxText.split('\n')[0].slice(0,80))}&body=${body}">${ico('mail')}Email</a>`);
+ if(sub.email)b.push(`<a class="abtn" href="mailto:${esc(sub.email)}?subject=${encodeURIComponent('Sample Builders: '+ctxText.split('\n')[0].slice(0,80))}&body=${body}">${ico('mail')}Email</a>`);
  return b.length?b.join(''):`<span class="nocontact">${esc(sub.name)}: no contact on file</span>`}
 function attNote(i){const J=attJ(i.slug)||{};const d=i.t?(i.t.start==i.t.finish?md(i.t.start):md(i.t.start)+'–'+md(i.t.finish)):md(i.date);
  return `${J.name||''}${J.address?' ('+J.address+')':''}: ${i.title}, scheduled ${d}. Can you confirm you're on track? Thanks${attSig()?', '+attSig():''}${attOwn().company?' · '+attOwn().company:''}`}
@@ -1647,7 +1693,7 @@ function attPeople(slug){const a=(AT().assigned||{})[slug]||{};const pm=attInfo(
   return `<div class="aperson"><div class="lb"><span class="lt">${esc(nm)}</span><span class="ls">${esc(role)}</span></div><div class="aacts sm">${s?attMsg(s,`${(attJ(slug)||{}).name}: quick check-in${attSig()?' from '+attSig():''}${attOwn().company?' at '+attOwn().company:''}.`):'<span class="nocontact">no contact on file</span>'}${s?`<button class="abtn" data-rel="sub|${esc(sub)}">${ico('chev')}</button>`:''}</div></div>`};
  let h=`<h3 class="sh3">People</h3><div class="aperson"><div class="lb"><span class="lt">PM: ${pm?esc(pm):'<b class="red">not set</b>'}</span><span class="ls">${esc(a.pm_src||'Set it in the job’s Settings; Buildertrend exports have no PM')}</span></div>${pm?'':`<a class="abtn" href="${jobHref(slug,'settings')}">Set PM</a>`}</div>`;
  (a.crew||[]).concat(a.bt_assigned||[]).filter((v,i,x)=>x.indexOf(v)==i).forEach(c=>h+=row(c,attSubKey(c),'crew / assigned in schedule'));
- if((a.staff||[]).length)h+=`<div class="small mut" style="margin:6px 0">Harswells team on this job: ${esc(a.staff.join(', '))}</div>`;
+ if((a.staff||[]).length)h+=`<div class="small mut" style="margin:6px 0">Sample Builders team on this job: ${esc(a.staff.join(', '))}</div>`;
  Object.entries(a.trades||{}).forEach(([tr,l])=>{h+=`<h3 class="sh3">${esc(tr)} <span class="mut">${l.length}</span></h3>`;l.forEach(x=>h+=row(x.name,x.sub,x.role+(x.amount?' · $'+Math.round(+x.amount).toLocaleString():'')))});
  if((a.vendors||[]).length){h+=`<h3 class="sh3">Suppliers (orders)</h3>`;a.vendors.forEach(v=>h+=row(v.name,v.sub,`${v.trade} · ${v.item}`))}
  return h}
@@ -1695,7 +1741,7 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
    const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).map(x=>({type:x.kind&&x.kind.startsWith('dropbox')?'dropbox':'url',url:x.url,label:x.label+(x.sub?' · '+x.sub:'')})));
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(b.job)} · ${esc(b.trade)} · bid ${esc(b.id)}</div><h2>${esc(b.vendor)}</h2></div>
     <table class="kv small"><tr><td class="mut">Status</td><td>${esc(b.status)}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr><tr><td class="mut">Sent / due</td><td>${esc(md(b.sent))} / ${esc(md(b.due))}</td></tr><tr><td class="mut">Owner</td><td>${esc(b.owner||'')}</td></tr>${b.amount?`<tr><td class="mut">Amount</td><td>${esc(b.amount)}</td></tr>`:''}</table>
-    <div class="aacts">${attMsg(attSub(attSubKey(b.vendor)),`Harswells bid request, ${b.job} ${b.trade}: checking on your quote${b.due?' (due '+md(b.due)+')':''}. Thanks${attSig()?', '+attSig():''}`)}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
+    <div class="aacts">${attMsg(attSub(attSubKey(b.vendor)),`Sample Builders bid request, ${b.job} ${b.trade}: checking on your quote${b.due?' (due '+md(b.due)+')':''}. Thanks${attSig()?', '+attSig():''}`)}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
   if(type=='order'){const x=(H().orders||[]).find(y=>y.id==id);if(!x){toast('Order not found');return}
    const links=[{type:'job',id:x.slug,label:x.job},{type:'sub',id:attSubKey(x.vendor),label:x.vendor}].concat(attJobLinks(x.slug).filter(l=>l.type=='dropbox'&&/Orders/.test(l.label)));
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(x.job)} · ${esc(x.trade)} · ${esc(x.id)}${x.po?' · PO '+esc(x.po):''}</div><h2>${esc(x.item)}</h2></div>
@@ -1777,8 +1823,8 @@ function mExports(M){const mods=J.modules||[];
 /* ---------- my changes: export / import / reset + shared check-out ---------- */
 function stampName(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,16).replace('T','-').replace(':','')}
 function whoSlug(){const w=(STORE.who()||'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'');return w?w+'-':''}
-function exportChanges(){if(!STORE.pendingTotal()&&!STORE.editedJobs().length){toast('No edits to export yet');return}const x=STORE.exportFiles();download(`Harswells-changes-${whoSlug()}${stampName()}.zip`,x.zip)}
-function exportJson(){const o=STORE.exportObj();download(`Harswells-changes-${whoSlug()}${stampName()}.json`,JSON.stringify(o,null,1),'application/json')}
+function exportChanges(){if(!STORE.pendingTotal()&&!STORE.editedJobs().length){toast('No edits to export yet');return}const x=STORE.exportFiles();download(`Sample Builders-changes-${whoSlug()}${stampName()}.zip`,x.zip)}
+function exportJson(){const o=STORE.exportObj();download(`Sample Builders-changes-${whoSlug()}${stampName()}.json`,JSON.stringify(o,null,1),'application/json')}
 function importFile(file){const r=new FileReader();r.onload=()=>{try{const res=STORE.importBuffer(r.result);J=null;route();if(LIVE&&STORE.live)LIVE.flushAll();
   toast(`Imported ${res.added} edit(s) in ${res.jobs} job(s)`+(res.failed?` · ${res.failed} could not be applied (see History)`:'')+(res.otherSnapshot?' · note: made on a different snapshot':''))}catch(e){toast('Import failed: '+e.message)}};r.onerror=()=>toast('Could not read that file');r.readAsArrayBuffer(file)}
 function ensureName(then){if(STORE.who()){then();return}openModal(`<h2>Your name</h2><p class="small mut">Shown on your edits, exports and check-outs so the office knows who changed what.</p><form id="wf"><input name="n" placeholder="Your first name" required style="width:100%" autocomplete="name"><div class="mbtns"><button class="pri" type="submit">Continue</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
@@ -1792,14 +1838,14 @@ function openChanges(){const eds=STORE.editedJobs();const n=STORE.pendingTotal()
  ${others.length?`<div class="note small">Edits from an older snapshot/version are still in this browser (${others.map(o=>o.n+' from '+esc(o.built||'?')).join(', ')}). <button class="small" id="adopt">Bring them over</button></div>`:''}
  <div class="mbtns"><button class="pri" id="xc">Export my changes</button><button id="xj">JSON only</button><label class="btn filebtn">Import changes<input type="file" id="imp" accept=".json,.zip,application/json,application/zip" hidden></label><span class="sp"></span>${STORE.live?(n?'<button class="danger" id="rst">Discard unsent edits</button>':'<span id="rst"></span>'):'<button class="danger" id="rst">Reset to original</button>'}</div>
  ${STORE.live?`<h3 class="sh">Live sync</h3><div class="small">Connected: <b>${esc(SY.A.describe())}</b></div><div class="small" style="margin-top:4px">${liveBadge(J&&J.slug)}</div>
-  <p class="small mut">Every edit is saved to the shared Harswells Dropbox about a second after you make it and shows up on everyone else’s open app within seconds. Nothing to check out or check in. Offline edits wait on this device and are sent automatically when you’re back online. If two people change the same task at the same moment, both edits are kept, the later one shows, and the job’s Conflicts tab lists it as “Needs review”.</p>
+  <p class="small mut">Every edit is saved to the shared Sample Builders Dropbox about a second after you make it and shows up on everyone else’s open app within seconds. Nothing to check out or check in. Offline edits wait on this device and are sent automatically when you’re back online. If two people change the same task at the same moment, both edits are kept, the later one shows, and the job’s Conflicts tab lists it as “Needs review”.</p>
   <div class="mbtns"><button id="lvchk">Check for updates now</button><button id="sdis">Disconnect Dropbox</button></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`:`
  ${(window.WSData&&WSData.demo)?'<h3 class="sh">Shared check-out</h3><div class="small">Demo: Dropbox sync and shared check-out are turned off. Edits stay in this browser; <b>Reset demo</b> on the banner clears them.</div>':`<h3 class="sh">Shared check-out <span class="mut small">(optional; lets your team take turns editing a job)</span></h3>
  <div class="small">${syncOn()?`Connected: <b>${esc(SY.A.describe())}</b>`:(SY.A&&SY.A.needsPermission()?`Folder access needs your OK again.`:'Not connected: edits stay in this browser until you export them.')}</div>
  ${J&&syncOn()?`<div class="small" style="margin-top:6px">${esc(J.name)}: ${co&&co.kind==SY.kind?`<b>checked out by you</b> since ${esc(co.lock.checked_out_at)} (expires ${esc(co.lock.expires_at)})`:(ls?(ls.state=='free'?'available':(ls.state=='other'?`checked out by <b>${esc(ls.lock.holder)}</b> since ${esc(ls.lock.checked_out_at)}`:(ls.state=='expired'?`lock by ${esc(ls.lock.holder)} expired`:'')))  :'checking…')}</div>
   <div class="mbtns">${co&&co.kind==SY.kind?`<button class="pri" id="sci">Check in${J.pending?' ('+J.pending+')':''}</button><button id="srl">Cancel check-out</button>`:`<button class="pri" id="sco">Check out ${esc(J.name)}</button>`}<button id="spl">Refresh</button></div>`:''}
  <div class="mbtns">${syncOn()||(SY.A&&SY.A.needsPermission())?`${SY.A&&SY.A.needsPermission()?'<button class="pri" id="sgrant">Allow folder access</button>':''}<button id="sdis">Disconnect ${esc(SY.A.label)}</button>`:`${HWSSync.FsaBackend().available()?'<button id="sfsa">Use a shared folder…</button>':''}<button id="sdbx">Sign in with Dropbox</button>`}</div>
- <p class="small mut">${MODE==='share'?'Shared folder works in desktop Chrome/Edge (pick the Dropbox-synced “Harswells Live Schedule/sync” folder). Dropbox sign-in from this file opens Dropbox in a new tab and asks you to paste the code it shows. On iPhone use the hosted app.':'Dropbox sign-in keeps your check-outs and change sets in the shared Dropbox folder (locks/ and changes/ folders).'}</p>`}
+ <p class="small mut">${MODE==='share'?'Shared folder works in desktop Chrome/Edge (pick the Dropbox-synced “Sample Builders Live Schedule/sync” folder). Dropbox sign-in from this file opens Dropbox in a new tab and asks you to paste the code it shows. On iPhone use the hosted app.':'Dropbox sign-in keeps your check-outs and change sets in the shared Dropbox folder (locks/ and changes/ folders).'}</p>`}
  <div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`}`,m=>{
   const g=s=>m.querySelector(s);const b0=(id,f)=>{const x=g(id);if(x)x.onclick=f};g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};
   g('#xc').onclick=exportChanges;g('#xj').onclick=exportJson;g('#imp').onchange=e=>{const f=e.target.files[0];if(f){closeModal();importFile(f)}};
@@ -1834,7 +1880,7 @@ async function doCheckout(slug,force){if(!syncOn()){openChanges();return}ensureN
    openModal(`<h2>${esc(J?J.name:slug)} is checked out</h2><p><b>${esc(lk.holder||'Someone')}</b> checked it out ${esc(lk.checked_out_at||'')}${lk.expires_at?` (expires ${esc(lk.expires_at)})`:''}.</p><p class="small mut">Wait for them to check in, or take over if they are done${exp?' (their check-out has expired)':''}. Taking over is recorded; their un-checked-in edits stay on their device.</p><div class="mbtns"><button class="danger" id="tko">Take over</button><span class="sp"></span><button data-close>OK</button></div>`,
    m=>m.querySelector('#tko').onclick=()=>{if(exp||confirm(`Take over from ${lk.holder}?`)){closeModal();doCheckout(slug,true)}})}
   else if(e.name=='SetupError')setupFolder(slug,e);else toast('Check-out failed: '+e.message)}finally{busy(false)}})}
-function setupFolder(slug,e){openModal(`<h2>Check-out folder not found</h2><p>${esc(e.message)}</p><p class="small mut">Everyone must use the <b>same</b> folder. <b>Folder owner:</b> tap “Create it here” once. <b>Everyone else:</b> ask the folder owner to share the <code>Harswells Live Schedule/sync</code> folder with you (can edit), add it to your Dropbox, then enter where it appears in your Dropbox (for example <code>/sync</code> or <code>/Harswells Live Schedule/sync</code>).</p><form id="sfr"><label class="small">Folder path in this Dropbox<input name="p" value="${esc(e.where||'')}" style="width:100%" autocomplete="off"></label><div class="mbtns"><button class="pri" type="submit">Use this folder</button><button type="button" id="smk">Create it here</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
+function setupFolder(slug,e){openModal(`<h2>Check-out folder not found</h2><p>${esc(e.message)}</p><p class="small mut">Everyone must use the <b>same</b> folder. <b>Folder owner:</b> tap “Create it here” once. <b>Everyone else:</b> ask the folder owner to share the <code>Sample Builders Live Schedule/sync</code> folder with you (can edit), add it to your Dropbox, then enter where it appears in your Dropbox (for example <code>/sync</code> or <code>/Sample Builders Live Schedule/sync</code>).</p><form id="sfr"><label class="small">Folder path in this Dropbox<input name="p" value="${esc(e.where||'')}" style="width:100%" autocomplete="off"></label><div class="mbtns"><button class="pri" type="submit">Use this folder</button><button type="button" id="smk">Create it here</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
  m=>{m.querySelector('#sfr').onsubmit=ev=>{ev.preventDefault();SY.A.setRoot(new FormData(ev.target).get('p'));closeModal();doCheckout(slug)};
   m.querySelector('#smk').onclick=async()=>{const p=m.querySelector('[name=p]').value;if(p&&p!==e.where)SY.A.setRoot(p);closeModal();busy(true);try{await SY.A.ensureLayout(true);doCheckout(slug)}catch(err){toast('Could not create the folder: '+err.message)}finally{busy(false)}}})}
 async function doCheckin(slug){const co=STORE.checkout(slug);if(!co){toast('Not checked out');return}busy(true);try{const cs=STORE.changeset(slug);const r=await SY.locks.checkin(slug,cs,co);
@@ -1855,7 +1901,7 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
  <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');
- bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
+ bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Sample Builders · Job workspaces'}
 /* ---------- boot ---------- */
 function route(){closeModal();if(!DATA)return;const p=parseHash();
  if(p.slug){if(!DATA.jobs[p.slug]){location.hash='#/';return}if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0)}
@@ -1872,7 +1918,7 @@ function liveBadge(slug){const s=LIVE?LIVE.status():{state:'connecting'};const q
  if(s.state=='saving'||s.state=='pending')return `<span class="lv sv">● Saving…</span>`;
  if(s.state=='error')return `<span class="lv err">● Not saved yet</span> · retrying${q?` (${q} waiting)`:''}`;
  if(s.state=='connecting')return `<span class="lv sv">● Connecting…</span>`;
- if(!slug&&document.body.classList.contains('hubp'))return `<span class="lv on">● Live</span> · shared Harswells Dropbox`;const i=STORE?STORE.liveInfo(slug):null;const upd=i&&i.ms?` · Updated ${relTime(i.ms)}${i.by?' by '+esc(i.by):''}`:'';
+ if(!slug&&document.body.classList.contains('hubp'))return `<span class="lv on">● Live</span> · shared Sample Builders Dropbox`;const i=STORE?STORE.liveInfo(slug):null;const upd=i&&i.ms?` · Updated ${relTime(i.ms)}${i.by?' by '+esc(i.by):''}`:'';
  return `<span class="lv on">● Live</span>${upd}`}
 function paintLive(){document.querySelectorAll('#livepill').forEach(x=>{x.innerHTML=liveBadge(J&&J.slug)});const sb=document.getElementById('syncbar');if(sb&&window.WSData&&WSData.liveMode){sb.innerHTML=WSData.statusHtml();WSData.bind()}}
 setInterval(()=>{if(LIVE)paintLive()},20000);
