@@ -144,7 +144,7 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswells app on iPhone.</p></div></div>
 <noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
 
-<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Live Schedule/sync","dataPath":"/Harswells Live Schedule/data/data.json","pathRoot":"home"},"lockHours":12};const BOOT={"mode":"pwa"};</script>
+<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Team Folder/Harswells Live Schedule/sync","dataPath":"/Harswells Team Folder/Harswells Live Schedule/data/data.json","pathRoot":"root"},"lockHours":12};const BOOT={"mode":"pwa"};</script>
 <script>/* Harswells Schedule PWA data layer (editable edition). The app shell holds NO job data.
    Data source: "Sign in with Dropbox" ONLY (OAuth PKCE, see HWSSync.DropboxBackend), reading HWS_CONFIG.dropbox.dataPath with
    files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
@@ -165,15 +165,20 @@ async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{cons
 async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
 function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
-function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');return d}
+function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');
+ if(!Object.keys(d.jobs).length)throw new Error('The schedule data file in Dropbox has no jobs yet (placeholder). Ask the office to publish the schedule data, then tap Sync now.');return d}
+const NOACC='Your Dropbox account can\u2019t see the Harswells schedule data (Harswells Team Folder \u203a Harswells Live Schedule). Sign in with your Harswells Dropbox account, or ask the office to give you access to the Harswells Team Folder.';
+function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
 async function fetchData(){
- if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');const r=await A.readAbs(HWSSync.CFG.dropbox.dataPath);if(!r)throw new Error('Data file not found in Dropbox: '+HWSSync.CFG.dropbox.dataPath);return check(JSON.parse(r.text))}
+ if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
+  try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
+  if(!r)throw new Error(NOACC);let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}return check(d)}
  const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
  if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
  return check(d)}
 async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
- try{const d=await fetchData();const changed=!data||d.built!==data.built;data=d;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ try{const d=await fetchData();const changed=!data||d.built!==data.built;data=d;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt,src:srcKey()})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
  catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
 function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
@@ -184,7 +189,7 @@ const W={onUpdate:null,preview:false,
  data:()=>data,
  async init(){if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
-  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data){data=c.data;syncedAt=c.syncedAt}}catch(e){}}
+  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt}}catch(e){}}
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
   window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
@@ -193,7 +198,7 @@ const W={onUpdate:null,preview:false,
  statusHtml(){if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
   return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
-  ${e&&e.message&&e.message!='setup'?`<div class="note">${esc2(e.message)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
+  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
   <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
@@ -550,7 +555,7 @@ class ConflictError extends Error{constructor(m){super(m);this.name='ConflictErr
 class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
 class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
-const CFG=Object.assign({lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Live Schedule/sync',dataPath:'/Harswells Live Schedule/data/data.json',pathRoot:'home'}},root.HWS_CONFIG||{});
+const CFG=Object.assign({lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
 try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours}}catch(e){}
 const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 /* tiny IndexedDB kv (directory handles are structured-cloneable, not JSON) */
@@ -588,6 +593,7 @@ const DBX={auth:'https://www.dropbox.com/oauth2/authorize',token:'https://api.dr
 const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b64u(a.buffer).slice(0,n)}
 const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
+let ROOT_P=null; /* one shared get_current_account for all backend instances */
 function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
  const hosted=()=>/^https?:$/.test(location.protocol);
  const redirectUri=()=>location.origin+location.pathname;
@@ -598,7 +604,10 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
  async function token(){if(!auth||!auth.access_token)throw new AuthError('not signed in to Dropbox');if(Date.now()<auth.expires_at)return auth.access_token;
   if(!auth.refresh_token)throw new AuthError('Dropbox session expired; sign in again');keep(await tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}));return auth.access_token}
  function hdrs(t,extra){const h=Object.assign({Authorization:'Bearer '+t},extra||{});if(c.pathRoot=='home')h['Dropbox-API-Path-Root']='{".tag": "home"}';else if(c.pathRoot=='root'&&auth&&auth.root_ns)h['Dropbox-API-Path-Root']=asciiJson({'.tag':'root',root:auth.root_ns});return h}
- async function call(url,init,retry){const t=await token();init.headers=hdrs(t,init.headers);init.credentials='omit';let r;try{r=await fetch(url,init)}catch(e){throw new Error('offline or Dropbox unreachable ('+e.message+')')}
+ async function call(url,init,retry){
+  /* team space: every request needs the account's root namespace. Devices signed in before 9/27 5:25 PM may lack it: fetch it once (no re-sign-in). */
+  if(c.pathRoot=='root'&&auth&&auth.access_token&&!auth.root_ns&&!/users\/get_current_account$/.test(url)){ROOT_P=ROOT_P||A.account().finally(()=>{ROOT_P=null});await ROOT_P;if(!auth.root_ns){const a2=LS.get('hws-dbx-auth');if(a2&&a2.root_ns)auth.root_ns=a2.root_ns}if(!auth.root_ns)throw new Error('Could not read your Dropbox team information. Check the connection and tap Sync now.')}
+  const t=await token();init.headers=hdrs(t,init.headers);init.credentials='omit';let r;try{r=await fetch(url,init)}catch(e){throw new Error('offline or Dropbox unreachable ('+e.message+')')}
   if(r.status==401&&!retry&&auth.refresh_token){auth.expires_at=0;return call(url,Object.assign({},init,{headers:Object.fromEntries(Object.entries(init.headers).filter(([k])=>k!='Authorization'&&k!='Dropbox-API-Path-Root'))}),true)}
   return r}
  async function err(r){let j=null;try{j=await r.json()}catch(e){}return (j&&(j.error_summary||(j.error&&j.error['.tag'])))||('HTTP '+r.status)}
