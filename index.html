@@ -146,44 +146,45 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 
 <script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Live Schedule/sync","dataPath":"/Harswells Live Schedule/data/data.json","pathRoot":"home"},"lockHours":12};const BOOT={"mode":"pwa"};</script>
 <script>/* Harswells Schedule PWA data layer (editable edition). The app shell holds NO job data.
-   Data source (chosen on this device, stored in localStorage, never in the published files):
-     link         : a Dropbox shared link to ONE file (data/data.json), fetched in its direct form (dl.dropboxusercontent.com, dl=1)
-     same-origin  : data/data.json next to the app (local preview / a private host that also serves the data)
-     dropbox-api  : "Sign in with Dropbox" (OAuth PKCE, see HWSSync.DropboxBackend) and read HWS_CONFIG.dropbox.dataPath with files/download
-   The last good copy is kept in IndexedDB for offline use. One-time setup: <app-url>#setup=link:<shared link> or #setup=same-origin */
+   Data source: "Sign in with Dropbox" ONLY (OAuth PKCE, see HWSSync.DropboxBackend), reading HWS_CONFIG.dropbox.dataPath with
+   files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
+   Dev only: on a loopback host (127.0.0.1 / localhost) #setup=same-origin reads data/data.json next to the app, for the local
+   preview and tests. It is refused on any other host and is never offered in the UI.
+   The last good copy is kept in IndexedDB for offline use. */
 (function(){
 'use strict';
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
+const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+const okSource=c=>!!c&&(c.source=='dropbox-api'||(DEV&&c.source=='same-origin'));
 let cfg={};try{cfg=JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){}
+if(!okSource(cfg))cfg={};
 let data=null,syncedAt=null,lastErr=null,syncing=false;
 function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
-function directLink(u){try{const x=new URL(u.trim());if(/(^|\.)dropbox\.com$/.test(x.hostname)&&x.hostname!='dl.dropboxusercontent.com'){x.hostname='dl.dropboxusercontent.com'}
-  if(x.hostname=='dl.dropboxusercontent.com'){x.searchParams.delete('raw');x.searchParams.set('dl','1')}return x.toString()}catch(e){return u}}
-function sourceUrl(){if(cfg.source=='link'&&cfg.link)return directLink(cfg.link);if(cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
+function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
 function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');return d}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');const r=await A.readAbs(HWSSync.CFG.dropbox.dataPath);if(!r)throw new Error('Data file not found in Dropbox: '+HWSSync.CFG.dropbox.dataPath);return check(JSON.parse(r.text))}
  const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
- if(!r.ok)throw new Error('Data link returned HTTP '+r.status+(r.status==403||r.status==404?' (link removed, not public, or wrong file)':''));
- const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The link did not return the data file (got '+(txt.trim().startsWith('<')?'a web page, e.g. a Dropbox login/preview page':'non-JSON')+')')}
+ if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
+ const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
  return check(d)}
 async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
  try{const d=await fetchData();const changed=!data||d.built!==data.built;data=d;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
  catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
 function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
- if(v=='same-origin')cfg={source:'same-origin'};else if(v=='dropbox-api')cfg={source:'dropbox-api'};else if(v.startsWith('link:'))cfg={source:'link',link:v.slice(5)};else return false;
- saveCfg();history.replaceState(null,'',location.pathname+location.search+'#/');return true}
+ const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
+ history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
 const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const W={onUpdate:null,preview:false,
  data:()=>data,
  async init(){if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
-  try{const c=await idbGet('data');if(c&&c.data){data=c.data;syncedAt=c.syncedAt}}catch(e){}
+  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data){data=c.data;syncedAt=c.syncedAt}}catch(e){}}
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
   window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
@@ -193,15 +194,13 @@ const W={onUpdate:null,preview:false,
   return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
   ${e&&e.message&&e.message!='setup'?`<div class="note">${esc2(e.message)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
-  <form id="srcf"><p><label><input type="radio" name="src" value="dropbox-api" ${cfg.source=='dropbox-api'?'checked':''} ${dbxOk?'':'disabled'}> Sign in with Dropbox ${dbxOk?'(recommended: also enables check-out/check-in)':'<span class="mut">(App key not configured in this build)</span>'}</label></p>
-  <p><label><input type="radio" name="src" value="link" ${cfg.source=='link'||!cfg.source?'checked':''}> Dropbox data link</label><br><input name="link" style="width:100%" placeholder="https://www.dropbox.com/scl/fi/…/data.json?rlkey=…" value="${esc2(cfg.link||'')}" autocomplete="off"></p>
-  <p><label><input type="radio" name="src" value="same-origin" ${cfg.source=='same-origin'?'checked':''}> Data hosted next to this app (data/data.json)</label></p><p><button class="pri" type="submit">Save and sync</button></p></form></div></div>`},
+  <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
-  const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();const fd=new FormData(f);cfg={source:fd.get('src'),link:(fd.get('link')||'').toString().trim()};saveCfg();
-   if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
-   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;openStore();await syncBoot()}route()}else toast('Could not load: '+(lastErr||'check the link'))}catch(e){toast('Enter a data link first')}}},
- _directLink:directLink};
+  const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();cfg={source:'dropbox-api'};saveCfg();
+   {const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
+   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;openStore();await syncBoot()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
+ _dev:DEV};
 window.WSData=W;
 })();
 </script>
