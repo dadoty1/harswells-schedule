@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#15233b"><meta name="format-detection" content="telephone=no"><title>Harswells</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2315233b%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27Arial%27 font-weight=%27bold%27%3EH%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Harswells">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png"><link rel="icon" sizes="192x192" href="icons/icon-192.png">
+<style>:root{--bg:#f4f5f7;--card:#fff;--ink:#1d2330;--mut:#667085;--line:#e3e6ea;--blue:#2563eb;--red:#d92d20;--amber:#dc8a00;--green:#12a150;--hdr:#15233b}
+*{box-sizing:border-box}html,body{margin:0;overflow-x:hidden}body{font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+button,.btn{font:inherit;border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--ink);display:inline-block}
+button:hover,.btn:hover{border-color:#b8c0cc;text-decoration:none}button.pri{background:var(--blue);color:#fff;border-color:var(--blue)}button.danger{color:var(--red);border-color:#f3b8b2}button:disabled{opacity:.45;cursor:not-allowed}
+select,input,textarea{font:inherit;padding:4px 7px;border:1px solid var(--line);border-radius:6px;background:#fff;max-width:100%;color:var(--ink)}
+header.top{background:var(--hdr);color:#fff;position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;padding:8px 14px}
+header.top a{color:#c9d3e3}header.top .brand{font-weight:700;font-size:15px;white-space:nowrap;color:#fff}header.top .sp{flex:1}header.top .meta{font-size:11px;opacity:.8;white-space:nowrap}
+header.top select{background:#23344f;color:#fff;border-color:#34496b;max-width:220px}header.top button{background:#23344f;color:#fff;border-color:#34496b}
+.banner{background:#fff7e0;border-bottom:1px solid #f5d68a;color:#6b4e00;padding:6px 14px;font-size:12px}.banner b{color:#4d3800}
+.jh{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px}.jh h1{margin:0 0 2px;font-size:21px}.jh .sub{color:var(--mut);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.kd{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.kd .k{border:1px solid var(--line);border-radius:8px;padding:5px 10px;min-width:110px;background:#fbfcfd}.kd .k .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}.kd .k .v{font-weight:700}.kd .k .n{font-size:11px;color:var(--mut)}
+.pbar{height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden;width:120px;display:inline-block;vertical-align:middle}.pbar>b{display:block;height:100%;background:var(--green)}
+.layout{display:flex;align-items:flex-start;min-height:calc(100vh - 150px)}
+.side{width:196px;flex:none;background:#fff;border-right:1px solid var(--line);position:sticky;top:44px;align-self:stretch;padding:8px 0}
+.side a{display:flex;justify-content:space-between;padding:7px 14px;color:var(--ink);border-left:3px solid transparent}.side a:hover{background:#f5f8ff;text-decoration:none}
+.side a.on{background:#eef4ff;border-left-color:var(--blue);font-weight:600}.side .cnt{color:var(--mut);font-size:11px}.side .grp{font-size:10.5px;color:var(--mut);text-transform:uppercase;padding:10px 14px 4px;letter-spacing:.04em}
+.main{flex:1;min-width:0;padding:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.panel>h3{margin:0;padding:10px 12px;font-size:14px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.panel>h3 .sp{flex:1}.pb{padding:10px 12px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:#fbfcfd}.tools label{display:flex;gap:4px;align-items:center;white-space:nowrap}.tools .sp{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}.seg button{border:0;border-radius:0;border-right:1px solid var(--line)}.seg button:last-child{border-right:0}.seg button.on{background:var(--hdr);color:#fff}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f8f9fb;font-size:11.5px;color:#475467;font-weight:600;white-space:nowrap}td.num,th.num{text-align:right;white-space:nowrap}th.s{cursor:pointer}tr.tot td{font-weight:700;background:#f8f9fb}
+tr.rowlink{cursor:pointer}tr.rowlink:hover td{background:#f5f8ff}tr.od td{background:#fff6f5}
+.chip{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#eef1f5;color:#344054;white-space:nowrap}
+.chip.REAL{background:#dbe8ff;color:#1845a8}.chip.DRAFT{background:repeating-linear-gradient(45deg,#f1f3f6,#f1f3f6 3px,#e1e5ea 3px,#e1e5ea 6px);color:#475467}
+.chip.TRACKER{background:#e0f5f1;color:#0b6e63}.chip.BUILDERTREND,.chip.inbt{background:#e6e3ff;color:#3b2fb5}.chip.notbt{background:#fde4e2;color:#b42318}.chip.PROPOSED{background:#fff2d6;color:#8a5a00}
+.chip.high,.chip.late,.chip.overdue{background:#fde4e2;color:#b42318}.chip.medium{background:#fff1d6;color:#8a5a00}.chip.low{background:#eef1f5;color:#475467}.chip.ok{background:#dcfae6;color:#067647}
+.mut{color:var(--mut)}.small{font-size:11.5px}.red{color:var(--red)}.b{font-weight:600}.nowrap{white-space:nowrap}
+.empty{padding:22px;color:var(--mut);text-align:center}.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12.5px}
+.list .it{display:flex;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:flex-start}.list .it:last-child{border-bottom:0}
+.list .dt{width:70px;flex:none;color:var(--mut);font-size:11.5px}.list .bd{flex:1;min-width:0}.list .t{font-weight:600}.list .s{color:var(--mut);font-size:11.5px;overflow-wrap:anywhere}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#475467;padding:6px 12px;border-bottom:1px solid var(--line)}.legend i{display:inline-block;width:18px;height:9px;border-radius:2px;vertical-align:middle;margin-right:4px}
+/* gantt */
+.gwrap{overflow:auto;max-height:calc(100vh - 290px);min-height:320px;position:relative;background:#fff}
+.ginner{display:flex;width:max-content;position:relative}.gleft{position:sticky;left:0;z-index:3;background:#fff;border-right:2px solid #cfd5dd;flex:none}
+.grow{display:flex;height:24px;align-items:center;border-bottom:1px solid #f0f2f5;font-size:12px;white-space:nowrap;cursor:pointer}
+.grow:hover{background:#f5f8ff}.grow.ph{background:#f3f5f8;font-weight:700}.grow.hdr{background:#f8f9fb;font-weight:600;color:#475467;font-size:11px;cursor:default;height:40px;position:sticky;top:0;z-index:4;border-bottom:1px solid #cfd5dd}
+.grow>span{padding:0 5px;overflow:hidden;text-overflow:ellipsis}
+.c-id{width:50px;color:#667085}.c-task{width:250px}.c-who{width:92px;color:#475467}.c-dur{width:38px;text-align:right}.c-st,.c-fin{width:66px}.c-pct{width:38px;text-align:right}.c-slip{width:40px;text-align:right}.c-src{width:52px}
+.grow.crit .c-task{color:var(--red)}.grow.od .c-task{color:var(--red);font-weight:600}.grow.done .c-task{color:#667085;text-decoration:line-through}
+.gsvgwrap{position:relative}.gsvg{display:block}.ghdr{position:sticky;top:0;z-index:2;background:#f8f9fb}
+svg .bar{cursor:pointer}svg.edit .bar.mv{cursor:grab;touch-action:none}svg.edit .rh{cursor:ew-resize;touch-action:none}svg .dragging{opacity:.75}
+.tip{position:fixed;z-index:70;background:#15233b;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;pointer-events:none}
+/* calendar */
+.calg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-left:1px solid var(--line)}.calg .dh{background:#f8f9fb;font-size:11px;font-weight:600;color:#475467;padding:4px 6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.calg .dc{min-height:96px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:3px 4px;overflow:hidden}.calg .dc.off{background:#f7f8fa}.calg .dc.other{opacity:.45}.calg .dc.today{box-shadow:inset 0 0 0 2px var(--red)}
+.calg .dn{font-size:11px;color:#475467;display:flex;justify-content:space-between}.calg .hol{font-size:10px;color:#b54708}
+.calg .ev{display:block;font-size:11px;border-radius:4px;padding:1px 4px;margin-top:2px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.calg .ev.draft{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.28) 0 3px,transparent 3px 6px)}
+.calg .ev.done{opacity:.55;text-decoration:line-through}.calg .ev.od{outline:2px solid var(--red)}.calg .more{font-size:10.5px;color:var(--blue);cursor:pointer}
+/* modal / popup */
+.modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.35);z-index:80;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 10px}
+.modal{background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(16,24,40,.3);width:640px;max-width:100%;padding:16px 18px}.modal h2{margin:0 0 10px;font-size:17px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}.fg label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:#475467}.fg label.w{grid-column:1/-1}.fg label.cb{flex-direction:row;align-items:center;gap:6px;color:var(--ink)}
+.fg input,.fg select,.fg textarea{width:100%}.mbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.mbtns .sp{flex:1}
+.kv td{border:0;padding:2px 8px 2px 0}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#15233b;color:#fff;padding:9px 16px;border-radius:8px;z-index:90;font-size:13px;max-width:92vw}
+.pkg{border-top:1px solid var(--line)}.pkg:first-child{border-top:0}.pkg .ph{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}.pkg .ph .t{font-weight:700}.pkg .body{padding:0 12px 10px}
+.bar2{height:8px;background:#e8ecf1;border-radius:4px;position:relative;min-width:60px}.bar2>b{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:#98a2b3}.bar2>b.low{background:var(--green)}
+/* landing */
+.lcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}.lcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}.lcard .n{font-size:24px;font-weight:700}.lcard.red .n{color:var(--red)}
+.jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}.jcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--ink);display:block}.jcard:hover{border-color:#9db8f5;text-decoration:none;box-shadow:0 2px 8px rgba(16,24,40,.06)}
+.jcard h4{margin:0 0 2px;font-size:15px}.jcard .row{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-top:6px}
+.sync{font-size:11px;padding:2px 8px;border-radius:10px;background:#23344f}.sync.off{background:#b42318}
+@media(max-width:760px){header.top{padding:7px 10px;gap:6px}header.top .meta{display:none}header.top select{max-width:130px}.jh{padding:10px}.jh h1{font-size:18px}
+ .layout{display:block}.side{width:auto;position:sticky;top:42px;z-index:20;display:flex;overflow-x:auto;padding:0;border-right:0;border-bottom:1px solid var(--line);scrollbar-width:none}
+ .side a{border-left:0;border-bottom:3px solid transparent;white-space:nowrap;padding:8px 10px;gap:4px}.side a.on{border-bottom-color:var(--blue)}.side .grp{display:none}
+ .main{padding:8px}.c-who,.c-dur,.c-st,.c-fin,.c-pct,.c-slip,.c-src,.c-id{display:none}.c-task{width:150px}.gwrap{max-height:calc(100vh - 250px)}
+ .kd .k{min-width:0;flex:1 1 40%}.fg{grid-template-columns:1fr}.calg .dc{min-height:64px}.calg .ev{font-size:9.5px}.tools{gap:6px}.hide-sm{display:none}}
+@media print{header.top,.side,.tools,.banner button,.noprint,.toast{display:none!important}.layout{display:block}.main{padding:0}body{background:#fff}
+ .gwrap{max-height:none;overflow:visible}.panel{border:0;break-inside:auto}tr{break-inside:avoid}.jh{border:0}.grow{height:20px}}
+
+/* ---- editable offline edition: additions to app/ws.css ---- */
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+header.top{padding-top:calc(8px + env(safe-area-inset-top))}
+.hbtn{position:relative}.badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:#f79009;color:#15233b;font-size:11px;font-weight:700;text-align:center}
+.banner a{color:#6b4e00;text-decoration:underline}.banner #syncbar{margin-top:3px;color:#6b4e00}.banner #syncbar .sync{color:#fff}
+.jrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.jrow .sp{flex:1}
+.pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:12px;font-weight:600;background:#eef1f5;color:#344054}.pill.mine{background:#dcfae6;color:#067647}.pill.other{background:#fde4e2;color:#b42318}
+.c-lk{width:30px;text-align:center}.lk{border:0;background:transparent;padding:0 2px;font-size:13px;line-height:1;cursor:pointer;opacity:.55}.lk.on{opacity:1}.lk:hover{opacity:1}
+td .lk{font-size:15px}
+svg .bar.armed .bx,svg .bar.armed path{filter:drop-shadow(0 0 3px #f79009);stroke:#f79009;stroke-width:2.5}
+.gwrap,.gsvg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+svg.edit .bar.mv{touch-action:auto}svg.edit .rh{touch-action:auto}
+@media (hover:hover) and (pointer:fine){svg.edit .bar.mv{touch-action:none}svg.edit .rh{touch-action:none}}
+.mlist a{display:flex;justify-content:space-between;padding:14px 6px;border-bottom:1px solid var(--line);font-size:16px;color:var(--ink)}.mlist .cnt{color:var(--mut);font-size:13px}
+.modal .grab{display:none}.modal h3.sh{font-size:14px;margin:18px 0 6px;padding-top:12px;border-top:1px solid var(--line)}
+.filebtn{cursor:pointer}.pcrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pcrow input[type=range]{flex:1;min-width:140px}.pcq button{padding:3px 8px}
+details summary{cursor:pointer;color:var(--mut);margin-bottom:6px}
+body.busy{cursor:progress}body.busy .main{opacity:.8}
+.fsheet{display:flex;flex-direction:column;gap:10px}.fsheet select,.fsheet input[type=search]{width:100%!important}
+/* phone list */
+.plist{background:#fff}.pgh{position:sticky;top:0;z-index:2;background:#f3f5f8;padding:6px 12px;font-size:12px;font-weight:700;color:#475467;border-bottom:1px solid var(--line)}
+.prow{position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:#fff}
+.pact{position:absolute;right:0;top:0;bottom:0;display:flex}.pact button{border:0;border-radius:0;width:56px;color:#fff;font-weight:600;font-size:13px}.a-done{background:#12a150}.a-lock{background:#475467}.a-edit{background:#2563eb}
+.pfront{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:60px;background:#fff;transition:transform .18s ease;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.prow.will-done .pfront{box-shadow:inset 6px 0 0 #12a150}
+.pchk{flex:none;width:32px;height:32px;border-radius:50%;border:2px solid #98a2b3;background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;padding:0}
+.pchk.on{background:#12a150;border-color:#12a150}.pchk.ro{opacity:.5}
+.pbody{flex:1;min-width:0}.pt{font-weight:600;font-size:15px;line-height:1.25}.ps{color:var(--mut);font-size:12.5px;margin-top:3px}.pdot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px}
+.prow.done .pt{color:#667085;text-decoration:line-through}.prow.od .pt{color:var(--red)}.psrc{flex:none}
+/* bottom tab bar (phone) */
+.tabbar{display:none}
+@media(max-width:760px){
+ body{font-size:14px}body.has-tabs{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+ header.top{gap:8px}header.top .brand{font-size:16px}header.top select{flex:1;max-width:none;min-width:0;font-size:16px;padding:6px 8px}.hbtn{padding:7px 10px;font-size:14px}
+ .banner{font-size:11.5px;padding:5px 10px;line-height:1.35}
+ .jh{padding:10px 12px}.jh .kd{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.jh .kd .k{flex:none;min-width:104px}.note.gates{font-size:12px;max-height:3.1em;overflow:hidden}
+ .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:4px env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);box-shadow:0 -2px 10px rgba(16,24,40,.06)}
+ .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:52px;color:#667085;font-size:10.5px;font-weight:600;position:relative;text-decoration:none!important}
+ .tabbar a .ic{font-size:20px;line-height:1.1;filter:grayscale(1);opacity:.7}.tabbar a.on{color:var(--blue)}.tabbar a.on .ic{filter:none;opacity:1}
+ .tabbar .dot{position:absolute;top:3px;left:calc(50% + 6px);font-style:normal;background:var(--red);color:#fff;border-radius:9px;font-size:10px;padding:0 5px;line-height:16px}
+ button,.btn{min-height:40px;padding:6px 12px;font-size:14px}button.small,.btn.small{min-height:34px}.seg button{min-width:44px}
+ select,input,textarea{font-size:16px;min-height:40px}input[type=checkbox]{width:22px;height:22px;min-height:0}
+ .tools{padding:8px 10px}.tools label{font-size:13px}.panel>h3{padding:10px}.main{padding:8px 8px 12px}
+ .panel{border-radius:8px;margin-bottom:10px}
+ .c-lk{display:none}.c-task{width:128px}.gwrap{max-height:calc(100vh - 300px);max-height:calc(100dvh - 300px);min-height:300px;-webkit-overflow-scrolling:touch}
+ .grow{font-size:12.5px}.gleft{box-shadow:2px 0 4px rgba(16,24,40,.06)}
+ .modal-bg{align-items:flex-end;padding:0}
+ .modal{width:100%;max-width:100%;border-radius:16px 16px 0 0;max-height:92vh;max-height:92dvh;overflow:auto;-webkit-overflow-scrolling:touch;padding:8px 16px calc(16px + env(safe-area-inset-bottom))}
+ .modal .grab{display:block;width:40px;height:5px;border-radius:3px;background:#d0d5dd;margin:2px auto 10px}
+ .modal h2{font-size:18px}.fg{gap:10px}.fg label{font-size:13px}.fg label.cb{font-size:14px}
+ .mbtns.sticky{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom));background:#fff;padding:10px 0 calc(6px + env(safe-area-inset-bottom));margin-bottom:calc(-16px - env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+ .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+ .list .it{padding:10px 12px}.list .dt{width:62px}
+ th,td{padding:7px 8px}
+ .jgrid{grid-template-columns:1fr}.lcards{grid-template-columns:1fr 1fr}.lcard .n{font-size:20px}
+ .calg .dc{min-height:58px;padding:2px}.calg .ev{font-size:9px;padding:0 2px}.calg .dn{font-size:12px}
+}
+@media print{.tabbar,.pact,.hbtn{display:none!important}body.has-tabs{padding-bottom:0}}
+header.top select{-webkit-appearance:none;appearance:none;background:#23344f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9d3e3'/%3E%3C/svg%3E") no-repeat right 8px center;padding-right:24px;color:#fff}
+.grow>span.c-lk{padding:0;overflow:visible}
+</style></head><body>
+<div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
+<h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
+<p style="color:#667085;font-size:13px">If this message stays, this viewer cannot run the app (for example the iPhone Mail or Files <i>preview</i>).
+Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswells app on iPhone.</p></div></div>
+<noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
+
+<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Live Schedule/sync","dataPath":"/Harswells Live Schedule/data/data.json","pathRoot":"home"},"lockHours":12};const BOOT={"mode":"pwa"};</script>
+<script>/* Harswells Schedule PWA data layer (editable edition). The app shell holds NO job data.
+   Data source (chosen on this device, stored in localStorage, never in the published files):
+     link         : a Dropbox shared link to ONE file (data/data.json), fetched in its direct form (dl.dropboxusercontent.com, dl=1)
+     same-origin  : data/data.json next to the app (local preview / a private host that also serves the data)
+     dropbox-api  : "Sign in with Dropbox" (OAuth PKCE, see HWSSync.DropboxBackend) and read HWS_CONFIG.dropbox.dataPath with files/download
+   The last good copy is kept in IndexedDB for offline use. One-time setup: <app-url>#setup=link:<shared link> or #setup=same-origin */
+(function(){
+'use strict';
+const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
+let cfg={};try{cfg=JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){}
+let data=null,syncedAt=null,lastErr=null,syncing=false;
+function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
+function directLink(u){try{const x=new URL(u.trim());if(/(^|\.)dropbox\.com$/.test(x.hostname)&&x.hostname!='dl.dropboxusercontent.com'){x.hostname='dl.dropboxusercontent.com'}
+  if(x.hostname=='dl.dropboxusercontent.com'){x.searchParams.delete('raw');x.searchParams.set('dl','1')}return x.toString()}catch(e){return u}}
+function sourceUrl(){if(cfg.source=='link'&&cfg.link)return directLink(cfg.link);if(cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
+function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
+function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');return d}
+async function fetchData(){
+ if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');const r=await A.readAbs(HWSSync.CFG.dropbox.dataPath);if(!r)throw new Error('Data file not found in Dropbox: '+HWSSync.CFG.dropbox.dataPath);return check(JSON.parse(r.text))}
+ const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
+ if(!r.ok)throw new Error('Data link returned HTTP '+r.status+(r.status==403||r.status==404?' (link removed, not public, or wrong file)':''));
+ const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The link did not return the data file (got '+(txt.trim().startsWith('<')?'a web page, e.g. a Dropbox login/preview page':'non-JSON')+')')}
+ return check(d)}
+async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
+ try{const d=await fetchData();const changed=!data||d.built!==data.built;data=d;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
+function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
+function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
+ if(v=='same-origin')cfg={source:'same-origin'};else if(v=='dropbox-api')cfg={source:'dropbox-api'};else if(v.startsWith('link:'))cfg={source:'link',link:v.slice(5)};else return false;
+ saveCfg();history.replaceState(null,'',location.pathname+location.search+'#/');return true}
+const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const W={onUpdate:null,preview:false,
+ data:()=>data,
+ async init(){if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
+  applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
+  try{const c=await idbGet('data');if(c&&c.data){data=c.data;syncedAt=c.syncedAt}}catch(e){}
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
+  window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
+  setInterval(()=>{if(!document.hidden)sync()},10*60e3);
+  if(data){sync()}else if(sourceUrl()||cfg.source=='dropbox-api'){try{await sync(true)}catch(e){}}},
+ statusHtml(){if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
+  return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
+ errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
+  ${e&&e.message&&e.message!='setup'?`<div class="note">${esc2(e.message)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
+  <form id="srcf"><p><label><input type="radio" name="src" value="dropbox-api" ${cfg.source=='dropbox-api'?'checked':''} ${dbxOk?'':'disabled'}> Sign in with Dropbox ${dbxOk?'(recommended: also enables check-out/check-in)':'<span class="mut">(App key not configured in this build)</span>'}</label></p>
+  <p><label><input type="radio" name="src" value="link" ${cfg.source=='link'||!cfg.source?'checked':''}> Dropbox data link</label><br><input name="link" style="width:100%" placeholder="https://www.dropbox.com/scl/fi/…/data.json?rlkey=…" value="${esc2(cfg.link||'')}" autocomplete="off"></p>
+  <p><label><input type="radio" name="src" value="same-origin" ${cfg.source=='same-origin'?'checked':''}> Data hosted next to this app (data/data.json)</label></p><p><button class="pri" type="submit">Save and sync</button></p></form></div></div>`},
+ bind(){const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
+  const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
+  const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();const fd=new FormData(f);cfg={source:fd.get('src'),link:(fd.get('link')||'').toString().trim()};saveCfg();
+   if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
+   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;openStore();await syncBoot()}route()}else toast('Could not load: '+(lastErr||'check the link'))}catch(e){toast('Enter a data link first')}}},
+ _directLink:directLink};
+window.WSData=W;
+})();
+</script>
+<script>/* Harswells schedule engine (browser port of jobcal.py + sched.py + jobs.apply_edit + the schedule-derived parts of
+   modules.py). Pure functions, no DOM. Used by the share file and the PWA so edits behave like the live server. */
+(function(root){
+'use strict';
+const DAY=864e5;
+const dn=s=>{const [y,m,d]=String(s).slice(0,10).split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/DAY)};
+const isoN=n=>new Date(n*DAY).toISOString().slice(0,10);
+const pyWd=n=>(new Date(n*DAY).getUTCDay()+6)%7; // Mon=0
+const addDays=(s,k)=>isoN(dn(s)+k);
+/* ---------- calendars (jobcal.py) ---------- */
+function nth(y,m,wd,n){if(n>0){let d=dn(`${y}-${String(m).padStart(2,'0')}-01`);d+=((wd-pyWd(d))%7+7)%7;return d+7*(n-1)}
+ let d=m<12?dn(`${y}-${String(m+1).padStart(2,'0')}-01`)-1:dn(`${y}-12-31`);return d-(((pyWd(d)-wd)%7)+7)%7}
+function obs(d){const w=pyWd(d);return w==5?d-1:(w==6?d+1:d)}
+function holidaysForYear(y,kind){if(kind=='none')return {};const h={};const D=(m,d)=>dn(`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+ h[obs(D(1,1))]="New Year's Day";h[nth(y,5,0,-1)]='Memorial Day';h[obs(D(7,4))]='Independence Day';h[nth(y,9,0,1)]='Labor Day';h[nth(y,11,3,4)]='Thanksgiving';h[obs(D(12,25))]='Christmas Day';
+ if(kind=='construction')h[nth(y,11,3,4)+1]='Day after Thanksgiving';
+ else{h[nth(y,1,0,3)]='Martin Luther King Jr. Day';h[nth(y,2,0,3)]="Presidents' Day";h[obs(D(6,19))]='Juneteenth';h[nth(y,10,0,2)]='Columbus Day';h[obs(D(11,11))]='Veterans Day'}
+ return h}
+const calCache={};
+function makeCal(saturday,kind){saturday=!!saturday;kind=['construction','federal','none'].includes(kind)?kind:'construction';const key=saturday+'|'+kind;if(calCache[key])return calCache[key];
+ const hol={};for(let y=2018;y<=2038;y++)Object.assign(hol,holidaysForYear(y,kind));
+ const first=dn('2018-01-01'),last=dn('2038-12-31');const days=[];
+ const isWdN=d=>{const w=pyWd(d);return (w<5||(saturday&&w==5))&&!hol[d]};
+ for(let d=first;d<=last;d++)if(isWdN(d))days.push(d);
+ const bl=x=>{let lo=0,hi=days.length;while(lo<hi){const m=(lo+hi)>>1;if(days[m]<x)lo=m+1;else hi=m}return lo};
+ const br=x=>{let lo=0,hi=days.length;while(lo<hi){const m=(lo+hi)>>1;if(days[m]<=x)lo=m+1;else hi=m}return lo};
+ const holidays={};Object.keys(hol).sort().forEach(k=>holidays[isoN(+k)]=hol[k]);
+ const c={saturday,kind,holidays,
+  isWd:s=>isWdN(dn(s)),
+  wdi:s=>bl(dn(s)),
+  fromWdi:i=>isoN(days[Math.max(0,Math.min(i,days.length-1))]),
+  nextWd:s=>isoN(days[Math.min(bl(dn(s)),days.length-1)]),
+  wdBetween:(a,b)=>{if(dn(b)<dn(a))return 0;return br(dn(b))-bl(dn(a))},
+  addWd:(s,n)=>isoN(days[Math.max(0,Math.min(bl(dn(s))+n,days.length-1))]),
+  describe:()=>(saturday?'Mon-Sat':'Mon-Fri')+{construction:', skips major US holidays',federal:', skips US federal holidays',none:', no holidays'}[kind]};
+ return calCache[key]=c}
+/* ---------- sched.py ---------- */
+const FIELDS=['id','task','phase','bt_phase','milestone_type','start','finish','duration','depends_on','owner','source','source_ref','status','pct_complete','lock','baseline_start','baseline_finish','actual_start','actual_finish','template_id','consumes','notes','color'];
+const DONE=new Set(['complete','done','completed']);
+const DEP_RE=/^\s*([A-Za-z0-9_\-]+?)\s*(FS|SS|FF|SF)?\s*([+-]\s*\d+)?\s*$/;
+function parseDeps(s){const out=[];String(s||'').split(/[;,]/).forEach(p=>{if(!p.trim())return;const m=p.match(DEP_RE);if(m)out.push([m[1],m[2]||'FS',parseInt((m[3]||'0').replace(/\s/g,''),10)])});return out}
+function fmtDeps(deps){return deps.map(([i,t,l])=>(t!='FS'||l)?`${i}${t}${l>=0?'+':''}${l}`:i).join(';')}
+const up=v=>String(v==null?'':v).toUpperCase(),lo=v=>String(v==null?'':v).toLowerCase();
+function intDur(v){const f=parseFloat(v||1);if(isNaN(f))return null;return Math.trunc(f)}
+function compute(rows,today,cal){const by={};rows.forEach(r=>by[r.id]=r);const floor=cal.wdi(today);const warn=[];
+ rows.forEach(r=>{r._deps=parseDeps(r.depends_on).filter(d=>d[0] in by);const d=intDur(r.duration);r._dur=d==null?1:Math.max(1,d)});
+ const order=[],state={};
+ function visit(id){if(state[id]==2)return;if(state[id]==1){warn.push('dependency cycle at '+id);return}state[id]=1;by[id]._deps.forEach(d=>visit(d[0]));state[id]=2;order.push(id)}
+ rows.forEach(r=>visit(r.id));
+ order.forEach(id=>{const r=by[id];const locked=up(r.lock)=='Y'||DONE.has(lo(r.status));const s0=r.start,f0=r.finish;
+  if(locked&&s0){const es=cal.wdi(s0);const ef=f0?cal.wdi(f0):es+r._dur-1;r._es=es;r._ef=Math.max(es,ef);r._keep=[s0,f0||s0];if(up(r.source)!='BUILDERTREND')r.duration=String(r._ef-r._es+1);return}
+  const c=[];if(s0&&!r._deps.length)c.push(cal.wdi(s0));
+  r._deps.forEach(([i,t,l])=>{const p=by[i];if(p._es===undefined)return;if(t=='FS')c.push(p._ef+1+l);else if(t=='SS')c.push(p._es+l);else if(t=='FF')c.push(p._ef+l-r._dur+1);else if(t=='SF')c.push(p._es+l-r._dur+1)});
+  let es=c.length?Math.max(...c):floor;if(up(r.source)!='REAL')es=Math.max(es,floor);r._es=es;r._ef=es+r._dur-1;r.start=cal.fromWdi(r._es);r.finish=cal.fromWdi(r._ef)});
+ rows.forEach(r=>{if(r._keep){r.start=r._keep[0];r.finish=r._keep[1]}else if(r._es!==undefined){r.start=cal.fromWdi(r._es);r.finish=cal.fromWdi(r._ef)}});
+ rows.forEach(r=>r._deps.forEach(([i,t,l])=>{const p=by[i];const bothBt=up(r.source)=='BUILDERTREND'&&up(p.source)=='BUILDERTREND';
+  if(t=='FS'&&r._es<p._ef+1+l&&up(r.lock)=='Y'&&!bothBt)warn.push(`${r.id} '${r.task}' starts ${r.start} before predecessor ${p.id} '${p.task}' finishes ${p.finish}`)}));
+ const succ={};rows.forEach(r=>succ[r.id]=[]);rows.forEach(r=>r._deps.forEach(([i,t,l])=>succ[i].push([r.id,t,l])));
+ const end=rows.reduce((m,r)=>Math.max(m,r._ef),-Infinity);const endV=rows.length?end:0;
+ order.slice().reverse().forEach(id=>{const r=by[id];const lfs=[];succ[id].forEach(([sid,t,l])=>{const s=by[sid];if(s._ls===undefined)return;
+   if(t=='FS')lfs.push(s._ls-1-l);else if(t=='SS')lfs.push(s._ls-l+r._dur-1);else lfs.push(s._lf-l)});
+  r._lf=lfs.length?Math.min(...lfs):endV;r._ls=r._lf-(r._ef-r._es);r.float=r._ls-r._es});
+ return warn}
+function clean(rows){rows.forEach(r=>Object.keys(r).forEach(k=>{if(k[0]=='_')delete r[k]}));return rows}
+/* ---------- jobs.py edit engine ---------- */
+const EDITABLE=['task','phase','bt_phase','milestone_type','start','finish','duration','depends_on','owner','source','source_ref','status','pct_complete','lock','actual_start','actual_finish','consumes','notes','color'];
+class EditError extends Error{}
+const clone=o=>JSON.parse(JSON.stringify(o));
+function computed(rows,today,cal){const c=clone(rows);const warn=compute(c,today,cal);const C={};c.forEach(r=>C[r.id]=r);return {C,warn,rows:c}}
+function isLocked(r){return up(r.lock)=='Y'||DONE.has(lo(r.status))}
+function violations(rows){const by={};rows.forEach(r=>by[r.id]=r);const out={};
+ rows.forEach(r=>{if(r._es===undefined||r.done||DONE.has(lo(r.status)))return;(r._deps||[]).forEach(([i,t,l])=>{const p=by[i];if(!p||p._es===undefined)return;
+  const need={FS:p._ef+1+l,SS:p._es+l}[t];const short=need!==undefined?need-r._es:(t=='FF'?(p._ef+l)-r._ef:0);if(short>0)out[r.id+'\u0001'+i]=[t,short]})});return out}
+function nextId(rows){let n=0;rows.forEach(r=>{const m=/^N(\d+)$/.exec(r.id);if(m)n=Math.max(n,+m[1])});return 'N'+String(n+1).padStart(3,'0')}
+function freeze(r,C){const c=C[r.id];if(c&&c.start){r.start=c.start;r.finish=c.finish}}
+function move(r,C,cal,start,finish){const s=cal.nextWd(start);let f,dur;
+ if(finish){f=finish>s?finish:s;dur=Math.max(1,cal.wdBetween(s,f))}else{dur=Math.max(1,intDur(r.duration)||1);f=cal.addWd(s,dur-1)}
+ if(r.milestone_type&&dur<=1)f=s;r.duration=String(dur);r.start=s;r.finish=f;if(isLocked(r))return;
+ const deps=parseDeps(r.depends_on);const known=d=>C[d[0]]&&C[d[0]]._es!==undefined;if(!deps.some(known))return;
+ const newEs=cal.wdi(s);const base=(i,t)=>{const p=C[i];return {FS:p._ef+1,SS:p._es,FF:p._ef-dur+1,SF:p._es-dur+1}[t]};
+ const out=deps.map(d=>{let [i,t,l]=d;if(known(d)&&base(i,t)+l>newEs)l=newEs-base(i,t);return [i,t,l]});
+ const kn=out.filter(known);let top=kn[0];kn.forEach(d=>{if(base(d[0],d[1])+d[2]>base(top[0],top[1])+top[2])top=d});
+ if(base(top[0],top[1])+top[2]<newEs)top[2]=newEs-base(top[0],top[1]);r.depends_on=fmtDeps(out)}
+function descendants(rows,ids){const succ={};rows.forEach(r=>parseDeps(r.depends_on).forEach(([i])=>(succ[i]=succ[i]||[]).push(r.id)));const seen=new Set(),st=[...ids];
+ while(st.length){const x=st.pop();(succ[x]||[]).forEach(y=>{if(!seen.has(y)){seen.add(y);st.push(y)}})}return seen}
+function setPct(r,C,today,pct){pct=parseFloat(pct);pct=isNaN(pct)?0:Math.max(0,Math.min(100,Math.trunc(pct)));const wasDone=DONE.has(lo(r.status));r.pct_complete=String(pct);
+ if(pct>=100){if(!wasDone)freeze(r,C);r.status='complete';r.actual_start=r.actual_start||r.start;r.actual_finish=r.actual_finish||((r.finish||today)<today?(r.finish||today):today)}
+ else{if(wasDone)r.actual_finish='';r.status=pct>0?'in progress':'not started';if(pct>0&&!r.actual_start)r.actual_start=(r.start||today)<today?(r.start||today):today}}
+/* state = {rows:[raw schedule rows], flags:[{task,pred,type,created}]}; ctx = {today, cal, settings, stamp:'YYYY-MM-DD HH:MM'} */
+function applyEdit(state,ops,ctx){const {today,cal}=ctx;const st=ctx.settings||{};const rows=clone(state.rows);rows.forEach(r=>FIELDS.forEach(f=>{if(r[f]==null)r[f]=''}));
+ const by={};rows.forEach(r=>by[r.id]=r);const c0=computed(rows,today,cal),C0=c0.C;const v0=violations(c0.rows);const touched=new Set(),msgs=[],newIds=[];
+ const S=v=>v==null?'':String(v);
+ for(const op of ops){const kind=op.op;if(['move','update','complete','delete','pct'].includes(kind)&&!(op.id in by))throw new EditError(`task ${op.id} not found`);
+  const r=by[op.id];if(r&&up(r.source)=='TRACKER')throw new EditError('tracker milestones are rebuilt from the tracker CSVs; edit the tracker instead');
+  if(kind=='move'){move(r,C0,cal,op.start,op.finish);touched.add(r.id);msgs.push(`moved ${r.id} '${r.task}' to ${r.start}–${r.finish}`)}
+  else if(kind=='update'){const f={};Object.entries(op.fields||{}).forEach(([k,v])=>{if(EDITABLE.includes(k))f[k]=S(v)});
+   if('depends_on' in f){const deps=parseDeps(f.depends_on);const bad=deps.filter(d=>!(d[0] in by)||d[0]==r.id).map(d=>d[0]);if(bad.length)throw new EditError('unknown/self predecessor: '+bad.join(', '));f.depends_on=fmtDeps(deps)}
+   const becomes=up('lock' in f?f.lock:r.lock)=='Y'&&up(r.lock)!='Y';if(becomes)freeze(r,C0);
+   const ns=f.start,nf=f.finish,nd=f.duration;delete f.start;delete f.finish;delete f.duration;Object.assign(r,f);
+   if('pct_complete' in f)setPct(r,C0,today,f.pct_complete);
+   if(ns||nf||nd){const cur=C0[r.id]||r;const s=ns||cur.start||today;let fin=null;if(nd&&!nf)fin=cal.addWd(cal.nextWd(s),Math.max(1,intDur(nd)||1)-1);else fin=nf||null;move(r,C0,cal,s,fin)}
+   touched.add(r.id);msgs.push(`updated ${r.id} '${r.task}'`)}
+  else if(kind=='pct'){setPct(r,C0,today,op.pct||0);touched.add(r.id);msgs.push(`${r.id} ${r.pct_complete}% complete`)}
+  else if(kind=='complete'){const done=op.done!==false;setPct(r,C0,today,done?100:0);touched.add(r.id);msgs.push(`${done?'completed':'reopened'} ${r.id} '${r.task}'`)}
+  else if(kind=='add'){const f={};Object.entries(op.fields||op.row||{}).forEach(([k,v])=>{if(EDITABLE.includes(k))f[k]=S(v)});const nid=op.new_id&&!(op.new_id in by)?op.new_id:nextId(rows);
+   const n={};FIELDS.forEach(k=>n[k]='');Object.assign(n,{id:nid,task:f.task||'New task',phase:f.phase||'General',source:f.source||'DRAFT',status:'not started',pct_complete:'0',source_ref:`Added in the job workspace ${ctx.stamp} AZ${ctx.who?' by '+ctx.who:''}`});
+   ['owner','notes','color','milestone_type','lock','bt_phase'].forEach(k=>{if(f[k])n[k]=f[k]});
+   if(f.depends_on){const deps=parseDeps(f.depends_on);const bad=deps.filter(d=>!(d[0] in by)).map(d=>d[0]);if(bad.length)throw new EditError('unknown predecessor: '+bad.join(', '));n.depends_on=fmtDeps(deps)}
+   const s=cal.nextWd(f.start||today);const dur=Math.max(1,intDur(f.duration)||1);n.start=s;n.duration=String(dur);n.finish=cal.addWd(s,dur-1);
+   let pos=rows.findIndex(x=>x.id==op.after);pos=pos<0?rows.length:pos+1;rows.splice(pos,0,n);by[nid]=n;
+   if(f.pct_complete&&+f.pct_complete>0){const cc=computed(rows,today,cal).C;setPct(n,cc,today,f.pct_complete)}
+   touched.add(nid);newIds.push(nid);msgs.push(`added ${nid} '${n.task}'`)}
+  else if(kind=='delete'){rows.splice(rows.indexOf(r),1);delete by[r.id];rows.forEach(x=>{const deps=parseDeps(x.depends_on);if(deps.some(d=>d[0]==r.id))x.depends_on=fmtDeps(deps.filter(d=>d[0]!=r.id))});msgs.push(`deleted ${r.id} '${r.task}'`)}
+  else if(kind=='baseline'){rows.forEach(x=>{const c=C0[x.id];if(c&&up(x.source)!='TRACKER'){x.baseline_start=c.start;x.baseline_finish=c.finish}});msgs.push('baseline set to the current schedule')}
+  else throw new EditError('unknown op '+kind)}
+ let c1=computed(rows,today,cal);
+ if(c1.warn.some(w=>w.startsWith('dependency cycle'))&&!c0.warn.some(w=>w.startsWith('dependency cycle')))throw new EditError('that predecessor would create a dependency loop');
+ const pushed=[];
+ if(st.cascade_bt){const desc=descendants(rows,touched);for(let it=0;it<60;it++){const v=violations(c1.rows);const todo=Object.entries(v).filter(([k])=>!(k in v0)&&desc.has(k.split('\u0001')[0])&&up(by[k.split('\u0001')[0]].source)=='BUILDERTREND');
+  if(!todo.length)break;const need={};todo.forEach(([k,[t,short]])=>{const tid=k.split('\u0001')[0];need[tid]=Math.max(need[tid]||0,short)});
+  Object.entries(need).forEach(([tid,short])=>{const c=c1.C[tid];by[tid].start=cal.fromWdi(c._es+short);by[tid].finish=cal.fromWdi(c._ef+short);if(!pushed.includes(tid))pushed.push(tid)});c1=computed(rows,today,cal)}}
+ rows.forEach(x=>{const c=c1.C[x.id];if(c&&!isLocked(x)&&c.start){x.start=c.start;x.finish=c.finish}});
+ const shifted=Object.keys(c1.C).filter(i=>i in C0&&!touched.has(i)&&(C0[i].start!=c1.C[i].start||C0[i].finish!=c1.C[i].finish)).map(i=>({id:i,task:c1.C[i].task,old:C0[i].start,new:c1.C[i].start}));
+ const v1=violations(c1.rows);const flBefore=state.flags||[];
+ const newflags=Object.entries(v1).filter(([k])=>!(k in v0)).map(([k,val])=>{const [t,p]=k.split('\u0001');return {task:t,pred:p,type:val[0],created:ctx.stamp}});
+ const fl=flBefore.filter(f=>(f.task+'\u0001'+f.pred) in v1&&f.task in by).concat(newflags.filter(f=>!flBefore.some(g=>g.task==f.task&&g.pred==f.pred)));
+ let summary=msgs.join('; ');if(shifted.length)summary+=`; ${shifted.length} downstream task(s) shifted`;if(pushed.length)summary+=`; ${pushed.length} Buildertrend task(s) pushed`;if(newflags.length)summary+=`; ${newflags.length} locked task(s) flagged (not moved)`;
+ return {state:{rows,flags:fl},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
+/* ---------- derived job (modules.load_schedules + build_conflicts + build_todos + jobs.job_slice) ---------- */
+const PALETTE=['#2563eb','#0e9384','#7a3ff2','#dc6803','#c11574','#12a150','#4f46e5','#b54708','#0086c9','#6172f3','#ee46bc','#669f2a'];
+function pyRound(x){const f=Math.floor(x),d=x-f;if(Math.abs(d-0.5)<1e-9)return f%2==0?f:f+1;return Math.round(x)}
+const durW=t=>Math.max(1,intDur(t.duration)||1);
+const DONE_ORDER=/^(delivered|paid)/i;
+function poStatus(s){s=lo(s);if(s.startsWith('paid'))return 'Paid';if(s.includes('invoiced'))return 'Released (invoiced)';if(s.startsWith('delivered'))return 'Work Complete';if(s.includes('partially'))return 'Approved (partial delivery)';if(s.includes('missing'))return 'Issue';
+ if(/ordered|shipped|production|contracted|deposit|ready for pickup|placed/.test(s)&&!s.includes('not'))return 'Released';return 'Draft'}
+function consumerTask(tasks,key){if(!key)return null;const base=key.split('-')[0];let best=null;
+ tasks.forEach(r=>{const c=r.consumes||'';if(!c||c.startsWith('selection:')||r.done)return;const ks=c.split(';');
+  if(ks.includes(key)||(key==base&&ks.some(k=>k.split('-')[0]==base))||(base=='TIL'&&ks.includes('TIL'))){if(!best||r.start<best.start)best=r}});return best}
+const dd=(a,b)=>dn(a)-dn(b);
+/* base: snapshot job object (from data.json); state: {rows, flags}; opts: {settings, extra:{orders,btve}} */
+function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const settings=Object.assign({saturday:false,holidays:'construction',cascade_bt:false},base.settings||{},opts.settings||{});
+ const cal=makeCal(settings.saturday,settings.holidays);
+ const rows=clone(state.rows);rows.forEach(r=>FIELDS.forEach(f=>{if(r[f]==null)r[f]=''}));const warn=compute(rows,today,cal);
+ // edit flags still broken
+ const v=violations(rows);const byR={};rows.forEach(r=>byR[r.id]=r);const eflags=[];
+ (state.flags||[]).forEach(f=>{const k=f.task+'\u0001'+f.pred;if(k in v&&byR[f.task]&&byR[f.pred]){const t=byR[f.task],p=byR[f.pred];eflags.push({task:t.id,task_name:t.task,task_start:t.start,task_source:t.source,pred:p.id,pred_name:p.task,pred_finish:p.finish,short:v[k][1],created:f.created||''})}});
+ rows.forEach(r=>{const s=lo(r.status);const done=s.startsWith('complete')||s=='done';r.done=done;
+  r.late=!!(((r.source=='REAL'||r.source=='BUILDERTREND')&&!done&&r.finish&&r.finish<today&&!/^(unverified|tentative|scheduled)/.test(s))||/^(failed|missed|not done|issues)/.test(s));
+  r.critical=!!(r.late||(!done&&(r.float==null?99:r.float)<=0));r.future_complete=!!(done&&r.source=='BUILDERTREND'&&r.start&&r.start>today);
+  r.overdue=!!(!done&&r.finish&&r.finish<today);r.slip=(r.baseline_finish&&r.finish)?cal.wdi(r.finish)-cal.wdi(r.baseline_finish):'';r.locked=up(r.lock)=='Y';
+  if(r.source=='REAL'&&r.id.startsWith('E')&&lo(r.source_ref).includes('calendar')&&r.phase=='Preconstruction/Bids')r.phase='Calendar events (REAL)'});
+ clean(rows);
+ const tasks=rows.concat(clone(base.trackerRows||[]));
+ const sch=tasks.filter(r=>r.source!='TRACKER');const dates=[];tasks.forEach(r=>{if(r.start)dates.push(r.start);if(r.finish)dates.push(r.finish)});
+ const realish=tasks.filter(r=>['REAL','TRACKER','BUILDERTREND'].includes(r.source)).slice().sort((a,b)=>a.start<b.start?-1:a.start>b.start?1:0);
+ const summary={start:dates.length?dates.reduce((a,b)=>a<b?a:b):'',finish:sch.length?sch.map(r=>r.finish).reduce((a,b)=>a>b?a:b):'',
+  real:tasks.filter(r=>r.source=='REAL').length,tracker:tasks.filter(r=>r.source=='TRACKER').length,bt:tasks.filter(r=>r.source=='BUILDERTREND').length,
+  bt_past_due:tasks.filter(r=>r.source=='BUILDERTREND'&&r.late).length,draft:tasks.filter(r=>r.source=='DRAFT').length,total:tasks.length,late:tasks.filter(r=>r.late).length,
+  next:realish.filter(r=>r.start>=today).slice(0,3).map(r=>({task:r.task,date:r.start,type:r.milestone_type,src:r.source}))};
+ // selections: DRAFT template deadlines follow the "Finalize ..." schedule task
+ const fin={};tasks.forEach(r=>{const c=r.consumes||'';if(c.startsWith('selection:')){const k=c.split(':')[1];if(!(k in fin))fin[k]=r}});
+ const selections=(base.selections||[]).map(s=>{if(s.source!='DRAFT')return s;const f=fin[s.key];return Object.assign({},s,{deadline:f?f.start:'',deadline_task:f?f.task:'',source_ref:"Buildertrend '**Future Template' Selection Print"+(f?`; due = schedule '${f.task}'`:'')})});
+ // to-dos: BT template due dates follow their schedule item
+ const byT={};tasks.forEach(t=>{if(!(t.id in byT))byT[t.id]=t});
+ const todos=[];(base.todos||[]).forEach(t=>{const m=/^(\d+) days? (after|before) /.exec(t.due_rule||'');if(!m||!['DRAFT','REAL'].includes(t.source)){todos.push(t);return}
+  const rel=byT[t.related];if(!rel)return;const days=(m[2]=='after'?1:-1)*(+m[1]);const b=days>=0?rel.finish:rel.start;todos.push(Object.assign({},t,{due:addDays(b,days),related_task:rel.task,source:rel.source=='DRAFT'?'DRAFT':'REAL'}))});
+ todos.sort((a,b)=>{const x=a.due||'9999',y=b.due||'9999';return x<y?-1:x>y?1:(a.title<b.title?-1:a.title>b.title?1:0)});
+ // conflicts
+ const ex=opts.extra||null;const out=[];const horizon=addDays(today,120);
+ const cnotes=base.conflict_notes||{};const noteFor=k=>cnotes[k]?' '+cnotes[k]:'';
+ const add=(kind,sev,title,detail,t,ref)=>{t=t||{};out.push({job:base.name,slug:base.slug,kind,severity:sev,title,detail,task:t.id||'',task_name:t.task||'',task_start:t.start||'',task_source:t.source||'',ref:ref||''})};
+ const STATIC_KINDS=['delivery after phase start','ordered, no delivery date','not ordered / order-by passed','BT vs email date'];
+ if(ex&&ex.orders){ex.orders.forEach(o=>{const t=consumerTask(tasks,o.key);if(!t)return;const ts=t.start;
+   if(o.eta||(o.od&&o.lead)){const proj=o.eta||addDays(o.od,o.lead);const basis=o.eta?`expected delivery '${o.eta_raw}'`:`ordered ${o.ordered_raw} + lead '${o.lead_raw}'`;
+    if(proj>ts)add('delivery after phase start',ts<=addDays(today,45)?'high':'medium',`${o.item.slice(0,70)} arrives ~${proj}, after '${t.task}' starts ${t.start} (${t.source})`,`${basis}. Vendor ${o.vendor}. ${dd(proj,ts)} days after the task start.`,t,o.id)}
+   else if(!['Draft','Issue'].includes(o.pst)){if(ts<=addDays(today,30))add('ordered, no delivery date','medium',`${o.item.slice(0,70)}: '${o.status}' but no ETA; '${t.task}' starts ${t.start} (${t.source})`,`Confirm delivery date with ${o.vendor}.`,t,o.id)}
+   else if(!o.od){const ld=o.lead||o.dflt;const ob=addDays(ts,-ld);if(ts<=horizon||ob<=today)add('not ordered / order-by passed',ob<=today?'high':'medium',`${o.item.slice(0,70)}: order by ${ob} for '${t.task}' ${t.start} (${t.source})`,`Status '${o.status}'; lead ${o.lead?o.lead_raw+' (tracker)':'~'+ld+'d (default)'}. Vendor ${o.vendor}.`,t,o.id)}})}
+ else (base.conflicts||[]).filter(c=>STATIC_KINDS.slice(0,3).includes(c.kind)).forEach(c=>{const t=byT[c.task];out.push(Object.assign({},c,t?{task_start:t.start}:{}))});
+ selections.forEach(s=>{if(s.source=='TRACKER'&&!String(s.approval||'').startsWith('Approved')&&!s.order_date&&['Draft','Issue'].includes(poStatus(s.order_status))){const t=consumerTask(tasks,s.key);
+   if(t&&t.start<=horizon)add('phase before selection approved',t.start<=addDays(today,45)?'high':'medium',`'${t.task}' starts ${t.start} (${t.source}); selection not approved: ${String(s.choice||'').slice(0,60)}`,`Selection: ${s.approval||'unknown'}; order status: ${s.order_status}.`,t,s.order_link)}
+  else if(s.source=='DRAFT'&&s.deadline&&s.deadline<=addDays(today,14)){const t=consumerTask(tasks,s.key);add('selection due (template)','low',`${s.title}: due ${s.deadline} per DRAFT schedule ('${s.deadline_task}')`,'Buildertrend selection template; confirm with the designer/client.',t,s.id)}});
+ (base.gates||[]).forEach(g=>{if(['done','complete','closed'].includes(lo(g.status||'open')))return;const t=tasks.find(x=>x.id==g.gated_task);
+  if(t&&t.start<=horizon)add('prerequisite open',t.start<=addDays(today,30)?'high':'medium',`'${t.task}' (${t.start}, ${t.source}) needs: ${g.item}`,`Source: ${g.source||''}`,t)});
+ const btl=tasks.filter(t=>t.source=='BUILDERTREND'&&t.late);if(btl.length){const first=btl.reduce((a,b)=>b.start<a.start?b:a);const old=btl.every(t=>t.finish<addDays(today,-180));
+  add('BT schedule not updated',old?'low':(btl.length>=3?'high':'medium'),`Buildertrend: ${btl.length} item(s) past their end date but not marked complete (earliest '${first.task}' ${first.start})`,
+   old?'Whole schedule is dated 2025 - stale/unused BT schedule.':'Update % complete in Buildertrend or re-baseline; downstream BT dates (and everything this dashboard derives) assume these happened.',first)}
+ tasks.forEach(t=>{if(t.future_complete)add('BT marked complete in the future','medium',`Buildertrend marks '${t.task}' (${t.start}-${t.finish}) complete, but it is dated after today`,
+   'Either the work happened earlier (fix the BT dates) or it was checked off by mistake.'+noteFor('BT marked complete in the future'),t)});
+ if(ex&&ex.btve)ex.btve.forEach(d=>{const n=+d.days;if(n==0)return;const t=tasks.find(x=>x.id==d.bt_id);const bad=/^(failed|not done|missed)/.test(lo(d.email_status));
+   const sev=(bad&&t&&!t.done)||Math.abs(n)>=14?'high':(Math.abs(n)>=2?'medium':'low');add('BT vs email date',sev,`BT '${d.bt_task}' ${d.field} ${d.bt_date} vs email/calendar ${d.email_date} (${d.email_status})`+(n?`: ${Math.abs(n)} day(s) apart`:''),d.source,t,d.email_id)});
+ else (base.conflicts||[]).filter(c=>c.kind=='BT vs email date').forEach(c=>out.push(c));
+ eflags.forEach(f=>{const tt=tasks.find(x=>x.id==f.task);add('locked task not moved (edit)',tt&&tt.start<=addDays(today,30)?'high':'medium',`'${f.task_name}' (${f.task_source}, locked) starts ${f.task_start} but predecessor '${f.pred_name}' now finishes ${f.pred_finish}: ${f.short} workday(s) short`,
+   `A workspace edit on ${f.created} moved the predecessor. Locked/REAL/Buildertrend dates never auto-move: move this task, adjust the link lag, or unlock it.`,tt)});
+ warn.forEach(w=>add('dependency','medium',w,'A locked REAL date conflicts with its predecessor logic.'));
+ tasks.forEach(t=>{if(t.late&&t.source=='REAL')add('late / failed REAL item','high',`'${t.task}' ${t.start}: ${t.status}`,t.source_ref||'',t)});
+ const rank={high:0,medium:1,low:2};const conflicts=out.map((c,i)=>[c,i]).sort((a,b)=>{const x=rank[a[0].severity]-rank[b[0].severity];if(x)return x;const p=a[0].task_start||'9999',q=b[0].task_start||'9999';return p<q?-1:p>q?1:a[1]-b[1]}).map(x=>x[0]);
+ // job slice
+ const nt=tasks.filter(t=>t.source!='TRACKER');const totW=nt.reduce((a,t)=>a+durW(t),0);const doneW=nt.reduce((a,t)=>a+durW(t)*(t.done?100:(parseFloat(t.pct_complete)||0))/100,0);
+ const pc=Object.assign({},settings.phase_colors||{});let k=0;tasks.forEach(t=>{const p=t.phase||'Other';if(!(p in pc)){pc[p]=PALETTE[k%PALETTE.length];k++}});
+ const kd=[];if(summary.start)kd.push({label:'Start',date:summary.start,note:''});if(summary.finish)kd.push({label:'Projected finish',date:summary.finish,note:''});
+ const bl=nt.map(x=>x.baseline_finish).filter(Boolean);if(bl.length&&summary.finish){const b=bl.reduce((a,c)=>a>c?a:c);const slip=cal.wdi(summary.finish)-cal.wdi(b);kd.push({label:'Baseline finish',date:b,note:slip?`${slip>0?'+':''}${slip} workdays`:'on baseline'})}
+ [['permit','Permit'],['inspection','Next inspection']].forEach(([kind,label])=>{const m=tasks.filter(x=>x.milestone_type==kind&&!x.done&&x.start&&x.start>=today).sort((a,b)=>a.start<b.start?-1:a.start>b.start?1:0);if(m.length)kd.push({label,date:m[0].start,note:m[0].task.slice(0,60)})});
+ const info=Object.assign({},base.info||{},(opts.settings||{}).info||{});
+ const J=Object.assign({},base,{tasks,summary,warnings:warn,selections,todos,conflicts,info,settings:{saturday:settings.saturday,holidays:settings.holidays,cascade_bt:!!settings.cascade_bt},
+  cal:{saturday:cal.saturday,kind:cal.kind,describe:cal.describe(),holidays:cal.holidays},phase_colors:pc,key_dates:kd,pct:totW?pyRound(100*doneW/totW):0,edit_flags:eflags});
+ delete J.trackerRows;delete J.baseRows;
+ J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length});
+ return J}
+function listRow(J,old){const t=J.tasks.filter(x=>x.source!='TRACKER');return Object.assign({},old,{stage:(J.info||{}).status||J.stage,pm:(J.info||{}).pm||'',client:(J.info||{}).client||'',start:J.summary.start||'',finish:J.summary.finish||'',tasks:J.tasks.length,
+ bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
+/* split a snapshot job into raw schedule rows + read-only tracker rows */
+const TRACKER_ID=/^(BID|ORD|DLV)-/;
+function splitJob(j){const base=[],trk=[];(j.tasks||[]).forEach(t=>{if(t.source=='TRACKER'&&TRACKER_ID.test(t.id))trk.push(t);else{const r={};FIELDS.forEach(f=>r[f]=t[f]==null?'':String(t[f]));base.push(r)}});return {rows:base,trackerRows:trk}}
+/* exports (refresh.export_bt schedule part + export_msproject) */
+function csvText(rows,cols){const q=v=>{v=v==null?'':(typeof v=='object'?JSON.stringify(v):String(v));return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};return [cols.join(',')].concat(rows.map(r=>cols.map(c=>q(r[c])).join(','))).join('\r\n')+'\r\n'}
+function btCsv(J){const hdr=['ID #','Title','Complete','Phase','Duration','Start','End','Assigned To'];[1,2,3].forEach(i=>['Id','Type','Lag'].forEach(k=>hdr.push(`Pred ${i} ${k}`)));hdr.push('Notes');
+ const tasks=J.tasks.filter(t=>t.source!='TRACKER');const num={};tasks.forEach((t,i)=>num[t.id]=i+1);
+ return csvText(tasks.map(t=>{const r={'ID #':num[t.id],Title:t.task,Complete:t.done?'True':'False',Phase:t.bt_phase||t.phase,Duration:t.duration,Start:t.start,End:t.finish,'Assigned To':t.owner||'',Notes:`${t.source}: ${t.source_ref||''}`};
+  parseDeps(t.depends_on).filter(d=>d[0] in num).slice(0,3).forEach(([p,ty,lag],i)=>{r[`Pred ${i+1} Id`]=num[p];r[`Pred ${i+1} Type`]=ty;r[`Pred ${i+1} Lag`]=lag});return r}),hdr)}
+function xesc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function mspXml(J){const tasks=J.tasks.filter(t=>t.source!='TRACKER');const num={};tasks.forEach((t,i)=>num[t.id]=i+1);
+ const x=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>','<Project xmlns="http://schemas.microsoft.com/project">',`<Name>${xesc(J.name)}</Name><ScheduleFromStart>1</ScheduleFromStart><MinutesPerDay>480</MinutesPerDay><Tasks>`];
+ tasks.forEach(t=>{const dur=Math.max(parseInt(t.duration||0,10)||0,0);const links=parseDeps(t.depends_on).filter(d=>d[0] in num).map(([p,ty,lag])=>`<PredecessorLink><PredecessorUID>${num[p]}</PredecessorUID><Type>${({FF:0,FS:1,SF:2,SS:3})[ty]??1}</Type><LinkLag>${lag*4800}</LinkLag><LagFormat>7</LagFormat></PredecessorLink>`).join('');
+  x.push(`<Task><UID>${num[t.id]}</UID><ID>${num[t.id]}</ID><Name>${xesc(t.task)}</Name><Start>${t.start}T08:00:00</Start><Finish>${t.finish}T17:00:00</Finish><Duration>PT${dur*8}H0M0S</Duration><Milestone>${dur==0||(t.milestone_type&&dur<=1)?1:0}</Milestone><PercentComplete>${t.done?100:0}</PercentComplete><Notes>${xesc(t.source+': '+(t.source_ref||''))}</Notes>${links}</Task>`)});
+ x.push('</Tasks></Project>');return x.join('\n')}
+const E={DAY,dn,isoN,addDays,makeCal,holidaysForYear,FIELDS,parseDeps,fmtDeps,compute,clean,applyEdit,EditError,violations,deriveJob,listRow,splitJob,poStatus,consumerTask,csvText,btCsv,mspXml,clone,pyRound};
+root.HWSEngine=E;if(typeof module!=='undefined'&&module.exports)module.exports=E;
+})(typeof window!=='undefined'?window:globalThis);
+
+/* Harswells local change store: every edit is an entry in a per-job log kept in localStorage (key per file/data version).
+   The job shown = snapshot + checked-in change sets (from the shared folder / Dropbox) + this browser's entries, replayed
+   through HWSEngine (same rules as the live server). Undo = mark the last local entry undone and replay. */
+(function(root){
+'use strict';
+const E=root.HWSEngine;
+function nowAZ(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,19).replace('T',' ')} // Arizona = UTC-7 all year (no DST)
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function storageOk(){try{const k='__hws_t';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
+function mergeSettings(s,b){s=E.clone(s);if('saturday' in b)s.saturday=!!b.saturday;if(['construction','federal','none'].includes(b.holidays))s.holidays=b.holidays;if('cascade_bt' in b)s.cascade_bt=!!b.cascade_bt;
+ Object.entries(b.info||{}).forEach(([k,v])=>{s.info[k]=String(v==null?'':v).slice(0,300)});
+ Object.entries(b.phase_colors||{}).forEach(([k,v])=>{if(/^#[0-9a-fA-F]{6}$/.test(v||''))s.phase_colors[String(k).slice(0,80)]=v;else if(!v)delete s.phase_colors[k]});return s}
+/* minimal ZIP (stored, UTF-8 names) so "Export my changes" is ONE download (iOS/Safari handle one file best) */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zip(files){const enc=new TextEncoder();const parts=[],central=[];let off=0;const d=new Date();const dt=((d.getFullYear()-1980)<<9|(d.getMonth()+1)<<5|d.getDate()),tm=(d.getHours()<<11|d.getMinutes()<<5|(d.getSeconds()>>1));
+ files.forEach(f=>{const name=enc.encode(f.name),data=typeof f.data=='string'?enc.encode(f.data):f.data;const crc=crc32(data);
+  const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+  parts.push(new Uint8Array(h.buffer),name,data);
+  const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,off,true);
+  central.push(new Uint8Array(c.buffer),name);off+=30+name.length+data.length});
+ const csize=central.reduce((a,b)=>a+b.length,0);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,csize,true);e.setUint32(16,off,true);
+ return new Blob(parts.concat(central,[new Uint8Array(e.buffer)]),{type:'application/zip'})}
+function unzipFind(buf,want){const u=new Uint8Array(buf),v=new DataView(buf);let p=0;const dec=new TextDecoder();
+ while(p+30<=u.length&&v.getUint32(p,true)==0x04034b50){const method=v.getUint16(p+8,true),size=v.getUint32(p+18,true),nl=v.getUint16(p+26,true),xl=v.getUint16(p+28,true);const name=dec.decode(u.subarray(p+30,p+30+nl));const st=p+30+nl+xl;
+  if(want(name)){if(method!==0)throw new Error('zip entry is compressed; import the changes .json instead');return dec.decode(u.subarray(st,st+size))}p=st+size}return null}
+function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra||null;const KEY='hws-edits-v1:'+version;
+ const persist=storageOk();let rec=null;
+ if(persist){try{rec=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){rec=null}}
+ if(!rec||rec.v!==1)rec={v:1,version,built:data.built,jobs:{}};
+ const cache={};let lastSaveErr=null;
+ function save(){rec.updated=nowAZ();if(!persist)return;try{localStorage.setItem(KEY,JSON.stringify(rec));lastSaveErr=null}catch(e){lastSaveErr=e.message;if(o.onSaveError)o.onSaveError(e)}}
+ function jr(slug){return rec.jobs[slug]||(rec.jobs[slug]={log:[],remote:[]})}
+ function who(){try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
+ function baseOf(slug){const j=data.jobs[slug];if(!j)return null;const c=data.common||{};const sp=E.splitJob(j);
+  const base=Object.assign({},j,{modules:c.modules,mod_cols:c.mod_cols,mod_files:c.mod_files,all_jobs:c.all_jobs,built:data.built,today:data.today,trackerRows:sp.trackerRows});
+  return {base,rows:sp.rows}}
+ function ctx(settings,e){return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||''}}
+ function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null});
+  const h=[];let n=0;const r=rec.jobs[slug];
+  if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:false,failed:e.failed,where:'checked in'+(cs.who?' by '+cs.who:'')})));
+   r.log.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:e.undone,failed:e.failed,where:'this browser'}))}
+  J.history=h;J.pending=r?r.log.filter(e=>!e.undone).length:0;return J}
+ function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[]};
+  let settings={saturday:!!(b.base.settings||{}).saturday,holidays:(b.base.settings||{}).holidays||'construction',cascade_bt:!!(b.base.settings||{}).cascade_bt,info:E.clone(b.base.info||{}),phase_colors:E.clone(b.base.phase_colors||{})};
+  const r=rec.jobs[slug];const entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
+  entries.forEach(e=>{if(e.kind=='settings'){settings=mergeSettings(settings,e.settings||{});return}
+   try{const x=E.applyEdit(state,e.ops,ctx(settings,e));state=x.state;delete e.failed}catch(err){e.failed=err.message}});
+  const c={base:b.base,state,settings};c.J=derive(slug,c);cache[slug]=c;return c}
+ function get(slug){return cache[slug]||build(slug)}
+ const S={KEY,persist,version,
+  saveError:()=>lastSaveErr,
+  who,setWho(n){try{localStorage.setItem('hws-who',String(n||'').trim().slice(0,60))}catch(e){}},
+  getJob(slug){const c=get(slug);return c?c.J:null},
+  edit(slug,ops){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:E.clone(ops)};
+   const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e));let k=0;e.ops.forEach(op=>{if(op.op=='add')op.new_id=x.result.new_ids[k++]});
+   e.summary=x.result.summary;jr(slug).log.push(e);save();c.state=x.state;c.J=derive(slug,c);return {J:c.J,result:x.result}},
+  undo(slug){const r=rec.jobs[slug];const last=r&&r.log.slice().reverse().find(e=>e.kind=='edit'&&!e.undone);if(!last)throw new Error('nothing to undo (only edits made in this browser and not yet checked in can be undone)');
+   last.undone=true;last.undone_at=nowAZ();save();delete cache[slug];const c=build(slug);return {J:c.J,summary:'Undid: '+last.summary}},
+  setSettings(slug,body){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'settings',settings:E.clone(body),summary:'settings changed'};jr(slug).log.push(e);save();c.settings=mergeSettings(c.settings,body);c.J=derive(slug,c);return c.J},
+  getList(){const L=Object.assign({},data.list,{built:data.built});L.jobs=data.list.jobs.map(row=>{const r=rec.jobs[row.slug];if(!r||(!r.remote.length&&!r.log.some(e=>!e.undone)))return row;const J=S.getJob(row.slug);return J?E.listRow(J,row):row});return L},
+  pending(slug){const r=rec.jobs[slug];return r?r.log.filter(e=>!e.undone).length:0},
+  pendingTotal(){return Object.keys(rec.jobs).reduce((a,s)=>a+S.pending(s),0)},
+  editedJobs(){return Object.keys(rec.jobs).filter(s=>S.pending(s)||rec.jobs[s].remote.length)},
+  diff(slug){const b=baseOf(slug);const c=get(slug);const o={};b.rows.forEach(r=>o[r.id]=r);const n={};c.state.rows.forEach(r=>n[r.id]=r);
+   const out={added:[],deleted:[],changed:[]};c.state.rows.forEach(r=>{if(!o[r.id]){out.added.push(r);return}E.FIELDS.forEach(f=>{if(f=='phase')return;if(String(o[r.id][f])!==String(r[f]))out.changed.push({id:r.id,task:r.task,field:f,before:o[r.id][f],after:r[f]})})});
+   b.rows.forEach(r=>{if(!n[r.id])out.deleted.push({id:r.id,task:r.task})});return out},
+  exportObj(){const jobs={};Object.keys(rec.jobs).forEach(slug=>{const r=rec.jobs[slug];const live=r.log.filter(e=>!e.undone);if(!live.length&&!r.log.length)return;const J=S.getJob(slug);
+    jobs[slug]={name:J.name,entries:E.clone(r.log),checked_in:r.remote.map(cs=>({id:cs.id,name:cs.name,who:cs.who,created:cs.created,entries:cs.entries.length})),
+     api_ops:live.filter(e=>e.kind=='edit').map(e=>e.ops),settings_changes:live.filter(e=>e.kind=='settings').map(e=>e.settings),diff:S.diff(slug)}});
+   return {format:'harswells-schedule-changes',format_version:1,file_version:version,snapshot_built:data.built,snapshot_today:data.today,exported_at:nowAZ()+' AZ',exported_by:who(),
+    how_to_apply:'Each api_ops item is one POST /api/job/<slug>/edit body {"ops": [...]} on the live server, in order (add ops carry new_id; map it to the id the server returns). Or run: python3 share/apply_changes.py <this file> (dry run by default).',jobs}},
+  exportFiles(){const obj=S.exportObj();const files=[{name:'changes.json',data:JSON.stringify(obj,null,1)}];
+   Object.keys(obj.jobs).forEach(slug=>{const J=S.getJob(slug);const cols=(J.mod_cols||{}).schedule;if(cols)files.push({name:`${slug}-schedule.csv`,data:E.csvText(J.tasks,cols)});
+    files.push({name:`${slug}-buildertrend-schedule.csv`,data:E.btCsv(J)});const d=obj.jobs[slug].diff;
+    files.push({name:`${slug}-changed-tasks.csv`,data:E.csvText(d.changed.concat(d.added.map(r=>({id:r.id,task:r.task,field:'(added)',before:'',after:`${r.start} → ${r.finish}`})),d.deleted.map(r=>({id:r.id,task:r.task,field:'(deleted)',before:'',after:''}))),['id','task','field','before','after'])})});
+   files.push({name:'README.txt',data:`Harswells schedule changes exported ${obj.exported_at} by ${obj.exported_by||'(name not set)'}\r\nSnapshot: ${obj.snapshot_built}\r\n\r\nchanges.json  = every edit (same format as the live app's edit API) - Import it back into the file, or apply it on the office box.\r\n<job>-schedule.csv = the whole schedule after the edits\r\n<job>-changed-tasks.csv = only what changed vs the snapshot\r\n<job>-buildertrend-schedule.csv = Buildertrend import shape\r\n`});
+   return {obj,files,zip:zip(files)}},
+  importObj(obj){if(!obj||obj.format!=='harswells-schedule-changes'||!obj.jobs)throw new Error('not a Harswells changes file');let added=0;const jobsTouched=[];
+   Object.entries(obj.jobs).forEach(([slug,j])=>{if(!data.jobs[slug])return;const r=jr(slug);const have=new Set(r.log.map(e=>e.id).concat(...r.remote.map(cs=>cs.entries.map(e=>e.id))));
+    (j.entries||[]).forEach(e=>{if(!e||!e.id||have.has(e.id))return;if(e.kind!='edit'&&e.kind!='settings')return;r.log.push(E.clone(e));added++});jobsTouched.push(slug);delete cache[slug]});
+   save();let failed=0;jobsTouched.forEach(s=>{build(s);failed+=rec.jobs[s].log.filter(e=>e.failed&&!e.undone).length});return {added,jobs:jobsTouched.length,failed,otherSnapshot:obj.snapshot_built!==data.built}},
+  importText(text){return S.importObj(JSON.parse(text))},
+  importBuffer(buf){const u=new Uint8Array(buf);if(u[0]==0x50&&u[1]==0x4b){const t=unzipFind(buf,n=>/(^|\/)changes\.json$/.test(n));if(!t)throw new Error('no changes.json in that zip');return S.importText(t)}return S.importText(new TextDecoder().decode(u))},
+  reset(slug){if(slug){delete rec.jobs[slug];delete cache[slug]}else{rec={v:1,version,built:data.built,jobs:{}};Object.keys(cache).forEach(k=>delete cache[k])}save();if(!slug&&persist){try{localStorage.removeItem(KEY)}catch(e){}}},
+  /* shared check-out / check-in support */
+  checkout(slug){return (rec.jobs[slug]||{}).checkout||null},
+  setCheckout(slug,co){const r=jr(slug);if(co)r.checkout=co;else delete r.checkout;save()},
+  changeset(slug){const r=rec.jobs[slug];const live=r?r.log.filter(e=>!e.undone):[];return {id:uid(),job:slug,who:who(),created:nowAZ()+' AZ',created_ms:Date.now(),base_built:data.built,file_version:version,entries:E.clone(live)}},
+  markCheckedIn(slug,cs,name){const r=jr(slug);r.remote.push(Object.assign({},cs,{name}));r.log=[];save();delete cache[slug];build(slug)},
+  mergeRemote(slug,sets){const r=jr(slug);const have=new Set(r.remote.map(c=>c.id));let n=0;sets.forEach(cs=>{if(cs&&cs.id&&!have.has(cs.id)&&Array.isArray(cs.entries)){r.remote.push(cs);n++}});
+   r.remote.sort((a,b)=>((a.created_ms||0)-(b.created_ms||0))||(String(a.name||a.created)<String(b.name||b.created)?-1:1));if(n){save();delete cache[slug];build(slug)}return n},
+  knownRemote(slug){return new Set(((rec.jobs[slug]||{}).remote||[]).map(c=>c.name))},
+  otherVersions(){if(!persist)return [];const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('hws-edits-v1:')&&k!==KEY){const r=JSON.parse(localStorage.getItem(k)||'null');if(r&&r.jobs){const n=Object.values(r.jobs).reduce((a,j)=>a+(j.log||[]).filter(e=>!e.undone).length,0);if(n)out.push({key:k,n,built:r.built})}}}}catch(e){}return out},
+  adoptVersion(key){const r=JSON.parse(localStorage.getItem(key)||'null');if(!r)return 0;const obj={format:'harswells-schedule-changes',jobs:{}};Object.entries(r.jobs).forEach(([s,j])=>obj.jobs[s]={entries:(j.log||[])});return S.importObj(obj)},
+  nowAZ,uid};
+ return S}
+root.HWSStore={create,nowAZ,uid,zip,unzipFind,crc32};
+})(typeof window!=='undefined'?window:globalThis);
+
+/* Harswells shared check-out / check-in.
+   ONE storage-adapter interface, two back ends with the same semantics:
+     fsa     : a folder picked with the File System Access API (desktop Chrome/Edge; e.g. the Dropbox-synced
+               "Harswells Live Schedule/sync" folder on the computer)
+     dropbox : the Dropbox HTTP API, signed in with OAuth 2 PKCE (no secret; needs a registered App key)
+   Adapter:  read(path)->{text,rev}|null · write(path,text,{mode:'add'|'update'|'overwrite',rev})->{rev} (throws ConflictError)
+             remove(path,{rev}) (throws ConflictError when the rev moved) · list(dir)->[{name,path,rev}]
+   Files (relative to the sync root):
+     locks/<job>.json                      who has the job checked out (atomic: add if absent, update-with-rev otherwise)
+     changes/<job>/<time>-<who>-<id>.json  one change set per check-in (entries = the edit log, live-API op format)
+   A lost race shows up as a ConflictError (Dropbox 409 path/conflict on mode=add or on mode=update with a stale rev). */
+(function(root){
+'use strict';
+class ConflictError extends Error{constructor(m){super(m);this.name='ConflictError'}}
+class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
+class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
+class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
+const CFG=Object.assign({lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Live Schedule/sync',dataPath:'/Harswells Live Schedule/data/data.json',pathRoot:'home'}},root.HWS_CONFIG||{});
+try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours}}catch(e){}
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+/* tiny IndexedDB kv (directory handles are structured-cloneable, not JSON) */
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('hws-sync',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function kvGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function kvPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');if(v===undefined)t.objectStore('kv').delete(k);else t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
+function fnv(s){let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}return h.toString(16)}
+/* ---------------------------------------------------------------- back end (a): File System Access folder */
+function FsaBackend(handle){let dir=handle||null,perm=handle?'granted':'none';/* handle: optional pre-authorised FileSystemDirectoryHandle (tests) */
+ async function sub(path,create){const parts=path.split('/').filter(Boolean);const name=parts.pop();let d=dir;for(const p of parts)d=await d.getDirectoryHandle(p,{create});return {d,name}}
+ async function readH(d,name){try{const fh=await d.getFileHandle(name);const f=await fh.getFile();const text=await f.text();return {text,rev:`${f.lastModified}-${f.size}-${fnv(text)}`,fh}}catch(e){if(e.name=='NotFoundError'||e.name=='TypeMismatchError')return null;throw e}}
+ const A={kind:'fsa',label:'Shared folder',
+  available:()=>typeof root.showDirectoryPicker=='function',
+  async restore(){try{dir=await kvGet('fsa-dir')||null}catch(e){dir=null}if(!dir)return false;try{perm=await dir.queryPermission({mode:'readwrite'})}catch(e){perm='prompt'}return perm=='granted'},
+  needsPermission:()=>!!dir&&perm!='granted',
+  async connect(){if(dir&&perm!='granted'){perm=await dir.requestPermission({mode:'readwrite'});if(perm=='granted')return true}
+   dir=await root.showDirectoryPicker({id:'harswells-sync',mode:'readwrite'});perm='granted';try{await kvPut('fsa-dir',dir)}catch(e){}return true},
+  async disconnect(){dir=null;perm='none';try{await kvPut('fsa-dir',undefined)}catch(e){}},
+  ready:()=>!!dir&&perm=='granted',
+  describe:()=>dir?`folder “${dir.name}”`:'no folder',
+  async read(path){const {d,name}=await sub(path,false).catch(e=>({}));if(!d)return null;const r=await readH(d,name);return r?{text:r.text,rev:r.rev}:null},
+  async write(path,text,opt){opt=opt||{};const {d,name}=await sub(path,true);const cur=await readH(d,name);
+   if(opt.mode=='add'&&cur)throw new ConflictError(path+' already exists');
+   if(opt.mode=='update'&&(!cur||cur.rev!==opt.rev))throw new ConflictError(path+' changed since it was read');
+   const fh=cur?cur.fh:await d.getFileHandle(name,{create:true});const w=await fh.createWritable();await w.write(text);await w.close();
+   const f=await fh.getFile();return {rev:`${f.lastModified}-${f.size}-${fnv(text)}`}},
+  async remove(path,opt){opt=opt||{};const {d,name}=await sub(path,false).catch(()=>({}));if(!d)return;const cur=await readH(d,name);if(!cur)return;if(opt.rev&&cur.rev!==opt.rev)throw new ConflictError(path+' changed since it was read');await d.removeEntry(name)},
+  async list(path,opt){let d=dir;try{for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p)}catch(e){return []}
+   const out=[];const walk=async(h,rel,depth)=>{for await (const [name,x] of h.entries()){const pp=rel+'/'+name;if(x.kind=='file')out.push({name,path:pp});else if(opt&&opt.recursive&&depth<3)await walk(x,pp,depth+1)}};
+   await walk(d,path.replace(/\/$/,''),0);return out.sort((a,b)=>a.path<b.path?-1:1)},
+  async ensureLayout(){await sub('locks/.keep',true);await sub('changes/.keep',true)}};
+ return A}
+/* ---------------------------------------------------------------- back end (b): Dropbox HTTP API + OAuth PKCE */
+const DBX={auth:'https://www.dropbox.com/oauth2/authorize',token:'https://api.dropboxapi.com/oauth2/token',api:'https://api.dropboxapi.com/2/',content:'https://content.dropboxapi.com/2/'};
+const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b64u(a.buffer).slice(0,n)}
+const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
+function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
+ const hosted=()=>/^https?:$/.test(location.protocol);
+ const redirectUri=()=>location.origin+location.pathname;
+ const full=p=>(c.syncRoot.replace(/\/$/,'')+'/'+p.replace(/^\//,''));
+ async function tokenReq(params){const r=await fetch(DBX.token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString(),credentials:'omit'});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new AuthError('Dropbox sign-in failed: '+(j.error_description||j.error||('HTTP '+r.status)));return j}
+ function keep(j){auth=Object.assign({},auth||{},{access_token:j.access_token,expires_at:Date.now()+((j.expires_in||14400)-60)*1000},j.refresh_token?{refresh_token:j.refresh_token}:{},j.account_id?{account_id:j.account_id}:{});LS.set('hws-dbx-auth',auth)}
+ async function token(){if(!auth||!auth.access_token)throw new AuthError('not signed in to Dropbox');if(Date.now()<auth.expires_at)return auth.access_token;
+  if(!auth.refresh_token)throw new AuthError('Dropbox session expired; sign in again');keep(await tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}));return auth.access_token}
+ function hdrs(t,extra){const h=Object.assign({Authorization:'Bearer '+t},extra||{});if(c.pathRoot=='home')h['Dropbox-API-Path-Root']='{".tag": "home"}';else if(c.pathRoot=='root'&&auth&&auth.root_ns)h['Dropbox-API-Path-Root']=asciiJson({'.tag':'root',root:auth.root_ns});return h}
+ async function call(url,init,retry){const t=await token();init.headers=hdrs(t,init.headers);init.credentials='omit';let r;try{r=await fetch(url,init)}catch(e){throw new Error('offline or Dropbox unreachable ('+e.message+')')}
+  if(r.status==401&&!retry&&auth.refresh_token){auth.expires_at=0;return call(url,Object.assign({},init,{headers:Object.fromEntries(Object.entries(init.headers).filter(([k])=>k!='Authorization'&&k!='Dropbox-API-Path-Root'))}),true)}
+  return r}
+ async function err(r){let j=null;try{j=await r.json()}catch(e){}return (j&&(j.error_summary||(j.error&&j.error['.tag'])))||('HTTP '+r.status)}
+ async function rpc(ep,body){const r=await call(DBX.api+ep,{method:'POST',headers:{'Content-Type':'application/json'},body:body===null?'null':JSON.stringify(body)});if(r.ok)return r.json();const e=await err(r);const x=new Error('Dropbox '+ep+': '+e);x.status=r.status;x.summary=e;throw x}
+ const A={kind:'dropbox',label:'Dropbox',CFG:c,
+  available:()=>true,
+  configured:()=>!!c.appKey&&!/^__|REPLACE|YOUR_/i.test(c.appKey),
+  async restore(){return !!(auth&&auth.access_token)},
+  needsPermission:()=>false,
+  ready:()=>!!(auth&&auth.access_token),
+  describe:()=>auth?`Dropbox${auth.name?' · '+auth.name:''}${auth.email?' ('+auth.email+')':''}`:'Dropbox (signed out)',
+  /* sign-in: hosted app = redirect flow; file:// = open Dropbox in a new tab and paste the code it shows (no redirect URI) */
+  async connect(){if(!A.configured())throw new AuthError('Dropbox App key is not configured in this build (see DEPLOY.md: register a Dropbox app, then set dropboxAppKey)');
+   const verifier=randStr(64);const ch=b64u(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));const state=randStr(16);
+   const q={client_id:c.appKey,response_type:'code',code_challenge:ch,code_challenge_method:'S256',token_access_type:'offline',state};
+   if(hosted()){q.redirect_uri=redirectUri();LS.set('hws-dbx-pkce',{verifier,state,redirect_uri:q.redirect_uri,back:location.hash});location.assign(DBX.auth+'?'+new URLSearchParams(q));return 'redirect'}
+   LS.set('hws-dbx-pkce',{verifier,state});window.open(DBX.auth+'?'+new URLSearchParams(q),'_blank','noopener');return 'paste'},
+  async finishPaste(code){const p=LS.get('hws-dbx-pkce');if(!p)throw new AuthError('start the sign-in first');keep(await tokenReq({code:code.trim(),grant_type:'authorization_code',client_id:c.appKey,code_verifier:p.verifier}));LS.set('hws-dbx-pkce',null);await A.account();return true},
+  async handleRedirect(){const u=new URL(location.href);const code=u.searchParams.get('code'),state=u.searchParams.get('state'),e=u.searchParams.get('error');if(!code&&!e)return false;
+   const p=LS.get('hws-dbx-pkce');['code','state','error','error_description'].forEach(k=>u.searchParams.delete(k));history.replaceState(null,'',u.pathname+(u.search||'')+((p&&p.back)||u.hash||''));
+   if(e)throw new AuthError('Dropbox sign-in cancelled: '+e);if(!p||p.state!==state)throw new AuthError('Dropbox sign-in: state mismatch (start again)');
+   keep(await tokenReq({code,grant_type:'authorization_code',client_id:c.appKey,code_verifier:p.verifier,redirect_uri:p.redirect_uri}));LS.set('hws-dbx-pkce',null);await A.account();return true},
+  async account(){try{const a=await rpc('users/get_current_account',null);auth.name=(a.name&&a.name.display_name)||'';auth.email=a.email||'';auth.root_ns=a.root_info&&a.root_info.root_namespace_id;LS.set('hws-dbx-auth',auth);return a}catch(e){return null}},
+  async disconnect(){try{if(auth&&auth.access_token)await rpc('auth/token/revoke',null)}catch(e){}auth=null;LS.set('hws-dbx-auth',null)},
+  async readAbs(path){const r=await call(DBX.content+'files/download',{method:'POST',headers:{'Dropbox-API-Arg':asciiJson({path})}});
+   if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
+   let meta={};try{meta=JSON.parse(r.headers.get('Dropbox-API-Result')||'{}')}catch(e){}return {text:await r.text(),rev:meta.rev||null}},
+  read(path){return A.readAbs(full(path))},
+  async write(path,text,opt){opt=opt||{};const mode=opt.mode=='update'?{'.tag':'update',update:opt.rev}:(opt.mode=='add'?{'.tag':'add'}:{'.tag':'overwrite'});
+   const r=await call(DBX.content+'files/upload',{method:'POST',headers:{'Content-Type':'application/octet-stream','Dropbox-API-Arg':asciiJson({path:full(path),mode,autorename:false,mute:true,strict_conflict:true})},body:String(text)});
+   if(r.status==409){const e=await err(r);if(/conflict/.test(e))throw new ConflictError(path+': '+e);throw new Error('Dropbox upload: '+e)}if(!r.ok)throw new Error('Dropbox upload: HTTP '+r.status);const m=await r.json();return {rev:m.rev}},
+  async remove(path,opt){opt=opt||{};const body={path:full(path)};if(opt.rev)body.parent_rev=opt.rev;
+   try{await rpc('files/delete_v2',body)}catch(e){if(e.status!=409)throw e;const cur=await A.read(path);if(!cur)return;if(opt.rev&&cur.rev!==opt.rev)throw new ConflictError(path+' changed since it was read');throw e}},
+  async list(path,opt){const out=[];const base=full(path).replace(/\/$/,'');let j;try{j=await rpc('files/list_folder',{path:base,recursive:!!(opt&&opt.recursive)})}catch(e){if(e.status==409&&/not_found/.test(e.summary||''))return [];throw e}
+   const rel=x=>path.replace(/\/$/,'')+(x.path_display||x.path_lower||'').slice(base.length);
+   for(;;){(j.entries||[]).forEach(x=>{if(x['.tag']=='file')out.push({name:x.name,path:rel(x),rev:x.rev})});if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}
+   return out.sort((a,b)=>a.path<b.path?-1:1)},
+  /* The check-out folder must be the SAME folder for everyone (the owner's "Harswells Live Schedule/sync", shared with each editor).
+     If it is missing in the signed-in account we do NOT silently create a private copy (that would give each person their own
+     locks); the UI asks first (SetupError). Once present, missing READMEs are added with overwrite uploads (never 409). */
+  async ensureLayout(allowCreate){const k='hws-dbx-layout:'+c.syncRoot+':'+((auth&&auth.account_id)||'');if(LS.get(k))return;const base=full('').replace(/\/$/,'');
+   let have=null;if(A._missing===c.syncRoot){if(!allowCreate)throw new SetupError(`The shared check-out folder “${c.syncRoot}” is not in ${auth&&auth.name?auth.name+'\u2019s':'this'} Dropbox.`,c.syncRoot)}else try{let j=await rpc('files/list_folder',{path:base,recursive:true});have=new Set();for(;;){(j.entries||[]).forEach(x=>have.add((x.path_lower||'').slice(base.length).toLowerCase()));if(!j.has_more)break;j=await rpc('files/list_folder/continue',{cursor:j.cursor})}}
+   catch(e){if(!(e.status==409&&/not_found/.test(e.summary||'')))throw e;A._missing=c.syncRoot}
+   if(!have&&!allowCreate)throw new SetupError(`The shared check-out folder “${c.syncRoot}” is not in ${auth&&auth.name?auth.name+'\u2019s':'this'} Dropbox.`,c.syncRoot);
+   const note='Harswells schedule check-out/check-in store. locks/<job>.json = who has a job checked out; changes/<job>/*.json = checked-in edit sets. Managed by the Harswells app; do not edit by hand.\n';
+   for(const p of ['README.txt','locks/README.txt','changes/README.txt'])if(!have||!have.has('/'+p.toLowerCase()))await A.write(p,note,{mode:'overwrite'});A._missing=null;LS.set(k,1)},
+  setRoot(p){p='/'+String(p||'').trim().replace(/^\/+|\/+$/g,'');c.syncRoot=p;A._missing=null;let ov={};try{ov=JSON.parse(localStorage.getItem('hws-config-override')||'{}')||{}}catch(e){}ov.dropbox=Object.assign({},ov.dropbox||{},{syncRoot:p});try{localStorage.setItem('hws-config-override',JSON.stringify(ov))}catch(e){}}};
+ return A}
+/* ---------------------------------------------------------------- check-out / check-in (identical on both back ends) */
+function device(){let d=LS.get('hws-device');if(!d){d={id:randStr(10),ua:(navigator.platform||'')+' '+(/iPhone|iPad/.test(navigator.userAgent)?'iOS':'')};LS.set('hws-device',d)}return d}
+function Locks(adapter,opts){const hours=opts.lockHours||CFG.lockHours||12;const lp=slug=>`locks/${slug}.json`;
+ const nowIso=()=>new Date(Date.now()-7*3600e3).toISOString().slice(0,16).replace('T',' ')+' AZ';
+ function parse(cur){if(!cur)return null;try{return JSON.parse(cur.text)}catch(e){return {holder:'(unreadable lock file)',expires_ms:0}}}
+ const L={
+  async readLock(slug){await adapter.ensureLayout();const ls=await adapter.list('locks');if(!ls.some(f=>f.name==slug+'.json'))return null;return adapter.read(lp(slug))},
+  async status(slug){const cur=await L.readLock(slug);const lock=parse(cur);if(!lock)return {state:'free'};const mine=lock.device===device().id&&lock.holder===opts.who();
+   const expired=Date.now()>(lock.expires_ms||0);return {state:mine?'mine':(expired?'expired':'other'),lock,rev:cur.rev}},
+  async checkout(slug,force){const who=opts.who()||'unnamed';const cur=await L.readLock(slug);const lock=parse(cur);const d=device();
+   const body={job:slug,holder:who,device:d.id,device_info:d.ua,session:randStr(12),checked_out_at:nowIso(),expires_at:new Date(Date.now()+hours*3600e3-7*3600e3).toISOString().slice(0,16).replace('T',' ')+' AZ',expires_ms:Date.now()+hours*3600e3,snapshot_built:opts.built||'',app:'harswells-schedule'};
+   if(lock){const mine=lock.device===d.id&&lock.holder===who;if(!mine&&Date.now()<=(lock.expires_ms||0)&&!force)throw new LockedError(lock)}
+   let w;try{w=cur?await adapter.write(lp(slug),JSON.stringify(body,null,1),{mode:'update',rev:cur.rev}):await adapter.write(lp(slug),JSON.stringify(body,null,1),{mode:'add'})}
+   catch(e){if(e instanceof ConflictError){const s=await L.status(slug).catch(()=>null);throw new LockedError((s&&s.lock)||{holder:'someone else (lost the race)'})}throw e}
+   const chk=await adapter.read(lp(slug));const got=parse(chk);if(!got||got.session!==body.session)throw new LockedError(got||{holder:'someone else (lost the race)'});
+   return {lock:body,rev:chk.rev||w.rev}},
+  async pull(slug,known){const files=(await adapter.list('changes',{recursive:true})).filter(f=>f.path.startsWith(`changes/${slug}/`));const out=[];for(const f of files){if(!/\.json$/.test(f.name)||known.has(f.name))continue;const r=await adapter.read(f.path);if(!r)continue;try{const cs=JSON.parse(r.text);cs.name=f.name;out.push(cs)}catch(e){}}return out},
+  async checkin(slug,cs,co){let name=null;if(cs.entries.length){const safe=String(cs.who||'user').replace(/[^A-Za-z0-9]+/g,'-').slice(0,20);name=`${cs.created_ms?new Date(cs.created_ms-7*3600e3).toISOString().replace(/[^0-9]/g,'').slice(0,14):cs.created.replace(/[^0-9]/g,'').slice(0,12)}-${safe}-${cs.id}.json`;await adapter.write(`changes/${slug}/${name}`,JSON.stringify(cs,null,1),{mode:'add'})}
+   let released=true,warning='';try{await adapter.remove(lp(slug),{rev:co&&co.rev})}catch(e){if(e instanceof ConflictError){released=false;warning='Your check-out had been taken over by someone else; your changes were still saved as a change set.'}else throw e}
+   return {name,released,warning}},
+  async release(slug,co){await adapter.remove(lp(slug),{rev:co&&co.rev})}};
+ return L}
+root.HWSSync={CFG,ConflictError,LockedError,AuthError,SetupError,FsaBackend,DropboxBackend,Locks,device,LS};
+})(typeof window!=='undefined'?window:globalThis);
+
+/* Harswells job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
+   unchanged). Edits run through HWSEngine (same rules as the live server) and are stored by HWSStore; optional shared
+   check-out/check-in through HWSSync (File System Access folder or Dropbox API). */
+'use strict';
+const B=(typeof BOOT!=='undefined'&&BOOT)||{};const MODE=B.mode||'share';
+let DATA=null,STORE=null,J=null,L=null,EDIT=false;
+const E=window.HWSEngine;
+const $=s=>document.querySelector(s);
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt$=v=>(v==null||v===''||isNaN(+v))?'':'$'+Math.round(+v).toLocaleString();
+const DAY=864e5;const dP=s=>{if(!s)return null;const [y,m,d]=String(s).slice(0,10).split('-').map(Number);return Date.UTC(y,m-1,d)};
+const iso=ms=>new Date(ms).toISOString().slice(0,10);const addD=(s,n)=>iso(dP(s)+n*DAY);
+const md=s=>{if(!s)return '';const t=new Date(dP(s));return (t.getUTCMonth()+1)+'/'+t.getUTCDate()};
+const mdy=s=>{if(!s)return '';const t=new Date(dP(s));return (t.getUTCMonth()+1)+'/'+t.getUTCDate()+'/'+String(t.getUTCFullYear()).slice(2)};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const dow=s=>DOWS[new Date(dP(s)).getUTCDay()];
+const chip=(t,c)=>`<span class="chip ${esc(c||t)}">${esc(t)}</span>`;
+const SRC_LABEL={BUILDERTREND:'BT',REAL:'REAL',DRAFT:'DRAFT',TRACKER:'TRACKER'};
+const srcChip=s=>chip(SRC_LABEL[s]||s,s);
+function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}
+const UIKEY='hws-share-ui-v1';let st={view:'gantt',pview:'list',zpx:6,colorBy:'source',phase:'',who:'',src:'',overdue:false,critOnly:false,critHl:true,showDone:true,q:'',collapsed:{},calMonth:'',sort:'start',sortDir:1,selAll:false,todoAll:false,lq:''};
+try{Object.assign(st,JSON.parse(localStorage.getItem(UIKEY)||'{}'))}catch(e){}
+function saveUi(){try{const o=Object.assign({},st);delete o._scroll;localStorage.setItem(UIKEY,JSON.stringify(o))}catch(e){}}
+const mq=window.matchMedia?matchMedia('(max-width: 760px)'):{matches:false};const isPhone=()=>mq.matches;
+const coarse=window.matchMedia?matchMedia('(pointer: coarse)').matches:false;
+/* ---------- links (hash routing: #/ = all jobs, #/job/<slug>/<module>) ---------- */
+function jobHref(slug,mod){return '#/job/'+slug+'/'+(mod||'schedule')}
+function homeHref(){return '#/'}
+function modHref(mod){return '#/job/'+J.slug+'/'+mod}
+function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule'};return {slug:null}}
+function curMod(){return parseHash().mod||'schedule'}
+/* ---------- calendar helpers (job workday calendar) ---------- */
+function isWd(s){const c=J.cal||{};const d=new Date(dP(s)).getUTCDay();return (d>=1&&d<=5||(c.saturday&&d==6))&&!(c.holidays||{})[s]}
+function nextWd(s){for(let i=0;i<30&&!isWd(s);i++)s=addD(s,1);return s}
+function prevWd(s){for(let i=0;i<30&&!isWd(s);i++)s=addD(s,-1);return s}
+function wdCount(a,b){if(!a||!b||b<a)return 0;let n=0;for(let s=a;s<=b;s=addD(s,1))if(isWd(s))n++;return n}
+/* ---------- editing (local engine) ---------- */
+function syncOn(){return !!(SY.A&&SY.A.ready())}
+function canEditJob(){if(!J||!STORE)return false;if(syncOn()){const co=STORE.checkout(J.slug);return !!(co&&co.kind==SY.kind)}return true}
+function edit(ops,okMsg){if(!canEditJob()){needCheckout();return}
+ try{const r=STORE.edit(J.slug,ops);J=r.J;renderJob();toast(okMsg||r.result.summary)}catch(e){toast('Not saved: '+e.message);renderJob()}}
+function undo(){if(!J)return;if(!canEditJob()){needCheckout();return}try{const r=STORE.undo(J.slug);J=r.J;renderJob();toast(r.summary)}catch(e){toast('Undo: '+e.message)}}
+function needCheckout(){toast(syncOn()?'Check out this job first (tap “Check out”), so nobody else edits it at the same time.':'Editing is not available here.')}
+/* ---------- shell ---------- */
+function builtShort(){return String((DATA&&DATA.built)||'').replace(/^[A-Z][a-z]{2} /,'').replace(/ AZ$/,'')}
+function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
+ const main=MODE==='share'?`<b>Snapshot as of ${esc(builtShort())} AZ</b> · your edits save in this browser only · Export to send changes back to the office`
+  :`<b>Data as of ${esc(builtShort())} AZ</b> · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
+ const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
+ const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
+ return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
+function topHtml(){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];const n=STORE?STORE.pendingTotal():0;
+ return `<header class="top"><a class="brand" href="${homeHref()}" aria-label="All jobs">Harswells</a><a href="${homeHref()}" class="small hide-sm">All jobs</a><span class="sp"></span>
+ ${jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${jobs.map(x=>`<option value="${esc(x.slug)}" ${J&&J.slug==x.slug?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}
+ <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
+ <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe()):'saved in this browser'}</span></header>${bannerHtml()}`}
+function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value,isPhone()?'schedule':curMod())};
+ const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
+/* ---------- job page ---------- */
+const TABS=[['schedule','Schedule','📅'],['todos','To-Dos','☑️'],['selections','Selections','🎨'],['conflicts','Conflicts','⚠️'],['more','More','☰']];
+const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,logs:mLogs,messages:mMsgs,todos:mTodos,conflicts:mConf,exports:mExports,settings:mSettings,history:mHistory});
+function lockPill(){if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
+ if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
+ const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
+ return `${other}<button class="pri small" id="co">Check out to edit</button>`}
+function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>';bindTop();return}
+ EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
+ const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
+ const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
+ const head=`<div class="jh"><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>${chip(J.bt_status,J.bt_status=='in Buildertrend'?'inbt':'notbt')}
+ <span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
+ <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
+ ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
+ const side=`<nav class="side">${(J.modules||[]).map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${c[k]||''}</span></a>`).join('')}
+ <div class="grp">Job</div><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
+ const tabs=`<nav class="tabbar" aria-label="Modules">${TABS.map(([k,l,ic])=>{const on=k==mod||(k=='more'&&!TABS.some(t=>t[0]==mod));const n=k=='conflicts'?hc:(k=='todos'?0:0);
+  return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}"><span class="ic">${ic}</span><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
+ $('#root').innerHTML=topHtml()+head+(ph?`<main class="main" id="mod"></main>${tabs}`:`<div class="layout">${side}<main class="main" id="mod"></main></div>`);
+ document.body.classList.toggle('has-tabs',ph);
+ bindTop();const M=$('#mod');
+ const co=$('#co');if(co)co.onclick=()=>doCheckout(J.slug);const ci=$('#ci');if(ci)ci.onclick=()=>doCheckin(J.slug);
+ const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
+ try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
+ document.title=J.name+' · Harswells';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
+function openMore(){const c=J.counts||{};const items=[['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']];
+ openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${c[k]||(k=='history'?(J.history||[]).length||'':'')}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
+ m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
+function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
+function panel(title,sub,body,right){return `<div class="panel"><h3>${title} ${sub?`<span class="mut small">${sub}</span>`:''}<span class="sp"></span>${right||''}</h3>${body}</div>`}
+function csvBtn(mod){return `<button class="noprint small" data-csv="${mod}">CSV</button>`}
+function bindCsv(el){el.querySelectorAll('[data-csv]').forEach(b=>b.onclick=()=>exportModule(b.dataset.csv))}
+
+/* ---------- schedule ---------- */
+function editable(t){return EDIT&&t&&t.source!='TRACKER'}
+function filtered(){const q=st.q.toLowerCase();return (J.tasks||[]).filter(t=>(st.showDone||!t.done)&&(!st.phase||(t.phase||'Other')==st.phase)&&(!st.who||(st.who=='(unassigned)'?!t.owner:t.owner==st.who))
+ &&(!st.src||t.source==st.src)&&(!st.overdue||t.overdue||t.late)&&(!st.critOnly||(t.critical&&!t.done))&&(!q||(t.task+' '+t.id+' '+(t.owner||'')+' '+(t.notes||'')).toLowerCase().includes(q)))}
+function taskColor(t){if(st.colorBy=='phase')return t.color||(J.phase_colors||{})[t.phase||'Other']||'#2563eb';if(t.done)return '#98a2b3';if(t.color&&st.colorBy=='custom')return t.color;
+ return t.source=='TRACKER'?'#0e9384':(t.source=='BUILDERTREND'?'#4f46e5':'#2563eb')}
+function isMs(t){return (t.milestone_type&&(+t.duration<=1))||+t.duration===0}
+const ZL=[1.2,1.8,3,4.5,6,9,14,22,32];const ZNAME={month:1.8,week:6,day:22};
+const zmode=px=>px>=14?'day':(px>=4?'week':'month');
+function curView(){return isPhone()?st.pview:st.view}
+function setView(v){if(isPhone())st.pview=v;else st.view=v}
+function filterCount(){return ['phase','who','src','q'].filter(k=>st[k]).length+(st.overdue?1:0)+(st.critOnly?1:0)+(st.showDone?0:1)}
+function mSchedule(M){const tasks=J.tasks||[];const phases=[...new Set(tasks.map(t=>t.phase||'Other'))].sort();const who=[...new Set(tasks.map(t=>t.owner).filter(Boolean))].sort();
+ const nOver=tasks.filter(t=>t.overdue||t.late).length;const ph=isPhone();const view=curView();
+ const filt=`<select id="fp" aria-label="Phase"><option value="">All phases</option>${phases.map(p=>`<option ${st.phase==p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+ <select id="fw" aria-label="Assignee"><option value="">All assignees</option><option ${st.who=='(unassigned)'?'selected':''}>(unassigned)</option>${who.map(p=>`<option ${st.who==p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+ <select id="fs" aria-label="Source"><option value="">All sources</option>${['BUILDERTREND','REAL','DRAFT','TRACKER'].map(s=>`<option value="${s}" ${st.src==s?'selected':''}>${s=='BUILDERTREND'?'BT (Buildertrend)':s}</option>`).join('')}</select>
+ <label><input type="checkbox" id="fo" ${st.overdue?'checked':''}> Overdue</label><label><input type="checkbox" id="fc" ${st.critOnly?'checked':''}> Critical path only</label>
+ <label><input type="checkbox" id="fh" ${st.critHl?'checked':''}> Highlight critical</label><label><input type="checkbox" id="fd" ${st.showDone?'checked':''}> Completed</label>
+ <input type="search" id="fq" placeholder="Search tasks" value="${esc(st.q)}" style="width:150px">`;
+ const hint=EDIT?(coarse||ph?' · long-press a bar to drag, tap to edit':' · drag bars to move, drag the right edge to resize, click to edit'):(syncOn()?' · check out to edit':'');
+ M.innerHTML=`<div class="panel"><h3>Schedule <span class="mut small">${tasks.length} items · ${J.summary.bt||0} BT · ${J.summary.real||0} REAL · ${J.summary.draft||0} DRAFT · ${nOver} overdue${hint}</span></h3>
+ <div class="tools"><span class="seg" id="vw">${[['list','List'],['gantt','Gantt'],['calendar','Calendar']].map(([k,l])=>`<button data-v="${k}" class="${view==k?'on':''}">${l}</button>`).join('')}</span>
+ ${view=='gantt'?(ph?`<span class="seg" id="zb"><button data-zs="-1" aria-label="Zoom out">−</button><button data-zs="1" aria-label="Zoom in">+</button></span>`:`<span class="seg" id="zm">${['day','week','month'].map(z=>`<button data-z="${z}" class="${zmode(st.zpx)==z?'on':''}">${z[0].toUpperCase()+z.slice(1)}</button>`).join('')}</span><span class="seg" id="zb"><button data-zs="-1" title="Zoom out">−</button><button data-zs="1" title="Zoom in">+</button></span>
+ <label>Color <select id="cb"><option value="source" ${st.colorBy=='source'?'selected':''}>by source</option><option value="phase" ${st.colorBy=='phase'?'selected':''}>by phase / task color</option></select></label>`):''}
+ <span class="sp"></span>${EDIT?`<button class="pri" id="add">+ Add${ph?'':' task'}</button><button id="und" title="Undo the last edit (Ctrl+Z)">Undo</button>${ph?'':'<button id="bl" title="Copy current dates into the baseline">Set baseline</button>'}`:(syncOn()?'<button class="pri" id="co2">Check out to edit</button>':'')}
+ ${ph?`<button id="flt" aria-label="Filters and more">Filters${filterCount()?` (${filterCount()})`:''} ⋯</button>`:`<button id="pr">Print</button>${csvBtn('schedule')}`}</div>
+ ${ph?'':`<div class="tools">${filt}${view=='gantt'?'<button id="ca" class="small">Collapse</button><button id="ea" class="small">Expand</button>':''}</div>${legend()}`}<div id="sv"></div></div>`;
+ const re=()=>{saveUi();mSchedule(M)};
+ M.querySelectorAll('#vw button').forEach(b=>b.onclick=()=>{setView(b.dataset.v);re()});M.querySelectorAll('#zm button').forEach(b=>b.onclick=()=>{st.zpx=ZNAME[b.dataset.z];re()});
+ M.querySelectorAll('#zb button').forEach(b=>b.onclick=()=>{zoomStep(+b.dataset.zs);re()});
+ const cb=$('#cb');if(cb)cb.onchange=e=>{st.colorBy=e.target.value;re()};
+ function bindFilters(root,after){const g=s=>root.querySelector(s);g('#fp').onchange=e=>{st.phase=e.target.value;after()};g('#fw').onchange=e=>{st.who=e.target.value;after()};g('#fs').onchange=e=>{st.src=e.target.value;after()};
+  g('#fo').onchange=e=>{st.overdue=e.target.checked;after()};g('#fc').onchange=e=>{st.critOnly=e.target.checked;after()};g('#fh').onchange=e=>{st.critHl=e.target.checked;after()};g('#fd').onchange=e=>{st.showDone=e.target.checked;after()};
+  let qt;g('#fq').oninput=e=>{st.q=e.target.value;clearTimeout(qt);qt=setTimeout(after,250)}}
+ if(!ph){bindFilters(M,re);M.querySelector('#fq').oninput=(()=>{let qt;return e=>{st.q=e.target.value;clearTimeout(qt);qt=setTimeout(()=>{saveUi();drawView()},200)}})()}
+ if($('#ca'))$('#ca').onclick=()=>{phases.forEach(p=>st.collapsed[J.slug+'|'+p]=true);re()};if($('#ea'))$('#ea').onclick=()=>{phases.forEach(p=>delete st.collapsed[J.slug+'|'+p]);re()};
+ if(EDIT){$('#add').onclick=()=>taskModal(null);$('#und').onclick=undo;if($('#bl'))$('#bl').onclick=setBaseline}
+ const co2=$('#co2');if(co2)co2.onclick=()=>doCheckout(J.slug);
+ if($('#pr'))$('#pr').onclick=()=>window.print();bindCsv(M);
+ if($('#flt'))$('#flt').onclick=()=>openModal(`<h2>Filters</h2><div class="fsheet">${filt}</div>${view=='gantt'?`<div class="mbtns"><button id="ca2">Collapse phases</button><button id="ea2">Expand phases</button><label class="small">Color <select id="cb2"><option value="source" ${st.colorBy=='source'?'selected':''}>by source</option><option value="phase" ${st.colorBy=='phase'?'selected':''}>by phase</option></select></label></div>`:''}
+  ${legend()}<div class="mbtns">${EDIT?'<button id="bl2">Set baseline</button>':''}<button id="pr2">Print</button>${csvBtn('schedule')}<button id="clr">Clear filters</button><span class="sp"></span><button class="pri" data-close>Done</button></div>`,m=>{
+  bindFilters(m,()=>{saveUi()});m.querySelector('#clr').onclick=()=>{Object.assign(st,{phase:'',who:'',src:'',q:'',overdue:false,critOnly:false,showDone:true});closeModal();re()};
+  const bl2=m.querySelector('#bl2');if(bl2)bl2.onclick=()=>{closeModal();setBaseline()};m.querySelector('#pr2').onclick=()=>{closeModal();setTimeout(()=>window.print(),100)};bindCsv(m);
+  const ca2=m.querySelector('#ca2');if(ca2){ca2.onclick=()=>{phases.forEach(p=>st.collapsed[J.slug+'|'+p]=true);closeModal();re()};m.querySelector('#ea2').onclick=()=>{phases.forEach(p=>delete st.collapsed[J.slug+'|'+p]);closeModal();re()};m.querySelector('#cb2').onchange=e=>{st.colorBy=e.target.value}}},()=>re());
+ function drawView(){const el=$('#sv');const ts=filtered();if(!(J.tasks||[]).length){el.innerHTML=emptyState('No schedule yet',EDIT?' Tap “+ Add” to start one.':' No schedule items for this job.');return}
+  if(!ts.length){el.innerHTML=emptyState('Nothing matches these filters','');return}
+  if(view=='list')(ph?plistView:listView)(el,ts);else if(view=='calendar')calView(el,ts);else ganttView(el,ts)}
+ drawView()}
+function setBaseline(){if(confirm('Set the baseline to the current schedule for every task? (Undo reverts it.)'))edit([{op:'baseline'}])}
+function zoomStep(d){let i=ZL.findIndex(x=>x>=st.zpx-1e-9);if(i<0)i=ZL.length-1;i=Math.max(0,Math.min(ZL.length-1,i+d));st.zpx=ZL[i]}
+function legend(){return `<div class="legend"><span><i style="background:#2563eb"></i>REAL</span><span><i style="background:repeating-linear-gradient(45deg,#dbe6fb,#dbe6fb 2px,#7aa2e8 2px,#7aa2e8 4px)"></i>DRAFT (hatched)</span><span><i style="background:#4f46e5"></i>Buildertrend</span><span><i style="background:#0e9384"></i>tracker</span><span><i style="background:#fff;border:2px solid #d92d20"></i>critical path</span><span><i style="background:#fff;border:2px dashed #d92d20"></i>overdue</span><span><i style="background:#c4cad3;height:4px"></i>baseline</span><span>🔒 locked date</span><span style="color:#d92d20">┆ today</span></div>`}
+function parseDeps(s){return (s||'').split(/[;,]/).filter(x=>x.trim()).map(x=>{const m=x.trim().match(/^([A-Za-z0-9_\-]+?)(FS|SS|FF|SF)?([+-]\d+)?$/);return m?{id:m[1],type:m[2]||'FS',lag:+(m[3]||0)}:null}).filter(Boolean)}
+function toggleLock(t){if(!editable(t))return;const on=String(t.lock).toUpperCase()!='Y';edit([{op:'update',id:t.id,fields:{lock:on?'Y':''}}],`${t.id} ${on?'locked 🔒 (it will not auto-move)':'unlocked (it follows its predecessors)'}`)}
+function ganttView(el,ts){const ph=isPhone();const px=st.zpx,zoom=zmode(px);const RH=ph?34:24,HH=40,BY=ph?8:5,BH=ph?17:13;const byId={};(J.tasks||[]).forEach(t=>byId[t.id]=t);const today=J.today;
+ const phs={},order=[];ts.forEach(t=>{const p=t.phase||'Other';if(!phs[p]){phs[p]=[];order.push(p)}phs[p].push(t)});
+ const mn=l=>l.reduce((m,t)=>t.start&&t.start<m?t.start:m,'9999');order.sort((a,b)=>mn(phs[a])<mn(phs[b])?-1:1);
+ const rows=[];order.forEach(p=>{const l=phs[p].slice().sort((a,b)=>a.start<b.start?-1:a.start>b.start?1:(a.id<b.id?-1:1));const s0=mn(l),f0=l.reduce((m,t)=>(t.finish||t.start||'')>m?(t.finish||t.start):m,'0');
+  rows.push({kind:'phase',name:p,start:s0,finish:f0,n:l.length,crit:l.some(t=>(t.overdue||t.late)&&!t.done)});if(!st.collapsed[J.slug+'|'+p])l.forEach(t=>rows.push(Object.assign({kind:'task'},t)))});
+ const dated=rows.filter(r=>r.start&&r.start!='9999');
+ let min=Math.min(...dated.map(r=>dP(r.start)),dP(today)),max=Math.max(...dated.map(r=>dP(r.finish||r.start)),dP(today));min-=7*DAY;max+=28*DAY;
+ if(zoom!='day'){const d=new Date(min);min=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)}else{const d=new Date(min);min-=((d.getUTCDay()+6)%7)*DAY}
+ const W=Math.max(500,Math.round((max-min)/DAY*px)),H=rows.length*RH;const X=s=>Math.round((dP(s)-min)/DAY*px);
+ let hdr='',grid='',bars='',arrows='',base='';
+ for(let d=new Date(min);d.getTime()<=max;){const x=X(iso(d.getTime()));const nx=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1));const w=Math.round((Math.min(nx.getTime(),max)-d.getTime())/DAY*px);
+  hdr+=`<rect x="${x}" y="0" width="${w}" height="20" fill="${d.getUTCMonth()%2?'#f1f3f6':'#f8f9fb'}"/><text x="${x+4}" y="14" font-size="11" fill="#344054" font-weight="600">${w>44?MON[d.getUTCMonth()]+' '+d.getUTCFullYear():(w>14?MON[d.getUTCMonth()][0]:'')}</text>`;
+  if(zoom=='month')grid+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#eef0f3"/>`;d=nx}
+ if(zoom!='month'){for(let t=min;t<=max;t+=DAY){const s=iso(t),d=new Date(t),x=Math.round((t-min)/DAY*px);
+  if(d.getUTCDay()==1){hdr+=`<line x1="${x}" y1="20" x2="${x}" y2="${HH}" stroke="#d0d5dd"/>${px*7>=26?`<text x="${x+2}" y="33" font-size="10" fill="#667085">${d.getUTCMonth()+1}/${d.getUTCDate()}</text>`:''}`;grid+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#e6e9ee"/>`}
+  if(!isWd(s))grid+=`<rect x="${x}" y="0" width="${px}" height="${H}" fill="${(J.cal.holidays||{})[s]?'#fff4e5':'#f6f7f9'}"><title>${esc((J.cal.holidays||{})[s]||'non-workday')}</title></rect>`;
+  if(zoom=='day')hdr+=`<text x="${x+px/2}" y="${HH-3}" font-size="8.5" text-anchor="middle" fill="#98a2b3">${'SMTWTFS'[d.getUTCDay()]}</text>`}}
+ const pos={};rows.forEach((r,i)=>{if(r.kind=='task'&&r.start)pos[r.id]={i,x1:X(r.start),x2:X(r.finish||r.start)+px,t:r}});
+ const mid=BY+BH/2;
+ rows.forEach((r,i)=>{const y=i*RH;if(!r.start||r.start=='9999')return;const x1=X(r.start),x2=X(r.finish||r.start)+px;
+  if(r.kind=='phase'){bars+=`<path d="M${x1} ${y+mid-4}h${Math.max(x2-x1,2)}v9l-4 -4h${-(Math.max(x2-x1,2)-8)}l-4 4z" fill="${r.crit?'#b42318':'#344054'}" opacity=".85"/>`;return}
+  const t=r,col=taskColor(t),crit=st.critHl&&t.critical&&!t.done,od=(t.overdue||t.late)&&!t.done,ed=editable(t);
+  if(t.baseline_start&&t.baseline_finish&&(t.baseline_start!=t.start||t.baseline_finish!=t.finish)){const bx=X(t.baseline_start),bw=Math.max(X(t.baseline_finish)+px-bx,2);base+=`<rect x="${bx}" y="${y+BY+BH+1}" width="${bw}" height="4" fill="#c4cad3"><title>Baseline ${md(t.baseline_start)}–${md(t.baseline_finish)}</title></rect>`}
+  const stroke=od?'#d92d20':(crit?'#d92d20':col),sw=(od||crit)?2:1,dash=od?' stroke-dasharray="4 2"':'';const ty=y+BY+BH-2;
+  if(isMs(t)){const mx=x1+px/2,hs=BH/2+2;bars+=`<g class="bar ${ed?'mv':''}" data-id="${esc(t.id)}"><rect x="${mx-hs-6}" y="${y+2}" width="${2*hs+12}" height="${RH-4}" fill="transparent"/><path d="M${mx} ${y+mid-hs}l${hs} ${hs}l${-hs} ${hs}l${-hs} ${-hs}z" fill="${t.source=='DRAFT'?'#fff':col}" stroke="${stroke}" stroke-width="${Math.max(sw,1.6)}"${dash}/></g><text x="${mx+hs+3}" y="${ty}" font-size="10.5" fill="#475467" pointer-events="none">${esc(t.task.slice(0,46))}${t.locked?' 🔒':''}</text>`}
+  else{const w=Math.max(x2-x1,4);const hw=ph||coarse?18:8;bars+=`<g class="bar ${ed?'mv':''}" data-id="${esc(t.id)}"><rect class="bx" x="${x1}" y="${y+BY}" width="${w}" height="${BH}" rx="2" fill="${col}" stroke="${stroke}" stroke-width="${sw}"${dash}/>${t.source=='DRAFT'?`<rect x="${x1}" y="${y+BY}" width="${w}" height="${BH}" rx="2" fill="url(#hw)" pointer-events="none"/>`:''}
+   ${(t.done||+t.pct_complete>0)?`<rect x="${x1}" y="${y+mid-1}" width="${w*Math.min(100,t.done?100:+t.pct_complete)/100}" height="3" fill="#15233b" opacity=".6" pointer-events="none"/>`:''}${ed?`<rect class="rh" x="${x1+w-hw/2}" y="${y+BY-3}" width="${hw}" height="${BH+6}" fill="transparent"/>`:''}</g>
+   <text x="${x2+5}" y="${ty}" font-size="10.5" fill="${od||crit?'#b42318':'#475467'}" pointer-events="none">${esc(t.task.slice(0,44))}${t.owner?' · '+esc(t.owner):''}${t.locked?' 🔒':''}</text>`}});
+ rows.forEach(r=>{if(r.kind!='task')return;const to=pos[r.id];if(!to)return;parseDeps(r.depends_on).forEach(d=>{const fr=pos[d.id];if(!fr)return;
+  const yf=fr.i*RH+mid,yt=to.i*RH+mid;const xs=d.type[0]=='S'?fr.x1:fr.x2;const xe=d.type[1]=='F'?to.x2:to.x1;const red=st.critHl&&r.critical&&fr.t.critical&&!r.done;
+  const path=xe-6>=xs+2?`M${xs} ${yf}H${Math.max(xe-4,xs)}V${yt+(yt>yf?-7:7)}`:`M${xs} ${yf}h6V${(yf+yt)/2}H${xe-10}V${yt}H${xe-2}`;
+  arrows+=`<path d="${path}" fill="none" stroke="${red?'#d92d20':'#8b95a5'}" stroke-width="${red?1.4:1}" marker-end="url(#${red?'arR':'ar'})" opacity=".85"/>`})});
+ const tx=X(today)+px/2;
+ const defs=`<defs><pattern id="hw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="2.4" opacity=".55"/></pattern>
+ <marker id="ar" markerWidth="7" markerHeight="7" refX="3.5" refY="6" viewBox="0 0 7 7"><path d="M0 0L3.5 7L7 0z" fill="#8b95a5"/></marker><marker id="arR" markerWidth="7" markerHeight="7" refX="3.5" refY="6" viewBox="0 0 7 7"><path d="M0 0L3.5 7L7 0z" fill="#d92d20"/></marker></defs>`;
+ const rs=`style="height:${RH}px"`;
+ const left=rows.map(r=>{if(r.kind=='phase')return `<div class="grow ph" ${rs} data-ph="${esc(r.name)}"><span class="c-id">${st.collapsed[J.slug+'|'+r.name]?'▸':'▾'}</span><span class="c-task"><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${(J.phase_colors||{})[r.name]||'#999'}"></i> ${esc(r.name)} <span class="mut small">(${r.n})</span></span><span class="c-lk"></span><span class="c-who"></span><span class="c-dur"></span><span class="c-st">${mdy(r.start)}</span><span class="c-fin">${mdy(r.finish)}</span><span class="c-pct"></span><span class="c-slip"></span><span class="c-src"></span></div>`;
+  const t=r,od=(t.overdue||t.late)&&!t.done;return `<div class="grow ${od?'od':''} ${st.critHl&&t.critical&&!t.done?'crit':''} ${t.done?'done':''}" ${rs} data-id="${esc(t.id)}" title="${esc(t.task)}"><span class="c-id">${esc(t.id)}</span><span class="c-task" style="padding-left:14px">${isPhone()&&t.locked?'🔒 ':''}${isMs(t)?'◆ ':''}${esc(t.task)}</span><span class="c-lk">${editable(t)?`<button class="lk ${t.locked?'on':''}" data-lk="${esc(t.id)}" title="${t.locked?'Locked: click to unlock':'Click to lock this date'}" aria-label="${t.locked?'Unlock':'Lock'} ${esc(t.task)}">${t.locked?'🔒':'🔓'}</button>`:(t.locked?'🔒':'')}</span><span class="c-who">${esc(t.owner||'')}</span><span class="c-dur">${esc(t.duration)}d</span><span class="c-st">${mdy(t.start)}</span><span class="c-fin">${mdy(t.finish)}</span><span class="c-pct">${t.done?'✓':(+t.pct_complete?t.pct_complete+'%':'')}</span><span class="c-slip ${+t.slip>0?'red':''}">${t.slip!==''&&t.slip!=null&&+t.slip!==0?(+t.slip>0?'+':'')+t.slip:''}</span><span class="c-src">${srcChip(t.source)}</span></div>`}).join('');
+ el.innerHTML=`<div class="gwrap" id="gw"><div class="ginner"><div class="gleft"><div class="grow hdr"><span class="c-id">ID</span><span class="c-task">Task</span><span class="c-lk" title="Lock (locked dates never auto-move)">🔒</span><span class="c-who">Assigned</span><span class="c-dur">Dur</span><span class="c-st">Start</span><span class="c-fin">Finish</span><span class="c-pct">%</span><span class="c-slip" title="Slip vs baseline, workdays">Slip</span><span class="c-src">Src</span></div>${left}</div>
+ <div class="gsvgwrap"><svg class="gsvg ghdr" width="${W}" height="${HH}">${hdr}<line x1="${tx}" y1="20" x2="${tx}" y2="${HH}" stroke="#d92d20" stroke-width="2"/></svg>
+ <svg class="gsvg ${EDIT?'edit':''}" id="gs" width="${W}" height="${H}">${defs}${grid}${base}${arrows}${bars}<line x1="${tx}" y1="0" x2="${tx}" y2="${H}" stroke="#d92d20" stroke-width="1.5" stroke-dasharray="4 3" pointer-events="none"/><text x="${tx+3}" y="10" font-size="10" fill="#d92d20" pointer-events="none">today</text></svg></div></div></div>`;
+ const gw=el.querySelector('#gw');const lw=el.querySelector('.gleft').offsetWidth;
+ if(st._scroll&&st._scroll.slug==J.slug&&st._scroll.px==px){gw.scrollLeft=st._scroll.x;gw.scrollTop=st._scroll.y}
+ else if(st._center&&st._center.slug==J.slug){gw.scrollLeft=Math.max(0,X(st._center.date)-(gw.clientWidth-lw)/2);gw.scrollTop=st._center.y||0;st._center=null}
+ else gw.scrollLeft=Math.max(0,tx-Math.min(220,(gw.clientWidth-lw)*0.25));
+ gw.addEventListener('scroll',()=>{st._scroll={slug:J.slug,px,x:gw.scrollLeft,y:gw.scrollTop}},{passive:true});
+ el.querySelectorAll('.grow[data-ph]').forEach(d=>d.onclick=()=>{const k=J.slug+'|'+d.dataset.ph;if(st.collapsed[k])delete st.collapsed[k];else st.collapsed[k]=true;saveUi();ganttView(el,ts)});
+ el.querySelectorAll('.grow[data-id]').forEach(d=>d.onclick=e=>{if(e.target.closest('[data-lk]'))return;taskModal(byId[d.dataset.id])});
+ el.querySelectorAll('[data-lk]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleLock(byId[b.dataset.lk])});
+ /* pinch to zoom (two fingers) */
+ let pinch=null;const tdist=e=>Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+ gw.addEventListener('touchstart',e=>{if(e.touches.length==2){cancelDrag();const cx=(e.touches[0].clientX+e.touches[1].clientX)/2-gw.getBoundingClientRect().left-lw+gw.scrollLeft;pinch={d0:tdist(e),r:1,cx}}},{passive:true});
+ gw.addEventListener('touchmove',e=>{if(pinch&&e.touches.length==2){e.preventDefault();pinch.r=tdist(e)/pinch.d0;el.querySelector('#gs').style.transform=`scaleX(${pinch.r})`;el.querySelector('#gs').style.transformOrigin=`${pinch.cx}px 0`}},{passive:false});
+ gw.addEventListener('touchend',e=>{if(pinch&&e.touches.length<2){const p=pinch;pinch=null;const np=px*p.r;let best=ZL[0];ZL.forEach(z=>{if(Math.abs(Math.log(z/np))<Math.abs(Math.log(best/np)))best=z});
+  if(best!=px){st._center={slug:J.slug,date:iso(min+p.cx/px*DAY),y:gw.scrollTop};st._scroll=null;st.zpx=best;saveUi();ganttView(el,ts)}else el.querySelector('#gs').style.transform=''}},{passive:true});
+ const svg=el.querySelector('#gs');let drag=null,pend=null,suppress=false,tip=null;
+ svg.addEventListener('click',e=>{if(suppress){suppress=false;return}const g=e.target.closest('[data-id]');if(g&&byId[g.dataset.id])taskModal(byId[g.dataset.id])});
+ function cancelDrag(){if(pend){clearTimeout(pend.timer);pend=null}if(drag){drag.g.removeAttribute('transform');drag.g.classList.remove('dragging','armed');const r=drag.g.querySelector('.bx');if(r&&drag.w0)r.setAttribute('width',drag.w0);drag=null}if(tip){tip.remove();tip=null}}
+ if(!EDIT)return;
+ const LONG=380;
+ function arm(p,e){p.active=true;drag=p;pend=null;p.g.classList.add('armed');try{svg.setPointerCapture(p.pid)}catch(_){}if(navigator.vibrate)try{navigator.vibrate(12)}catch(_){}showTip(p,p.x0,p.y0)}
+ function showTip(p,x,y){const q=proposed(p);if(!tip){tip=document.createElement('div');tip.className='tip';document.body.appendChild(tip)}tip.textContent=`${p.t.id}: ${mdy(q.start)} → ${mdy(q.finish)}${p.rh?' ('+wdCount(q.start,q.finish)+' workdays)':''}`;tip.style.left=Math.min(x+12,innerWidth-190)+'px';tip.style.top=Math.max(8,y-(p.touch?64:-12))+'px'}
+ svg.addEventListener('pointerdown',e=>{if(e.button>0)return;const g=e.target.closest('.bar[data-id]');if(!g)return;const t=byId[g.dataset.id];if(!editable(t))return;
+  const p={t,g,rh:e.target.classList.contains('rh')&&!isMs(t),x0:e.clientX,y0:e.clientY,dd:0,moved:false,pid:e.pointerId,touch:e.pointerType!='mouse',active:false};
+  if(p.touch){cancelDrag();pend=p;p.timer=setTimeout(()=>{if(pend===p)arm(p,e)},LONG)}else{e.preventDefault();arm(p,e);if(tip){tip.remove();tip=null}}});
+ svg.addEventListener('pointermove',e=>{if(pend&&e.pointerId==pend.pid){if(Math.hypot(e.clientX-pend.x0,e.clientY-pend.y0)>9){clearTimeout(pend.timer);pend=null}return}
+  if(!drag||e.pointerId!=drag.pid)return;const dx=e.clientX-drag.x0;if(Math.abs(dx)>3)drag.moved=true;if(!drag.moved)return;const dd=Math.round(dx/px);drag.dd=dd;
+  if(drag.rh){const r=drag.g.querySelector('.bx');if(!drag.w0)drag.w0=+r.getAttribute('width');r.setAttribute('width',Math.max(4,drag.w0+dd*px))}else drag.g.setAttribute('transform',`translate(${dd*px},0)`);drag.g.classList.add('dragging');showTip(drag,e.clientX,e.clientY)});
+ svg.addEventListener('touchmove',e=>{if(drag)e.preventDefault()},{passive:false});
+ svg.addEventListener('contextmenu',e=>{if(drag||pend)e.preventDefault()});
+ const end=e=>{if(pend&&e.pointerId==pend.pid){clearTimeout(pend.timer);pend=null;return}if(!drag||e.pointerId!=drag.pid)return;const d=drag;drag=null;if(tip){tip.remove();tip=null}d.g.classList.remove('armed');
+  if(d.touch||d.moved){suppress=true;setTimeout(()=>suppress=false,400)}if(!d.moved||!d.dd){ganttView(el,ts);return}
+  const q=proposed(d);edit([d.rh?{op:'move',id:d.t.id,start:d.t.start,finish:q.finish}:{op:'move',id:d.t.id,start:q.start}])};
+ svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',e=>{if(pend&&e.pointerId==pend.pid){clearTimeout(pend.timer);pend=null}if(drag&&e.pointerId==drag.pid){cancelDrag();ganttView(el,ts)}});
+ function proposed(d){const t=d.t;if(d.rh){let f=d.dd>0?nextWd(addD(t.finish,d.dd)):prevWd(addD(t.finish,d.dd));if(f<t.start)f=t.start;return {start:t.start,finish:f}}const s=nextWd(addD(t.start,d.dd));const n=Math.max(1,+t.duration||1);let f=s,k=1;while(k<n){f=addD(f,1);if(isWd(f))k++}return {start:s,finish:isMs(t)?s:f}}}
+function listView(el,ts){const cols=[['id','ID'],['task','Task'],['phase','Phase'],['owner','Assigned'],['start','Start'],['finish','Finish'],['duration','Dur'],['depends_on','Predecessors'],['pct_complete','%'],['slip','Slip'],['float','Float'],['source','Source'],['status','Status']];
+ const k=st.sort,dir=st.sortDir;const num=['duration','pct_complete','slip','float'].includes(k);const l=ts.slice().sort((a,b)=>{let x=a[k],y=b[k];if(num){x=+x||0;y=+y||0}else{x=String(x||'');y=String(y||'')}return (x<y?-1:x>y?1:0)*dir});
+ el.innerHTML=`<div class="tw"><table class="ltab"><tr>${EDIT?'<th title="Complete">✓</th><th title="Lock: locked dates never auto-move">🔒</th>':''}${cols.map(([c,h])=>`<th class="s ${num&&c==k?'num':''}" data-k="${c}">${h}${c==k?(dir>0?' ▲':' ▼'):''}</th>`).join('')}</tr>
+ ${l.map(t=>{const od=(t.overdue||t.late)&&!t.done;const ed=t.source!='TRACKER';return `<tr class="rowlink ${od?'od':''}" data-id="${esc(t.id)}">${EDIT?`<td>${ed?`<input type="checkbox" data-done="${esc(t.id)}" ${t.done?'checked':''} aria-label="complete">`:''}</td><td>${ed?`<button class="lk ${t.locked?'on':''}" data-lk="${esc(t.id)}" aria-label="${t.locked?'Unlock':'Lock'}">${t.locked?'🔒':'🔓'}</button>`:''}</td>`:''}<td class="nowrap mut">${esc(t.id)}</td><td class="${st.critHl&&t.critical&&!t.done?'red':''}">${!EDIT&&t.locked?'🔒 ':''}${esc(t.task)}${t.notes?`<div class="mut small">${esc(String(t.notes).slice(0,140))}</div>`:''}</td><td class="small"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${t.color||(J.phase_colors||{})[t.phase||'Other']}"></i> ${esc(t.phase)}</td><td class="small">${esc(t.owner)}</td>
+ <td class="nowrap">${mdy(t.start)}</td><td class="nowrap">${od?chip(mdy(t.finish),'overdue'):mdy(t.finish)}</td><td class="num">${esc(t.duration)}</td><td class="small mut">${esc((t.depends_on||'').replace(/;/g,', '))}</td><td class="num">${t.done?'100':esc(t.pct_complete||0)}</td><td class="num ${+t.slip>0?'red':''}">${t.slip===''||t.slip==null?'':(+t.slip>0?'+':'')+t.slip}</td><td class="num">${t.float==null?'':esc(t.float)}</td><td>${srcChip(t.source)}</td><td class="small">${esc(t.status)}</td></tr>`}).join('')}</table></div>`;
+ el.querySelectorAll('th[data-k]').forEach(h=>h.onclick=()=>{if(st.sort==h.dataset.k)st.sortDir*=-1;else{st.sort=h.dataset.k;st.sortDir=1}saveUi();listView(el,ts)});
+ const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);
+ el.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=e=>{if(e.target.matches('input,button'))return;taskModal(by[r.dataset.id])});
+ el.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>edit([{op:'complete',id:c.dataset.done,done:c.checked}]));
+ el.querySelectorAll('[data-lk]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleLock(by[b.dataset.lk])})}
+/* phone list: big rows, tap circle = done, swipe left = actions (Done / Lock / Edit), swipe right = done, tap = edit sheet */
+function plistView(el,ts){const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);const today=J.today;const wk=s=>{const d=dP(s);const w=new Date(d).getUTCDay();return iso(d-((w+6)%7)*DAY)};
+ const l=ts.slice().sort((a,b)=>(a.start||'9')<(b.start||'9')?-1:(a.start||'9')>(b.start||'9')?1:(a.id<b.id?-1:1));
+ const over=l.filter(t=>(t.overdue||t.late)&&!t.done);const rest=l.filter(t=>!((t.overdue||t.late)&&!t.done));
+ const groups=[];if(over.length)groups.push(['Overdue',over]);let cur=null;rest.forEach(t=>{const k=t.start?wk(t.start):'';const lab=!k?'No date':(k==wk(today)?'This week':(k==wk(addD(today,7))?'Next week':'Week of '+mdy(k)));if(!cur||cur[0]!=lab){cur=[lab,[]];groups.push(cur)}cur[1].push(t)});
+ const row=t=>{const od=(t.overdue||t.late)&&!t.done;const ed=editable(t);const pc=t.done?100:(+t.pct_complete||0);
+  return `<div class="prow ${t.done?'done':''} ${od?'od':''}" data-id="${esc(t.id)}">${ed?`<div class="pact"><button data-a="done" class="a-done">${t.done?'Reopen':'Done'}</button><button data-a="lock" class="a-lock">${t.locked?'Unlock':'Lock'}</button><button data-a="edit" class="a-edit">Edit</button></div>`:''}
+  <div class="pfront">${ed?`<button class="pchk ${t.done?'on':''}" data-done="${esc(t.id)}" aria-label="${t.done?'Reopen':'Mark complete'}: ${esc(t.task)}">${t.done?'✓':''}</button>`:`<span class="pchk ro ${t.done?'on':''}">${t.done?'✓':''}</span>`}
+  <div class="pbody"><div class="pt ${st.critHl&&t.critical&&!t.done?'red':''}">${t.locked?'🔒 ':''}${isMs(t)?'◆ ':''}${esc(t.task)}</div>
+  <div class="ps"><b>${t.start?dow(t.start)+' '+md(t.start):'—'}</b>${t.finish&&t.finish!=t.start?' → '+dow(t.finish)+' '+md(t.finish):''} · ${esc(t.duration)}d · <i class="pdot" style="background:${t.color||(J.phase_colors||{})[t.phase||'Other']}"></i>${esc(t.phase)}${t.owner?' · '+esc(t.owner):''}${pc&&!t.done?` · ${pc}%`:''}${od?' · '+chip('overdue','overdue'):''}</div></div>
+  <span class="psrc">${srcChip(t.source)}</span></div></div>`};
+ el.innerHTML=`<div class="plist">${groups.map(([g,ts2])=>`<div class="pgh">${esc(g)} <span class="mut">(${ts2.length})</span></div>${ts2.map(row).join('')}`).join('')}</div>${EDIT?'<div class="mut small" style="padding:8px 12px">Tap ○ to mark done · swipe a row left for Lock / Edit, right to mark done · tap a row to edit</div>':''}`;
+ let open=null;const closeOpen=()=>{if(open){open.querySelector('.pfront').style.transform='';open.classList.remove('open');open=null}};
+ el.querySelectorAll('[data-done]').forEach(b=>b.onclick=e=>{e.stopPropagation();const t=by[b.dataset.done];edit([{op:'complete',id:t.id,done:!t.done}])});
+ el.querySelectorAll('.prow').forEach(r=>{const t=by[r.dataset.id];const f=r.querySelector('.pfront');let s=null;
+  r.querySelectorAll('.pact [data-a]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=b.dataset.a;closeOpen();if(a=='done')edit([{op:'complete',id:t.id,done:!t.done}]);else if(a=='lock')toggleLock(t);else taskModal(t)});
+  f.addEventListener('click',e=>{if(e.target.closest('[data-done]'))return;if(s&&s.swiped){s=null;return}if(open){closeOpen();return}taskModal(t)});
+  if(!editable(t))return;
+  f.addEventListener('pointerdown',e=>{if(e.button>0||e.target.closest('[data-done]'))return;s={x0:e.clientX,y0:e.clientY,dx:0,on:false,pid:e.pointerId,base:r.classList.contains('open')?-168:0}});
+  f.addEventListener('pointermove',e=>{if(!s||e.pointerId!=s.pid)return;const dx=e.clientX-s.x0,dy=e.clientY-s.y0;if(!s.on){if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.3){s.on=true;try{f.setPointerCapture(e.pointerId)}catch(_){}if(open&&open!==r)closeOpen()}else return}
+   s.dx=dx;const x=Math.max(-190,Math.min(110,s.base+dx));f.style.transition='none';f.style.transform=`translateX(${x}px)`;r.classList.toggle('will-done',x>70)});
+  const fin=e=>{if(!s||e.pointerId!=s.pid)return;const x=s.base+s.dx;f.style.transition='';r.classList.remove('will-done');if(!s.on){s=null;return}s.swiped=true;
+   if(x>70){f.style.transform='';edit([{op:'complete',id:t.id,done:!t.done}]);return}if(x<-60){f.style.transform='translateX(-168px)';r.classList.add('open');open=r}else{f.style.transform='';r.classList.remove('open');if(open===r)open=null}setTimeout(()=>{if(s)s.swiped=false},350)};
+  f.addEventListener('pointerup',fin);f.addEventListener('pointercancel',e=>{if(s&&e.pointerId==s.pid){f.style.transition='';f.style.transform=s.base?'translateX(-168px)':'';s=null}})})}
+function calView(el,ts){const m=st.calMonth||J.today.slice(0,7);const [y,mo]=m.split('-').map(Number);const first=Date.UTC(y,mo-1,1);const start=first-((new Date(first).getUTCDay()+6)%7)*DAY;
+ const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);let cells='';const ph=isPhone();const maxEv=ph?3:4;
+ for(let i=0;i<42;i++){const s=iso(start+i*DAY),d=new Date(start+i*DAY);if(i==35&&d.getUTCMonth()!=mo-1)break;const hol=(J.cal.holidays||{})[s];
+  const ev=ts.filter(t=>t.start&&t.start<=s&&(t.finish||t.start)>=s&&(isWd(s)||t.start==s)).sort((a,b)=>a.start<b.start?-1:1);
+  cells+=`<div class="dc ${isWd(s)?'':'off'} ${d.getUTCMonth()!=mo-1?'other':''} ${s==J.today?'today':''}" data-day="${s}"><div class="dn"><span>${d.getUTCDate()}</span>${hol&&!ph?`<span class="hol">${esc(hol)}</span>`:''}</div>
+  ${ev.slice(0,maxEv).map(t=>`<span class="ev ${t.source=='DRAFT'?'draft':''} ${t.done?'done':''} ${(t.overdue||t.late)&&!t.done?'od':''}" style="background:${taskColor(t)}" data-id="${esc(t.id)}" title="${esc(t.id+' '+t.task+' ('+mdy(t.start)+'–'+mdy(t.finish)+')')}">${t.start==s?'':'↳ '}${esc(t.task)}</span>`).join('')}${ev.length>maxEv?`<span class="more" data-day="${s}">+${ev.length-maxEv} more</span>`:''}</div>`}
+ el.innerHTML=`<div class="tools"><button id="cp" aria-label="Previous month">‹</button><b style="min-width:110px;text-align:center">${MON[mo-1]} ${y}</b><button id="cn" aria-label="Next month">›</button><button id="ct">Today</button><span class="mut small hide-sm">${esc(J.cal.describe)} · shaded = non-workday / holiday</span></div><div class="calg">${DOW.map(d=>`<div class="dh">${ph?d[0]:d}</div>`).join('')}${cells}</div>`;
+ const go=n=>{const d=new Date(Date.UTC(y,mo-1+n,1));st.calMonth=iso(d.getTime()).slice(0,7);saveUi();calView(el,ts)};
+ $('#cp').onclick=()=>go(-1);$('#cn').onclick=()=>go(1);$('#ct').onclick=()=>{st.calMonth='';saveUi();calView(el,ts)};
+ const dayList=s=>{const ev=ts.filter(t=>t.start<=s&&(t.finish||t.start)>=s);openModal(`<h2>${dow(s)} ${mdy(s)}</h2><div class="list">${ev.map(t=>`<div class="it" data-id="${esc(t.id)}" style="cursor:pointer"><div class="dt">${srcChip(t.source)}</div><div class="bd"><div class="t">${esc(t.task)}</div><div class="s">${mdy(t.start)}–${mdy(t.finish)} · ${esc(t.owner||'')}</div></div></div>`).join('')||emptyState('Nothing scheduled','')}</div><div class="mbtns">${EDIT?'<button class="pri" id="addday">+ Add task this day</button>':''}<span class="sp"></span><button data-close>Close</button></div>`,m=>{m.querySelectorAll('[data-id]').forEach(x=>x.onclick=()=>{closeModal();taskModal(by[x.dataset.id])});const a=m.querySelector('#addday');if(a)a.onclick=()=>{closeModal();taskModal(null,{start:s})}})};
+ el.querySelectorAll('.ev').forEach(e=>e.onclick=ev=>{ev.stopPropagation();taskModal(by[e.dataset.id])});
+ el.querySelectorAll('.more').forEach(e=>e.onclick=ev=>{ev.stopPropagation();dayList(e.dataset.day)});
+ if(ph)el.querySelectorAll('.dc').forEach(c=>c.onclick=()=>dayList(c.dataset.day))}
+/* ---------- modal / sheet + task editor ---------- */
+let modalEl=null,modalOnClose=null;function closeModal(){if(modalEl){modalEl.remove();modalEl=null;document.body.classList.remove('modal-open');const f=modalOnClose;modalOnClose=null;if(f)f()}}
+function openModal(html,bind,onClose){closeModal();modalEl=document.createElement('div');modalEl.className='modal-bg';modalEl.innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"></div>${html}</div>`;document.body.appendChild(modalEl);document.body.classList.add('modal-open');modalOnClose=onClose||null;
+ modalEl.addEventListener('click',e=>{if(e.target===modalEl||e.target.closest('[data-close]'))closeModal()});if(bind)bind(modalEl);const f=modalEl.querySelector('input:not([type=checkbox]):not([type=color]),select,textarea');if(f&&!isPhone())f.focus()}
+document.addEventListener('keydown',e=>{if(e.key=='Escape')closeModal();if(J&&(e.ctrlKey||e.metaKey)&&e.key=='z'&&!e.target.matches('input,textarea,select')&&!modalEl){e.preventDefault();undo()}});
+function succOf(id){return (J.tasks||[]).filter(t=>parseDeps(t.depends_on).some(d=>d.id==id))}
+function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||editable(t);const phases=[...new Set((J.tasks||[]).map(x=>x.phase||'Other'))].sort();const who=[...new Set((J.tasks||[]).map(x=>x.owner).filter(Boolean))].sort();
+ const info=t?`<table class="kv small" style="margin-bottom:8px"><tr><td class="mut">Status</td><td>${srcChip(t.source)} ${t.done?chip('complete','ok'):''} ${(t.overdue||t.late)&&!t.done?chip('overdue','overdue'):''} ${t.critical&&!t.done?chip('critical path','high'):''} ${t.locked?chip('🔒 locked','low'):''} ${esc(t.status)}</td></tr>
+ <tr><td class="mut">Dates</td><td>${mdy(t.start)} → ${mdy(t.finish)} (${esc(t.duration)} workdays)${t.float!=null?` · float ${esc(t.float)}`:''}</td></tr>${t.baseline_start?`<tr><td class="mut">Baseline</td><td>${mdy(t.baseline_start)} → ${mdy(t.baseline_finish)}${t.slip!==''&&t.slip!=null?` · slip <b class="${+t.slip>0?'red':''}">${(+t.slip>0?'+':'')+t.slip}</b> workdays`:''}</td></tr>`:''}
+ ${t.actual_start?`<tr><td class="mut">Actual</td><td>${mdy(t.actual_start)} → ${mdy(t.actual_finish)||'…'}</td></tr>`:''}<tr><td class="mut">Successors</td><td>${succOf(t.id).map(s=>esc(s.id)).join(', ')||'—'}</td></tr><tr><td class="mut">Source</td><td>${esc(t.source_ref)}</td></tr></table>`:'';
+ if(!ed){openModal(`<h2>${esc(t.id)} · ${esc(t.task)}</h2>${info}<table class="kv small"><tr><td class="mut">Phase</td><td>${esc(t.phase)}</td></tr><tr><td class="mut">Assigned</td><td>${esc(t.owner||'—')}</td></tr><tr><td class="mut">Predecessors</td><td>${esc(t.depends_on||'—')}</td></tr>${t.notes?`<tr><td class="mut">Notes</td><td>${esc(t.notes)}</td></tr>`:''}</table>
+  ${t.source=='TRACKER'?'<div class="note small" style="margin-top:8px">Tracker milestones are rebuilt from the tracker CSVs on every refresh; edit the tracker to change them.</div>':(syncOn()&&!EDIT?'<div class="note small" style="margin-top:8px">Check out this job to edit it.</div>':'')}<div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`);return}
+ const v=t||Object.assign({task:'',phase:st.phase||'General',owner:'',start:J.today,duration:1,depends_on:'',pct_complete:0,source:'DRAFT',lock:'',notes:'',color:'',milestone_type:''},preset||{});
+ const pc=t&&t.done?100:(+v.pct_complete||0);
+ openModal(`<h2>${t?esc(t.id)+' · Edit task':'Add task'}</h2>${t?`<details class="small"${isPhone()?'':' open'}><summary>Details</summary>${info}</details>`:''}<form id="tf"><div class="fg">
+ <label class="w">Title<input name="task" required value="${esc(v.task)}"></label>
+ <label>Start<input type="date" name="start" value="${esc(v.start)}"></label><label>Duration (workdays)<input type="number" inputmode="numeric" min="1" name="duration" value="${esc(v.duration||1)}"></label>
+ <label class="w">% complete <span class="mut" id="pcv">${pc}%</span><span class="pcrow"><input type="range" min="0" max="100" step="5" name="pct_complete" value="${pc}"><span class="seg pcq">${[0,25,50,75,100].map(x=>`<button type="button" data-pc="${x}">${x}</button>`).join('')}</span></span></label>
+ <label class="cb w lockrow"><input type="checkbox" name="lock" ${String(v.lock).toUpperCase()=='Y'?'checked':''}> 🔒 Locked date (confirmed/REAL): it never auto-moves; if a predecessor pushes into it, it's flagged as a conflict instead</label>
+ <label class="w">Predecessors <span class="mut">(finish-to-start with lag: <code>B002</code>, <code>T010+2</code>, <code>B004SS</code>; separate with ;)</span><input name="depends_on" value="${esc(v.depends_on||'')}" placeholder="e.g. B002+1; T010" autocapitalize="characters" autocomplete="off"></label>
+ <label>Phase<input name="phase" list="dlp" value="${esc(v.phase)}"></label><label>Assigned to (sub / vendor / crew)<input name="owner" list="dlw" value="${esc(v.owner)}"></label>
+ <label>Source<select name="source">${['DRAFT','REAL','BUILDERTREND'].map(s=>`<option ${v.source==s?'selected':''}>${s}</option>`).join('')}</select></label>
+ <label>Milestone type<select name="milestone_type">${['','permit','inspection','delivery','meeting','draw','milestone','selection'].map(s=>`<option value="${s}" ${v.milestone_type==s?'selected':''}>${s||'(task)'}</option>`).join('')}</select></label>
+ <label>Color<span style="display:flex;gap:6px;align-items:center"><input type="color" name="color" value="${esc(v.color||(J.phase_colors||{})[v.phase]||'#2563eb')}" style="width:52px;padding:1px"><label class="cb" style="font-size:11.5px"><input type="checkbox" name="usephase" ${v.color?'':'checked'}> use phase color</label></span></label>
+ <label class="w">Notes<textarea name="notes" rows="3">${esc(v.notes||'')}</textarea></label></div>
+ <datalist id="dlp">${phases.map(p=>`<option value="${esc(p)}">`).join('')}</datalist><datalist id="dlw">${who.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
+ <div class="mbtns sticky"><button class="pri" type="submit">${t?'Save':'Add task'}</button>${t?`<button type="button" id="tc">${t.done?'Reopen':'Mark complete'}</button><button type="button" class="danger" id="tdl">Delete</button>`:''}<span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,m=>{
+  const f=m.querySelector('#tf');const rng=f.querySelector('[name=pct_complete]');const pcv=m.querySelector('#pcv');rng.oninput=()=>pcv.textContent=rng.value+'%';m.querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>{rng.value=b.dataset.pc;pcv.textContent=b.dataset.pc+'%'});
+  f.onsubmit=e=>{e.preventDefault();const fd=new FormData(f);const o={};['task','phase','owner','start','duration','depends_on','pct_complete','source','milestone_type','notes'].forEach(k=>o[k]=(fd.get(k)||'').toString().trim());
+   o.lock=fd.get('lock')?'Y':'';o.color=fd.get('usephase')?'':fd.get('color');
+   if(!t){closeModal();edit([{op:'add',fields:o}]);return}
+   const ch={};Object.keys(o).forEach(k=>{const old=k=='pct_complete'?String(t.done?100:(t.pct_complete||0)):String(t[k]==null?'':t[k]);if(String(o[k])!==old)ch[k]=o[k]});
+   if(ch.lock==='Y'&&String(t.lock).toUpperCase()==='Y')delete ch.lock;if(!Object.keys(ch).length){closeModal();return}closeModal();edit([{op:'update',id:t.id,fields:ch}])};
+  if(t){m.querySelector('#tc').onclick=()=>{closeModal();edit([{op:'complete',id:t.id,done:!t.done}])};m.querySelector('#tdl').onclick=()=>{if(confirm(`Delete ${t.id} “${t.task}”? Links to it are removed. (Undo restores it.)`)){closeModal();edit([{op:'delete',id:t.id}])}}}})}
+
+/* ---------- other modules ---------- */
+function mSel(M){const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
+ M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} Buildertrend template selections (DRAFT, due = “Finalize …” schedule task)`,
+ all.length?`<div class="tw"><table><tr><th>Title / Room-Location</th><th>Fixture / Choice</th><th>Brand</th><th>Model</th><th>Finish</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th class="num">Allowance</th><th>Deadline</th><th>Client approval</th><th>Status</th><th>Order status</th><th>Order date</th><th>ETA</th><th>Link / PO</th><th>Src</th></tr>
+ ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${x.link&&/^https?:/.test(x.link)?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
+ (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:'')+csvBtn('selections'));
+ const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M)}
+function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
+ M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} Buildertrend template packages not yet released`,
+ real.map(p=>{const mx=Math.max(...p.subs.map(x=>x.amount||0),1);return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${p.low?` · low ${fmt$(p.low)}`:''} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
+ <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
+ ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}</td><td class="small">${esc(x.ref)}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
+ (tpl.length?panel('Template packages (not released)','Buildertrend “**Future Template” bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M)}
+function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv + Buildertrend PO exports',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and Buildertrend PO exports.'),csvBtn('pos'));bindCsv(M)}
+function mCos(M){const l=J.cos||[];const tot=l.reduce((a,c)=>a+(+c.amount||0),0);M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${fmt$(c.amount)||'<span class="mut">TBD</span>'}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${fmt$(tot)}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
+function mBudget(M){const l=J.budget||[];const sum=k=>l.reduce((a,b)=>a+(+b[k]||0),0);M.innerHTML=panel('Budget','Buildertrend Job Costing columns · original/revised from live/modules/budget.csv · committed/actual from POs by cost code',l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Original</th><th class="num">Revised</th><th class="num">Committed</th><th class="num">Actual</th><th class="num">Variance</th><th class="num">Projected</th><th class="num">Cost to complete</th><th>Notes</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title)}</td><td class="num">${fmt$(b.original)}</td><td class="num">${fmt$(b.revised)}</td><td class="num">${fmt$(b.committed)}</td><td class="num">${fmt$(b.actual)}</td><td class="num ${b.variance<0?'red':''}">${fmt$(b.variance)}</td><td class="num">${fmt$(b.projected)}</td><td class="num">${fmt$(b.to_complete)}</td><td class="small mut">${esc(b.notes)}</td></tr>`).join('')}<tr class="tot"><td colspan=2>Total</td>${['original','revised','committed','actual','variance','projected','to_complete'].map(k=>`<td class="num">${fmt$(sum(k))}</td>`).join('')}<td></td></tr></table></div>`:emptyState('No budget lines yet','Add rows to live/modules/budget.csv.'),csvBtn('budget'));bindCsv(M)}
+function mLogs(M){const l=J.logs||[];M.innerHTML=panel('Daily logs','Daily update emails and Plaud recordings (Slack job channels once active)',`<div class="list">${l.map(x=>`<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.title)}</div><div class="s">${esc(x.text)}</div><div class="s">${esc(x.source)}</div></div></div>`).join('')||emptyState('No daily logs yet','')}</div>`,csvBtn('logs'));bindCsv(M)}
+function mMsgs(M){const l=J.messages||[];M.innerHTML=panel('Messages','Slack + email intake tied to this job',`<div class="list">${l.map(i=>`<div class="it"><div class="dt">${mdy(i.time)}</div><div class="bd"><div>${chip(i.class||'—','low')} <span class="small mut">${esc(i.source)} · ${esc(i.channel)} · ${esc(i.author)}</span></div><div class="s" style="color:#1d2330;margin:3px 0">${esc(String(i.text||'').slice(0,400))}</div>${i.link&&/^https?:/.test(i.link)?`<a class="small" href="${esc(i.link)}" target="_blank" rel="noopener">open</a>`:''}</div></div>`).join('')||emptyState('No messages yet','')}</div>`,csvBtn('messages'));bindCsv(M)}
+function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show=st.todoAll?items:items.filter(t=>t.status!='done'&&(!t.due||t.due<=lim));
+ M.innerHTML=panel('To-dos','BT To-Do template (due dates tied to schedule items) + follow-ups.csv + proposed items',items.length?`<div class="tw"><table><tr><th>Due</th><th>To-do</th><th>Assigned</th><th>Tied to</th><th>Priority</th><th>Tags</th><th>Source</th></tr>${show.map(t=>`<tr><td class="nowrap">${t.due&&t.due<J.today&&t.status!='done'?chip(md(t.due),'overdue'):esc(mdy(t.due))}</td><td>${esc(t.title)}${t.next?`<div class="mut small">${esc(t.next)}</div>`:''}</td><td class="small">${esc(t.assigned)}</td><td class="small">${esc(t.due_rule||t.related)}</td><td class="small">${esc(t.priority)}</td><td class="small">${esc(t.tags)}</td><td>${srcChip(t.source)}</td></tr>`).join('')||'<tr><td colspan=7 class="empty">No to-dos in the next 30 days</td></tr>'}</table></div>`:emptyState('No to-dos yet',''),
+ `<label class="small"><input type="checkbox" id="ta" ${st.todoAll?'checked':''}> show all (${items.length})</label>`+csvBtn('todos'));const ta=$('#ta');if(ta)ta.onchange=e=>{st.todoAll=e.target.checked;saveUi();mTodos(M)};bindCsv(M)}
+function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, BT vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
+ bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
+
+function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)',`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo}
+function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
+ M.innerHTML=panel('Job settings',EDIT?'saved with your edits (export / check in to send them)':(syncOn()?'check out to change':'view-only'),`<form id="sf" class="pb"><div class="fg">
+ <label>Work week<select name="saturday" ${dis}><option value="0" ${s.saturday?'':'selected'}>Mon–Fri</option><option value="1" ${s.saturday?'selected':''}>Mon–Sat</option></select></label>
+ <label>Holidays<select name="holidays" ${dis}>${[['construction','Major US holidays (New Year, Memorial, July 4, Labor, Thanksgiving + Fri, Christmas)'],['federal','All 11 US federal holidays'],['none','No holidays']].map(([k,l])=>`<option value="${k}" ${s.holidays==k?'selected':''}>${l}</option>`).join('')}</select></label>
+ <label class="cb w"><input type="checkbox" name="cascade_bt" ${s.cascade_bt?'checked':''} ${dis}> Buildertrend tasks follow their links when a predecessor is moved here (off = BT rows are locked facts and get flagged instead)</label>
+ <label>Project manager<input name="pm" value="${esc(i.pm)}" ${dis}></label><label>Client / owner<input name="client" value="${esc(i.client)}" ${dis}></label>
+ <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${dis}></label><label>Contract<input name="contract" value="${esc(i.contract)}" ${dis}></label>
+ <label class="w">Notes<textarea name="notes" rows="2" ${dis}>${esc(i.notes)}</textarea></label>
+ <div class="w"><div class="small mut" style="margin:6px 0 4px">Phase colors</div><div style="display:flex;flex-wrap:wrap;gap:8px">${pcs.map(([p,c])=>`<label class="cb small" style="border:1px solid var(--line);border-radius:6px;padding:3px 6px"><input type="color" data-pc="${esc(p)}" value="${esc(c)}" ${dis} style="width:34px;padding:0;border:0"> ${esc(p)}</label>`).join('')||'<span class="mut small">No phases yet</span>'}</div></div></div>
+ ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>`);
+ if(!EDIT)return;$('#sf').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const pc={};M.querySelectorAll('[data-pc]').forEach(x=>{if(x.value!=(J.phase_colors||{})[x.dataset.pc])pc[x.dataset.pc]=x.value});
+  const body={saturday:f.get('saturday')=='1',holidays:f.get('holidays'),cascade_bt:!!f.get('cascade_bt'),info:{pm:f.get('pm'),client:f.get('client'),status:f.get('status'),contract:f.get('contract'),notes:f.get('notes')},phase_colors:pc};
+  try{J=STORE.setSettings(J.slug,body);renderJob();toast('Settings saved; schedule recomputed')}catch(err){toast('Not saved: '+err.message)}}}
+/* ---------- exports ---------- */
+function csvText(rows,cols){return E.csvText(rows,cols)}
+function download(name,data,mime){try{const b=data instanceof Blob?data:new Blob([data],{type:mime||'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Downloaded '+name)}catch(e){toast('Download failed: '+e.message)}}
+function modRows(mod){if(mod=='bids'){const o=[];(J.bids||[]).forEach(p=>{const b={title:p.title,cost_codes:p.cost_codes,status:p.status,deadline:p.deadline,invited:p.invited,received:p.received,low:p.low,owner:p.owner,source:p.source};if(!p.subs.length)o.push(b);p.subs.forEach(s=>o.push(Object.assign({},b,{vendor:s.vendor,sub_status:s.status,sent:s.sent,reply:s.reply,amount:s.amount})))});return o}
+ if(mod=='pos')return (J.pos||[]).map(p=>Object.assign({},p,{flags:(p.flags||[]).join(', ')}));if(mod=='schedule')return J.tasks||[];return J[mod]||[]}
+function exportModule(mod){const cols=(J.mod_cols||{})[mod];if(!cols)return;download(J.slug+'-'+((J.mod_files||{})[mod]||mod+'.csv'),csvText(modRows(mod),cols))}
+function mExports(M){const mods=J.modules||[];
+ M.innerHTML=panel('Exports','built from this job as it is now (snapshot + your edits)',`<div class="pb"><div class="small mut" style="margin-bottom:6px">Schedule for Buildertrend / MS Project</div>
+ <p><button id="xb">Buildertrend schedule CSV</button> <span class="small mut">ID #, Title, Complete, Phase, Duration, Start, End, Assigned To, Pred 1–3 Id/Type/Lag</span></p>
+ <p><button id="xm">MS Project XML</button> <span class="small mut">MSPDI with predecessor links; opens in MS Project / ProjectLibre</span></p>
+ <div class="small mut" style="margin:12px 0 6px">Module CSVs</div><p>${mods.map(([k,l])=>`<button data-csv="${k}" style="margin:0 6px 6px 0">${l}</button>`).join('')}</p>
+ <div class="small mut" style="margin:12px 0 6px">Send your edits back to the office</div><p><button class="pri" id="xc">Export my changes</button> <span class="small mut">one .zip: changes.json + CSVs (all jobs you edited)</span></p></div>`);
+ bindCsv(M);$('#xb').onclick=()=>download(J.slug+'-buildertrend-schedule.csv',E.btCsv(J));$('#xm').onclick=()=>download(J.slug+'-msproject.xml',E.mspXml(J),'application/xml');$('#xc').onclick=exportChanges}
+/* ---------- my changes: export / import / reset + shared check-out ---------- */
+function stampName(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,16).replace('T','-').replace(':','')}
+function whoSlug(){const w=(STORE.who()||'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'');return w?w+'-':''}
+function exportChanges(){if(!STORE.pendingTotal()&&!STORE.editedJobs().length){toast('No edits to export yet');return}const x=STORE.exportFiles();download(`Harswells-changes-${whoSlug()}${stampName()}.zip`,x.zip)}
+function exportJson(){const o=STORE.exportObj();download(`Harswells-changes-${whoSlug()}${stampName()}.json`,JSON.stringify(o,null,1),'application/json')}
+function importFile(file){const r=new FileReader();r.onload=()=>{try{const res=STORE.importBuffer(r.result);J=null;route();
+  toast(`Imported ${res.added} edit(s) in ${res.jobs} job(s)`+(res.failed?` · ${res.failed} could not be applied (see History)`:'')+(res.otherSnapshot?' · note: made on a different snapshot':''))}catch(e){toast('Import failed: '+e.message)}};r.onerror=()=>toast('Could not read that file');r.readAsArrayBuffer(file)}
+function ensureName(then){if(STORE.who()){then();return}openModal(`<h2>Your name</h2><p class="small mut">Shown on your edits, exports and check-outs so the office knows who changed what.</p><form id="wf"><input name="n" placeholder="Your first name" required style="width:100%" autocomplete="name"><div class="mbtns"><button class="pri" type="submit">Continue</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
+ m=>{m.querySelector('#wf').onsubmit=e=>{e.preventDefault();STORE.setWho(new FormData(e.target).get('n'));closeModal();then()}})}
+function openChanges(){const eds=STORE.editedJobs();const n=STORE.pendingTotal();const names=Object.fromEntries(((DATA.common||{}).all_jobs||[]).map(x=>[x.slug,x.name]));const others=STORE.otherVersions();
+ const co=J&&syncOn()?STORE.checkout(J.slug):null;const ls=J&&lockCache[J.slug];
+ openModal(`<h2>My changes</h2>
+ <label class="small">Your name <input id="whoin" value="${esc(STORE.who())}" placeholder="Your first name" style="width:160px" autocomplete="name"></label>
+ <p class="small">${STORE.persist?`Saved in this browser (localStorage, key <code>${esc(STORE.KEY)}</code>).`:'<b class="red">This viewer blocks storage: edits are lost when you close it. Export them first.</b>'} <b>${n}</b> unsent edit${n==1?'':'s'}${eds.length?' in '+eds.length+' job'+(eds.length>1?'s':''):''}.</p>
+ ${eds.length?`<div class="list">${eds.map(s=>`<div class="it"><div class="bd"><a href="${jobHref(s)}" data-close class="t">${esc(names[s]||s)}</a> <span class="small mut">${STORE.pending(s)} unsent</span></div><button class="small" data-rj="${esc(s)}">Reset job</button></div>`).join('')}</div>`:''}
+ ${others.length?`<div class="note small">Edits from an older snapshot/version are still in this browser (${others.map(o=>o.n+' from '+esc(o.built||'?')).join(', ')}). <button class="small" id="adopt">Bring them over</button></div>`:''}
+ <div class="mbtns"><button class="pri" id="xc">Export my changes</button><button id="xj">JSON only</button><label class="btn filebtn">Import changes<input type="file" id="imp" accept=".json,.zip,application/json,application/zip" hidden></label><span class="sp"></span><button class="danger" id="rst">Reset to original</button></div>
+ <h3 class="sh">Shared check-out <span class="mut small">(optional; lets your team take turns editing a job)</span></h3>
+ <div class="small">${syncOn()?`Connected: <b>${esc(SY.A.describe())}</b>`:(SY.A&&SY.A.needsPermission()?`Folder access needs your OK again.`:'Not connected: edits stay in this browser until you export them.')}</div>
+ ${J&&syncOn()?`<div class="small" style="margin-top:6px">${esc(J.name)}: ${co&&co.kind==SY.kind?`<b>checked out by you</b> since ${esc(co.lock.checked_out_at)} (expires ${esc(co.lock.expires_at)})`:(ls?(ls.state=='free'?'available':(ls.state=='other'?`checked out by <b>${esc(ls.lock.holder)}</b> since ${esc(ls.lock.checked_out_at)}`:(ls.state=='expired'?`lock by ${esc(ls.lock.holder)} expired`:'')))  :'checking…')}</div>
+  <div class="mbtns">${co&&co.kind==SY.kind?`<button class="pri" id="sci">Check in${J.pending?' ('+J.pending+')':''}</button><button id="srl">Cancel check-out</button>`:`<button class="pri" id="sco">Check out ${esc(J.name)}</button>`}<button id="spl">Refresh</button></div>`:''}
+ <div class="mbtns">${syncOn()||(SY.A&&SY.A.needsPermission())?`${SY.A&&SY.A.needsPermission()?'<button class="pri" id="sgrant">Allow folder access</button>':''}<button id="sdis">Disconnect ${esc(SY.A.label)}</button>`:`${HWSSync.FsaBackend().available()?'<button id="sfsa">Use a shared folder…</button>':''}<button id="sdbx">Sign in with Dropbox</button>`}</div>
+ <p class="small mut">${MODE==='share'?'Shared folder works in desktop Chrome/Edge (pick the Dropbox-synced “Harswells Live Schedule/sync” folder). Dropbox sign-in from this file opens Dropbox in a new tab and asks you to paste the code it shows. On iPhone use the hosted app.':'Dropbox sign-in keeps your check-outs and change sets in the shared Dropbox folder (locks/ and changes/ folders).'}</p>
+ <div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,m=>{
+  const g=s=>m.querySelector(s);g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};
+  g('#xc').onclick=exportChanges;g('#xj').onclick=exportJson;g('#imp').onchange=e=>{const f=e.target.files[0];if(f){closeModal();importFile(f)}};
+  g('#rst').onclick=()=>{if(confirm('Reset to the original snapshot? This deletes every unsent edit in this browser (export first if you need them).')){STORE.reset();closeModal();J=null;route();toast('Reset to the original snapshot')}};
+  m.querySelectorAll('[data-rj]').forEach(b=>b.onclick=()=>{if(confirm('Discard your unsent edits for this job?')){STORE.reset(b.dataset.rj);closeModal();J=null;route();toast('Job reset')}});
+  const ad=g('#adopt');if(ad)ad.onclick=()=>{others.forEach(o=>STORE.adoptVersion(o.key));closeModal();J=null;route();toast('Older edits brought over (check History for anything that could not apply)')};
+  const b=(id,f)=>{const x=g(id);if(x)x.onclick=f};
+  b('#sco',()=>{closeModal();doCheckout(J.slug)});b('#sci',()=>{closeModal();doCheckin(J.slug)});b('#srl',()=>{closeModal();doRelease(J.slug)});b('#spl',()=>{closeModal();refreshLock(J.slug,true).then(()=>openChanges())});
+  b('#sfsa',async()=>{try{await setBackend('fsa',true);closeModal();J=null;route();toast('Shared folder connected')}catch(e){if(e.name!='AbortError')toast('Folder: '+e.message)}});
+  b('#sgrant',async()=>{try{await SY.A.connect();closeModal();J=null;route()}catch(e){toast(e.message)}});
+  b('#sdbx',async()=>{try{const r=await setBackend('dropbox',true);if(r=='paste'){closeModal();pasteCode()}else if(r!=='redirect'){closeModal();J=null;route()}}catch(e){toast(e.message)}});
+  b('#sdis',async()=>{if(!confirm('Disconnect? Unsent edits stay in this browser.'))return;await SY.A.disconnect();HWSSync.LS.set('hws-sync-kind',null);SY.A=null;SY.kind=null;SY.locks=null;closeModal();J=null;route()})})}
+function pasteCode(){openModal(`<h2>Finish Dropbox sign-in</h2><p class="small">Dropbox opened in a new tab. Approve access, then copy the code it shows and paste it here.</p><form id="pc"><input name="c" required style="width:100%" autocomplete="off" placeholder="Access code"><div class="mbtns"><button class="pri" type="submit">Sign in</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
+ m=>{m.querySelector('#pc').onsubmit=async e=>{e.preventDefault();try{await SY.A.finishPaste(new FormData(e.target).get('c'));closeModal();J=null;route();toast('Signed in to Dropbox')}catch(err){toast(err.message)}}})}
+/* ---------- sync state ---------- */
+const SY={A:null,kind:null,locks:null};const lockCache={};
+async function setBackend(kind,interactive){const A=kind=='fsa'?HWSSync.FsaBackend():HWSSync.DropboxBackend();HWSSync.LS.set('hws-sync-kind',kind);
+ let r=true;if(interactive){if(kind=='dropbox'&&!A.configured()){HWSSync.LS.set('hws-sync-kind',null);throw new Error('Dropbox sign-in is not set up in this build yet (Dropbox App key missing; see DEPLOY.md).')}r=await A.connect()}else await A.restore();
+ SY.A=A;SY.kind=kind;SY.locks=HWSSync.Locks(A,{who:()=>STORE.who(),built:DATA.built});return r}
+async function syncRedirect(){if(HWSSync.LS.get('hws-sync-kind')!=='dropbox')return;try{const A=HWSSync.DropboxBackend();if(await A.handleRedirect())toast('Signed in to Dropbox'+(A.describe()?': '+A.describe():''))}catch(e){toast(e.message)}}
+async function syncBoot(){const kind=HWSSync.LS.get('hws-sync-kind');if(!kind)return;const A=kind=='fsa'?HWSSync.FsaBackend():HWSSync.DropboxBackend();
+ try{await A.restore()}catch(e){}SY.A=A;SY.kind=kind;SY.locks=HWSSync.Locks(A,{who:()=>STORE.who(),built:DATA&&DATA.built})}
+async function refreshLock(slug,force){if(!syncOn())return;if(!force&&lockCache[slug]&&Date.now()-lockCache[slug].at<60e3)return;try{const s=await SY.locks.status(slug);s.at=Date.now();lockCache[slug]=s;
+  const co=STORE.checkout(slug);if(co&&co.kind==SY.kind&&s.state!='mine'){STORE.setCheckout(slug,null);toast('Your check-out of this job is no longer valid'+(s.lock?` (${s.lock.holder} has it)`:''))}
+  if(J&&J.slug==slug&&!modalEl)renderJob()}catch(e){lockCache[slug]={state:'unknown',at:Date.now()}}}
+async function doCheckout(slug,force){if(!syncOn()){openChanges();return}ensureName(async()=>{busy(true);try{const r=await SY.locks.checkout(slug,force);
+  const sets=await SY.locks.pull(slug,STORE.knownRemote(slug));const n=STORE.mergeRemote(slug,sets);STORE.setCheckout(slug,{kind:SY.kind,rev:r.rev,lock:r.lock,at:Date.now()});lockCache[slug]={state:'mine',lock:r.lock,rev:r.rev,at:Date.now()};
+  if(J&&J.slug==slug)J=STORE.getJob(slug);renderJob();toast(`Checked out · you can edit ${J.name}`+(n?` · pulled ${n} change set(s) from others`:''))}
+ catch(e){if(e.name=='LockedError'){const lk=e.lock||{};const exp=Date.now()>(lk.expires_ms||0);lockCache[slug]={state:exp?'expired':'other',lock:lk,at:Date.now()};renderJob();
+   openModal(`<h2>${esc(J?J.name:slug)} is checked out</h2><p><b>${esc(lk.holder||'Someone')}</b> checked it out ${esc(lk.checked_out_at||'')}${lk.expires_at?` (expires ${esc(lk.expires_at)})`:''}.</p><p class="small mut">Wait for them to check in, or take over if they are done${exp?' (their check-out has expired)':''}. Taking over is recorded; their un-checked-in edits stay on their device.</p><div class="mbtns"><button class="danger" id="tko">Take over</button><span class="sp"></span><button data-close>OK</button></div>`,
+   m=>m.querySelector('#tko').onclick=()=>{if(exp||confirm(`Take over from ${lk.holder}?`)){closeModal();doCheckout(slug,true)}})}
+  else if(e.name=='SetupError')setupFolder(slug,e);else toast('Check-out failed: '+e.message)}finally{busy(false)}})}
+function setupFolder(slug,e){openModal(`<h2>Check-out folder not found</h2><p>${esc(e.message)}</p><p class="small mut">Everyone must use the <b>same</b> folder. <b>Folder owner:</b> tap “Create it here” once. <b>Everyone else:</b> ask the folder owner to share the <code>Harswells Live Schedule/sync</code> folder with you (can edit), add it to your Dropbox, then enter where it appears in your Dropbox (for example <code>/sync</code> or <code>/Harswells Live Schedule/sync</code>).</p><form id="sfr"><label class="small">Folder path in this Dropbox<input name="p" value="${esc(e.where||'')}" style="width:100%" autocomplete="off"></label><div class="mbtns"><button class="pri" type="submit">Use this folder</button><button type="button" id="smk">Create it here</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
+ m=>{m.querySelector('#sfr').onsubmit=ev=>{ev.preventDefault();SY.A.setRoot(new FormData(ev.target).get('p'));closeModal();doCheckout(slug)};
+  m.querySelector('#smk').onclick=async()=>{const p=m.querySelector('[name=p]').value;if(p&&p!==e.where)SY.A.setRoot(p);closeModal();busy(true);try{await SY.A.ensureLayout(true);doCheckout(slug)}catch(err){toast('Could not create the folder: '+err.message)}finally{busy(false)}}})}
+async function doCheckin(slug){const co=STORE.checkout(slug);if(!co){toast('Not checked out');return}busy(true);try{const cs=STORE.changeset(slug);const r=await SY.locks.checkin(slug,cs,co);
+  if(r.name)STORE.markCheckedIn(slug,cs,r.name);STORE.setCheckout(slug,null);lockCache[slug]={state:'free',at:Date.now()};if(J&&J.slug==slug)J=STORE.getJob(slug);renderJob();
+  toast((r.name?`Checked in ${cs.entries.length} edit(s)`:'Checked in (no edits)')+(r.warning?' · '+r.warning:''))}
+ catch(e){toast('Check-in failed: '+e.message+'. Your edits stay saved here; try again when online.')}finally{busy(false)}}
+async function doRelease(slug){const co=STORE.checkout(slug);if(STORE.pending(slug)&&!confirm('You have unsent edits. Cancel the check-out anyway? (The edits stay in this browser; check out again later to check them in.)'))return;
+ busy(true);try{await SY.locks.release(slug,co)}catch(e){if(e.name!='ConflictError'){toast('Could not release: '+e.message);busy(false);return}}STORE.setCheckout(slug,null);lockCache[slug]={state:'free',at:Date.now()};if(J&&J.slug==slug)renderJob();toast('Check-out cancelled');busy(false)}
+let busyN=0;function busy(on){busyN+=on?1:-1;document.body.classList.toggle('busy',busyN>0)}
+/* ---------- landing (all jobs) ---------- */
+function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const jobs=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage).toLowerCase().includes(q));
+ const hi=L.jobs.reduce((a,j)=>a+j.high,0),od=L.jobs.reduce((a,j)=>a+j.overdue,0);document.body.classList.remove('has-tabs');
+ $('#root').innerHTML=topHtml()+`<main class="main" style="max-width:1400px;margin:0 auto"><div class="lcards"><div class="lcard"><div class="n">${L.jobs.length}</div><div class="b">Jobs</div><div class="small mut">each has its own schedule workspace</div></div>
+ <div class="lcard red"><div class="n">${od}</div><div class="b">Overdue tasks</div><div class="small mut">not complete, past finish</div></div><div class="lcard red"><div class="n">${hi}</div><div class="b">High conflicts</div><div class="small mut">across all jobs</div></div>
+ <div class="lcard"><div class="n">${L.jobs.filter(j=>j.tasks).length}</div><div class="b">Jobs with a schedule</div><div class="small mut">${L.jobs.filter(j=>j.bt).length} from Buildertrend</div></div></div>
+ <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
+ ${jobs.map(j=>{const pe=STORE.pending(j.slug);return `<a class="jcard" href="${jobHref(j.slug)}"><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span><span>${chip(j.bt_status=='in Buildertrend'?'BT':'not in BT',j.bt_status=='in Buildertrend'?'inbt':'notbt')}</span></div>
+ <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
+ <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
+ ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`;
+ bindTop();const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
+/* ---------- boot ---------- */
+function route(){closeModal();if(!DATA)return;const p=parseHash();
+ if(p.slug){if(!DATA.jobs[p.slug]){location.hash='#/';return}if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0)}
+ else{J=null;L=STORE.getList();renderList()}}
+window.addEventListener('hashchange',route);
+let lastPhone=isPhone();window.addEventListener('resize',()=>{const p=isPhone();if(p!==lastPhone){lastPhone=p;if(!modalEl)route()}});
+function openStore(){STORE=HWSStore.create({data:DATA,version:MODE==='share'?B.version:('pwa-'+String(DATA.built).replace(/[^0-9A-Za-z]+/g,'')),extra:DATA.extra,onSaveError:e=>toast('Could not save in this browser: '+e.message+' (export your changes)')})}
+async function boot(){try{
+  await syncRedirect();
+  if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
+  else{await WSData.init();WSData.onUpdate=()=>{const pend=STORE?STORE.pendingTotal():0;DATA=WSData.data();openStore();J=null;route();if(pend&&!STORE.pendingTotal())toast('New data arrived; open “Changes” to bring your unsent edits over')};DATA=WSData.data();
+   if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
+  openStore();await syncBoot();route();
+ }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
+if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+</script>
+</body></html>
