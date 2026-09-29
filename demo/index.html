@@ -187,6 +187,44 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .bcard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px}.bcard.late{border-left:4px solid var(--red)}
 .bt{display:flex;align-items:center;gap:8px}.bv{font-weight:700;font-size:16px;flex:1;min-width:0}.bs{color:#475467;font-size:13px;margin-top:4px;line-height:1.6}.bs .dchip{padding:1px 6px}
 .lbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.none2{margin-top:8px;font-style:italic}
+.orow .olinks{padding:0 14px 12px;margin-top:-4px}
+/* Messages tab, phone */
+.sys-tog{display:flex;align-items:center;gap:8px;color:#344054}
+.msgday{margin-bottom:8px}
+.msgcard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 12px 10px;margin-bottom:10px}
+.msghead{display:flex;align-items:center;gap:8px;min-width:0}
+.msgico{width:28px;height:28px;padding:5px;border-radius:8px;background:var(--soft);color:var(--navy2);box-sizing:border-box}
+.msgwho{font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msgwhen{margin-left:auto;color:var(--mut);font-size:12px;font-weight:600;white-space:nowrap}
+.msgtext{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;width:100%;margin:8px 0 0;padding:0;border:0;background:transparent;text-align:left;font:inherit;color:#1d2330;line-height:1.4;cursor:pointer}
+.msgcard.open .msgtext{-webkit-line-clamp:unset;display:block}
+.msgacts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.replypill{min-height:32px}
+.msgopen{font-size:13px;font-weight:700}
+.msgreplies{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #edf0f4}
+.msgcard.replies-open .msgreplies{display:block}
+.msgreply{font-size:13px;padding:6px 0;color:#1d2330}
+.msgreply b{font-size:13px}
+/* Daily logs tab, phone */
+.logjump{display:flex;align-items:center;gap:8px}
+.logjump select{min-height:40px;border-radius:12px;border:1px solid #d7dde7;background:#fff;padding:0 12px;font-weight:600;color:#344054}
+.logcard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px;margin-bottom:10px}
+.loghead{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.loghead h2{margin:0;font-size:16px;line-height:1.3;color:var(--navy)}
+.logcounts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.loglines{display:flex;flex-direction:column;margin-top:8px}
+.logline{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;border:0;background:transparent;padding:8px 0;font:inherit;color:#1d2330;cursor:pointer;border-top:1px solid #edf0f4}
+.logtxt{flex:1;min-width:0;line-height:1.35}
+.logbullet{display:flex;align-items:flex-start;gap:8px;padding:8px 0 8px 2px;border-top:1px solid #edf0f4;line-height:1.35}
+.logbullet .logtxt::before{content:"• ";color:var(--navy2);font-weight:700}
+.logpending .logtxt{color:#667085;font-weight:600}
+.logpending .logtxt::before{content:""}
+.logsources{margin-top:4px;border-top:1px solid #edf0f4}
+.logsources summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--navy)}
+.logsrcgrp{padding:0 0 8px 2px}
+.logsrctitle{font-size:13px;font-weight:600;color:#344054;margin:4px 0}
+.logsrc{display:flex;align-items:center;gap:8px;min-height:36px;font-size:13px}
+.logwhen{color:#667085;min-width:72px}
 .lbtn{display:inline-flex;align-items:center;gap:7px;max-width:100%;min-height:44px;padding:0 12px;border-radius:10px;background:var(--soft);color:var(--navy);font-weight:600;font-size:13.5px;text-decoration:none!important;border:1px solid #d9e1ee}
 .lbtn .lt{font-size:13.5px;-webkit-line-clamp:1;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}.lbtn:active{background:#dfe7f3}
 .lbtn.big{flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:64px;padding:10px 12px;background:#fff}.lbtn.big .ico{color:var(--navy2)}.lbtn.big .ls{font-weight:400;max-width:100%}
@@ -622,7 +660,7 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
  J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length});
  return J}
 function listRow(J,old){const t=J.tasks.filter(x=>x.source!='TRACKER');return Object.assign({},old,{stage:(J.info||{}).status||J.stage,pm:(J.info||{}).pm||'',client:(J.info||{}).client||'',start:J.summary.start||'',finish:J.summary.finish||'',tasks:J.tasks.length,
- bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
+ bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:(old&&old.closed)?0:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
 /* split a snapshot job into raw schedule rows + read-only tracker rows */
 const TRACKER_ID=/^(BID|ORD|DLV)-/;
 function splitJob(j){const base=[],trk=[];(j.tasks||[]).forEach(t=>{if(t.source=='TRACKER'&&TRACKER_ID.test(t.id))trk.push(t);else{const r={};FIELDS.forEach(f=>r[f]=t[f]==null?'':String(t[f]));base.push(r)}});return {rows:base,trackerRows:trk}}
@@ -1354,8 +1392,87 @@ function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bi
 function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv + Buildertrend PO exports',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and Buildertrend PO exports.'),csvBtn('pos'));bindCsv(M)}
 function mCos(M){const l=J.cos||[];const tot=l.reduce((a,c)=>a+(+c.amount||0),0);M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${fmt$(c.amount)||'<span class="mut">TBD</span>'}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${fmt$(tot)}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
 function mBudget(M){const l=J.budget||[];const sum=k=>l.reduce((a,b)=>a+(+b[k]||0),0);M.innerHTML=panel('Budget','Buildertrend Job Costing columns · original/revised from live/modules/budget.csv · committed/actual from POs by cost code',l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Original</th><th class="num">Revised</th><th class="num">Committed</th><th class="num">Actual</th><th class="num">Variance</th><th class="num">Projected</th><th class="num">Cost to complete</th><th>Notes</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title)}</td><td class="num">${fmt$(b.original)}</td><td class="num">${fmt$(b.revised)}</td><td class="num">${fmt$(b.committed)}</td><td class="num">${fmt$(b.actual)}</td><td class="num ${b.variance<0?'red':''}">${fmt$(b.variance)}</td><td class="num">${fmt$(b.projected)}</td><td class="num">${fmt$(b.to_complete)}</td><td class="small mut">${esc(b.notes)}</td></tr>`).join('')}<tr class="tot"><td colspan=2>Total</td>${['original','revised','committed','actual','variance','projected','to_complete'].map(k=>`<td class="num">${fmt$(sum(k))}</td>`).join('')}<td></td></tr></table></div>`:emptyState('No budget lines yet','Add rows to live/modules/budget.csv.'),csvBtn('budget'));bindCsv(M)}
-function mLogs(M){const l=J.logs||[];M.innerHTML=panel('Daily logs','Daily update emails and Plaud recordings (Slack job channels once active)',`<div class="list">${l.map(x=>`<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.title)}</div><div class="s">${esc(x.text)}</div><div class="s">${esc(x.source)}</div></div></div>`).join('')||emptyState('No daily logs yet','')}</div>`,csvBtn('logs'));bindCsv(M)}
-function mMsgs(M){const l=J.messages||[];M.innerHTML=panel('Messages','Slack + email intake tied to this job',`<div class="list">${l.map(i=>`<div class="it"><div class="dt">${mdy(i.time)}</div><div class="bd"><div>${chip(i.class||'—','low')} <span class="small mut">${esc(i.source)} · ${esc(i.channel)} · ${esc(i.author)}</span></div><div class="s" style="color:#1d2330;margin:3px 0">${esc(String(i.text||'').slice(0,400))}</div>${i.link&&/^https?:/.test(i.link)?`<a class="small" href="${esc(i.link)}" target="_blank" rel="noopener">open</a>`:''}</div></div>`).join('')||emptyState('No messages yet','')}</div>`,csvBtn('messages'));bindCsv(M)}
+function logDesk(x){const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
+ const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(x.text&&x.text!==x.title?`<div class="s">${esc(x.text)}</div>`:''));
+ return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.title||x.text||'')}</div>${extra}<div class="s">${esc(x.source)}</div></div></div>`}
+function mLogs(M){const l=J.logs||[];
+ if(typeof isPhone==='function'&&isPhone()){logPhone(M,l);return}
+ M.innerHTML=panel('Daily logs','Summaries of the day. Message text stays out of this list.',`<div class="list">${l.map(logDesk).join('')||emptyState('No daily logs yet','')}</div>`,csvBtn('logs'));bindCsv(M)}
+function asList(v){if(Array.isArray(v))return v;if(v==null||v==='')return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
+const MSG_IC={slack:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ email:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+ text:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>'};
+function msgIco(k){return `<svg class="ico msgico" viewBox="0 0 24 24" aria-hidden="true">${MSG_IC[k]||MSG_IC.slack}</svg>`}
+function msgKind(i){const s=((i.source||'')+' '+(i.channel||'')+' '+(i.src||'')).toLowerCase();if(/slack/.test(s))return 'slack';if(/email|gmail/.test(s))return 'email';if(/\b(text|texts|sms|imessage)\b/.test(s))return 'text';return 'slack'}
+function isSystemMsg(i){const sub=String(i.subtype||'');return i.class==='system'||i.status==='system'||/^(channel_|group_|bot_)/.test(sub)}
+function msgPass(i,f){if(f==='all')return true;const k=msgKind(i);return (f==='slack'&&k==='slack')||(f==='email'&&k==='email')||(f==='texts'&&k==='text')}
+function msgOpenLabel(i){const k=msgKind(i);return k==='email'?'Open in Gmail':(k==='slack'?'Open in Slack':'Open')}
+function msgClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)return '';let h=+m[1];const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m[2]+' '+ap}
+function msgCard(i){const k=msgKind(i);const reps=asList(i.replies);const n=+i.reply_count||reps.length;const files=asList(i.files);const link=/^https:\/\//.test(i.link||'')?i.link:'';
+ return `<article class="msgcard"><div class="msghead">${msgIco(k)}<span class="chip">${esc(i.channel||k)}</span><span class="msgwho">${esc(i.author||'')}</span><span class="msgwhen">${esc(msgClock(i.time))}</span></div>
+ <button type="button" class="msgtext" data-expand>${esc(i.text||'')}</button>
+ <div class="msgacts">${n?`<button type="button" class="fchip replypill" data-replies>${n} repl${n==1?'y':'ies'}</button>`:''}
+ ${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=esc(f.name||'Attachment');return u?`<a class="lbtn" href="${esc(u)}" target="_blank" rel="noopener">${name}</a>`:`<span class="lbtn">${name}</span>`}).join('')}
+ ${link?`<a class="msgopen" href="${esc(link)}" target="_blank" rel="noopener">${esc(msgOpenLabel(i))}</a>`:''}${i.class?chip(i.class,'low'):''}</div>
+ ${reps.length?`<div class="msgreplies">${reps.map(r=>`<div class="msgreply"><b>${esc(r.user_name||r.user_id||'')}</b> <span class="mut">${esc(msgClock(r.time))}</span><div>${esc(r.text||'')}</div></div>`).join('')}</div>`:''}</article>`}
+const LOG_IC={slack:MSG_IC.slack,email:MSG_IC.email,text:MSG_IC.text,
+ plaud:'<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>',
+ schedule:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'};
+function logKind(x){const s=((x.src||'')+' '+(x.source||'')).toLowerCase();if(/slack/.test(s))return 'slack';if(/plaud/.test(s))return 'plaud';if(/schedule|workcal|history/.test(s))return 'schedule';if(/imessage|\btexts?\b|\bsms\b/.test(s))return 'text';if(/gmail|email|team_update/.test(s))return 'email';return 'email'}
+function logIco(k){return `<svg class="ico msgico" viewBox="0 0 24 24" aria-hidden="true">${LOG_IC[k]||LOG_IC.email}</svg>`}
+function logOpen(x){const ref=String(x.ref||'');const src=((x.src||'')+' '+(x.source||'')).toLowerCase();const https=/^https:\/\//.test(ref);
+ if(/slack/.test(src)){if(https)window.open(ref,'_blank','noopener');else location.hash=modHref('messages');return}
+ if(/imessage|\btext\b|\bsms\b/.test(src)){location.hash=modHref('messages');return}
+ if(/email|gmail|team_update/.test(src)){if(https)window.open(ref,'_blank','noopener');else location.hash=modHref('messages');return}
+ if(/schedule|workcal|history/.test(src)){const by={};(J.tasks||[]).forEach(t=>{by[t.id]=t});if(ref&&by[ref]&&typeof taskModal==='function')taskModal(by[ref]);else location.hash=modHref('schedule');return}
+ if(https)window.open(ref,'_blank','noopener')}
+const LOG_SRC_NAME={imessage:'texts',email:'email',slack:'slack',team_update:'email',plaud:'plaud',schedule:'schedule',workcal:'calendar',history:'history',trade:'trade',team:'team'};
+function logCountsLabel(counts){return Object.entries(counts||{}).filter(([,n])=>n).map(([k,n])=>n+' '+(LOG_SRC_NAME[k]||k)).join(' · ')}
+function logWhen(t){const s=String(t||'');if(!s)return '';if(s==='all day'||/^\d{4}-\d{2}-\d{2}$/.test(s)||/T00:00(?::00)?(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)?$/.test(s))return 'all day';return msgClock(s)}
+function logSourceLabel(s){const k=logKind(s);return k==='email'?'Open in Gmail':(k==='slack'?'Open in Slack':(k==='text'?'Open in Messages':'Open'))}
+function logSourceRow(s){const href=/^https:\/\//.test(s.ref||'')?s.ref:'';
+ const open=href?`<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">${esc(logSourceLabel(s))}</a>`:`<button type="button" class="msgopen" data-logsrc="${esc(s.src||'')}" data-logref="${esc(s.ref||'')}">${esc(logSourceLabel(s))}</button>`;
+ return `<div class="logsrc">${logIco(logKind(s))}<span class="logwhen">${esc(logWhen(s.time))}</span>${open}</div>`}
+function logDayCounts(items){const auto=items.find(x=>x.source==='auto'&&x.counts&&typeof x.counts==='object'&&Object.keys(x.counts).length);
+ const counts=auto?Object.assign({},auto.counts):{};const team=items.filter(x=>x.source!=='auto').length;if(team)counts.team=(counts.team||0)+team;
+ if(Object.keys(counts).length)return counts;const fallback={};items.forEach(x=>{const k=x.source==='auto'?(x.src||'auto'):'team';fallback[k]=(fallback[k]||0)+1});return fallback}
+function logSourcesBlock(items){const groups=items.filter(x=>!x.pending&&asList(x.sources).length);if(!groups.length)return '';
+ const n=groups.reduce((a,x)=>a+asList(x.sources).length,0);
+ const body=groups.map(x=>`<div class="logsrcgrp"><div class="logsrctitle">${esc(x.title||x.text||'')}</div>${asList(x.sources).map(logSourceRow).join('')}</div>`).join('');
+ return `<details class="logsources"><summary>Sources <span class="mut">${n}</span></summary>${body}</details>`}
+function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
+ const rows=l.filter(x=>{if(f==='auto'&&x.source!=='auto')return false;if(f==='team'&&x.source==='auto')return false;if(month&&String(x.date||'').slice(0,7)!==month)return false;return true});
+ const by={},order=[];rows.forEach(x=>{const d=String(x.date||'').slice(0,10)||'undated';if(!by[d]){by[d]=[];order.push(d)}by[d].push(x)});
+ order.sort((a,b)=>a<b?1:-1);
+ order.forEach(d=>by[d].sort((a,b)=>{const ta=a.source==='auto'?1:0,tb=b.source==='auto'?1:0;if(ta!==tb)return ta-tb;return String(a.time||'').localeCompare(String(b.time||''))}));
+ const months=[...new Set(l.map(x=>String(x.date||'').slice(0,7)).filter(m=>/^\d{4}-\d{2}$/.test(m)))].sort((a,b)=>a<b?1:-1);
+ const chips=[['all','All'],['auto','Auto'],['team','Team']].map(([k,lab])=>`<button type="button" class="fchip ${f===k?'on':''}" data-lf="${k}">${lab}</button>`).join('');
+ const jump=`<label class="logjump"><span class="mut small">Month</span> <select id="logmonth" aria-label="Jump to month"><option value="">All months</option>${months.map(m=>`<option value="${esc(m)}" ${month===m?'selected':''}>${esc((MON[+m.slice(5)-1]||m)+' '+m.slice(0,4))}</option>`).join('')}</select></label>`;
+ const cards=order.map(d=>{const items=by[d];const counts=logDayCounts(items);
+  const countChips=Object.entries(counts).filter(([,n])=>n).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
+  const team=items.filter(x=>x.source!=='auto').map((x,i)=>`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(x.title||x.text||'')}</span></button>`).join('');
+  const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span></div>`).join('');
+  const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
+  return `<article class="logcard" id="log-${esc(d)}"><div class="loghead"><h2>${head}</h2><div class="logcounts">${countChips}</div></div><div class="loglines">${team}${bullets}</div>${logSourcesBlock(items)}</article>`}).join('')||emptyState('No daily logs yet','');
+ M.innerHTML=panel('Daily logs','Short summary of the day. Sources stay collapsed and do not show the message text.',`<div class="fbar"><div class="chips">${chips}</div>${jump}</div><div class="loglist">${cards}</div>`,csvBtn('logs'));
+ bindCsv(M);
+ M.querySelectorAll('[data-lf]').forEach(b=>b.onclick=()=>{st.logF=b.dataset.lf;saveUi();mLogs(M)});
+ const sel=M.querySelector('#logmonth');if(sel)sel.onchange=()=>{st.logMonth=sel.value;saveUi();mLogs(M);const first=M.querySelector('.logcard');if(first)first.scrollIntoView({block:'start'})};
+ M.querySelectorAll('.logline').forEach(b=>b.onclick=()=>{const row=(by[b.dataset.day]||[])[+b.dataset.i];if(row)logOpen(row)});
+ M.querySelectorAll('[data-logsrc]').forEach(b=>b.onclick=()=>logOpen({src:b.dataset.logsrc,ref:b.dataset.logref,source:b.dataset.logsrc}))}
+function mMsgs(M){const l=J.messages||[];
+ if(typeof isPhone==='function'&&isPhone()){const f=st.msgF||'all';const showSys=!!st.msgSys;const sys=l.filter(isSystemMsg);
+  const rows=l.filter(i=>(showSys||!isSystemMsg(i))&&msgPass(i,f)).slice().sort((a,b)=>String(a.time||'')<String(b.time||'')?1:-1);
+  const days={},order=[];rows.forEach(i=>{const d=String(i.time||'').slice(0,10)||'undated';if(!days[d]){days[d]=[];order.push(d)}days[d].push(i)});
+  const chips=[['all','All'],['slack','Slack'],['email','Email'],['texts','Texts']].map(([k,lab])=>`<button type="button" class="fchip ${f===k?'on':''}" data-mf="${k}">${lab}</button>`).join('');
+  const cards=order.map(d=>`<section class="msgday"><h2 class="sh2">${d==='undated'?'Undated':esc(dow(d)+' '+mdy(d))} <span>${days[d].length}</span></h2>${days[d].map(msgCard).join('')}</section>`).join('')||emptyState('No messages yet','');
+  M.innerHTML=panel('Messages','Slack, email, and texts tied to this job',`<div class="fbar"><div class="chips">${chips}</div><label class="small sys-tog"><input type="checkbox" id="msgsys" ${showSys?'checked':''}> Show system <span class="mut">(${sys.length} joins and renames)</span></label></div><div class="msglist">${cards}</div>`,csvBtn('messages'));
+  bindCsv(M);M.querySelectorAll('[data-mf]').forEach(b=>b.onclick=()=>{st.msgF=b.dataset.mf;saveUi();mMsgs(M)});
+  const tog=M.querySelector('#msgsys');if(tog)tog.onchange=e=>{st.msgSys=e.target.checked;saveUi();mMsgs(M)};
+  M.querySelectorAll('[data-expand]').forEach(b=>b.onclick=()=>b.closest('.msgcard').classList.toggle('open'));
+  M.querySelectorAll('[data-replies]').forEach(b=>b.onclick=e=>{e.stopPropagation();b.closest('.msgcard').classList.toggle('replies-open')});
+  return}
+ M.innerHTML=panel('Messages','Slack + email intake tied to this job',`<div class="list">${l.map(i=>`<div class="it"><div class="dt">${mdy(i.time)}</div><div class="bd"><div>${chip(i.class||'—','low')} <span class="small mut">${esc(i.source)} · ${esc(i.channel)} · ${esc(i.author)}</span></div><div class="s" style="color:#1d2330;margin:3px 0">${esc(String(i.text||'').slice(0,400))}</div>${i.link&&/^https?:/.test(i.link)?`<a class="small" href="${esc(i.link)}" target="_blank" rel="noopener">open</a>`:''}</div></div>`).join('')||emptyState('No messages yet','')}</div>`,csvBtn('messages'));bindCsv(M)}
 function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show=st.todoAll?items:items.filter(t=>t.status!='done'&&(!t.due||t.due<=lim));
  M.innerHTML=panel('To-dos','BT To-Do template (due dates tied to schedule items) + follow-ups.csv + proposed items',items.length?`<div class="tw"><table><tr><th>Due</th><th>To-do</th><th>Assigned</th><th>Tied to</th><th>Priority</th><th>Tags</th><th>Source</th></tr>${show.map(t=>`<tr><td class="nowrap">${t.due&&t.due<J.today&&t.status!='done'?chip(md(t.due),'overdue'):esc(mdy(t.due))}</td><td>${esc(t.title)}${t.next?`<div class="mut small">${esc(t.next)}</div>`:''}</td><td class="small">${esc(t.assigned)}</td><td class="small">${esc(t.due_rule||t.related)}</td><td class="small">${esc(t.priority)}</td><td class="small">${esc(t.tags)}</td><td>${srcChip(t.source)}</td></tr>`).join('')||'<tr><td colspan=7 class="empty">No to-dos in the next 30 days</td></tr>'}</table></div>`:emptyState('No to-dos yet',''),
  `<label class="small"><input type="checkbox" id="ta" ${st.todoAll?'checked':''}> show all (${items.length})</label>`+csvBtn('todos'));const ta=$('#ta');if(ta)ta.onchange=e=>{st.todoAll=e.target.checked;saveUi();mTodos(M)};bindCsv(M)}
@@ -1457,10 +1574,12 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
    ${(b.links||[]).length?`<div class="lbtns">${b.links.map(x=>lbtn(x)).join('')}</div>`:'<div class="ls none2">No file or email on file yet</div>'}</div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
  if(sub=='orders'){const extra=h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id));
   const openO=h.orders.filter(o=>(o.flags||[]).length&&!/not ordered/i.test(o.status||''));
+  const olinks=o=>(o.links||[]).length?`<div class="lbtns olinks">${o.links.map(x=>lbtn(x)).join('')}</div>`:'';
+  const orow=(href,title,sub2,right,o)=>`<div class="orow">${hrow(href,title,sub2,right)}${olinks(o||{})}</div>`;
   body=`<h2 class="sh2 amber">Orders to place <span>${S.toPlace}</span></h2><div class="rows">${h.orderby.map(o=>hrow(jobHref(o.slug,'conflicts'),esc(o.title.replace(/: order by.*$/,'')),`${esc(o.job)} · needed ${md(o.need)} for ${esc(o.task)}`,`<span class="dchip ${o.by<S.td?'overdue':''}">order by ${md(o.by)}</span>`)).join('')}
-   ${extra.map(o=>hrow(o.slug?jobHref(o.slug,'pos'):'#/trackers/orders',esc(o.item),`${esc(o.job)} · ${esc(o.vendor||'')} · ${esc(o.status)}`,o.owner?`<span class="own">${esc(o.owner)}</span>`:'')).join('')}</div>
-  <h2 class="sh2">Deliveries coming <span>${S.dl.length}</span></h2><div class="hint">Calendar delivery events are notices of what is arriving, not appointments.</div><div class="rows">${S.dl.map(d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),`${esc(d.job||'')}${d.time?' · '+esc(d.time):''} · ${d.src=='calendar'?'calendar notice':'order ETA'}`,dchip(d.date,S.td))).join('')||'<div class="none">No deliveries on the calendar</div>'}</div>
-  <h2 class="sh2">Open orders needing attention <span>${openO.length}</span></h2><div class="rows">${openO.map(o=>hrow(o.slug?jobHref(o.slug,'pos'):'#/trackers/orders',esc(o.item),`${esc(o.job)} · ${esc(o.vendor||'')}${o.eta?' · ETA '+esc(o.eta):''}${o.flagNotes?' · '+esc(o.flagNotes):''}`,o.owner?`<span class="own">${esc(o.owner)}</span>`:'')).join('')}</div>`}
+   ${extra.map(o=>orow(o.slug?jobHref(o.slug,'pos'):'#/trackers/orders',esc(o.item),`${esc(o.job)} · ${esc(o.vendor||'')} · ${esc(o.status)}`,o.owner?`<span class="own">${esc(o.owner)}</span>`:'',o)).join('')}</div>
+  <h2 class="sh2">Deliveries coming <span>${S.dl.length}</span></h2><div class="hint">Calendar delivery events are notices of what is arriving, not appointments.</div><div class="rows">${S.dl.map(d=>orow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),`${esc(d.job||'')}${d.time?' · '+esc(d.time):''} · ${d.src=='calendar'?'calendar notice':'order ETA'}`,dchip(d.date,S.td),d)).join('')||'<div class="none">No deliveries on the calendar</div>'}</div>
+  <h2 class="sh2">Open orders needing attention <span>${openO.length}</span></h2><div class="rows">${openO.map(o=>orow(o.slug?jobHref(o.slug,'pos'):'#/trackers/orders',esc(o.item),`${esc(o.job)} · ${esc(o.vendor||'')}${o.eta?' · ETA '+esc(o.eta):''}${o.flagNotes?' · '+esc(o.flagNotes):''}`,o.owner?`<span class="own">${esc(o.owner)}</span>`:'',o)).join('')}</div>`}
  if(sub=='fups'){const by={};S.fu.forEach(f=>(by[f.owner||'Unassigned']=by[f.owner||'Unassigned']||[]).push(f));
   body=Object.entries(by).sort((a,b)=>b[1].length-a[1].length).map(([o,l])=>`<h2 class="sh2">${esc(o)} <span>${l.length}</span></h2><div class="rows">${l.sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1).map(f=>hrow(f.slug?jobHref(f.slug,'todos'):'#/trackers/fups',esc(f.item),`${esc(f.job||'')}${f.waiting?' · waiting on '+esc(f.waiting):''}${f.next?' · next: '+esc(f.next):''}`,`${f.pri?`<span class="pri ${esc(f.pri)}">${esc(f.pri)}</span>`:''}${dchip(f.due,S.td)}`)).join('')}</div>`).join('')||'<div class="none">No follow-ups owed</div>'}
  if(sub=='conflicts'){body=`<div class="rows">${S.high.map(x=>hrow(jobHref(x.slug,'conflicts'),esc(x.c.title),esc(x.job)+' · '+esc(x.c.kind),'<span class="dchip overdue">high</span>')).join('')||'<div class="none">No high conflicts</div>'}</div>`}
@@ -1529,7 +1648,7 @@ function attSlugs(){return Object.keys(DATA.jobs||{})}
 function attInfo(slug){const J=attJ(slug);return (J&&J.info)||{}}
 function attBase(slug){const a=AT();return a&&a.baseline&&a.baseline.jobs&&a.baseline.jobs[slug]||null}
 function attStale(slug){const b=attBase(slug);return !!(b&&b.quality=='stale')}
-function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');if(/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
+function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];if(closed.indexOf(slug)>=0||/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
  return slug!='general'&&!/complet|closeout|overhead|company/i.test(J.stage||'')}
 function attOwn(){return (AT()&&AT().owner)||{}}
 function attSig(){return attOwn().name||''}
@@ -1899,7 +2018,7 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
  ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span><span>${chip(j.bt_status=='in Buildertrend'?'BT':'not in BT',j.bt_status=='in Buildertrend'?'inbt':'notbt')}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
- <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
+ <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Sample Builders · Job workspaces'}
 /* ---------- boot ---------- */
