@@ -335,6 +335,23 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .fg .cb input{width:22px;height:22px;min-height:22px;margin:0;flex:none}
 tr[data-sel]{cursor:pointer}
 @media(max-width:760px){.gtabs a span{font-size:10px}.hub-money .hph{margin-bottom:8px}}
+.unlock{max-width:440px;margin:32px auto;padding:0 18px}
+.unlock h1{margin:0 0 8px}
+.unlock label{display:block;margin:14px 0 0;font-weight:650}
+.unlock input{display:block;width:100%;box-sizing:border-box;margin-top:6px;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px}
+.unlock .pri{margin-top:16px;min-height:48px;width:100%}
+.unlock .hint,.offbar .hint{color:#667085;font-size:13px;line-height:1.4}
+#offline-banner{display:inline-block;background:#3b2f1a;color:#fff;font-weight:700;padding:4px 8px;border-radius:8px}
+.offbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
+.offbar button[aria-pressed="true"]{background:#15233b;color:#fff}
+.planlayer{position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.55);display:flex;align-items:flex-end;justify-content:center}
+.planlayer[hidden]{display:none}
+.planview{background:#111;color:#fff;width:min(640px,100%);max-height:100%;overflow:auto;border-radius:14px 14px 0 0;padding-bottom:env(safe-area-inset-bottom)}
+.planbar{display:flex;gap:8px;align-items:center;padding:12px;background:#15233b}
+.planbar #planstat{color:#d0d5dd;font-size:13px;flex:1}
+.planview canvas{display:block;width:100%;height:auto;background:#222}
+.planopen{width:100%;text-align:left;border:0;background:#fff;border-bottom:1px solid var(--line)}
+.slack-state.pending{color:#b54708;font-weight:700}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -422,6 +439,66 @@ nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:cent
 .poamt{color:#667085;font-size:13px}
 .porelated .rrow{width:100%}
 .moneybox{background:#f8f9fb;border:1px dashed #cfd5dd;border-radius:12px;padding:12px 14px;margin:8px 0}
+
+/* Per-job Files tab. Phone first (390px), the same rows on a wide screen. */
+.ftab{max-width:920px}
+.fcrumbs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0 8px}
+.fcrumbs button{flex:none;border:0;background:transparent;color:var(--blue);font-weight:650;font-size:14px;min-height:44px;padding:0 4px}
+.fcrumbs button[aria-current="page"]{color:var(--ink);font-weight:750}
+.fcrumbs .sep{flex:none;color:var(--mut);align-self:center}
+.ftools{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.ftools .sbox{flex:1;min-width:0}
+.ftools .seg{flex:none}
+.ftree{background:#fff;border:1px solid #dde3ec;border-radius:14px;overflow:hidden}
+.fnode{display:flex;align-items:center;border-top:1px solid #edf0f4;background:#fff}
+.ftree>.fnode:first-child,.fkids>.fnode:first-child{border-top:0}
+.frow{display:flex;align-items:center;gap:8px;flex:1;min-width:0;min-height:52px;padding:6px 10px 6px 0;border:0;background:transparent;color:var(--ink);text-align:left;font:inherit}
+.frow:active{background:#f3f6fb}
+.fchev{flex:none;width:44px;height:44px;border:0;border-radius:10px;background:transparent;color:#667085;font-size:16px}
+.fchev[aria-expanded="true"]{transform:rotate(90deg)}
+.fic{flex:none;width:36px;height:36px;border-radius:8px;background:#eef2f8;color:#1f3a5f;display:flex;align-items:center;justify-content:center}
+.fic svg{width:20px;height:20px}
+.fic img{width:36px;height:36px;object-fit:cover;border-radius:8px}
+.fmeta{flex:1;min-width:0}
+.fn{display:block;font-weight:650;font-size:15px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs{display:block;color:var(--mut);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fwhen{flex:none;color:var(--mut);font-size:12px;min-width:64px;text-align:right}
+.fkids{margin:0;padding:0}
+.fempty{padding:22px 14px;color:var(--mut)}
+.fnote{color:var(--mut);font-size:12px;margin:8px 2px 0}
+.fview{position:fixed;inset:0;z-index:80;background:#0f1520;color:#f2f4f7;display:flex;flex-direction:column}
+.fview .fbar{display:flex;align-items:center;gap:8px;min-height:52px;padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top))}
+.fview .fbar h2{flex:1;min-width:0;margin:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fview .fbar button{min-height:44px;min-width:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff}
+.fstage{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#1b1f27}
+.fstage iframe,.fstage img{display:block;width:100%;border:0;background:#fff}
+.fstage img{height:auto;max-height:none}
+.fstage pre{margin:0;padding:12px;white-space:pre-wrap;word-break:break-word;color:#e8edf5;font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+.fstage table{border-collapse:collapse;background:#fff;color:#1d2330;font-size:13px;width:100%}
+.fstage td,.fstage th{border:1px solid #e4e7ec;padding:6px 8px;text-align:left}
+.fswipe{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px}
+.fswipe button{min-height:44px;min-width:44px}
+.facts{display:flex;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
+.facts a,.facts button{flex:1;min-height:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-align:center;text-decoration:none;font-weight:650}
+.facts a[data-fsrc]{flex:0 1 auto;background:transparent;color:#c5d0e0;font-weight:600}
+.filechip{display:inline-flex;align-items:center;min-height:36px;margin:2px 4px 2px 0;padding:4px 10px;border-radius:999px;border:1px solid #c7d2e2;background:#f4f7fb;color:#1f3a5f;font-weight:650;font-size:13px}
+button.lrow,button.rrow,button.permit{width:100%;border:0;background:transparent;font:inherit;text-align:left;cursor:pointer}
+button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}
+.fempty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.fview .fempty{color:#e8edf5}.fview .fempty b{color:#fff}
+.planroom button.pr-open{border:0;background:transparent;font:inherit;text-align:left;padding:0 8px;cursor:pointer}
+.planroom a.pr-measure{flex:0 0 auto;align-self:center;min-height:44px;display:inline-flex;align-items:center;padding:0 12px;border-radius:10px;border:1px solid #dde3ec;color:var(--navy);font-weight:700;text-decoration:none}
+@media(min-width:761px){
+ .fview{background:rgba(15,21,32,.55);align-items:center;justify-content:center}
+ .fview .fshell{width:min(960px,calc(100% - 48px));height:min(880px,calc(100% - 48px));background:#0f1520;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+ .frow{min-height:48px}
+ .fwhen{min-width:108px}
+}
+@media(max-width:760px){
+ .fview .fshell{display:flex;flex-direction:column;height:100%}
+ .fwhen{display:none}
+ .fn{font-size:16px}
+}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Sample Builders schedule</h2><p>Loading&hellip;</p>
@@ -480,7 +557,8 @@ window.HWS_DEMO_RESET=function(){keys().forEach(k=>real.removeItem(NS+k));try{in
    files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
    Dev only: on a loopback host (127.0.0.1 / localhost) #setup=same-origin reads data/data.json next to the app, for the local
    preview and tests. It is refused on any other host and is never offered in the UI.
-   The last good copy is kept in IndexedDB for offline use. */
+   The schedule is fetched only after the PIN. The last good copy is encrypted in IndexedDB. The service worker may also
+   hold that response (stale-while-revalidate). A reload with no network reopens the last view. */
 (function(){
 'use strict';
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
@@ -492,13 +570,14 @@ let data=null,syncedAt=null,lastErr=null,syncing=false,dataRev=null;
 function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
-async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
 function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
 function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');
  if(!Object.keys(d.jobs).length)throw new Error('The schedule data file in Dropbox has no jobs yet (placeholder). Ask the office to publish the schedule data, then tap Sync now.');return d}
 const NOACC='Your Dropbox account can\u2019t see the Sample Builders schedule data (Sample Builders Team Folder \u203a Sample Builders Live Schedule). Sign in with your Sample Builders Dropbox account, or ask the office to give you access to the Sample Builders Team Folder.';
 function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
+async function keep(d, rev){data=d;dataRev=rev||null;syncedAt=Date.now();lastErr=null;
+ if(window.HWSOffline){try{await HWSOffline.seal(d, syncedAt)}catch(e){}}}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
   /* 3.6 MB: download only when the Dropbox rev changed (one small get_metadata call otherwise) */
@@ -506,40 +585,75 @@ async function fetchData(){
   try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
   if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){}
    throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}check(d);d.__rev=r.rev||null;return d}
- const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
- if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
+ const url=sourceUrl();if(!url)throw new Error('setup');
+ const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow',headers:{'X-HWS-Revalidate':'1'}});
+ if(!r.ok)throw new Error(r.status===503?'offline':'Local data file returned HTTP '+r.status);
+ const stale=r.headers.get('X-HWS-Cache')==='stale';
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
- return check(d)}
-async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
- try{const d=await fetchData();if(d.same){syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
-  const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);data=d;dataRev=rev;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt,src:srcKey(),rev})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
- catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
-function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
+ return {doc:check(d),stale}}
+async function sync(force){if(W.preview||syncing||(down()&&!force))return false;syncing=true;paint();
+ try{const got=await fetchData();
+  if(got&&got.same){mark(true);syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
+  if(got&&got.stale){mark(false);if(!data&&got.doc){data=got.doc;syncedAt=syncedAt||Date.now()}syncing=false;paint();return !!data}
+  const d=got&&got.doc?got.doc:got;if(!d||!d.jobs){syncing=false;paint();return false}
+  const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);
+  mark(true);await keep(d, rev);syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ catch(e){if(e.message==='offline'||/failed to fetch|network|offline|load failed/i.test(e.message||''))mark(false);lastErr=e.message=='setup'?null:(e.message==='offline'?null:e.message);syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
+function down(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLine}
+function mark(on){if(window.HWSOffline)HWSOffline.markNet(on)}
+function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}
+ const b=document.getElementById('offline-banner');if(down()&&b)b.setAttribute('role','status')}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
  const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
  history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
 const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function watchSw(reg){
+  if(!reg)return;
+  const arm=sw=>{if(!sw)return;sw.addEventListener('statechange',()=>{if(sw.state==='installed'&&navigator.serviceWorker.controller)sw.postMessage('skip-waiting')})};
+  arm(reg.installing);reg.addEventListener('updatefound',()=>arm(reg.installing));
+}
+let swClaimSeen=false;
+function bindSw(){
+  if(!('serviceWorker' in navigator))return;
+  let had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had){had=true;return}if(swClaimSeen)return;swClaimSeen=true;location.reload()});
+  navigator.serviceWorker.addEventListener('message',ev=>{
+    const t=ev.data&&ev.data.type;
+    if(t==='hws-data-updated'&&navigator.onLine)sync();
+    if(t==='hws-shell'&&navigator.serviceWorker.controller){/* activate already claimed; controllerchange reloads if this replaced a worker */}});
+}
 const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=>syncedAt,
  data:()=>data,
  async init(){if(window.__HWS_DEMO){data=await window.__HWS_DEMO();W.preview=true;W.demo=true;return} /* demo page: bundled sample data, no network (demo-shim.js) */
   if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
-  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
-  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
-  window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
-  document.addEventListener('visibilitychange',()=>{if(!W.liveMode&&!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
-  setInterval(()=>{if(!W.liveMode&&!document.hidden)sync()},10*60e3); /* live mode: the Dropbox cursor/longpoll says when data.json changes */
-  if(data){sync()}else if(sourceUrl()||cfg.source=='dropbox-api'){try{await sync(true)}catch(e){}}},
+  bindSw();
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{const reg=await navigator.serviceWorker.register('sw.js');watchSw(reg)}catch(e){}}
+  window.addEventListener('online',()=>{paint();sync(true).then(ok=>{if(ok&&!down()&&typeof slackFlush==='function')slackFlush()})});
+  window.addEventListener('offline',()=>{mark(false);paint()});
+  window.addEventListener('pageshow',()=>{if(navigator.onLine)sync()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine&&(W.liveMode||Date.now()-(syncedAt||0)>5*60e3))sync()});
+  setInterval(()=>{if(!W.liveMode&&!document.hidden&&navigator.onLine)sync()},10*60e3);
+  if(window.HWSOffline&&!await HWSOffline.sessionOk())await HWSOffline.gate();
+  if(window.HWSOffline){try{const c=await HWSOffline.loadCopy();if(c&&c.data&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt||null;dataRev=c.rev||null}}catch(e){}}
+  else if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
+  if(!down()&&(data||sourceUrl()||cfg.source=='dropbox-api')){try{await sync(true)}catch(e){}}
+  else if(down()&&(data||sourceUrl())){try{await sync(true)}catch(e){}}
+  else if(!data&&down()){lastErr='Offline, no saved copy on this phone yet';paint()}},
  statusHtml(){if(W.demo)return `<b class="demob">DEMO — sample data</b> <span class="small">Made-up jobs, people and numbers. Edits stay in this browser only; nothing is sent or saved anywhere else.</span> <button class="small" id="demoreset">Reset demo</button>`;
   if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
-  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>`;
-  return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
+  const files=` <button class="small" id="offmgr">Saved files</button>`;
+  const off=down();
+  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))}</span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" disabled>Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`;
+  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>${files}`;
+  return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn">Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
-  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
+  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.</p>
   <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Sample Builders schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const dr=document.getElementById('demoreset');if(dr)dr.onclick=()=>{if(confirm('Reset the demo? This clears your demo edits, flags and approvals in this browser.'))window.HWS_DEMO_RESET()};
   const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
+  const om=document.getElementById('offmgr');if(om&&window.HWSOffline)om.onclick=()=>HWSOffline.openManager();
   const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();cfg={source:'dropbox-api'};saveCfg();
    {const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
    try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;await syncBoot();openStore();startLive()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
@@ -1175,6 +1289,463 @@ function create(o){const A=o.A,c=A.CFG;const dataPath=c.dataPath;const base=(c.l
 root.HWSLive={create,FORMAT};
 })(typeof window!=='undefined'?window:globalThis);
 
+/* Offline phone support. The PIN is checked against a hash kept on this device after the office server
+   accepts it (never the PIN itself, and never a copy of that hash in the public shell).
+   GitHub Pages has no /api/session (the POST returns 405 or 404). That host opens with no PIN screen.
+   The schedule snapshot in IndexedDB is encrypted with a key derived from the PIN after an office unlock.
+   The browser cache may already hold the same file after a load; this module does not keep a second plaintext copy.
+   iOS Home Screen limits are handled here: about 50 MB for saved files, and storage that the system can still evict. */
+(function(){
+'use strict';
+const FILE_CACHE='hws-files', NET_KEY='hws-net';
+const FILE_CAP=48*1024*1024;
+const IOS_CAP=50*1024*1024;
+const PIN_MIN=4, LOCK_LIMIT=5, LOCK_MS=15*60*1000, SESSION_MS=12*3600*1000;
+const VDB='hws-vault', VIEW_KEY='hws-last-view', JOB_KEY='hws-off-jobs', SYNC_KEY='hws-synced-at';
+const IOS_NOTE='iPhone may delete saved files if this Home Screen app is not opened for a while, and it keeps about 50 MB for this app. Unlock it once while online from the Home Screen icon, open it now and then, and clear saved files if a save does not fit.';
+const enc=new TextEncoder(), dec=new TextDecoder();
+let clock=()=>Date.now();
+let key=null;
+const dev=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function norm(name){return String(name||'').trim().toLowerCase().replace(/\s+/g,' ')}
+function b64(bytes){let s='';bytes.forEach(b=>{s+=String.fromCharCode(b)});return btoa(s)}
+function b64d(s){const bin=atob(s), out=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return out}
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(VDB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>{d.close();res(q.result)};q.onerror=()=>rej(q.error)})}
+async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>{d.close();res()};t.onerror=()=>rej(t.error)})}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function offlineNow(){if(!navigator.onLine)return true;return lsGet(NET_KEY)==='0'}
+function markNet(on){lsSet(NET_KEY,on?'1':'0')}
+function pinRec(){return idbGet('pin').catch(()=>null)}
+function lockRec(){return idbGet('lock').catch(()=>null).then(v=>v||{fails:{},until:{}})}
+async function hashPin(salt, name, pin){
+  const msg=enc.encode(norm(name)+'\n'+String(pin||''));
+  const data=new Uint8Array(salt.length+msg.length);
+  data.set(salt,0);data.set(msg,salt.length);
+  return b64(new Uint8Array(await crypto.subtle.digest('SHA-256', data)));
+}
+async function deriveKey(pin, salt){
+  const base=await crypto.subtle.importKey('raw', enc.encode(String(pin||'')), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+function sameHash(a,b){if(!a||!b||a.length!==b.length)return false;let n=0;for(let i=0;i<a.length;i++)n|=a.charCodeAt(i)^b.charCodeAt(i);return n===0}
+async function lockState(name){
+  const keyn=norm(name), now=clock(), rec=await lockRec();
+  const until=(rec.until||{})[keyn]||0;
+  if(until && now>=until){delete rec.until[keyn];delete rec.fails[keyn];await idbPut('lock', rec);return {locked:false,rec}}
+  if(until && now<until)return {locked:true,rec,error:'too many PIN attempts; try again in 15 minutes'}
+  return {locked:false,rec}
+}
+async function addFail(name){
+  const keyn=norm(name), now=clock(), rec=await lockRec();
+  const window=(rec.fails[keyn]||[]).filter(t=>now-t<=LOCK_MS);
+  window.push(now);
+  if(window.length>=LOCK_LIMIT){rec.until[keyn]=now+LOCK_MS;delete rec.fails[keyn];await idbPut('lock', rec);return {locked:true}}
+  rec.fails[keyn]=window;await idbPut('lock', rec);return {locked:false}
+}
+async function clearFail(name){const keyn=norm(name), rec=await lockRec();delete rec.fails[keyn];delete rec.until[keyn];await idbPut('lock', rec)}
+async function sessionOk(){
+  const rec=await pinRec();
+  return !!(rec&&rec.sessionUntil&&clock()<rec.sessionUntil&&rec.hash);
+}
+async function remember(display, pin){
+  const name=String(display||'').trim().slice(0,60);
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const hash=await hashPin(salt, name, pin);
+  const rec={v:1,norm:norm(name),display:name,salt:b64(salt),hash,sessionUntil:clock()+SESSION_MS};
+  await idbPut('pin', rec);
+  key=await deriveKey(pin, salt);
+  await clearFail(name);
+  return rec;
+}
+async function verifyLocal(name, pin){
+  const state=await lockState(name);
+  if(state.locked)return {ok:false,error:state.error};
+  const rec=await pinRec();
+  if(!rec||!rec.hash||!rec.salt)return {ok:false,error:'name or PIN does not match',unknown:true};
+  if(norm(name)!==rec.norm){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  if(String(pin||'').length<PIN_MIN){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  const got=await hashPin(b64d(rec.salt), name, pin);
+  if(!sameHash(got, rec.hash)){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  key=await deriveKey(pin, b64d(rec.salt));
+  rec.sessionUntil=clock()+SESSION_MS;
+  await idbPut('pin', rec);
+  await clearFail(name);
+  return {ok:true,display:rec.display||name};
+}
+async function verifyOnline(name, pin){
+  const state=await lockState(name);
+  if(state.locked)return {ok:false,error:state.error};
+  let res, body;
+  try{
+    res=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who:name,pin})});
+    try{body=await res.json()}catch(e){body={}}
+  }catch(e){return {ok:false,offline:true}}
+  if(res.ok&&body&&body.ok){await remember(body.who||name, pin);return {ok:true,display:body.who||name}}
+  if(res.status===404||res.status===405)return {ok:false,missing:true}
+  if(res.status===429){const rec=await lockRec();rec.until[norm(name)]=clock()+LOCK_MS;delete rec.fails[norm(name)];await idbPut('lock', rec);return {ok:false,error:body.error||'too many PIN attempts; try again in 15 minutes'}}
+  const fail=await addFail(name);
+  return {ok:false,error:fail.error||body.error||'name or PIN does not match'}
+}
+/* Pages has no session route. A 405 or 404 means this host is the static shell: open it with no PIN.
+   Any other answer (including 401 and 429) is the office server. The probe sends no name and no PIN. */
+const STATIC_KEY='hws-static-host';
+let staticOn=false;
+function isStatic(){return staticOn}
+function rememberStatic(on){
+  staticOn=!!on;
+  if(staticOn) lsSet(STATIC_KEY,'1');
+  else {try{localStorage.removeItem(STATIC_KEY)}catch(e){}}
+}
+async function probeStatic(){
+  if(!navigator.onLine){staticOn=lsGet(STATIC_KEY)==='1';return staticOn}
+  try{
+    const res=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    if(res.status===404||res.status===405){rememberStatic(true);return true}
+    rememberStatic(false);
+    return false;
+  }catch(e){staticOn=lsGet(STATIC_KEY)==='1';return staticOn}
+}
+async function unlockWith(name, pin){
+  name=String(name||'').trim();
+  if(!name)return {ok:false,error:'name required'}
+  if(String(pin||'').length<PIN_MIN)return {ok:false,error:'name or PIN does not match'}
+  if(navigator.onLine){
+    const net=await verifyOnline(name, pin);
+    if(net.ok||net.error&&!net.offline&&!net.missing)return net;
+    const local=await verifyLocal(name, pin);
+    if(local.ok)return local;
+    if(net.missing&&local.unknown)return {ok:false,error:'This phone has not checked this PIN online yet. Connect once, then it works offline.'}
+    return local.ok?local:{ok:false,error:local.error||net.error||'name or PIN does not match'}
+  }
+  return verifyLocal(name, pin);
+}
+function gateHtml(err){
+  let who='';try{who=localStorage.getItem('hws-who')||''}catch(e){}
+  return `<div class="unlock"><h1>Sample Builders</h1>
+  <p>Enter your name and PIN. The schedule is loaded after that and kept on this phone for offline use.</p>
+  <form id="unlock-form"><label>Name <input id="unlock-name" name="name" autocomplete="name" value="${esc(who)}" required></label>
+  <label>PIN <input id="unlock-pin" name="pin" type="password" autocomplete="off" inputmode="text" spellcheck="false" required aria-label="PIN"></label>
+  <button class="pri" id="unlock-go" type="submit">Unlock</button>
+  <p id="unlock-err" class="red" role="alert">${esc(err||'')}</p></form>
+  <p class="hint">${esc(IOS_NOTE)}</p></div>`
+}
+function gate(){
+  return probeStatic().then(skip=>{
+    if(skip) return true;
+    return new Promise(resolve=>{
+    const root=document.getElementById('root');
+    const show=err=>{if(root)root.innerHTML=gateHtml(err);const form=document.getElementById('unlock-form');if(!form)return;
+      const name=document.getElementById('unlock-name'), pin=document.getElementById('unlock-pin');
+      if(name&&!err)name.focus();
+      form.onsubmit=async ev=>{
+        ev.preventDefault();
+        const btn=document.getElementById('unlock-go');if(btn)btn.disabled=true;
+        const result=await unlockWith(name.value, pin.value);
+        if(btn)btn.disabled=false;
+        if(!result.ok){show(result.error||'name or PIN does not match');const again=document.getElementById('unlock-pin');if(again)again.focus();return}
+        try{localStorage.setItem('hws-who', result.display||name.value.trim())}catch(e){}
+        askPersist();
+        resolve(true);
+      }};
+    show('');
+    });
+  });
+}
+async function dataCache(){
+  const keys=await caches.keys();
+  const names=keys.filter(k=>k.startsWith('hws-data-')).sort();
+  return caches.open(names.length?names[names.length-1]:'hws-data');
+}
+async function putCache(data){
+  if(!('caches' in window))return;
+  try{
+    const cache=await dataCache();
+    const url=new URL('data/data.json', location.href).href;
+    await cache.put(url, new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json','X-HWS-Cache':'fresh'}}));
+  }catch(e){}
+}
+async function readCache(){
+  if(!('caches' in window))return null;
+  try{
+    const keys=await caches.keys();
+    const names=keys.filter(k=>k.startsWith('hws-data-')||k.startsWith('hws-shell-')||k==='hws-data');
+    for(let i=0;i<names.length;i++){
+      const box=await caches.open(names[i]);
+      const reqs=await box.keys();
+      for(let j=0;j<reqs.length;j++){
+        if(!/\/data\/data\.json$/.test(new URL(reqs[j].url).pathname))continue;
+        const res=await box.match(reqs[j]);
+        if(!res)continue;
+        try{const data=await res.json();const syncedAt=+(lsGet(SYNC_KEY)||0)||null;return {data,syncedAt}}catch(e){}
+      }
+    }
+  }catch(e){}
+  return null;
+}
+async function seal(data, syncedAt){
+  lsSet(SYNC_KEY, String(syncedAt||clock()));
+  await putCache(data);
+  if(!key){await dropLegacy();return false}
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv}, key, enc.encode(JSON.stringify({data,syncedAt}))));
+  await idbPut('blob',{iv:b64(iv),ct:b64(ct)});
+  await dropLegacy();
+  return true;
+}
+async function unseal(){
+  if(!key)return null;
+  const rec=await idbGet('blob').catch(()=>null);
+  if(!rec||!rec.iv||!rec.ct)return null;
+  try{
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(rec.iv)}, key, b64d(rec.ct));
+    return JSON.parse(dec.decode(pt));
+  }catch(e){return null}
+}
+async function dropLegacy(){
+  await new Promise(res=>{
+    let done=false;const fin=()=>{if(!done){done=true;res()}};
+    try{
+      const r=indexedDB.open('hws-pwa');
+      r.onupgradeneeded=()=>fin();
+      r.onerror=()=>fin();
+      r.onsuccess=()=>{
+        const db=r.result;
+        if(!db.objectStoreNames.contains('kv')){db.close();fin();return}
+        try{
+          const t=db.transaction('kv','readwrite');
+          t.objectStore('kv').delete('data');
+          t.oncomplete=()=>{db.close();fin()};
+          t.onerror=()=>{db.close();fin()};
+        }catch(e){db.close();fin()}
+      };
+    }catch(e){fin()}
+  });
+}
+async function loadCopy(){
+  const sealed=await unseal();
+  if(sealed&&sealed.data)return sealed;
+  if(await sessionOk())return readCache();
+  return null;
+}
+function rememberView(){
+  const h=location.hash||'#/';
+  if(h.indexOf('setup=')>=0)return;
+  lsSet(VIEW_KEY, h);
+}
+function restoreView(){
+  const last=lsGet(VIEW_KEY)||'';
+  const h=location.hash||'';
+  if((h===''||h==='#'||h==='#/'||h==='#/home')&&last&&last!=='#/'&&last!=='#'&&last!=='#/home'){
+    location.hash=last;
+    return true;
+  }
+  return false;
+}
+function fmtBytes(n){n=+n||0;if(n<1024)return n+' B';if(n<1024*1024)return (n/1024).toFixed(n<10*1024?1:0)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+async function capBytes(){
+  let cap=FILE_CAP;
+  try{
+    if(navigator.storage&&navigator.storage.estimate){
+      const est=await navigator.storage.estimate();
+      if(est&&est.quota&&est.quota<IOS_CAP)cap=Math.min(cap, Math.max(1024*1024, Math.floor(est.quota*0.8)));
+    }
+  }catch(e){}
+  return cap;
+}
+async function measure(){
+  let bytes=0,count=0;
+  try{
+    const box=await caches.open(FILE_CACHE);
+    const reqs=await box.keys();
+    for(let i=0;i<reqs.length;i++){
+      const res=await box.match(reqs[i]);
+      if(!res)continue;
+      const blob=await res.clone().blob();
+      bytes+=blob.size;count++;
+    }
+  }catch(e){}
+  return {bytes,count,cap:await capBytes()};
+}
+function jobMap(){try{return JSON.parse(lsGet(JOB_KEY)||'{}')}catch(e){return {}}}
+function jobSaved(slug){return !!jobMap()[slug]}
+function setJobFlag(slug, on){const m=jobMap();if(on)m[slug]=1;else delete m[slug];lsSet(JOB_KEY, JSON.stringify(m))}
+function saveable(url){return /\.(pdf|png|jpe?g|gif|webp|heic|csv|txt)(\?|#|$)/i.test(String(url||''))}
+function dropboxHost(hostname){
+  const h=String(hostname||'').toLowerCase();
+  return h==='dropbox.com'||h.endsWith('.dropbox.com')||h==='dropboxusercontent.com'||h.endsWith('.dropboxusercontent.com');
+}
+function servedHere(url){
+  try{
+    const abs=new URL(url, location.href);
+    if(dropboxHost(abs.hostname))return false;
+    return abs.origin===location.origin;
+  }catch(e){return false}
+}
+function itemsFor(slug){
+  const out=[], seen={};
+  const add=(url,name,kind)=>{const u=String(url||'');if(!u||seen[u]||!saveable(u)||!servedHere(u))return;seen[u]=1;out.push({url:u,name:name||'File',kind:kind||'file'})};
+  const job=(typeof DATA!=='undefined'&&DATA&&DATA.jobs&&DATA.jobs[slug])||null;
+  ((job&&job.plans)||[]).forEach(p=>add(p.url,p.name||'Plan sheet','plan'));
+  try{
+    const L=typeof JL==='function'?JL(slug):{items:[],permits:[]};
+    (L.items||[]).forEach(x=>add(x.url,x.label,'file'));
+    (L.permits||[]).forEach(p=>add(p.url,p.number||p.file,'file'));
+  }catch(e){}
+  return out;
+}
+async function cacheFile(url, meta){
+  meta=meta||{};
+  if(!servedHere(url))return {ok:false,error:'This link opens outside the app and cannot be saved on the phone.'};
+  const abs=new URL(url, location.href);
+  const href=abs.href;
+  const box=await caches.open(FILE_CACHE);
+  const hit=await box.match(href);
+  if(hit&&offlineNow())return {ok:true,cached:true};
+  if(offlineNow()&&!hit)return {ok:false,error:'Not saved on this phone yet'};
+  let res;
+  try{res=await fetch(href,{credentials:'omit'})}catch(e){return hit?{ok:true,cached:true}:{ok:false,error:'Could not download'}}
+  if(!res||!res.ok)return hit?{ok:true,cached:true}:{ok:false,error:'Could not download'};
+  const buf=await res.arrayBuffer();
+  const used=await measure();
+  const already=!!hit;
+  if(!already&&used.bytes+buf.byteLength>used.cap){
+    return {ok:false,error:'Saved files use '+fmtBytes(used.bytes)+' of about '+fmtBytes(IOS_CAP)+'. iPhone keeps roughly 50 MB for a Home Screen app. Clear saved files to make room.'};
+  }
+  const headers=new Headers(res.headers);
+  headers.set('Content-Length', String(buf.byteLength));
+  try{await box.put(href, new Response(buf,{status:200,headers}))}
+  catch(e){return {ok:false,error:'Saved files use '+fmtBytes(used.bytes)+' of about '+fmtBytes(IOS_CAP)+'. This phone refused another file. Clear saved files to make room.'}}
+  const list=(await idbGet('files').catch(()=>[]))||[];
+  const row={url:href,slug:meta.slug||'',name:meta.name||'File',bytes:buf.byteLength,kind:meta.kind||'file',at:clock()};
+  const i=list.findIndex(x=>x.url===href);
+  if(i>=0)list[i]=row;else list.push(row);
+  await idbPut('files', list);
+  return {ok:true,bytes:buf.byteLength};
+}
+async function clearFiles(slug){
+  const list=(await idbGet('files').catch(()=>[]))||[];
+  const box=await caches.open(FILE_CACHE);
+  if(!slug){
+    const keys=await box.keys();
+    for(let i=0;i<keys.length;i++)await box.delete(keys[i]);
+    await idbPut('files', []);
+    lsSet(JOB_KEY, '{}');
+    return;
+  }
+  const keep=[];
+  for(let i=0;i<list.length;i++){
+    if(list[i].slug===slug){try{await box.delete(list[i].url)}catch(e){}}
+    else keep.push(list[i]);
+  }
+  await idbPut('files', keep);
+  setJobFlag(slug, false);
+}
+async function toggleJob(slug, on){
+  if(!on){await clearFiles(slug);return {ok:true,on:false}}
+  const items=itemsFor(slug);
+  if(!items.length)return {ok:false,error:'No plan sheets or files to save for this job yet'}
+  let n=0, err='';
+  for(let i=0;i<items.length;i++){
+    const r=await cacheFile(items[i].url,{slug,name:items[i].name,kind:items[i].kind});
+    if(r.ok)n++;else{err=r.error||'Could not save';break}
+  }
+  setJobFlag(slug, n>0&&!err);
+  return {ok:!err,on:jobSaved(slug),saved:n,error:err}
+}
+function budgetNote(){return IOS_NOTE}
+async function askPersist(){
+  if(!navigator.storage||!navigator.storage.persist)return 'unavailable';
+  try{return await navigator.storage.persist()?'granted':'denied'}catch(e){return 'unavailable'}
+}
+async function openFile(url, name, slug){
+  const abs=new URL(url, location.href).href;
+  const shown=showPlan(abs, name||'Plan');
+  const r=await cacheFile(url,{name,slug,kind:'file'});
+  if(!r.ok&&!r.cached){
+    const st=document.getElementById('planstat');
+    if(st)st.textContent=r.error||'Could not open';
+    if(typeof toast==='function')toast(r.error||'Could not open');
+    return r;
+  }
+  await shown;
+  return r;
+}
+async function showPlan(url, name){
+  let host=document.getElementById('planlayer');
+  if(!host){host=document.createElement('div');host.id='planlayer';host.className='planlayer';document.body.appendChild(host)}
+  host.innerHTML=`<div class="planview" role="dialog" aria-modal="true"><div class="planbar"><b id="planname">${esc(name||'Plan')}</b><span id="planstat">Opening…</span><button type="button" id="planclose">Close</button></div><canvas id="plan-canvas"></canvas></div>`;
+  host.hidden=false;
+  document.getElementById('planclose').onclick=()=>{host.hidden=true;host.innerHTML=''};
+  try{
+    if(!window.HWSPlan)await new Promise((res,rej)=>{const s=document.createElement('script');s.src=new URL('plans/viewer.js', location.href).href;s.onload=res;s.onerror=()=>rej(new Error('viewer missing'));document.head.appendChild(s)});
+    const info=await window.HWSPlan.render(document.getElementById('plan-canvas'), url);
+    const st=document.getElementById('planstat');
+    if(st)st.textContent='Showing saved plan'+(navigator.onLine?'':' offline')+' · '+info.pages+' page'+(info.pages===1?'':'s');
+  }catch(e){
+    const st=document.getElementById('planstat');
+    if(st)st.textContent=e.message||'Could not open this plan';
+  }
+}
+function paintBar(root){
+  if(!root)return;
+  root.querySelectorAll('[data-offslug]').forEach(btn=>{
+    const slug=btn.getAttribute('data-offslug');
+    const on=jobSaved(slug);
+    btn.setAttribute('aria-pressed', on?'true':'false');
+    btn.textContent=on?'Saved for offline':'Save for offline';
+    btn.onclick=async ev=>{
+      ev.preventDefault();ev.stopPropagation();
+      btn.disabled=true;
+      const r=await toggleJob(slug, !jobSaved(slug));
+      btn.disabled=false;
+      paintBar(root);
+      const size=root.querySelector('[data-offsize]');
+      if(size)measure().then(m=>{size.textContent='Saved files: '+fmtBytes(m.bytes)+' of about 50 MB'});
+      if(r.error&&typeof toast==='function')toast(r.error);
+    };
+  });
+  const clr=root.querySelector('[data-offclear]');
+  if(clr&&!clr.dataset.bound){clr.dataset.bound='1';clr.onclick=async()=>{
+    if(!confirm('Clear saved files on this phone? Plans you saved for offline are removed. The schedule stays.'))return;
+    await clearFiles();
+    paintBar(document);
+    const size=root.querySelector('[data-offsize]');
+    if(size)size.textContent='Saved files: 0 KB of about 50 MB';
+  }}
+  root.querySelectorAll('[data-offsize]').forEach(el=>{
+    measure().then(m=>{el.textContent='Saved files: '+fmtBytes(m.bytes)+' of about 50 MB · '+m.count+' file'+(m.count===1?'':'s')});
+  });
+}
+function barHtml(slug){
+  const on=slug?jobSaved(slug):false;
+  return `<div class="offbar">${slug?`<button type="button" class="small" data-offslug="${esc(slug)}" aria-pressed="${on?'true':'false'}">${on?'Saved for offline':'Save for offline'}</button>`:''}<span class="small" data-offsize>Saved files: …</span><button type="button" class="small" data-offclear>Clear saved files</button><p class="hint">${esc(IOS_NOTE)}</p></div>`;
+}
+async function openManager(){
+  const m=await measure();
+  const persist=await askPersist();
+  const stay=persist==='granted'?'This phone accepted a request to keep the saved copy.':'iOS can still delete the copy under storage pressure even after that request.';
+  const html=`<h2>Saved for offline</h2><p><b>${esc(fmtBytes(m.bytes))}</b> of about 50 MB · ${m.count} file${m.count===1?'':'s'}.</p><p class="small">${esc(IOS_NOTE)} ${esc(stay)}</p><div class="mbtns"><button type="button" class="danger" id="offclearall">Clear saved files</button><span class="sp"></span><button type="button" data-close>Close</button></div>`;
+  if(typeof openModal==='function'){
+    openModal(html, modal=>{
+      const b=modal.querySelector('#offclearall');
+      if(b)b.onclick=async()=>{await clearFiles();if(typeof closeModal==='function')closeModal();if(typeof toast==='function')toast('Saved files cleared')};
+    });
+  }
+}
+window.addEventListener('hashchange', rememberView);
+window.HWSOffline={
+  gate, sessionOk, unlockWith, verifyLocal, remember, seal, unseal, readCache, loadCopy, dropLegacy, isStatic,
+  restoreView, rememberView, cacheFile, toggleJob, jobSaved, itemsFor, clearFiles, openFile, showPlan, servedHere,
+  measure, barHtml, paintBar, openManager, budgetNote, offlineNow, markNet,
+  limits(){return {fileCap:FILE_CAP,iosCap:IOS_CAP,lockMs:LOCK_MS,lockLimit:LOCK_LIMIT,sessionMs:SESSION_MS,note:IOS_NOTE}},
+  setClock(fn){if(dev&&typeof fn==='function')clock=fn},
+  _dev:dev
+};
+})();
+
 /* Sample Builders job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
    unchanged). Edits run through HWSEngine (same rules as the live server) and are stored by HWSStore; optional shared
    check-out/check-in through HWSSync (File System Access folder or Dropbox API). */
@@ -1239,7 +1810,7 @@ function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)locat
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
-const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
+const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -1255,7 +1826,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
  const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
- <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files and links<span class="cnt">${(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
+ <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files<span class="cnt">${(typeof HWSFiles!=='undefined'&&HWSFiles.count&&HWSFiles.count(J.slug))||(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
  const tabs=`<nav class="tabbar" aria-label="Modules">${TABS.map(([k,l,ic])=>{const on=k==mod||(k=='more'&&!TABS.some(t=>t[0]==mod));const n=k=='more'?hc:0;
   return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}"><span class="ic">${ic}</span><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
  $('#root').innerHTML=topHtml()+head+(ph?`<main class="main" id="mod"></main>${tabs}`:`<div class="layout">${side}<main class="main" id="mod"></main></div>`);
@@ -1488,14 +2059,14 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
 function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhone==='function'){renderSelPhone(M);return}const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
  M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} Buildertrend template selections (DRAFT, due = “Finalize …” schedule task)`,
  all.length?`<div class="tw"><table><tr><th>Title / Room-Location</th><th>Fixture / Choice</th><th>Brand</th><th>Model</th><th>Finish</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th class="num">Allowance</th><th>Deadline</th><th>Client approval</th><th>Status</th><th>Order status</th><th>Order date</th><th>ETA</th><th>Link / PO</th><th>Src</th></tr>
- ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${x.link&&/^https?:/.test(x.link)?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
+ ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${(typeof fileMaybeLink==='function'&&fileMaybeLink(x.link,'link','dropbox-file','lbtn'))||(x.link&&/^https?:/.test(x.link)&&!(typeof fileHosted==='function'&&fileHosted(x.link,''))?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:'')}${esc(x.order_link)}${typeof fileChip==='function'?fileChip(x):''}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
  (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:'')+csvBtn('selections'));
  const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M);if(typeof bindSelRows==='function')bindSelRows(M);const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl&&typeof openSelection==='function')openSelection(J.slug,focus)}
 function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
  M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} Buildertrend template packages not yet released`,
- real.map(p=>{const mx=Math.max(...p.subs.map(x=>x.amount||0),1);return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${p.low?` · low ${fmt$(p.low)}`:''} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
+ real.map(p=>{const mx=Math.max(...p.subs.map(x=>x.amount||0),1);return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${typeof fileChip==='function'?fileChip(p):''}${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${p.low?` · low ${fmt$(p.low)}`:''} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
  <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${p.subs.map(x=>`<div class="ps"><b>${esc(x.vendor)}</b> · ${esc(x.status)} ${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
- ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
+ ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${typeof fileChip==='function'?fileChip(x):''}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
  (tpl.length?panel('Template packages (not released)','Buildertrend “**Future Template” bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
 function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv + Buildertrend PO exports',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and Buildertrend PO exports.'),csvBtn('pos'));bindCsv(M)}
 function mCos(M){const l=J.cos||[];const tot=l.reduce((a,c)=>a+(+c.amount||0),0);M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${fmt$(c.amount)||'<span class="mut">TBD</span>'}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${fmt$(tot)}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
@@ -1505,14 +2076,19 @@ function mBudget(M){const l=J.budget_index||J.budget||[];
   (typeof mMoney==='function'?`<button type="button" class="pri" id="openmoney">Open money</button>`:''));
  const b=$('#openmoney');if(b)b.onclick=()=>{location.hash='#/job/'+(J&&J.slug||'')+'/money'};
  bindCsv(M)}
-function logLine(x){if((x.title||'')==='Team update'&&x.text)return x.text;return x.title||x.text||''}
-function logShownSource(x){if((x.title||'')==='Team update'||/daily update/i.test(x.source||'')||x.src==='team_update')return 'Team update';return x.source||''}
+function isTeamEmailLog(x){return (x.title||'')==='Team update'||/daily update/i.test(x.source||'')||x.src==='team_update'}
+function logSummary(x){return String((x&&(x.summary||x.text))||'').replace(/\s+/g,' ').trim()}
+function logLine(x){if(isTeamEmailLog(x))return logSummary(x);return x.title||x.text||''}
+function logEmailHref(x){const u=String((x&&(x.link||x.ref))||'');return /^https:\/\/mail\.google\.com\//.test(u)?u:''}
+function logEmailLink(x){const href=logEmailHref(x);if(!href)return '';return `<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">Open email</a>`}
+function logShownSource(x){if(isTeamEmailLog(x))return 'Team update';return x.source||''}
 function logDesk(x){const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
- const teamUpdate=(x.title||'')==='Team update'||/daily update/i.test(x.source||'');
- const head=teamUpdate?'Team update':(x.title||x.text||'');
- const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(x.text&&x.text!==head?`<div class="s">${esc(x.text)}</div>`:''));
+ const teamUpdate=isTeamEmailLog(x);
+ const head=teamUpdate?logSummary(x):(x.title||x.text||'');
+ const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(teamUpdate?'':(x.text&&x.text!==head?`<div class="s">${esc(x.text)}</div>`:'')));
  const src=teamUpdate?'':logShownSource(x);const srcHtml=src&&src!==head?`<div class="s">${esc(src)}</div>`:'';
- return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${extra}${srcHtml}</div></div>`}
+ const open=teamUpdate?logEmailLink(x):'';
+ return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${extra}${open}${srcHtml}${typeof fileChip==='function'?fileChip(x):''}</div></div>`}
 function mLogs(M){const l=J.logs||[];
  if(typeof isPhone==='function'&&isPhone()){logPhone(M,l);return}
  M.innerHTML=panel('Daily logs','Summaries of the day. Message text stays out of this list.',`<div class="list">${l.map(logDesk).join('')||emptyState('No daily logs yet','')}</div>`,csvBtn('logs'));bindCsv(M)}
@@ -1530,7 +2106,7 @@ function msgCard(i){const k=msgKind(i);const reps=asList(i.replies);const n=+i.r
  return `<article class="msgcard"><div class="msghead">${msgIco(k)}<span class="chip">${esc(i.channel||k)}</span><span class="msgwho">${esc(i.author||'')}</span><span class="msgwhen">${esc(msgClock(i.time))}</span></div>
  <button type="button" class="msgtext" data-expand>${k==='slack'&&typeof slackMarkup==='function'?slackMarkup(i.text||''):esc(i.text||'')}</button>
  <div class="msgacts">${n?`<button type="button" class="fchip replypill" data-replies>${n} repl${n==1?'y':'ies'}</button>`:''}
- ${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=esc(f.name||'Attachment');return u?`<a class="lbtn" href="${esc(u)}" target="_blank" rel="noopener">${name}</a>`:`<span class="lbtn">${name}</span>`}).join('')}
+ ${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=f.name||'Attachment';if(typeof fileHosted==='function'&&fileHosted(u,''))return fileLinkHtml({url:u,name:name,label:name,kind:'file',cls:'lbtn'});return u?`<a class="lbtn" href="${esc(u)}" target="_blank" rel="noopener">${esc(name)}</a>`:`<span class="lbtn">${esc(name)}</span>`}).join('')}
  ${link?`<a class="msgopen" href="${esc(link)}" target="_blank" rel="noopener">${esc(msgOpenLabel(i))}</a>`:''}${i.class?chip(i.class,'low'):''}</div>
  ${reps.length?`<div class="msgreplies">${reps.map(r=>`<div class="msgreply"><b>${esc(r.user_name||r.user_id||'')}</b> <span class="mut">${esc(msgClock(r.time))}</span><div>${k==='slack'&&typeof slackMarkup==='function'?slackMarkup(r.text||''):esc(r.text||'')}</div></div>`).join('')}</div>`:''}</article>`}
 const LOG_IC={slack:MSG_IC.slack,email:MSG_IC.email,text:MSG_IC.text,
@@ -1550,7 +2126,7 @@ function logCountsLabel(counts){return Object.entries(logShownCounts(counts)).ma
 function logWhen(t){const s=String(t||'');if(!s)return '';if(s==='all day'||/^\d{4}-\d{2}-\d{2}$/.test(s)||/T00:00(?::00)?(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)?$/.test(s))return 'all day';return msgClock(s)}
 function logSourceLabel(s){const k=logKind(s);return k==='email'?'Open in Gmail':(k==='slack'?'Open in Slack':(k==='text'?'Open in Messages':'Open'))}
 function logSourceRow(s){const href=/^https:\/\//.test(s.ref||'')?s.ref:'';
- const open=href?`<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">${esc(logSourceLabel(s))}</a>`:`<button type="button" class="msgopen" data-logsrc="${esc(s.src||'')}" data-logref="${esc(s.ref||'')}">${esc(logSourceLabel(s))}</button>`;
+ const open=(href&&typeof fileHosted==='function'&&fileHosted(href,''))?fileLinkHtml({url:href,label:s.label||'File',kind:'',cls:'msgopen'}):(href?`<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">${esc(logSourceLabel(s))}</a>`:`<button type="button" class="msgopen" data-logsrc="${esc(s.src||'')}" data-logref="${esc(s.ref||'')}">${esc(logSourceLabel(s))}</button>`);
  return `<div class="logsrc">${logIco(logKind(s))}<span class="logwhen">${esc(logWhen(s.time))}</span>${open}</div>`}
 function logDayCounts(items){const auto=items.find(x=>x.source==='auto'&&x.counts&&typeof x.counts==='object'&&Object.keys(x.counts).length);
  if(auto){const counts=Object.assign({},auto.counts);const team=items.filter(x=>x.source!=='auto').length;if(team)counts.team=(counts.team||0)+team;delete counts.trade;return counts}
@@ -1569,8 +2145,10 @@ function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
  const jump=`<label class="logjump"><span class="mut small">Month</span> <select id="logmonth" aria-label="Jump to month"><option value="">All months</option>${months.map(m=>`<option value="${esc(m)}" ${month===m?'selected':''}>${esc((MON[+m.slice(5)-1]||m)+' '+m.slice(0,4))}</option>`).join('')}</select></label>`;
  const cards=order.map(d=>{const items=by[d];const counts=logDayCounts(items);
   const countChips=Object.entries(logShownCounts(counts)).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
-  const team=items.filter(x=>x.source!=='auto').map((x,i)=>`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span></button>`).join('');
-  const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span></div>`).join('');
+  const team=items.filter(x=>x.source!=='auto').map((x)=>isTeamEmailLog(x)
+   ?`<div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logSummary(x))}</span>${logEmailLink(x)}</div>${typeof fileChip==='function'?fileChip(x):''}`
+   :`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span></button>${typeof fileChip==='function'?fileChip(x):''}`).join('');
+  const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span>${typeof fileChip==='function'?fileChip(x):''}</div>`).join('');
   const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
   return `<article class="logcard" id="log-${esc(d)}"><div class="loghead"><h2>${head}</h2><div class="logcounts">${countChips}</div></div><div class="loglines">${team}${bullets}</div>${logSourcesBlock(items)}</article>`}).join('')||emptyState('No daily logs yet','');
  M.innerHTML=panel('Daily logs','Short summary of the day. Sources stay collapsed and do not show the message text.',`<div class="fbar"><div class="chips">${chips}</div>${jump}</div><div class="loglist">${cards}</div>`,csvBtn('logs'));
@@ -1664,19 +2242,27 @@ function slackClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)ret
 function slackDay(t){return String(t||'').slice(0,10)||''}
 function slackFiles(v){if(Array.isArray(v))return v;if(!v)return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
 function slackReplies(v){return slackFiles(v)}
-function slackCanPost(){return typeof MODE!=='undefined'&&MODE==='live'&&!!(J&&J.channel)}
+function slackOfficeOnly(){try{return !!(window.HWSOffline&&typeof HWSOffline.isStatic==='function'&&HWSOffline.isStatic())}catch(e){return false}}
+function slackCanPost(){if(slackOfficeOnly())return false;const mode=slackMode();return (mode==='live'||mode==='pwa')&&!!(J&&J.channel)}
 function slackWho(){
   try{if(typeof STORE!=='undefined'&&STORE&&STORE.who){const w=STORE.who();if(w)return w}}catch(e){}
   try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
 function slackPin(){const el=typeof document!=='undefined'&&document.getElementById('slackpin');return el?String(el.value||''):''}
 function slackSetWho(n){n=String(n||'').trim().slice(0,60);try{if(typeof STORE!=='undefined'&&STORE&&STORE.setWho)STORE.setWho(n);else localStorage.setItem('hws-who',n)}catch(e){}}
-function slackPending(){const k=J&&J.slug||'';window._slackPend=window._slackPend||{};return window._slackPend[k]||(window._slackPend[k]=[])}
+const SLACK_BOX='hws-slack-outbox';
+function slackLoadBox(){try{const o=JSON.parse(localStorage.getItem(SLACK_BOX)||'null');if(o&&Array.isArray(o.rows))return o}catch(e){}return {v:1,rows:[]}}
+function slackSaveBox(box){try{localStorage.setItem(SLACK_BOX,JSON.stringify(box));return true}catch(e){return false}}
+function slackDraftKey(){return 'hws-slack-draft:'+(J&&J.slug||'')}
+function slackDraft(){try{return localStorage.getItem(slackDraftKey())||''}catch(e){return ''}}
+function slackSetDraft(v){try{if(v)localStorage.setItem(slackDraftKey(),v);else localStorage.removeItem(slackDraftKey())}catch(e){}}
+function slackPending(){const k=J&&J.slug||'';const box=slackLoadBox();window._slackPend=window._slackPend||{};window._slackPend[k]=box.rows.filter(p=>p.slug===k);return window._slackPend[k]}
+function slackStoreRow(row){const box=slackLoadBox();const i=box.rows.findIndex(p=>p.id===row.id);if(i>=0)box.rows[i]=row;else box.rows.push(row);return slackSaveBox(box)}
 function slackComposeBox(opts){
   opts=opts||{};
   const live=!!opts.live, channel=opts.channel||'', on=live&&!!channel, thread=opts.thread||'';
   const label=String(opts.label||'').replace(/^#/,'');
   let note='';
-  if(!thread&&!live)note='Posting is off on this copy. Use the office hub to send.';
+  if(!thread&&!live)note=slackOfficeOnly()?'Sending needs the office hub.':'Posting is off on this copy. Use the office hub to send.';
   else if(!thread&&live&&!channel)note='This job has no Slack channel yet.';
   const dis=on?'':'disabled';
   const ph=thread?'Reply in thread':(label?('Message #'+label):'Message');
@@ -1700,7 +2286,7 @@ function withSlackMod(mods){
 }
 function slackState(i){
   if(!i._state)return '';
-  const word=i._state==='sending'?'Sending…':(i._state==='sent'?'Sent':('Failed'+(i._err?': '+slackEsc(i._err):'')));
+  const word=i._state==='sending'?'Sending…':(i._state==='pending'?'Pending · sends when back online':(i._state==='sent'?'Sent':('Failed'+(i._err?': '+slackEsc(i._err):''))));
   const retry=i._state==='failed'?` <button type="button" class="small" data-retry="${slackEsc(i.id)}">Retry</button>`:'';
   return `<div class="slack-state ${slackEsc(i._state)}">${word}${retry}</div>`;
 }
@@ -1709,12 +2295,12 @@ function slackBubble(i,mine){
   const ts=slackTs(i);
   const pendingRe=ts?slackPending().filter(p=>p.thread_ts===ts):[];
   const label=(J.slack||'').replace(/^#/,'');
-  const replyBox=i._state?'':slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label,thread:ts});
+  const replyBox=i._state?'':slackComposeBox({live:slackCanPost(),channel:J.channel||'',label,thread:ts});
   const n=reps.length+pendingRe.length;
   return `<article class="slack-bubble${mine?' me':''}${i._state?' '+slackEsc(i._state):''}" id="sl-${slackEsc(String(i.id||ts))}">
     <div class="slack-meta"><b>${slackEsc(i.author||'Someone')}</b><time>${slackEsc(slackClock(i.time))}</time></div>
     <div class="slack-body">${slackMarkup(i.text||'')}</div>
-    ${files.length?`<div class="slack-files">${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=slackEsc(f.name||'File');return u?`<a class="lbtn" href="${slackEsc(u)}" target="_blank" rel="noopener">${name}</a>`:`<span class="lbtn">${name}</span>`}).join('')}</div>`:''}
+    ${files.length?`<div class="slack-files">${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=f.name||'File';if(typeof fileHosted==='function'&&fileHosted(u,''))return fileLinkHtml({url:u,name:name,label:name,kind:'file',cls:'lbtn'});return u?`<a class="lbtn" href="${slackEsc(u)}" target="_blank" rel="noopener">${slackEsc(name)}</a>`:`<span class="lbtn">${slackEsc(name)}</span>`}).join('')}</div>`:''}
     <div class="slack-acts"><button type="button" class="fchip" data-open>${n?n+' repl'+(n===1?'y':'ies'):'Reply'}</button>${link?`<a class="msgopen" href="${slackEsc(link)}" target="_blank" rel="noopener">Open in Slack</a>`:''}</div>
     ${slackState(i)}
     <div class="slack-replies">${reps.map(r=>`<div class="slack-reply"><b>${slackEsc(r.user_name||r.user_id||'')}</b> <span class="mut">${slackEsc(slackClock(r.time))}</span><div>${slackMarkup(r.text||'')}</div></div>`).join('')}
@@ -1732,9 +2318,9 @@ function slackApplyPush(msg){
     else J.messages.push(r);
   });
   const texts=new Set((msg.rows||[]).map(r=>String(r.text||'')+'|'+(r.author||'')));
-  window._slackPend=window._slackPend||{};
-  const pend=window._slackPend[J.slug]||[];
-  window._slackPend[J.slug]=pend.filter(p=>p._state==='failed'||p._state==='sending'||!texts.has(String(p.text||'')+'|'+(p.author||'')));
+  const box=slackLoadBox();
+  box.rows=box.rows.filter(p=>p.slug!==J.slug||p._state==='failed'||p._state==='pending'||p._state==='sending'||!texts.has(String(p.text||'')+'|'+(p.author||'')));
+  slackSaveBox(box);
 }
 function startSlackStream(){
   if(typeof MODE==='undefined'||MODE!=='live'||!window.EventSource||window._slackES)return;
@@ -1747,32 +2333,74 @@ function startSlackStream(){
     if(typeof curMod==='function'&&curMod()==='slack'){const M=document.getElementById('mod');if(M)mSlack(M)}
   };
 }
+function slackOffline(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLine}
+function slackNetFail(e, status){
+  if(slackOffline())return true;
+  if(status===0||status===404||status===405||status===502||status===503||status===504)return true;
+  const msg=e&&e.message||'';
+  return /failed to fetch|network|offline|load failed/i.test(msg);
+}
+async function slackCheckPin(who, pin){
+  if(!pin){
+    if(window.HWSOffline&&await HWSOffline.sessionOk())return {ok:true};
+    return {ok:false,error:'Enter your PIN'};
+  }
+  if(!navigator.onLine&&window.HWSOffline)return HWSOffline.verifyLocal(who, pin);
+  if(window.HWSOffline){
+    const net=await HWSOffline.unlockWith(who, pin);
+    return net;
+  }
+  const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
+  let sj={};try{sj=await s.json()}catch(e){}
+  if(!s.ok||!sj.ok)return {ok:false,error:sj.error||'name or PIN does not match',status:s.status};
+  return {ok:true};
+}
 async function slackSend(text, thread, pendingId){
   const who=slackWho();
-  if(!who){if(typeof toast==='function')toast('Add your name, then send');return}
+  if(!who){if(typeof toast==='function')toast('Add your name, then send');return false}
   const pin=slackPin();
   text=String(text||'').trim();
-  if(!text)return;
+  if(!text)return false;
   const pend=slackPending();
   let row=pendingId?pend.find(p=>p.id===pendingId):null;
   if(!row){
-    row={id:'local:'+Date.now(),author:who,text,time:new Date().toISOString(),thread_ts:thread||'',_state:'sending',source:'Slack',channel:J.slack||'Slack'};
+    row={id:'local:'+Date.now(),slug:J.slug,author:who,text,time:new Date().toISOString(),thread_ts:thread||'',_state:slackOffline()?'pending':'sending',source:'Slack',channel:J.slack||'Slack'};
     pend.push(row);
-  }else row._state='sending';
+  }else row._state=slackOffline()?'pending':'sending';
+  if(!slackStoreRow(row)){if(typeof toast==='function')toast('Could not keep that message on this phone');return false}
+  slackSetDraft('');
   const M=document.getElementById('mod');if(M&&typeof curMod==='function'&&curMod()==='slack')mSlack(M);
+  if(slackOffline())return true;
   try{
-    const read=async r=>{try{return await r.json()}catch(e){return {ok:false,error:'not sent'}}};
-    if(pin){
-      const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
-      const sj=await read(s);if(!sj.ok)throw new Error(sj.error||'name or PIN does not match');
-      const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
+    const checked=await slackCheckPin(who, pin);
+    if(!checked.ok){
+      if(slackNetFail(null, checked.status)){row._state='pending';row._err='';slackStoreRow(row)}
+      else {row._state='failed';row._err=checked.error||'name or PIN does not match';slackStoreRow(row)}
+      const M1=document.getElementById('mod');if(M1&&typeof curMod==='function'&&curMod()==='slack')mSlack(M1);
+      return row._state==='pending';
     }
+    const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
     const r=await fetch('/api/job/'+encodeURIComponent(J.slug)+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,thread_ts:thread||'',who})});
-    const j=await read(r);if(!j.ok)throw new Error(j.error||'not sent');
-    row._state='sent';row.ts=j.ts||'';
-  }catch(e){row._state='failed';row._err=e.message||'not sent'}
+    let j={};try{j=await r.json()}catch(e){}
+    if(!r.ok||!j.ok){
+      if(slackNetFail(null, r.status)){row._state='pending';row._err=''}
+      else {row._state='failed';row._err=j.error||'not sent'}
+    }else{row._state='sent';row.ts=j.ts||''}
+  }catch(e){
+    if(slackNetFail(e)){row._state='pending';row._err=''}
+    else {row._state='failed';row._err=e.message||'not sent'}
+  }
+  slackStoreRow(row);
   const M2=document.getElementById('mod');if(M2&&typeof curMod==='function'&&curMod()==='slack')mSlack(M2);
+  return row._state!=='failed';
 }
+function slackFlush(){
+  if(typeof J==='undefined'||!J||!J.slug)return;
+  const box=slackLoadBox();
+  const waiting=box.rows.filter(p=>p.slug===J.slug&&(p._state==='pending'||p._state==='sending'));
+  waiting.forEach(p=>slackSend(p.text, p.thread_ts||'', p.id));
+}
+if(typeof window!=='undefined')window.addEventListener('online',()=>{if(typeof slackFlush==='function')slackFlush()});
 function mSlack(M){
   if(typeof startSlackStream==='function')startSlackStream();
   const label=(J.slack||'').replace(/^#/,'');
@@ -1792,23 +2420,26 @@ function mSlack(M){
   if(!blocks)blocks=`<div class="empty"><b>No Slack messages yet</b>${J.channel?'New messages show up here.':'This job has no Slack channel yet.'}</div>`;
   const name=live?`<label class="slack-name">Your name <input id="slackwho" value="${slackEsc(who)}" placeholder="Your name" autocomplete="name" enterkeyhint="next"></label><label class="slack-name">PIN <input id="slackpin" type="password" placeholder="PIN" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-label="PIN"></label>`:'';
   const prev=M.querySelector('.slack-foot textarea');
-  const draft=prev?prev.value:'';
+  const draft=prev&&prev.value?prev.value:slackDraft();
   M.innerHTML=`<div class="slack-tab"><div class="slack-head"><h2>${slackEsc(J.name||'')}</h2><span class="chip">${slackEsc(title)}</span>${live?'<span class="slack-live">Live</span>':''}</div>
-    <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label})}</div></div>`;
+    <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:live,channel:J.channel||'',label})}</div></div>`;
   const box=M.querySelector('.slack-foot textarea');
   if(box&&draft)box.value=draft;
+  if(box)box.addEventListener('input',()=>slackSetDraft(box.value));
   const whoIn=M.querySelector('#slackwho');
   if(whoIn)whoIn.onchange=()=>slackSetWho(whoIn.value);
   M.querySelectorAll('.slack-compose').forEach(form=>{
-    form.onsubmit=ev=>{
+    form.onsubmit=async ev=>{
       ev.preventDefault();
       if(!slackCanPost())return;
       const ta=form.querySelector('textarea');
       const text=ta?ta.value:'';
+      if(!String(text||'').trim())return;
       const thread=form.getAttribute('data-thread')||'';
       if(whoIn)slackSetWho(whoIn.value);
-      if(ta)ta.value='';
-      slackSend(text, thread);
+      slackSetDraft(text);
+      const ok=await slackSend(text, thread);
+      if(!ok&&ta)ta.value=text;
     };
   });
   M.querySelectorAll('[data-open]').forEach(b=>{
@@ -1826,6 +2457,59 @@ if(typeof document!=='undefined'){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,slackMarkup};
+
+/* Same-origin plan sheets the hub serves itself. The Dropbox Plan Room (planroom.js) stays
+   in charge of the plans page. dropbox.com links are not listed here and are not cached.
+   pdf.js and plans/viewer.js are part of the app shell. */
+function withPlansMod(mods){
+  mods=(mods||[]).map(x=>x.slice?x.slice():x);
+  if(mods.some(x=>x[0]==='plans'))return mods;
+  const at=mods.findIndex(x=>x[0]==='files');
+  mods.splice(at<0?mods.length:at,0,['plans','Plan Room']);
+  return mods;
+}
+function planItems(){
+  const out=[], seen={};
+  const add=(url,name)=>{
+    const u=String(url||'');
+    if(!u||seen[u])return;
+    if(window.HWSOffline&&typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(u))return;
+    seen[u]=1;out.push({url:u,name:name||'Plan sheet'});
+  };
+  ((J&&J.plans)||[]).forEach(p=>add(p.url,p.name));
+  try{const L=typeof JL==='function'?JL(J.slug):{items:[]};(L.items||[]).forEach(x=>{if(/\.pdf(\?|#|$)/i.test(x.url||''))add(x.url,x.label)})}catch(e){}
+  return out;
+}
+function bindPlanOpens(root){
+  if(!root)return;
+  root.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{
+    if(window.HWSOffline)HWSOffline.openFile(b.getAttribute('data-plan'), b.getAttribute('data-name'), J&&J.slug);
+  });
+}
+function offlinePlanHtml(){
+  const items=planItems();
+  const slug=J&&J.slug;
+  const bar=window.HWSOffline?HWSOffline.barHtml(slug):'';
+  const rows=items.map(p=>`<button type="button" class="lrow planopen" data-plan="${esc(p.url)}" data-name="${esc(p.name)}"><span class="lb"><span class="lt">${esc(p.name)}</span><span class="ls">Opens here and is kept if you save this job</span></span></button>`).join('');
+  return `<div data-hws-offplans="1">${bar}${rows?`<div class="rows">${rows}</div>`:''}</div>`;
+}
+function paintOfflinePlans(root){
+  if(window.HWSOffline)HWSOffline.paintBar(root);
+  bindPlanOpens(root);
+}
+function mPlans(M){
+  const items=planItems();
+  M.innerHTML=`<div class="planroom"><h2 class="sh2 first">Plan Room</h2>${offlinePlanHtml()}${items.length?'':'<div class="none">No plan sheets on this job yet</div>'}</div>`;
+  paintOfflinePlans(M);
+}
+function attachOfflinePlans(M){
+  if(!M||M.querySelector('[data-hws-offplans]'))return;
+  const box=document.createElement('div');
+  box.innerHTML=offlinePlanHtml();
+  if(box.firstChild)M.appendChild(box.firstChild);
+  paintOfflinePlans(M);
+}
+window.HWSOfflinePlans={attach:attachOfflinePlans};
 
 /* Sample Builders employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
@@ -1888,8 +2572,9 @@ function dnavHtml(page){const it=hubNav();
  return `<nav class="dnav hide-sm" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" class="${k==page?'on':''}">${l}</a>`).join('')}</nav>`}
 function hubShell(page,body){document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg=page;
  $('#root').innerHTML=topHtml(page)+`<main class="hub hub-${page}${page=='home'?' hub-home':''}">${body}</main>`+gnavHtml(page);bindTop()}
-function lbtn(x,big){const u=safeUrl(x.url);if(!u)return '';return `<a class="lbtn${big?' big':''}" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(x.sub||x.label)}">${ico(linkIcon(x))}<span class="lt">${esc(x.label)}</span>${big&&x.sub?`<span class="ls">${esc(x.sub)}</span>`:''}</a>`}
-function lrow(x,extra){const u=safeUrl(x.url);if(!u)return '';return `<a class="lrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(linkIcon(x),'k-'+(x.kind||''))}<span class="lb"><span class="lt">${esc(x.label)}</span>${x.sub||extra?`<span class="ls">${esc(extra||x.sub)}</span>`:''}</span>${ico('ext','go')}</a>`}
+function hostedRow(x,extra,cls){if(typeof fileHosted!=='function'||!x||!fileHosted(x.url,x.kind))return '';return fileLinkHtml(Object.assign({},x,{cls:cls}),extra)}
+function lbtn(x,big){const h=hostedRow(x,'','lbtn'+(big?' big':''));if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lbtn${big?' big':''}" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(x.sub||x.label)}">${ico(linkIcon(x))}<span class="lt">${esc(x.label)}</span>${big&&x.sub?`<span class="ls">${esc(x.sub)}</span>`:''}</a>`}
+function lrow(x,extra){const h=hostedRow(x,extra,'lrow');if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(linkIcon(x),'k-'+(x.kind||''))}<span class="lb"><span class="lt">${esc(x.label)}</span>${x.sub||extra?`<span class="ls">${esc(extra||x.sub)}</span>`:''}</span>${ico('ext','go')}</a>`}
 function hrow(href,title,sub,right,cls){return `<a class="hrow ${cls||''}" href="${href}"><span class="lb"><span class="lt">${title}</span>${sub?`<span class="ls">${sub}</span>`:''}</span>${right||''}${ico('chev','go')}</a>`}
 function dchip(d,td){if(!d)return '';const c=d<td?'overdue':(d==td?'today':'');return `<span class="dchip ${c}">${d==td?'Today':(d==addD(td,1)?'Tomorrow':dow(d)+' '+md(d))}</span>`}
 function greet(){const h=+new Date(Date.now()-7*3600e3).toISOString().slice(11,13);return h<12?'Good morning':(h<17?'Good afternoon':'Good evening')}
@@ -1961,24 +2646,34 @@ function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().com
   const jobs=((DATA.common||{}).all_jobs||[]).filter(j=>JLs[j.slug]);
   body=`<div class="quick">${quick.map(x=>lbtn(x,true)).join('')}</div>
   <h2 class="sh2">Job folders <span>${jobs.length}</span></h2><div class="jfold">${jobs.map(j=>{const L=JLs[j.slug];const fold=(L.items||[]).find(x=>x.kind=='dropbox'&&x.label=='Job folder');const n=(L.items||[]).length+(L.permits||[]).length;
-   return `<details class="jf" data-slug="${esc(j.slug)}"><summary><span class="lb"><span class="lt">${esc(j.name)}</span><span class="ls">${fold?'Dropbox folder · ':'No Dropbox folder · '}${n} link${n==1?'':'s'}${(L.permits||[]).length?' · permit '+esc(L.permits[0].number):''}</span></span>${fold?`<a class="fold" href="${esc(safeUrl(fold.url))}" target="_blank" rel="noopener" aria-label="Open the Dropbox folder">${ico('files')}</a>`:''}${ico('chev','go')}</summary>
+   return `<details class="jf" data-slug="${esc(j.slug)}"><summary><span class="lb"><span class="lt">${esc(j.name)}</span><span class="ls">${fold?'Job folder · ':'No job folder · '}${n} link${n==1?'':'s'}${(L.permits||[]).length?' · permit '+esc(L.permits[0].number):''}</span></span><a class="fold" href="${jobHref(j.slug,'files')}" aria-label="Browse this job's files">Browse</a>${fold?`<button type="button" class="fold flink" data-flink="1" data-ffolder="1" data-file-slug="${esc(j.slug)}" data-file-path="${esc(typeof filePathFromUrl==='function'?filePathFromUrl(fold.url):'')}" aria-label="Open this folder in Files">${ico('files')}</button>`:''}<button type="button" class="small offjob" data-offslug="${esc(j.slug)}">Save for offline</button>${ico('chev','go')}</summary>
    <div class="rows">${jobLinkRows(j.slug,true)}</div></details>`}).join('')}</div>
   ${C.filter(g=>g.title!='Apps').map(g=>`<h2 class="sh2">${esc(g.title)} <span>${(g.items||[]).length}</span></h2><div class="rows">${(g.items||[]).map(x=>lrow(x)).join('')}</div>`).join('')}`}
  hubShell('files',`<div class="hph"><h1>Files</h1></div><label class="sbox big">${ico('search')}<input type="search" id="fq" placeholder="Search files, permits, bids, forms" value="${esc(st.fq||'')}" autocomplete="off"></label>${body}
- <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account). Google links follow the sheet's sharing.</div>`);
+ <div class="hint foot">Files and folders open here. Sheets and mail still open in their own apps.</div>`);
  const fq=$('#fq');fq.oninput=e=>{st.fq=e.target.value;saveUi();const p=fq.selectionStart;renderFiles();const n=$('#fq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
- document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));document.title='Sample Builders · Files'}
+ document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));
+ document.querySelectorAll('details.jf [data-offslug]').forEach(b=>b.addEventListener('click',e=>e.stopPropagation()));
+ if(window.HWSOffline)HWSOffline.paintBar(document.getElementById('root'));
+ document.title='Sample Builders · Files'}
+function bindSavedOpens(root,slug){if(!root||!window.HWSOffline)return;root.querySelectorAll('a[href]').forEach(a=>{
+  const href=a.getAttribute('href')||'';
+  if(!/\.(pdf|png|jpe?g|gif|webp)(\?|#|$)/i.test(href))return;
+  if(typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(href))return;
+  a.addEventListener('click',ev=>{ev.preventDefault();HWSOffline.openFile(href, a.textContent.trim(), slug)})})}
 function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!compact||!/\(all jobs\)/.test(x.label));
  const permits=(L.permits||[]).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
  return permits.join('')+it.map(x=>lrow(x)).join('')||'<div class="none">No links on file for this job yet</div>'}
 /* ---- Job module: Files and links ---- */
 function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp[x.group||'Links']=grp[x.group||'Links']||[]).push(x));
  const bids=H().bids.filter(b=>b.slug==J.slug&&(b.links||[]).some(x=>x.kind=='dropbox-file'));
- const permits=(L.permits||[]).length?`<div class="permits">${L.permits.map(p=>`<a class="permit" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${ico('badge')}<span class="lb"><span class="lt">${esc(p.number)}</span><span class="ls">${esc(p.what||'Permit')}</span></span>${ico('ext','go')}</a>`).join('')}</div>`:'';
- M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
+ const permits=(L.permits||[]).length?`<div class="permits">${L.permits.map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file',slug:J.slug})).join('')}</div>`:'';
+ const bar=window.HWSOffline?HWSOffline.barHtml(J.slug):'';
+ M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${bar}${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
  ${Object.entries(grp).map(([g,l])=>`<h3 class="sh3">${esc(g)}</h3><div class="rows">${l.map(x=>lrow(x)).join('')}</div>`).join('')||'<div class="none">No links on file for this job yet</div>'}
  ${bids.length?`<h3 class="sh3">Bid files <span class="mut">${bids.length}</span></h3><div class="rows">${bids.map(b=>b.links.filter(x=>x.kind=='dropbox-file').map(x=>lrow(x,b.vendor+' · '+b.trade)).join('')).join('')}</div>`:''}
- <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account).</div></div>`}
+ <div class="hint foot">Files and folders open in this hub. A PDF or photo you open is kept on this phone.</div></div>`;
+ if(window.HWSOffline){HWSOffline.paintBar(M);bindSavedOpens(M,J.slug)}}
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Sample Builders · Chat'}
@@ -2190,7 +2885,7 @@ function attOpenJob(slug,kind){const J=attJ(slug);if(!J)return;const D=attDrift(
    <div class="small mut">Baseline: <b>${esc(D.status||'')}</b> · ${esc((D.B||{}).source||'')}${(D.B||{}).note?' · '+esc(D.B.note):''}</div>
    ${own?`<div class="aacts"><button class="abtn ${D.approved?'on':'pri'}" id="aAppr">${D.approved?'✓ Approved':'Approve baseline'}</button><button class="abtn" id="aReset">Reset to current schedule</button></div>`:'<div class="small mut">Only '+esc(attSig()||'the owner')+' can approve or reset the baseline.</div>'}
    <div class="rows">${D.rows.slice(0,12).map(r=>`<button class="arow ${SEVC[r.slip>7?1:(r.slip>2?2:4)]}" data-at="${esc(r.t.id)}"><span class="abar"></span><span class="lb"><span class="lt">${esc(r.t.task)}</span><span class="ls">finish ${esc(md(r.t.finish))} vs ${esc(md(r.bf))}${r.t.critical?' · critical':''}</span></span><span class="dpill ${attColor(Math.abs(r.slip))}">${r.slip>0?'+':''}${r.slip}d</span>${ico('chev','go')}</button>`).join('')||'<div class="none">Every task is on its baseline</div>'}</div>`}
-  h+=`<h3 class="sh3">Last activity</h3>${L.sources.length?`<div class="rows">${L.sources.slice(0,6).map(s=>`<div class="asrc"><b>${esc(md(s.ts.slice(0,10)))}</b> ${esc(s.kind)}${s.what?' · '+esc(String(s.what).slice(0,90)):''}${s.url&&/^https:\/\//.test(s.url)?` <a href="${esc(s.url)}" target="_blank" rel="noopener">${ico('ext','sm')}</a>`:''}</div>`).join('')}</div>`:'<div class="none">No activity found in any source</div>'}`;
+  h+=`<h3 class="sh3">Last activity</h3>${L.sources.length?`<div class="rows">${L.sources.slice(0,6).map(s=>`<div class="asrc"><b>${esc(md(s.ts.slice(0,10)))}</b> ${esc(s.kind)}${s.what?' · '+esc(String(s.what).slice(0,90)):''}${s.url&&typeof fileHosted==='function'&&fileHosted(s.url,'')?fileLinkHtml({url:s.url,label:s.what||'File',slug:slug,cls:'flink'}):(s.url&&/^https:\/\//.test(s.url)?` <a href="${esc(s.url)}" target="_blank" rel="noopener">${ico('ext','sm')}</a>`:'')}</div>`).join('')}</div>`:'<div class="none">No activity found in any source</div>'}`;
   h+=attPeople(slug)}
  h+=HWSRelated.html(attJobLinks(slug),{slug})+`<p><button class="small" data-close>Close</button></p></div>`;
  openModal(h,m=>{HWSRelated.bind(m,{slug});m.querySelectorAll('[data-at]').forEach(b=>b.onclick=()=>{const t=(attJ(slug).tasks||[]).find(x=>x.id==b.dataset.at);if(t)attOpenTask(slug,t)});
@@ -2208,7 +2903,7 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
  const LBL={job:'Job',task:'Task',sub:'Sub / vendor',bid:'Bid / quote',order:'Order / PO',selection:'Selection',dropbox:'Dropbox',url:'Link',spec:'Spec sheet',designbook:'Design book',po:'Purchase order',takeoff:'Takeoff',adaptive:'Adaptive PO',file:'File',budget:'Budget line'};
  function html(links,o){const L=(links||[]).filter(Boolean);if(!L.length)return '';const g={};L.forEach(x=>(g[x.type]=g[x.type]||[]).push(x));
   return `<div class="related"><h3 class="sh3">Related <span class="mut">${L.length}</span></h3>${Object.keys(g).map(k=>`<div class="rgrp"><div class="rg">${esc(LBL[k]||k)}</div>${g[k].map(x=>{
-   const u=x.url&&/^https:\/\//.test(x.url)?x.url:'';if(u)return `<a class="rrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||u)}</span>${ico('ext','go')}</a>`;
+   const u=x.url&&/^https:\/\//.test(x.url)?x.url:'';const hostedKind=k==='file'?'file':(k==='dropbox'?(x.kind||'dropbox'):'');if(u&&typeof fileHosted==='function'&&fileHosted(u,hostedKind||k))return fileLinkHtml({url:u,label:x.label||'File',slug:(o&&o.slug)||'',kind:hostedKind,name:x.name||'',cls:'rrow'});if(u)return `<a class="rrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||u)}</span>${ico('ext','go')}</a>`;
    const s=k=='sub'?attSub(x.id):null;const extra=s?(s.phone||s.email?' · '+[s.phone?'phone':'',s.email?'email':''].filter(Boolean).join(' + '):' · no contact on file'):(x.role?' · '+x.role:'');
    return `<button class="rrow" data-rel="${esc(k)}|${esc(x.id)}">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||x.id)}<span class="ls">${esc(extra)}</span></span>${ico('chev','go')}</button>`}).join('')}</div>`).join('')}</div>`}
  function open(type,id,o){const slug=o&&o.slug;
@@ -2490,7 +3185,7 @@ function wdBtns(J,t){const body=encodeURIComponent(wdMsg(J,t));const P=wdPhones(
 function wdWarranty(t){const w=t.warranty||{};const ex=String(w.expiry||'').trim();const known=ex&&!/^not (on file|calculable)/i.test(ex);
  return `<div class="wdw"><span class="mut">Warranty:</span> ${known?`<b>${esc(ex)}</b>`:'<span class="mut">expiry not on file</span>'}${w.terms&&!/^not on file$/i.test(w.terms)?`<details><summary>terms</summary><div class="small">${esc(w.terms)}</div></details>`:''}${(w.product_warranties||[]).length?`<details><summary>${w.product_warranties.length} product warrant${w.product_warranties.length==1?'y':'ies'}</summary>${w.product_warranties.map(x=>typeof x=='string'?`<div class="small">${esc(x)}</div>`:`<div class="small"><b>${esc(x.maker||x.item||x.name||x.profile||'')}</b>: ${esc(x.length||x.expiry||x.terms||'not on file')}${(x.items||[]).length?` <span class="mut">· ${x.items.length} item${x.items.length==1?'':'s'}</span>`:''}</div>`).join('')}</details>`:''}</div>`}
 function wdLinks(t){const L=(t.links||[]).filter(l=>l&&(l.url||l.id));if(!L.length)return '';
- return `<details class="wdl"><summary>${L.length} link${L.length==1?'':'s'} (bids, POs, specs)</summary>${L.map(l=>{const u=String(l.url||'');return /^https:\/\//.test(u)?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||l.type)}</a>`:`<span>${esc((l.type||'')+': '+(l.label||l.id))}</span>`}).join('')}</details>`}
+ return `<details class="wdl"><summary>${L.length} link${L.length==1?'':'s'} (bids, POs, specs)</summary>${L.map(l=>{const u=String(l.url||'');if(typeof fileHosted==='function'&&fileHosted(u,l.type==='dropbox'?'dropbox-file':''))return fileLinkHtml({url:u,label:l.label||l.type||'File',kind:l.type==='dropbox'?'dropbox-file':'',cls:'lbtn'});return /^https:\/\//.test(u)?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||l.type)}</a>`:`<span>${esc((l.type||'')+': '+(l.label||l.id))}</span>`}).join('')}</details>`}
 function wdCard(J,t,open){const items=t.items||[];const rooms=(t.rooms||[]).filter(Boolean);
  const itemsHtml=items.length?`<details class="wdi"${open?' open':''}><summary>${items.length} item${items.length==1?'':'s'}${rooms.length?' · '+rooms.length+' room'+(rooms.length==1?'':'s'):''}</summary><ul>${items.map(i=>`<li>${esc(i.name||i.id||'')}${i.room?` <span class="mut">· ${esc(i.room)}</span>`:''}${i.did?` <span class="mut">· ${esc(i.did)}</span>`:''}</li>`).join('')}</ul></details>`:'';
  return `<div class="wdc" data-trade="${esc(t.trade||'')}"><div class="wdh"><span class="wdt">${esc(t.trade_label||t.trade||'Trade')}</span><span class="sp"></span><span class="wdb">${esc(t.basis||'')}</span></div>
@@ -2672,6 +3367,11 @@ const PLAN_CANDIDATES = [
 ];
 const NUMBERED_PLANS_RE = /^\d+\s+plans\b/i;
 
+function projectsRoot() {
+  const c = (typeof DATA !== "undefined" && DATA && DATA.common) || {};
+  return (c.files && c.files.root) || c.projects_root || PROJ;
+}
+
 function isArchiveName(name) {
   const n = String(name || "").trim().replace(/\s+/g, " ").toLowerCase();
   if (n === "archive") return true;
@@ -2691,8 +3391,12 @@ function loadedJob(slug) {
   return job || {};
 }
 function jobFolder(slug) {
-  const hit = (JL(slug).items || []).find((x) => x.label === "Job folder" && x.sub);
-  if (hit) return String(hit.sub).replace(/^\/+|\/+$/g, "");
+  // The links-row `folder` is the Dropbox directory. `sub` is the subtitle people read.
+  const hit = (JL(slug).items || []).find((x) => x.label === "Job folder" && (x.folder || x.sub));
+  if (hit && hit.folder) return String(hit.folder).replace(/^\/+|\/+$/g, "");
+  const map = (typeof DATA !== "undefined" && DATA && DATA.common && DATA.common.job_folders) || {};
+  if (map[slug]) return String(map[slug]).replace(/^\/+|\/+$/g, "");
+  if (hit && hit.sub) return String(hit.sub).replace(/^\/+|\/+$/g, "");
   // Dropbox folder comes from the private job record (data.json jobs[slug].folder).
   return String(loadedJob(slug).folder || "").replace(/^\/+|\/+$/g, "");
 }
@@ -2796,7 +3500,7 @@ async function resolvePlansRel(jobPath, topNames) {
 async function loadPlans(slug) {
   const folder = jobFolder(slug);
   if (!folder) return { error: "This job has no Dropbox project folder yet.", code: "nofolder" };
-  const jobPath = PROJ + "/" + folder;
+  const jobPath = projectsRoot().replace(/\/$/, "") + "/" + folder;
   let plansRel = plansRelFromLinks(slug);
   if (plansRel && !(await folderExists(jobPath + "/" + plansRel))) plansRel = "";
   if (!plansRel) {
@@ -2905,6 +3609,11 @@ function bindSignIn(root) {
   };
 }
 
+function paintSavedPlans(el) {
+  if (!el) return;
+  const hook = typeof HWSOfflinePlans !== "undefined" ? HWSOfflinePlans : (typeof window !== "undefined" ? window.HWSOfflinePlans : null);
+  if (hook && typeof hook.attach === "function") hook.attach(el);
+}
 let prGen = 0;
 async function mPlanRoom(M) {
   const gen = ++prGen;
@@ -2917,17 +3626,19 @@ async function mPlanRoom(M) {
     if (gen !== prGen || !J || J.slug !== slug) return;
     M.innerHTML = planSignIn(e.code === "auth" ? e.message : ("Could not read Dropbox. " + (e.message || "")));
     bindSignIn(M);
+    paintSavedPlans(M);
     return;
   }
   if (gen !== prGen || !J || J.slug !== slug) return;
   if (got.error) {
     M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(got.error)}</b></div><div class="rows">${sampleBlock()}</div></div>`;
+    paintSavedPlans(M);
     return;
   }
   const rows = got.pdfs.map((f) => {
     const where = f.rel.indexOf("/") >= 0 ? f.rel.slice(0, f.rel.lastIndexOf("/")) : "";
     const meta = [where, azWhen(f.modified), fmtSize(f.size)].filter(Boolean).join(" · ");
-    return `<div class="hrow pr-file"><a class="pr-open" href="${esc(sheetHref(slug, got.plansPath, f))}"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta || "PDF")}</span></span>${ico("chev", "go")}</a><button type="button" class="pr-auto" data-path="${esc(f.path)}" data-name="${esc(f.name)}" data-rel="${esc(f.rel)}">Auto takeoff</button></div>`;
+    return `<div class="hrow pr-file"><button type="button" class="pr-open" data-file-path="${esc(f.path)}" data-file-name="${esc(f.name)}" data-file-rel="${esc(f.rel)}"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta || "PDF")}</span></span></button><a class="pr-measure" href="${esc(sheetHref(slug, got.plansPath, f))}">Measure</a><button type="button" class="pr-auto" data-path="${esc(f.path)}" data-name="${esc(f.name)}" data-rel="${esc(f.rel)}">Auto takeoff</button></div>`;
   }).join("");
   M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room <span class="mut small">${got.pdfs.length} PDF${got.pdfs.length === 1 ? "" : "s"}</span></h2>
     <div class="hint">${esc(got.plansRel)} · newest first · archive folders skipped</div>
@@ -2935,6 +3646,7 @@ async function mPlanRoom(M) {
     <div class="rows">${sampleBlock()}</div>
     <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer.</div></div>`;
   bindAuto(M, slug, got.plansPath);
+  paintSavedPlans(M);
 }
 
 function renderPlanIndex() {
@@ -3038,6 +3750,784 @@ openMore = function () {
   a.textContent = "Plan Room";
   list.insertBefore(a, list.firstChild);
 };
+
+/* Per-job Files tab. Names, folders, and who may see budget files come from data.json
+   after sign-in. This file does not list jobs, people, or folder paths.
+   Listings are the office cache (common.files) plus a live Dropbox read when this
+   phone is signed in. Recently opened bytes stay in IndexedDB so they open offline. */
+const FILE_DB = "hws-files";
+const FILE_KEEP = 20;
+const FILE_CAP = 8 * 1024 * 1024;
+let fileUI = { slug: "", path: "", q: "", sort: "name", open: {} };
+let fileGen = 0;
+let fileBytes = new Map();
+
+function filesCommon() { return (DATA && DATA.common) || {}; }
+function filesRoot() {
+  const c = filesCommon();
+  if (c.files && c.files.root) return String(c.files.root);
+  if (typeof projectsRoot === "function") return projectsRoot();
+  return "";
+}
+function fileFolder(slug) {
+  const map = filesCommon().job_folders || {};
+  if (map[slug]) return String(map[slug]).replace(/^\/+|\/+$/g, "");
+  if (typeof jobFolder === "function") return jobFolder(slug) || "";
+  return "";
+}
+function fileAllow() { return (filesCommon().file_acl) || {}; }
+function fileWho() {
+  try {
+    const a = JSON.parse(localStorage.getItem("hws-dbx-auth") || "null");
+    if (a) return ((a.name || "") + " " + (a.email || "")).trim();
+  } catch (e) {}
+  if (typeof STORE !== "undefined" && STORE && STORE.who) return STORE.who() || "";
+  return "";
+}
+function fileCanSeeMoney(who, allow) {
+  const blob = String(who || "").toLowerCase();
+  if (!blob.trim()) return false;
+  return (allow || []).some((a) => a && blob.indexOf(String(a).toLowerCase()) >= 0);
+}
+function fileMoneyRe() {
+  const raw = fileAllow().money_folders || "";
+  if (!raw) return null;
+  try { return new RegExp(raw, "i"); } catch (e) { return null; }
+}
+function fileIsMoney(rel, tag) {
+  const re = fileMoneyRe();
+  if (!re) return false;
+  const parts = String(rel || "").split("/").filter(Boolean);
+  const check = tag === "folder" ? parts : parts.slice(0, -1);
+  return check.some((p) => re.test(p));
+}
+function fileEscRe(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function fileLabel(name) {
+  let s = String(name || "");
+  const map = filesCommon().display_rename || {};
+  const guards = filesCommon().display_rename_guard || [];
+  Object.keys(map).forEach((old) => {
+    if (!old) return;
+    const re = new RegExp("(^|[^A-Za-z\\u201c\"'])(" + fileEscRe(old) + ")(?![A-Za-z\\u201d])", "gi");
+    s = s.replace(re, (m, pre, word, offset, str) => {
+      const at = offset + pre.length;
+      if (guards.some((g) => str.slice(Math.max(0, at - String(g).length), at).toLowerCase() === String(g).toLowerCase())) return m;
+      return pre + map[old];
+    });
+  });
+  return s;
+}
+function fileKind(name) {
+  const ext = (String(name || "").split(".").pop() || "").toLowerCase();
+  if (ext === "pdf") return "pdf";
+  if (/^(png|jpe?g|gif|webp|heic|tiff?|bmp)$/.test(ext)) return "image";
+  if (/^(doc|docx|odt)$/.test(ext)) return "doc";
+  if (/^(xls|xlsx|ods)$/.test(ext)) return "sheet";
+  if (/^(ppt|pptx|odp)$/.test(ext)) return "slides";
+  if (ext === "csv") return "csv";
+  if (/^(txt|md|json|xml|log)$/.test(ext)) return "text";
+  if (/^(zip|rar|7z)$/.test(ext)) return "zip";
+  return "file";
+}
+function fileIcon(kind) {
+  const p = {
+    folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    pdf: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h2a2 2 0 0 1 0 4H8z"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+    doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+    sheet: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+    slides: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/>',
+    csv: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+    text: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
+    zip: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6M10 14h4"/>',
+    file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (p[kind] || p.file) + "</svg>";
+}
+function fileWhen(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return String(iso).slice(0, 10);
+  return d.toLocaleDateString("en-US", { timeZone: "America/Phoenix", month: "short", day: "numeric" });
+}
+function fileNorm(raw, root) {
+  if (!raw) return null;
+  const tag = raw.tag || raw[".tag"] || (raw.size != null && raw.name ? "file" : "folder");
+  if (tag !== "file" && tag !== "folder") return null;
+  const full = raw.path || raw.path_display || raw.path_lower || "";
+  const prefix = String(root || "").replace(/\/$/, "");
+  let rel = raw.rel || "";
+  if (!rel && full && prefix && full.toLowerCase().indexOf(prefix.toLowerCase() + "/") === 0) rel = full.slice(prefix.length + 1);
+  if (!rel) rel = raw.name || "";
+  rel = String(rel).replace(/\\/g, "/").replace(/^\/+|\/+$/g, "");
+  if (!rel || rel.indexOf("..") >= 0) return null;
+  const name = raw.name || rel.split("/").pop();
+  const money = raw.money != null ? !!raw.money : fileIsMoney(rel, tag);
+  return {
+    tag: tag, name: name, label: raw.label || name, rel: rel, path: full || (prefix && rel ? prefix + "/" + rel : ""),
+    size: +raw.size || 0, modified: raw.modified || raw.client_modified || raw.server_modified || "",
+    id: raw.id || "", content_hash: raw.content_hash || "", money: money, bt: raw.bt || null,
+    preview_path: raw.preview_path || "", thumb: !!raw.thumb,
+  };
+}
+function fileVisible(entries, who) {
+  const see = fileCanSeeMoney(who, fileAllow().money);
+  return (entries || []).filter((e) => e && (see || !e.money));
+}
+function fileOfficeEntries(slug) {
+  const jobs = (filesCommon().files && filesCommon().files.jobs) || {};
+  const block = jobs[slug] || {};
+  const root = (filesCommon().files && filesCommon().files.root) || "";
+  const folder = fileFolder(slug);
+  const base = root && folder ? root.replace(/\/$/, "") + "/" + folder : "";
+  return fileVisible((block.files || []).map((e) => fileNorm(e, base)).filter(Boolean), fileWho());
+}
+function fileBuildTree(entries) {
+  const root = { name: "", rel: "", tag: "folder", children: [], modified: "" };
+  const dirs = { "": root };
+  function ensure(rel) {
+    if (dirs[rel]) return dirs[rel];
+    const parentRel = rel.indexOf("/") >= 0 ? rel.slice(0, rel.lastIndexOf("/")) : "";
+    const parent = ensure(parentRel);
+    const node = { name: rel.split("/").pop(), rel: rel, tag: "folder", children: [], modified: "", money: false };
+    parent.children.push(node);
+    dirs[rel] = node;
+    return node;
+  }
+  (entries || []).forEach((e) => {
+    if (!e || !e.rel) return;
+    if (e.tag === "folder") {
+      const n = ensure(e.rel);
+      n.modified = e.modified || n.modified;
+      n.money = !!e.money;
+      n.path = e.path || n.path || "";
+      n.label = e.label || n.name;
+      return;
+    }
+    const parentRel = e.rel.indexOf("/") >= 0 ? e.rel.slice(0, e.rel.lastIndexOf("/")) : "";
+    ensure(parentRel).children.push(e);
+  });
+  return root;
+}
+function fileSortNodes(nodes, mode) {
+  const copy = (nodes || []).slice();
+  copy.sort((a, b) => {
+    const af = a.tag === "folder" || !!a.children;
+    const bf = b.tag === "folder" || !!b.children;
+    if (af !== bf) return af ? -1 : 1;
+    if (mode === "date") {
+      const am = a.modified || "";
+      const bm = b.modified || "";
+      if (am !== bm) return am < bm ? 1 : -1;
+    }
+    return String(a.name || "").localeCompare(String(b.name || ""), undefined, { numeric: true, sensitivity: "base" });
+  });
+  copy.forEach((n) => { if (n.children) n.children = fileSortNodes(n.children, mode); });
+  return copy;
+}
+function fileSearch(entries, query) {
+  const words = String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return entries || [];
+  return (entries || []).filter((e) => {
+    const blob = ((e.name || "") + " " + (e.rel || "") + " " + (e.label || "")).toLowerCase();
+    return words.every((w) => blob.indexOf(w) >= 0);
+  });
+}
+function fileNode(tree, rel) {
+  if (!rel) return tree;
+  const parts = rel.split("/");
+  let n = tree;
+  for (let i = 0; i < parts.length; i++) {
+    const next = parts.slice(0, i + 1).join("/");
+    n = (n.children || []).find((c) => c.rel === next && (c.tag === "folder" || c.children));
+    if (!n) return null;
+  }
+  return n;
+}
+function fileOnBox() {
+  return /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(location.origin);
+}
+
+function fileDb() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) { reject(new Error("no storage")); return; }
+    const req = indexedDB.open(FILE_DB, 1);
+    req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains("kv")) req.result.createObjectStore("kv"); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function fileIdb(op, key, val) {
+  return fileDb().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction("kv", op === "get" ? "readonly" : "readwrite");
+    const st = tx.objectStore("kv");
+    const req = op === "get" ? st.get(key) : st.put(val, key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  })).catch(() => null);
+}
+async function fileRemember(key, bytes, type) {
+  if (!key || !bytes || bytes.byteLength > FILE_CAP) return;
+  const recent = (await fileIdb("get", "recent")) || [];
+  const next = [key].concat(recent.filter((k) => k !== key)).slice(0, FILE_KEEP);
+  await fileIdb("put", "blob:" + key, { bytes: bytes, type: type || "", at: Date.now() });
+  await fileIdb("put", "recent", next);
+  const drop = recent.filter((k) => next.indexOf(k) < 0);
+  for (const k of drop) await fileIdb("put", "blob:" + k, null);
+}
+async function fileRecall(key) {
+  return fileIdb("get", "blob:" + key);
+}
+
+function fileDropboxUrl(entry) {
+  const path = entry.path || "";
+  if (!path) return "";
+  const parts = path.split("/").filter(Boolean).map(encodeURIComponent);
+  // Same shape as hlib.dbx_url: encoded segments and role=work. The file name is the Dropbox name.
+  if (entry.tag === "folder") return "https://www.dropbox.com/home/" + parts.join("/") + "?role=work";
+  const parent = parts.slice(0, -1).join("/");
+  return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(entry.name || "") + "&role=work";
+}
+function filePlanHref(slug, entry) {
+  if (typeof sheetHref !== "function" || fileKind(entry.name) !== "pdf") return "";
+  const plans = String(entry.path || "").replace(/\/[^/]+$/, "");
+  return sheetHref(slug, plans, { path: entry.path, name: entry.name, rel: entry.rel });
+}
+
+async function fileAuthHeaders() {
+  if (typeof HWSSync === "undefined" || !HWSSync.DropboxBackend) return null;
+  const A = HWSSync.DropboxBackend();
+  if (!A.ready()) return null;
+  await A.account();
+  const auth = HWSSync.LS.get("hws-dbx-auth");
+  if (!auth || !auth.access_token) return null;
+  const headers = { Authorization: "Bearer " + auth.access_token };
+  const cfg = (HWSSync.CFG && HWSSync.CFG.dropbox) || {};
+  if (cfg.pathRoot === "home") headers["Dropbox-API-Path-Root"] = '{".tag": "home"}';
+  else if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
+  return headers;
+}
+async function fileDownloadPath(path) {
+  const headers = await fileAuthHeaders();
+  if (!headers || !path) return null;
+  const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+    method: "POST", credentials: "omit",
+    headers: Object.assign({}, headers, { "Dropbox-API-Arg": JSON.stringify({ path: path }) }),
+  });
+  if (!r.ok) return null;
+  return { bytes: await r.arrayBuffer(), type: r.headers.get("Content-Type") || "" };
+}
+async function fileListLive(slug) {
+  if (typeof listFolder !== "function") return null;
+  const folder = fileFolder(slug);
+  const root = filesRoot();
+  if (!folder || !root) return null;
+  const base = root.replace(/\/$/, "") + "/" + folder;
+  const raw = await listFolder(base, true);
+  if (!raw) return null;
+  return raw.map((e) => fileNorm(e, base)).filter(Boolean);
+}
+
+function fileRelFromPath(path) {
+  const folder = (typeof J !== "undefined" && J && fileFolder(J.slug)) || "";
+  const root = filesRoot();
+  const base = root && folder ? (root.replace(/\/$/, "") + "/" + folder + "/") : "";
+  const p = String(path || "");
+  if (base && p.toLowerCase().indexOf(base.toLowerCase()) === 0) return p.slice(base.length);
+  return "";
+}
+function fileRefs(row, seen) {
+  const out = [];
+  if (!row || typeof row !== "object") return out;
+  seen = seen || new Set();
+  if (seen.has(row)) return out;
+  seen.add(row);
+  function add(rel, name, path) {
+    rel = String(rel || "").replace(/^\/+/, "");
+    if (!rel && path) rel = fileRelFromPath(path);
+    if (!rel) return;
+    if (out.some((x) => x.rel === rel)) return;
+    out.push({ rel: rel, name: name || rel.split("/").pop(), path: path || "" });
+  }
+  if (typeof row.rel === "string") add(row.rel, row.name, row.path || "");
+  if (typeof row.file === "string") {
+    if (row.file.charAt(0) === "/" || /dropbox\.com/.test(row.file)) add("", row.name, row.file.indexOf("http") === 0 ? filePathFromUrl(row.file) : row.file);
+    else add(row.file, row.name, "");
+  }
+  if (typeof row.path === "string") add("", row.name, row.path);
+  (Array.isArray(row.files) ? row.files : []).forEach((f) => {
+    if (typeof f === "string") add(f, "");
+    else if (f && typeof f === "object") add(f.rel || "", f.name, f.path || f.file || "");
+  });
+  (Array.isArray(row.links) ? row.links : []).forEach((l) => {
+    if (!l || (l.kind && l.kind !== "dropbox-file")) return;
+    add("", l.label, filePathFromUrl(l.url));
+  });
+  if (row.id && filesCommon().hub) {
+    const pools = [].concat((filesCommon().hub.bids) || [], (filesCommon().hub.orders) || []);
+    const hit = pools.find((b) => b && b.id === row.id && b !== row);
+    if (hit) fileRefs(hit, seen).forEach((r) => add(r.rel, r.name, r.path));
+  }
+  const link = row.link || row.url || "";
+  if (/dropbox\.com\/home\//.test(link)) add("", row.label || "", filePathFromUrl(link));
+  return out;
+}
+function filePathFromUrl(url) {
+  const m = String(url || "").match(/dropbox\.com\/home\/([^?#]*)/);
+  if (!m) return "";
+  const path = "/" + decodeURIComponent(m[1]).replace(/^\/+/, "");
+  const prev = String(url).match(/[?&]preview=([^&]+)/);
+  if (prev) return path.replace(/\/$/, "") + "/" + decodeURIComponent(prev[1]);
+  return path;
+}
+function fileHosted(url, kind) {
+  const u = String(url || "").toLowerCase();
+  if (u.indexOf("dropbox.com/home") >= 0 || u.indexOf("buildertrend.com") >= 0 || u.indexOf("buildertrend.net") >= 0) return true;
+  const k = String(kind || "").toLowerCase();
+  if (k !== "dropbox" && k !== "dropbox-file" && k !== "folder" && k !== "file") return false;
+  return !u;
+}
+function fileIsFolderLink(url, kind) {
+  const k = String(kind || "").toLowerCase();
+  if (k === "dropbox-file" || k === "file") return false;
+  if (k === "folder") return true;
+  const u = String(url || "");
+  if (/[?&]preview=/.test(u)) return false;
+  const path = filePathFromUrl(u);
+  const name = (path || u).split("/").filter(Boolean).pop() || "";
+  if (/\.[a-z0-9]{1,8}$/i.test(name)) return false;
+  return k === "dropbox" || k === "folder" || (!k && !!path);
+}
+function fileLinkHtml(x, extra) {
+  x = x || {};
+  const url = x.url || x.file || "";
+  const kind = x.kind || x.type || "";
+  const path = x.path || filePathFromUrl(url) || "";
+  const name = x.name || (path ? path.split("/").pop() : "") || x.label || "File";
+  const label = extra || x.label || name;
+  const sub = extra ? (x.sub || "") : (x.sub || "");
+  const slug = x.slug || (typeof J !== "undefined" && J && J.slug) || "";
+  const folder = fileIsFolderLink(url, kind);
+  const cls = x.cls || "lrow";
+  const icon = typeof ico === "function" ? ico(folder ? "files" : (typeof linkIcon === "function" ? linkIcon({ kind: folder ? "dropbox" : "dropbox-file" }) : "doc")) : "";
+  return '<button type="button" class="' + cls + ' flink" data-flink="1"'
+    + (folder ? ' data-ffolder="1"' : "")
+    + ' data-file-slug="' + esc(slug) + '"'
+    + ' data-file-path="' + esc(path) + '"'
+    + ' data-file-name="' + esc(name) + '"'
+    + ' data-file-rel="' + esc(x.rel || "") + '">'
+    + icon + '<span class="lb"><span class="lt">' + esc(fileLabel(label)) + "</span>"
+    + (sub && sub !== label ? '<span class="ls">' + esc(sub) + "</span>" : "")
+    + "</span></button>";
+}
+function fileMaybeLink(url, label, kind, cls) {
+  if (!fileHosted(url, kind)) return "";
+  return fileLinkHtml({ url: url, kind: kind || "", label: label || "File", cls: cls || "lbtn" });
+}
+function fileChips(row) {
+  return fileRefs(row).map((r) => '<button type="button" class="filechip" data-file-rel="' + esc(r.rel) + '" data-file-name="' + esc(r.name) + '" data-file-path="' + esc(r.path) + '">' + esc(fileLabel(r.name)) + "</button>").join("");
+}
+
+function fileRowsHtml(nodes, depth) {
+  return (nodes || []).map((n) => {
+    const folder = n.tag === "folder" || !!n.children;
+    const kind = folder ? "folder" : fileKind(n.name);
+    const open = !!fileUI.open[n.rel];
+    const label = fileLabel(n.label || n.name);
+    const chev = folder ? '<button type="button" class="fchev" data-fchev aria-expanded="' + (open ? "true" : "false") + '" aria-label="' + (open ? "Collapse folder" : "Expand folder") + '">›</button>' : '<span class="fchev" aria-hidden="true"></span>';
+    const sub = folder ? ((n.children || []).length + " items") : (n.bt ? "Buildertrend" : "");
+    const kids = folder && open ? '<div class="fkids" style="padding-left:12px">' + fileRowsHtml(n.children || [], depth + 1) + "</div>" : "";
+    return '<div class="fnode">' + chev + '<button type="button" class="frow" data-frel="' + esc(n.rel) + '" data-ftag="' + (folder ? "folder" : "file") + '"><span class="fic">' + fileIcon(kind) + '</span><span class="fmeta"><span class="fn">' + esc(label) + '</span>' + (sub ? '<span class="fs">' + esc(sub) + "</span>" : "") + '</span><span class="fwhen">' + esc(fileWhen(n.modified)) + "</span></button></div>" + kids;
+  }).join("");
+}
+
+function mFiles(M) {
+  const slug = J && J.slug;
+  if (!slug) return;
+  if (fileUI.slug !== slug) {
+    const keep = fileUI.pending === slug;
+    fileUI = { slug: slug, path: keep ? (fileUI.path || "") : "", q: "", sort: fileUI.sort || "name", open: keep ? (fileUI.open || {}) : {} };
+  }
+  const gen = ++fileGen;
+  const cached = fileOfficeEntries(slug);
+  drawFiles(M, slug, cached, cached.length ? "office" : "empty");
+  loadFiles(M, slug, gen, cached);
+}
+async function loadFiles(M, slug, gen, cached) {
+  let entries = cached;
+  let source = cached.length ? "office" : "empty";
+  try {
+    if (fileOnBox()) {
+      const r = await fetch("/api/files/" + encodeURIComponent(slug), { credentials: "same-origin" });
+      if (r.ok) {
+        const j = await r.json();
+        const root = (j.root || filesRoot() || "").replace(/\/$/, "");
+        const folder = j.folder || fileFolder(slug);
+        const base = root && folder ? root + "/" + folder : root;
+        const live = fileVisible((j.files || []).map((e) => fileNorm(e, base)).filter(Boolean), fileWho());
+        if (live.length || j.error) { entries = live; source = "box"; }
+      }
+    }
+  } catch (e) {}
+  try {
+    const live = await fileListLive(slug);
+    if (live) {
+      entries = fileVisible(live, fileWho());
+      source = "dropbox";
+      fileIdb("put", "list:" + slug, entries);
+    }
+  } catch (e) {}
+  if (!entries.length) {
+    const saved = await fileIdb("get", "list:" + slug);
+    if (saved && saved.length) { entries = fileVisible(saved, fileWho()); source = "phone"; }
+  }
+  if (gen !== fileGen || !J || J.slug !== slug) return;
+  fileBytes.set(slug, entries);
+  drawFiles(M, slug, entries, source);
+}
+function drawFiles(M, slug, entries, source) {
+  const q = fileUI.q || "";
+  const tree = fileBuildTree(entries);
+  const sortKids = (n) => { n.children = fileSortNodes(n.children || [], fileUI.sort); n.children.forEach((c) => { if (c.children) sortKids(c); }); };
+  sortKids(tree);
+  let body;
+  if (q.trim()) {
+    const hits = fileSortNodes(fileSearch(entries, q).map((e) => Object.assign({}, e, { children: null })), fileUI.sort);
+    body = hits.length ? fileRowsHtml(hits, 0) : '<div class="fempty">No files match that search.</div>';
+  } else {
+    const node = fileNode(tree, fileUI.path);
+    if (fileUI.path && !node) body = fileMissingFolderHtml(fileUI.path, entries);
+    else {
+      const kids = (node || tree).children || [];
+      body = kids.length ? fileRowsHtml(kids, 0) : '<div class="fempty">' + (fileFolder(slug) ? "This folder is empty." : "This job has no Dropbox folder yet.") + "</div>";
+    }
+  }
+  const crumbs = fileCrumbs(slug);
+  const note = source === "phone" ? "Saved on this phone" : (source === "office" ? "Office copy" : (source === "dropbox" ? "Live" : (source === "box" ? "Office computer" : "The office file list has not been published yet.")));
+  const bar = (window.HWSOffline && HWSOffline.barHtml) ? HWSOffline.barHtml(slug) : "";
+  M.innerHTML = '<div class="ftab">' + bar + '<div class="fcrumbs">' + crumbs + '</div><div class="ftools"><label class="sbox">' + (typeof ico === "function" ? ico("search") : "") + '<input type="search" id="fqj" placeholder="Search this job" value="' + esc(q) + '" autocomplete="off"></label><div class="seg"><button type="button" data-fsort="name" class="' + (fileUI.sort === "name" ? "on" : "") + '">Name</button><button type="button" data-fsort="date" class="' + (fileUI.sort === "date" ? "on" : "") + '">Date</button></div></div><div class="ftree">' + body + '</div><div class="fnote">' + esc(note) + "</div></div>";
+  if (window.HWSOffline && HWSOffline.paintBar) HWSOffline.paintBar(M);
+  const input = M.querySelector("#fqj");
+  if (input) input.oninput = () => { fileUI.q = input.value; const p = input.selectionStart; drawFiles(M, slug, entries, source); const n = M.querySelector("#fqj"); if (n) { n.focus(); try { n.setSelectionRange(p, p); } catch (e) {} } };
+  M.querySelectorAll("[data-fsort]").forEach((b) => b.onclick = () => { fileUI.sort = b.getAttribute("data-fsort"); drawFiles(M, slug, entries, source); });
+  M.querySelectorAll("[data-fcrumb]").forEach((b) => b.onclick = () => { fileUI.path = b.getAttribute("data-fcrumb") || ""; fileUI.q = ""; drawFiles(M, slug, entries, source); });
+  M.querySelectorAll("[data-fchev]").forEach((b) => b.onclick = (ev) => {
+    ev.stopPropagation();
+    const rel = b.parentElement && b.parentElement.querySelector("[data-frel]") && b.parentElement.querySelector("[data-frel]").getAttribute("data-frel");
+    if (!rel) return;
+    fileUI.open[rel] = !fileUI.open[rel];
+    drawFiles(M, slug, entries, source);
+  });
+  M.querySelectorAll("[data-frel]").forEach((b) => b.onclick = () => {
+    const rel = b.getAttribute("data-frel") || "";
+    if (b.getAttribute("data-ftag") === "folder") { fileUI.path = rel; fileUI.open[rel] = true; drawFiles(M, slug, entries, source); return; }
+    fileOpen(slug, rel, entries);
+  });
+}
+function fileCrumbs(slug) {
+  const parts = fileUI.q ? [] : (fileUI.path ? fileUI.path.split("/") : []);
+  const home = (J && J.name) || "Files";
+  let html = '<button type="button" data-fcrumb=""' + (parts.length && !fileUI.q ? "" : ' aria-current="page"') + ">" + esc(home) + "</button>";
+  if (fileUI.q) return html + '<span class="sep">/</span><button type="button" aria-current="page">Search</button>';
+  parts.forEach((p, i) => {
+    const rel = parts.slice(0, i + 1).join("/");
+    const last = i === parts.length - 1;
+    html += '<span class="sep">/</span><button type="button" data-fcrumb="' + esc(rel) + '"' + (last ? ' aria-current="page"' : "") + ">" + esc(fileLabel(p)) + "</button>";
+  });
+  return html;
+}
+
+function fileFind(entries, rel, path) {
+  return (entries || []).find((e) => (rel && e.rel === rel) || (path && e.path === path)) || null;
+}
+async function fileOpen(slug, rel, entries, extra) {
+  entries = entries || fileBytes.get(slug) || fileOfficeEntries(slug);
+  let entry = fileFind(entries, rel, extra && extra.path);
+  if (!entry) entry = { tag: "file", name: (extra && extra.name) || rel.split("/").pop(), rel: rel, path: (extra && extra.path) || "", modified: "", size: 0, source: (extra && extra.url) || "" };
+  const sibs = entries.filter((e) => e.tag === "file" && fileKind(e.name) === "image" && e.rel.split("/").slice(0, -1).join("/") === entry.rel.split("/").slice(0, -1).join("/"));
+  const images = sibs.length ? sibs : (fileKind(entry.name) === "image" ? [entry] : []);
+  const index = Math.max(0, images.findIndex((e) => e.rel === entry.rel));
+  openSheet(slug, entry, images, index);
+}
+function openSheet(slug, entry, images, index) {
+  document.querySelectorAll(".fview").forEach((n) => n.remove());
+  const view = document.createElement("div");
+  view.className = "fview";
+  view.innerHTML = '<div class="fshell"><div class="fbar"><button type="button" data-fclose aria-label="Close">Close</button><h2>' + esc(fileLabel(entry.label || entry.name)) + '</h2></div><div class="fswipe"' + (images.length > 1 ? "" : ' hidden') + '><button type="button" data-fprev aria-label="Previous">Prev</button><span class="mut" data-fcount></span><button type="button" data-fnext aria-label="Next">Next</button></div><div class="fstage" data-fstage><div class="fnote">Opening…</div></div><div class="facts"><button type="button" data-fdl>Download</button><a data-fsrc target="_blank" rel="noopener" hidden>View source</a></div></div>';
+  document.body.appendChild(view);
+  const state = { slug: slug, entry: entry, images: images, index: index, bytes: null, type: "", found: false, entries: fileBytes.get(slug) || fileOfficeEntries(slug) };
+  function showNav() {
+    const swipe = view.querySelector(".fswipe");
+    const many = state.images.length > 1 && fileKind(state.entry.name) === "image";
+    swipe.hidden = !many;
+    view.querySelector("[data-fcount]").textContent = many ? (state.index + 1) + " / " + state.images.length : "";
+    view.querySelector(".fbar h2").textContent = fileLabel(state.entry.label || state.entry.name);
+    const src = state.found ? fileSourceUrl(state.entry) : "";
+    const a = view.querySelector("[data-fsrc]");
+    if (src) { a.href = src; a.hidden = false; } else { a.removeAttribute("href"); a.hidden = true; }
+  }
+  async function load() {
+    showNav();
+    const stage = view.querySelector("[data-fstage]");
+    stage.innerHTML = '<div class="fnote">Opening…</div>';
+    try {
+      const got = await fileLoadBytes(state.slug, state.entry);
+      if (!view.isConnected) return;
+      state.found = true;
+      state.bytes = got.bytes;
+      state.type = got.type;
+      showNav();
+      renderStage(stage, state.entry, got);
+    } catch (e) {
+      if (!view.isConnected) return;
+      state.found = false;
+      showNav();
+      if (e.code === "missing") stage.innerHTML = fileMissingHtml(state.entry, state.entries);
+      else stage.innerHTML = '<div class="fempty">' + esc(e.message || "Could not open this file.") + "</div>";
+    }
+  }
+  view.querySelector("[data-fclose]").onclick = () => view.remove();
+  view.querySelector("[data-fdl]").onclick = () => { if (state.bytes) fileSave(state.entry.name, state.bytes, state.type); };
+  view.querySelector("[data-fprev]").onclick = () => step(-1);
+  view.querySelector("[data-fnext]").onclick = () => step(1);
+  let x0 = null;
+  view.addEventListener("touchstart", (e) => { x0 = e.changedTouches[0].clientX; }, { passive: true });
+  view.addEventListener("touchend", (e) => {
+    if (x0 == null || state.images.length < 2) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    x0 = null;
+    if (dx < -48) step(1);
+    else if (dx > 48) step(-1);
+  }, { passive: true });
+  function step(dir) {
+    if (state.images.length < 2) return;
+    state.index = (state.index + dir + state.images.length) % state.images.length;
+    state.entry = state.images[state.index];
+    load();
+  }
+  view.addEventListener("click", (e) => { if (e.target === view) view.remove(); });
+  load();
+}
+async function fileLoadBytes(slug, entry) {
+  const key = (entry.path || entry.rel || entry.name);
+  try {
+    if (fileOnBox() && entry.rel) {
+      const r = await fetch("/api/files/" + encodeURIComponent(slug) + "/body?rel=" + encodeURIComponent(entry.rel), { credentials: "same-origin" });
+      if (r.ok) {
+        const bytes = await r.arrayBuffer();
+        const type = r.headers.get("Content-Type") || "";
+        await fileRemember(key, bytes, type);
+        return { bytes: bytes, type: type, offline: false };
+      }
+    }
+  } catch (e) {}
+  try {
+    const office = /^(doc|sheet|slides)$/.test(fileKind(entry.name));
+    const path = office && entry.preview_path ? entry.preview_path : entry.path;
+    const got = path ? await fileDownloadPath(path) : null;
+    if (got && got.bytes) {
+      await fileRemember(key, got.bytes, got.type);
+      return { bytes: got.bytes, type: got.type, offline: false };
+    }
+  } catch (e) {}
+  const saved = await fileRecall(key);
+  if (saved && saved.bytes) return { bytes: saved.bytes, type: saved.type || "", offline: true };
+  const listed = fileFind(fileBytes.get(slug) || fileOfficeEntries(slug), entry.rel, entry.path);
+  if (!listed) {
+    const err = new Error("File moved or missing");
+    err.code = "missing";
+    throw err;
+  }
+  const err = new Error("This file is not on this phone yet. Sign in with Dropbox, or open it once while online.");
+  err.code = "offline";
+  throw err;
+}
+function fileSourceUrl(entry) {
+  const direct = (entry && (entry.source || (entry.bt && entry.bt.url))) || "";
+  if (direct && /^https:\/\//.test(direct) && !/dropbox\.com\/home/i.test(direct)) return direct;
+  return fileDropboxUrl(entry);
+}
+function fileSameName(entries, name, tag) {
+  const want = String(name || "").toLowerCase();
+  if (!want) return [];
+  if (tag === "folder") {
+    const seen = {};
+    const out = [];
+    (entries || []).forEach((e) => {
+      if (!e) return;
+      const add = (rel, part) => {
+        if (!rel || seen[rel]) return;
+        seen[rel] = 1;
+        out.push({ tag: "folder", name: part, rel: rel, path: e.path && e.tag === "folder" && e.rel === rel ? e.path : "", label: part });
+      };
+      if (e.tag === "folder" && String(e.name || "").toLowerCase() === want) add(e.rel, e.name);
+      String(e.rel || "").split("/").slice(0, -1).forEach((part, i, parts) => {
+        if (part.toLowerCase() === want) add(parts.slice(0, i + 1).join("/"), part);
+      });
+    });
+    return out;
+  }
+  return (entries || []).filter((e) => e && e.tag !== "folder" && String(e.name || "").toLowerCase() === want);
+}
+function fileMissingHtml(entry, entries) {
+  const name = (entry && entry.name) || "";
+  const hits = fileSameName(entries, name, "file").filter((e) => e.rel !== (entry && entry.rel));
+  let html = '<div class="fempty"><b>File moved or missing</b><p>This path is not in the job folder.</p></div>';
+  if (!hits.length) return html + '<div class="fnote">No file in this job has that name.</div>';
+  return html + '<div class="fnote">Same name in this job</div><div class="rows">' + hits.map((h) => fileLinkHtml({ rel: h.rel, path: h.path, name: h.name, label: h.label || h.name, kind: "file", cls: "lrow" })).join("") + "</div>";
+}
+function fileMissingFolderHtml(path, entries) {
+  const name = String(path || "").split("/").filter(Boolean).pop() || "";
+  const hits = fileSameName(entries, name, "folder");
+  let html = '<div class="fempty"><b>File moved or missing</b><p>This folder is not in the job.</p></div>';
+  if (!hits.length) return html + '<div class="fnote">No folder in this job has that name.</div>';
+  return html + '<div class="fnote">Same name in this job</div><div class="rows">' + hits.map((h) => fileLinkHtml({ rel: h.rel, path: h.path, name: h.name, label: h.label || h.name, kind: "folder", cls: "lrow" })).join("") + "</div>";
+}
+function fileOpenFolder(slug, path) {
+  const use = slug || (typeof J !== "undefined" && J && J.slug) || "";
+  let rel = "";
+  const folder = use ? fileFolder(use) : "";
+  const root = filesRoot();
+  const base = root && folder ? root.replace(/\/$/, "") + "/" + folder + "/" : "";
+  const p = String(path || "");
+  if (base && p.toLowerCase().indexOf(base.toLowerCase()) === 0) rel = p.slice(base.length).replace(/^\/+|\/+$/g, "");
+  else if (p && p.charAt(0) !== "/") rel = p.replace(/^\/+|\/+$/g, "");
+  fileUI.pending = use;
+  fileUI.slug = use;
+  fileUI.path = rel;
+  fileUI.q = "";
+  fileUI.open = fileUI.open || {};
+  if (rel) fileUI.open[rel] = true;
+  const dest = use ? ("#/job/" + use + "/files") : "#/files";
+  if (location.hash === dest && typeof J !== "undefined" && J && J.slug === use) {
+    const M = document.getElementById("mod");
+    if (M && typeof drawFiles === "function") drawFiles(M, use, fileBytes.get(use) || fileOfficeEntries(use), "office");
+    return;
+  }
+  location.hash = dest;
+}
+function renderStage(stage, entry, got) {
+  const kind = fileKind(entry.name);
+  const type = (got.type || "").toLowerCase();
+  const offline = got.offline ? '<div class="fnote">Saved on this phone</div>' : "";
+  if (type.indexOf("text/html") === 0 || (type.indexOf("pdf") < 0 && /^(doc|sheet|slides)$/.test(kind) && type.indexOf("html") >= 0)) {
+    const text = new TextDecoder().decode(got.bytes);
+    stage.innerHTML = offline + '<iframe sandbox="" style="width:100%;height:70vh;border:0;background:#fff"></iframe>';
+    stage.querySelector("iframe").srcdoc = text;
+    return;
+  }
+  if (kind === "pdf" || type.indexOf("pdf") >= 0) {
+    stage.innerHTML = offline + '<iframe data-fpdf title="PDF" style="width:100%;height:100%;min-height:280px;background:#1b1f27"></iframe>';
+    const frame = stage.querySelector("iframe");
+    const src = new URL("plan-room/preview/index.html", location.href).href;
+    const send = () => {
+      if (!frame.contentWindow) return;
+      const bytes = got.bytes.slice ? got.bytes.slice(0) : got.bytes;
+      frame.contentWindow.postMessage({ type: "hws-pdf", bytes: bytes }, location.origin);
+    };
+    const onMsg = (ev) => { if (ev.origin === location.origin && ev.data && ev.data.type === "hws-pdf-listening") send(); };
+    window.addEventListener("message", onMsg);
+    frame.onload = send;
+    frame.src = src;
+    return;
+  }
+  if (kind === "image" || type.indexOf("image/") === 0) {
+    const url = URL.createObjectURL(new Blob([got.bytes], { type: type || "image/jpeg" }));
+    stage.innerHTML = offline + '<img alt="" src="' + url + '">';
+    return;
+  }
+  if (kind === "csv" || type.indexOf("csv") >= 0) {
+    stage.innerHTML = offline + fileCsvTable(new TextDecoder().decode(got.bytes));
+    return;
+  }
+  if (kind === "text" || type.indexOf("text/") === 0 || type.indexOf("json") >= 0) {
+    stage.innerHTML = offline + "<pre>" + esc(new TextDecoder().decode(got.bytes).slice(0, 200000)) + "</pre>";
+    return;
+  }
+  stage.innerHTML = offline + '<div class="fempty">No preview for this file type. Download it below.</div>';
+}
+function fileCsvTable(text) {
+  const rows = [];
+  let row = [], cell = "", q = false;
+  const s = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) {
+      if (c === '"') { if (s[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; if (rows.length >= 200) break; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  if (!rows.length) return "<pre></pre>";
+  return "<table>" + rows.slice(0, 200).map((r, i) => "<tr>" + r.map((c) => (i ? "<td>" : "<th>") + esc(c) + (i ? "</td>" : "</th>")).join("") + "</tr>").join("") + "</table>";
+}
+function fileSave(name, bytes, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([bytes], { type: type || "application/octet-stream" }));
+  a.download = name || "download";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("click", (ev) => {
+    const chip = ev.target.closest(".flink, .filechip, .pr-open");
+    if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure")) return;
+    if (chip.hasAttribute("data-fsrc")) return;
+    const rel = chip.getAttribute("data-file-rel") || "";
+    const path = chip.getAttribute("data-file-path") || chip.getAttribute("data-path") || "";
+    const name = chip.getAttribute("data-file-name") || chip.getAttribute("data-name") || "";
+    const slug = chip.getAttribute("data-file-slug") || (J && J.slug) || "";
+    if (chip.getAttribute("data-ffolder") === "1") {
+      ev.preventDefault();
+      fileOpenFolder(slug, path || rel);
+      return;
+    }
+    if (!rel && !path && !name) return;
+    ev.preventDefault();
+    fileOpen(slug, rel, fileBytes.get(slug), { path: path, name: name });
+  }, true);
+  document.addEventListener("click", (ev) => {
+    const a = ev.target.closest("a[href]");
+    if (!a || a.hasAttribute("data-fsrc")) return;
+    const href = a.getAttribute("href") || "";
+    if (window.HWSOffline && typeof HWSOffline.servedHere === "function" && HWSOffline.servedHere(href)) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      HWSOffline.openFile(href, (a.textContent || "").trim(), (J && J.slug) || "");
+      return;
+    }
+    if (!fileHosted(href, "")) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const path = filePathFromUrl(href);
+    const slug = (J && J.slug) || "";
+    if (fileIsFolderLink(href, "")) fileOpenFolder(slug, path);
+    else fileOpen(slug, "", fileBytes.get(slug), { path: path, name: (path.split("/").pop() || "File"), url: href });
+  }, true);
+}
+
+window.HWSFiles = {
+  count(slug) { return fileOfficeEntries(slug).length; },
+  chips: fileChips,
+  open: fileOpen,
+  openFolder: fileOpenFolder,
+  hosted: fileHosted,
+  linkHtml: fileLinkHtml,
+  buildTree: fileBuildTree,
+  sortNodes: fileSortNodes,
+  search: fileSearch,
+  canSeeMoney: fileCanSeeMoney,
+  isMoney: fileIsMoney,
+  kind: fileKind,
+  label: fileLabel,
+  refs: fileRefs,
+};
+function fileChip(row) { return fileChips(row); }
 
 function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
@@ -3184,7 +4674,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
+  await syncBoot();openStore();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>

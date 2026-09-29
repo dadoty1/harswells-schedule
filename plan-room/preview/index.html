@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preview</title>
+<style>
+html,body{margin:0;height:100%;background:#1b1f27;color:#e8edf5}
+#c{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 8px 24px}
+canvas{max-width:100%;height:auto;background:#fff}
+#msg{font:15px/1.4 -apple-system,Segoe UI,sans-serif;padding:24px;text-align:center}
+</style>
+</head>
+<body>
+<div id="c"><div id="msg">Opening…</div></div>
+<script type="module">
+import * as pdfjs from "./vendor/pdf.min.mjs";
+pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdf.worker.min.mjs", import.meta.url).href;
+
+function say(text) {
+  const msg = document.getElementById("msg");
+  if (msg) msg.textContent = text;
+}
+
+async function show(bytes) {
+  const data = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+  const doc = await pdfjs.getDocument({ data: data }).promise;
+  const c = document.getElementById("c");
+  c.innerHTML = "";
+  const width = Math.max(280, c.clientWidth || document.documentElement.clientWidth || 360);
+  const pages = Math.min(doc.numPages, 12);
+  for (let i = 1; i <= pages; i++) {
+    const page = await doc.getPage(i);
+    const base = page.getViewport({ scale: 1 });
+    const vp = page.getViewport({ scale: Math.min(2, (width - 16) / base.width) });
+    const canvas = document.createElement("canvas");
+    canvas.width = vp.width;
+    canvas.height = vp.height;
+    c.appendChild(canvas);
+    await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+  }
+  parent.postMessage({ type: "hws-pdf-ready", pages: doc.numPages }, location.origin);
+}
+
+window.addEventListener("message", (ev) => {
+  if (ev.origin !== location.origin) return;
+  const d = ev.data || {};
+  if (d.type !== "hws-pdf" || !d.bytes) return;
+  show(d.bytes).catch((e) => {
+    say("This PDF could not be opened.");
+    parent.postMessage({ type: "hws-pdf-error", message: String(e && e.message || e) }, location.origin);
+  });
+});
+parent.postMessage({ type: "hws-pdf-listening" }, location.origin);
+</script>
+</body>
+</html>
