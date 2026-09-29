@@ -318,6 +318,22 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 }
 .tile{align-content:start}
 .hundo{margin-top:6px;min-height:36px;padding:6px 12px;border:1px solid #c9d2e3;border-radius:8px;background:#fff;color:#1f3a68;font-weight:600;cursor:pointer}
+.chip.prelim{background:#fff4d6;color:#8a5a00}
+.pgh{font-size:13px;font-weight:700;color:#475467;margin:12px 2px 6px}
+.selcard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px;margin:0 0 8px;min-height:64px;cursor:pointer;color:inherit;font:inherit}
+.selcard .pbody{flex:1;min-width:0}.selcard .pt{display:block;font-weight:650}.selcard .ps{display:block;color:#667085;font-size:13px;margin-top:2px}
+.selcard .psrc{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.bvacard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px 8px;margin:0 0 10px}
+.bvacard h3{margin:0 0 2px;font-size:16px}
+.bvanum{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid #edf0f4;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.bvanum b{font-variant-numeric:tabular-nums;font-size:16px}
+.bvanum.proj{background:#fffaf0;border-radius:10px;padding:8px 10px;margin-top:6px;border:1px dashed #e6d3a1}
+.fg label{display:block;margin:10px 0;font-size:13px;font-weight:650}
+.fg input,.fg select{display:block;width:100%;box-sizing:border-box;min-height:44px;margin-top:4px;padding:8px 10px;border:1px solid #c9d2e3;border-radius:10px;font:inherit;background:#fff}
+.fg .cb{display:flex;align-items:flex-start;gap:8px;font-weight:650}
+.fg .cb input{width:22px;height:22px;min-height:22px;margin:0;flex:none}
+tr[data-sel]{cursor:pointer}
+@media(max-width:760px){.gtabs a span{font-size:10px}.hub-money .hph{margin-bottom:8px}}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -377,6 +393,34 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .jh .wdlink{display:inline-flex;align-items:center;min-height:32px}
 .wdcts{margin:8px 0}.wdph{display:flex;align-items:center;gap:8px;margin:0 0 8px}.wdpl{flex:1;font-size:13.5px;line-height:1.3;min-width:0;overflow-wrap:anywhere}
 .wdph .abtn{min-height:44px;padding:0 12px}.wdem{display:flex;flex-wrap:wrap;gap:8px}.wdem .abtn{min-height:44px;padding:0 12px}
+
+/* Plan Room: job-page button, list, and the main-nav entry. Phone tap targets stay at least 44px. */
+a.hws-planbtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:var(--blue);border:1px solid var(--blue);color:#fff!important;font-weight:700;font-size:15px;text-decoration:none!important;flex:none}
+a.hws-planbtn:hover,a.hws-planbtn:active{text-decoration:none;filter:brightness(1.05)}
+.planroom{max-width:860px}
+.planroom .pr-open,.planroom .pr-sample{min-height:64px}
+.planroom .pr-file{display:flex;align-items:stretch;gap:8px;min-height:64px}
+.planroom .pr-file .pr-open{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:64px;text-decoration:none;color:inherit}
+.planroom button.pr-auto{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-weight:700;font-size:14px;white-space:nowrap}
+.planroom button.pr-auto:disabled{opacity:.7}
+.planroom .rows{margin-bottom:8px}
+.planroom .pr-signin{min-height:48px;margin:8px 0 14px;padding:0 16px}
+nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:center}
+@media(max-width:760px){
+ .jh .jrow .hws-planbtn{flex:1 1 100%;min-height:48px}
+ .planroom{overflow-x:hidden}
+}
+
+/* Purchase orders: phone cards, status chips, money-page note */
+.pocards{display:flex;flex-direction:column;gap:10px}
+.pocard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px;text-align:left;width:100%;font:inherit;color:inherit;cursor:pointer}
+.pocard .ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pocard .pid{font-weight:700}
+.pocard .ps{margin-top:4px;color:#475467;font-size:13px}
+.pocard .pacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.poamt{color:#667085;font-size:13px}
+.porelated .rrow{width:100%}
+.moneybox{background:#f8f9fb;border:1px dashed #cfd5dd;border-radius:12px;padding:12px 14px;margin:8px 0}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
@@ -546,7 +590,13 @@ function setPct(r,C,today,pct){pct=parseFloat(pct);pct=isNaN(pct)?0:Math.max(0,M
  if(pct>=100){if(!wasDone)freeze(r,C);r.status='complete';r.actual_start=r.actual_start||r.start;r.actual_finish=r.actual_finish||((r.finish||today)<today?(r.finish||today):today)}
  else{if(wasDone)r.actual_finish='';r.status=pct>0?'in progress':'not started';if(pct>0&&!r.actual_start)r.actual_start=(r.start||today)<today?(r.start||today):today}}
 /* state = {rows:[raw schedule rows], flags:[{task,pred,type,created}]}; ctx = {today, cal, settings, stamp:'YYYY-MM-DD HH:MM'} */
-function applyEdit(state,ops,ctx){const {today,cal}=ctx;const st=ctx.settings||{};const rows=clone(state.rows);rows.forEach(r=>FIELDS.forEach(f=>{if(r[f]==null)r[f]=''}));
+function applyEdit(state,ops,ctx){
+ ctx=ctx||{}; let poSummary='';
+ if(root.HWSPos&&ops.some(o=>root.HWSPos.OPS.indexOf(o.op)>=0)){const split=root.HWSPos.peel(ops);
+  if(split.po.length){const r=root.HWSPos.apply(state,split.po,ctx);state=r.state;poSummary=r.summary||''}
+  ops=split.rest;
+  if(!ops.length)return {state:{rows:state.rows,flags:state.flags||[],pos:state.pos||[],bid_status:state.bid_status||{}},result:{summary:poSummary,shifted:[],pushed:[],flagged:[],new_ids:[],po_ids:[]}}}
+ const {today,cal}=ctx;const st=ctx.settings||{};const rows=clone(state.rows);rows.forEach(r=>FIELDS.forEach(f=>{if(r[f]==null)r[f]=''}));
  const by={};rows.forEach(r=>by[r.id]=r);const c0=computed(rows,today,cal),C0=c0.C;const v0=violations(c0.rows);const touched=new Set(),msgs=[],newIds=[];
  const S=v=>v==null?'':String(v);
  for(const op of ops){const kind=op.op;if(['move','update','complete','delete','pct'].includes(kind)&&!(op.id in by))throw new EditError(`task ${op.id} not found`);
@@ -584,7 +634,8 @@ function applyEdit(state,ops,ctx){const {today,cal}=ctx;const st=ctx.settings||{
  const newflags=Object.entries(v1).filter(([k])=>!(k in v0)).map(([k,val])=>{const [t,p]=k.split('\u0001');return {task:t,pred:p,type:val[0],created:ctx.stamp}});
  const fl=flBefore.filter(f=>(f.task+'\u0001'+f.pred) in v1&&f.task in by).concat(newflags.filter(f=>!flBefore.some(g=>g.task==f.task&&g.pred==f.pred)));
  let summary=msgs.join('; ');if(shifted.length)summary+=`; ${shifted.length} downstream task(s) shifted`;if(pushed.length)summary+=`; ${pushed.length} Buildertrend task(s) pushed`;if(newflags.length)summary+=`; ${newflags.length} locked task(s) flagged (not moved)`;
- return {state:{rows,flags:fl},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
+ if(poSummary)summary=summary?poSummary+'; '+summary:poSummary;
+ return {state:{rows,flags:fl,pos:state.pos||[],bid_status:state.bid_status||{}},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
 /* ---------- derived job (modules.load_schedules + build_conflicts + build_todos + jobs.job_slice) ---------- */
 const PALETTE=['#2563eb','#0e9384','#7a3ff2','#dc6803','#c11574','#12a150','#4f46e5','#b54708','#0086c9','#6172f3','#ee46bc','#669f2a'];
 function pyRound(x){const f=Math.floor(x),d=x-f;if(Math.abs(d-0.5)<1e-9)return f%2==0?f:f+1;return Math.round(x)}
@@ -635,7 +686,7 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
    else if(!['Draft','Issue'].includes(o.pst)){if(ts<=addDays(today,30))add('ordered, no delivery date','medium',`${o.item.slice(0,70)}: '${o.status}' but no ETA; '${t.task}' starts ${t.start} (${t.source})`,`Confirm delivery date with ${o.vendor}.`,t,o.id)}
    else if(!o.od){const ld=o.lead||o.dflt;const ob=addDays(ts,-ld);if(ts<=horizon||ob<=today)add('not ordered / order-by passed',ob<=today?'high':'medium',`${o.item.slice(0,70)}: order by ${ob} for '${t.task}' ${t.start} (${t.source})`,`Status '${o.status}'; lead ${o.lead?o.lead_raw+' (tracker)':'~'+ld+'d (default)'}. Vendor ${o.vendor}.`,t,o.id)}})}
  else (base.conflicts||[]).filter(c=>STATIC_KINDS.slice(0,3).includes(c.kind)).forEach(c=>{const t=byT[c.task];out.push(Object.assign({},c,t?{task_start:t.start}:{}))});
- selections.forEach(s=>{if(s.source=='TRACKER'&&!String(s.approval||'').startsWith('Approved')&&!s.order_date&&['Draft','Issue'].includes(poStatus(s.order_status))){const t=consumerTask(tasks,s.key);
+ selections.forEach(s=>{const selApproved=(s.budget_status||'').toLowerCase()==='approved'||String(s.approval||'').toLowerCase().startsWith('approved')||s.status==='Client Approved';if(s.source=='TRACKER'&&!selApproved&&!s.order_date&&['Draft','Issue'].includes(poStatus(s.order_status))){const t=consumerTask(tasks,s.key);
    if(t&&t.start<=horizon)add('phase before selection approved',t.start<=addDays(today,45)?'high':'medium',`'${t.task}' starts ${t.start} (${t.source}); selection not approved: ${String(s.choice||'').slice(0,60)}`,`Selection: ${s.approval||'unknown'}; order status: ${s.order_status}.`,t,s.order_link)}
   else if(s.source=='DRAFT'&&s.deadline&&s.deadline<=addDays(today,14)){const t=consumerTask(tasks,s.key);add('selection due (template)','low',`${s.title}: due ${s.deadline} per DRAFT schedule ('${s.deadline_task}')`,'Buildertrend selection template; confirm with the designer/client.',t,s.id)}});
  (base.gates||[]).forEach(g=>{if(['done','complete','closed'].includes(lo(g.status||'open')))return;const t=tasks.find(x=>x.id==g.gated_task);
@@ -663,7 +714,9 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
  const J=Object.assign({},base,{tasks,summary,warnings:warn,selections,todos,conflicts,info,settings:{saturday:settings.saturday,holidays:settings.holidays,cascade_bt:!!settings.cascade_bt},
   cal:{saturday:cal.saturday,kind:cal.kind,describe:cal.describe(),holidays:cal.holidays},phase_colors:pc,key_dates:kd,pct:totW?pyRound(100*doneW/totW):0,edit_flags:eflags});
  delete J.trackerRows;delete J.baseRows;
- J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length});
+ if(opts.poState){J.hub_pos=opts.poState.pos||[];const bs=opts.poState.bid_status||{};
+  if(J.bids&&Object.keys(bs).length)J.bids=J.bids.map(p=>Object.assign({},p,{subs:(p.subs||[]).map(s=>bs[s.id]?Object.assign({},s,{status:bs[s.id].status}):s)}));}
+ J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length,pos:(J.hub_pos||[]).length});
  return J}
 function listRow(J,old){const t=J.tasks.filter(x=>x.source!='TRACKER');return Object.assign({},old,{stage:(J.info||{}).status||J.stage,pm:(J.info||{}).pm||'',client:(J.info||{}).client||'',start:J.summary.start||'',finish:J.summary.finish||'',tasks:J.tasks.length,
  bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:(old&&old.closed)?0:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
@@ -745,8 +798,8 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function baseOf(slug){const j=data.jobs[slug];if(!j)return null;const c=data.common||{};const sp=E.splitJob(j);
   const base=Object.assign({},j,{modules:c.modules,mod_cols:c.mod_cols,mod_files:c.mod_files,all_jobs:c.all_jobs,built:data.built,today:data.today,trackerRows:sp.trackerRows});
   return {base,rows:sp.rows}}
- function ctx(settings,e){return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||''}}
- function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null});
+ function ctx(settings,e){const c=data.common||{};return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||'',poRoles:c.po_roles||{},poMeta:c.po_meta||{}}}
+ function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null,poState:{pos:c.state.pos||[],bid_status:c.state.bid_status||{}}});
   const h=[];let n=0;const r=rec.jobs[slug];
   if(LIVE){const seq=liveSeq(r);const u=undoneSet(seq);const q=new Set(r?r.log.map(e=>e.id):[]);
    seq.forEach(e=>h.push({n:++n,id:e.id,auto:e.device==='auto-adjust'&&e.kind=='edit',ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:u.has(e.id),failed:e.failed,where:q.has(e.id)?'waiting to upload':(APPLIED.has(e.id)?'in the office schedule':'saved to Dropbox')}));
@@ -755,7 +808,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:false,failed:e.failed,where:'checked in'+(cs.who?' by '+cs.who:'')})));
    r.log.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:e.undone,failed:e.failed,where:'this browser'}))}
   J.history=h;J.pending=r?r.log.filter(e=>!e.undone).length:0;return J}
- function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[]};
+ function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[],pos:E.clone(b.base.hub_pos||[]),bid_status:{}};
   let settings={saturday:!!(b.base.settings||{}).saturday,holidays:(b.base.settings||{}).holidays||'construction',cascade_bt:!!(b.base.settings||{}).cascade_bt,info:E.clone(b.base.info||{}),phase_colors:E.clone(b.base.phase_colors||{})};
   const r=rec.jobs[slug];let entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));if(LIVE)entries=entries.concat(effective(liveSeq(r)));else r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
   entries.forEach(e=>{if(e.kind=='settings'){settings=mergeSettings(settings,e.settings||{});return}
@@ -766,7 +819,8 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   saveError:()=>lastSaveErr,
   who,setWho(n){try{localStorage.setItem('hws-who',String(n||'').trim().slice(0,60))}catch(e){}},
   getJob(slug){const c=get(slug);return c?c.J:null},
-  edit(slug,ops){const c=get(slug);const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:E.clone(ops)};
+  edit(slug,ops){const c=get(slug);const strip=op=>{op=E.clone(op);const wipe=o=>{if(!o||typeof o!='object')return;['amount','unit_price','total','extended_cost','deposit_paid','paid_to_date'].forEach(k=>delete o[k])};wipe(op);wipe(op.bid);wipe(op.order);wipe(op.fields);return op};
+   const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:(ops||[]).map(strip)};
    if(LIVE){e.ts_ms=Date.now();e.device=devId();const taken=new Set(c.state.rows.map(r=>r.id));e.ops.forEach(op=>{if(op.op=='add'&&!op.new_id){let n;do{n='N'+(10000+Math.floor(Math.random()*89999))}while(taken.has(n));taken.add(n);op.new_id=n}})}
    const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e));let k=0;e.ops.forEach(op=>{if(op.op=='add')op.new_id=x.result.new_ids[k++]});
    e.summary=x.result.summary;jr(slug).log.push(e);save();c.state=x.state;c.J=derive(slug,c);return {J:c.J,result:x.result}},
@@ -1104,7 +1158,7 @@ const coarse=window.matchMedia?matchMedia('(pointer: coarse)').matches:false;
 function jobHref(slug,mod){return '#/job/'+slug+'/'+(mod||'schedule')}
 function homeHref(){return '#/'}
 function modHref(mod){return '#/job/'+J.slug+'/'+mod}
-function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule'};const pg=(p[0]||'home').split('?')[0];return {slug:null,page:HUB_PAGES.includes(pg)?pg:'home',sub:p[1]||''}}
+function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule',focus};const pg=(p[0]||'home').split('?')[0];return {slug:null,page:HUB_PAGES.includes(pg)?pg:'home',sub:p[1]||'',focus:''}}
 function curMod(){return parseHash().mod||'schedule'}
 /* ---------- calendar helpers (job workday calendar) ---------- */
 function isWd(s){const c=J.cal||{};const d=new Date(dP(s)).getUTCDay();return (d>=1&&d<=5||(c.saturday&&d==6))&&!(c.holidays||{})[s]}
@@ -1139,7 +1193,7 @@ function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)locat
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
-const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
+const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -1149,12 +1203,12 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
  const head=`<div class="jh"><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>${chip(J.bt_status,J.bt_status=='in Buildertrend'?'inbt':'notbt')}
- <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a><span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
+ <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
  const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
- const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}
+ const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
  <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files and links<span class="cnt">${(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
  const tabs=`<nav class="tabbar" aria-label="Modules">${TABS.map(([k,l,ic])=>{const on=k==mod||(k=='more'&&!TABS.some(t=>t[0]==mod));const n=k=='more'?hc:0;
   return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}"><span class="ic">${ic}</span><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
@@ -1165,7 +1219,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
  document.title=J.name+' · Harswells';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
-function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']];
+function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget']].concat((typeof canSeeMoney==='function'&&canSeeMoney())?[['money','Budget vs actual']]:[]).concat([['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]);
  openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${k==='slack'?(typeof slackRows==='function'?slackRows().length||'':''):(c[k]||(k=='history'?(J.history||[]).length||'':''))}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
  m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
@@ -1385,24 +1439,34 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
   if(t){m.querySelector('#tc').onclick=()=>{closeModal();edit([{op:'complete',id:t.id,done:!t.done}])};m.querySelector('#tdl').onclick=()=>{if(confirm(`Delete ${t.id} “${t.task}”? Links to it are removed. (Undo restores it.)`)){closeModal();edit([{op:'delete',id:t.id}])}}}})}
 
 /* ---------- other modules ---------- */
-function mSel(M){const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
+function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhone==='function'){renderSelPhone(M);return}const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
  M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} Buildertrend template selections (DRAFT, due = “Finalize …” schedule task)`,
  all.length?`<div class="tw"><table><tr><th>Title / Room-Location</th><th>Fixture / Choice</th><th>Brand</th><th>Model</th><th>Finish</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th class="num">Allowance</th><th>Deadline</th><th>Client approval</th><th>Status</th><th>Order status</th><th>Order date</th><th>ETA</th><th>Link / PO</th><th>Src</th></tr>
- ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${x.link&&/^https?:/.test(x.link)?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
+ ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${x.link&&/^https?:/.test(x.link)?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
  (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:'')+csvBtn('selections'));
- const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M)}
+ const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M);if(typeof bindSelRows==='function')bindSelRows(M);const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl&&typeof openSelection==='function')openSelection(J.slug,focus)}
 function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
  M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} Buildertrend template packages not yet released`,
  real.map(p=>{const mx=Math.max(...p.subs.map(x=>x.amount||0),1);return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${p.low?` · low ${fmt$(p.low)}`:''} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
- <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
- ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}</td><td class="small">${esc(x.ref)}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
- (tpl.length?panel('Template packages (not released)','Buildertrend “**Future Template” bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M)}
+ <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${p.subs.map(x=>`<div class="ps"><b>${esc(x.vendor)}</b> · ${esc(x.status)} ${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
+ ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
+ (tpl.length?panel('Template packages (not released)','Buildertrend “**Future Template” bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
 function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv + Buildertrend PO exports',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and Buildertrend PO exports.'),csvBtn('pos'));bindCsv(M)}
 function mCos(M){const l=J.cos||[];const tot=l.reduce((a,c)=>a+(+c.amount||0),0);M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${fmt$(c.amount)||'<span class="mut">TBD</span>'}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${fmt$(tot)}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
-function mBudget(M){const l=J.budget||[];const sum=k=>l.reduce((a,b)=>a+(+b[k]||0),0);M.innerHTML=panel('Budget','Buildertrend Job Costing columns · original/revised from live/modules/budget.csv · committed/actual from POs by cost code',l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Original</th><th class="num">Revised</th><th class="num">Committed</th><th class="num">Actual</th><th class="num">Variance</th><th class="num">Projected</th><th class="num">Cost to complete</th><th>Notes</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title)}</td><td class="num">${fmt$(b.original)}</td><td class="num">${fmt$(b.revised)}</td><td class="num">${fmt$(b.committed)}</td><td class="num">${fmt$(b.actual)}</td><td class="num ${b.variance<0?'red':''}">${fmt$(b.variance)}</td><td class="num">${fmt$(b.projected)}</td><td class="num">${fmt$(b.to_complete)}</td><td class="small mut">${esc(b.notes)}</td></tr>`).join('')}<tr class="tot"><td colspan=2>Total</td>${['original','revised','committed','actual','variance','projected','to_complete'].map(k=>`<td class="num">${fmt$(sum(k))}</td>`).join('')}<td></td></tr></table></div>`:emptyState('No budget lines yet','Add rows to live/modules/budget.csv.'),csvBtn('budget'));bindCsv(M)}
+function mBudget(M){const l=J.budget_index||J.budget||[];
+ M.innerHTML=panel('Budget','Counts only. Dollar amounts are on the money page.',
+  l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Preliminary</th><th class="num">Committed</th><th class="num">Pending</th><th class="num">POs</th><th class="num">Actual</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title||'')}</td><td class="num">${b.preliminary_count||0}</td><td class="num">${b.committed_count||0}</td><td class="num">${b.pending_count||0}</td><td class="num">${b.po_count||0}</td><td class="num">${b.actual_count||0}</td></tr>`).join('')}</table></div>`:emptyState('No budget lines yet','The running budget is imported into the private money file.'),
+  (typeof mMoney==='function'?`<button type="button" class="pri" id="openmoney">Open money</button>`:''));
+ const b=$('#openmoney');if(b)b.onclick=()=>{location.hash='#/job/'+(J&&J.slug||'')+'/money'};
+ bindCsv(M)}
+function logLine(x){if((x.title||'')==='Team update'&&x.text)return x.text;return x.title||x.text||''}
+function logShownSource(x){if((x.title||'')==='Team update'||/daily update/i.test(x.source||'')||x.src==='team_update')return 'Team update';return x.source||''}
 function logDesk(x){const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
- const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(x.text&&x.text!==x.title?`<div class="s">${esc(x.text)}</div>`:''));
- return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.title||x.text||'')}</div>${extra}<div class="s">${esc(x.source)}</div></div></div>`}
+ const teamUpdate=(x.title||'')==='Team update'||/daily update/i.test(x.source||'');
+ const head=teamUpdate?'Team update':(x.title||x.text||'');
+ const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(x.text&&x.text!==head?`<div class="s">${esc(x.text)}</div>`:''));
+ const src=teamUpdate?'':logShownSource(x);const srcHtml=src&&src!==head?`<div class="s">${esc(src)}</div>`:'';
+ return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${extra}${srcHtml}</div></div>`}
 function mLogs(M){const l=J.logs||[];
  if(typeof isPhone==='function'&&isPhone()){logPhone(M,l);return}
  M.innerHTML=panel('Daily logs','Summaries of the day. Message text stays out of this list.',`<div class="list">${l.map(logDesk).join('')||emptyState('No daily logs yet','')}</div>`,csvBtn('logs'));bindCsv(M)}
@@ -1434,7 +1498,7 @@ function logOpen(x){const ref=String(x.ref||'');const src=((x.src||'')+' '+(x.so
  if(/email|gmail|team_update/.test(src)){if(https)window.open(ref,'_blank','noopener');else location.hash=modHref('messages');return}
  if(/schedule|workcal|history/.test(src)){const by={};(J.tasks||[]).forEach(t=>{by[t.id]=t});if(ref&&by[ref]&&typeof taskModal==='function')taskModal(by[ref]);else location.hash=modHref('schedule');return}
  if(https)window.open(ref,'_blank','noopener')}
-const LOG_SRC_NAME={imessage:'texts',email:'email',slack:'slack',team_update:'email',plaud:'plaud',schedule:'schedule',workcal:'calendar',history:'history',trade:'trade',team:'team'};
+const LOG_SRC_NAME={imessage:'texts',email:'email',slack:'slack',team_update:'Team update',plaud:'plaud',schedule:'schedule',workcal:'calendar',history:'history',trade:'trade',team:'team'};
 function logShownCounts(counts){const out={};Object.entries(counts||{}).forEach(([k,n])=>{if(n&&k!=='trade')out[k]=n});return out}
 function logCountsLabel(counts){return Object.entries(logShownCounts(counts)).map(([k,n])=>n+' '+(LOG_SRC_NAME[k]||k)).join(' · ')}
 function logWhen(t){const s=String(t||'');if(!s)return '';if(s==='all day'||/^\d{4}-\d{2}-\d{2}$/.test(s)||/T00:00(?::00)?(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)?$/.test(s))return 'all day';return msgClock(s)}
@@ -1459,7 +1523,7 @@ function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
  const jump=`<label class="logjump"><span class="mut small">Month</span> <select id="logmonth" aria-label="Jump to month"><option value="">All months</option>${months.map(m=>`<option value="${esc(m)}" ${month===m?'selected':''}>${esc((MON[+m.slice(5)-1]||m)+' '+m.slice(0,4))}</option>`).join('')}</select></label>`;
  const cards=order.map(d=>{const items=by[d];const counts=logDayCounts(items);
   const countChips=Object.entries(logShownCounts(counts)).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
-  const team=items.filter(x=>x.source!=='auto').map((x,i)=>`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(x.title||x.text||'')}</span></button>`).join('');
+  const team=items.filter(x=>x.source!=='auto').map((x,i)=>`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span></button>`).join('');
   const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span></div>`).join('');
   const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
   return `<article class="logcard" id="log-${esc(d)}"><div class="loghead"><h2>${head}</h2><div class="logcounts">${countChips}</div></div><div class="loglines">${team}${bullets}</div>${logSourcesBlock(items)}</article>`}).join('')||emptyState('No daily logs yet','');
@@ -1719,7 +1783,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,s
 
 /* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
-const HUB_PAGES=['home','jobs','trackers','files','chat','attention'];
+const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money'];
 const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
  jobs:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
  trackers:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>',
@@ -1738,6 +1802,7 @@ const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyl
  box:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
  cam:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
  sheet:'<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>',
+ money:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
  badge:'<circle cx="12" cy="8" r="6"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>',
  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'};
 const ico=(k,c)=>`<svg class="ico ${c||''}" viewBox="0 0 24 24" aria-hidden="true">${IC[k]||IC.doc}</svg>`;
@@ -1747,6 +1812,10 @@ function safeUrl(u){return /^https:\/\//.test(u||'')?u:''}
 function H(){return (DATA&&DATA.common&&DATA.common.hub)||{bids:[],orders:[],orderby:[],deliveries:[],fups:[]}}
 function HL(){return (DATA&&DATA.common&&DATA.common.links)||{company:[]}}
 function JL(slug){return ((DATA&&DATA.common&&DATA.common.job_links)||{})[slug]||{items:[],permits:[]}}
+function needsSlack(slug, channel){if(!slug||slug==='general')return false;return !(channel||'').trim()}
+function slackChannelNote(){const rows=(H().needs_slack||[]).filter(x=>x&&(x.name||x.slug));if(!rows.length)return '';
+ const names=rows.map(x=>esc(x.name||x.slug)).join(', ');
+ return `<div class="note gates" style="margin:0 0 12px"><b>${rows.length===1?'A new job has':'New jobs have'} no Slack channel yet.</b> ${names}. Channels are not created from here.</div>`}
 function hubToday(){return H().today||(DATA&&DATA.today)||iso(Date.now()-7*3600e3)}
 function jobSearch(slug){const j=slug&&((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j&&j.search||''}
 function jobName(slug){const j=((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j?j.name:''}
@@ -1765,9 +1834,11 @@ function hubStats(){const h=H(),td=hubToday(),we=h.weekEnd||addD(td,7);const T=a
  const fu=h.fups;const fuDue=fu.filter(f=>f.due&&f.due<=we);
  return {td,we,overdue,today,week,high,bOpen,bWeek,bPast,bIn,toPlace,dl,dlWeek,fu,fuDue,jobs:(DATA.list&&DATA.list.jobs||[]).length}}
 /* ---- shared chrome ---- */
-function gnavHtml(page){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files'],['chat','Chat','#/chat']];
+function hubNav(){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files'],['chat','Chat','#/chat']];
+ if(typeof canSeeMoney==='function'&&canSeeMoney())it.splice(2,0,['money','Money','#/money']);return it}
+function gnavHtml(page){const it=hubNav();
  return `<nav class="tabbar gtabs" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" data-g="${k}" class="${k==page?'on':''}" ${k==page?'aria-current="page"':''}>${ico(k)}<span>${l}</span></a>`).join('')}</nav>`}
-function dnavHtml(page){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files'],['chat','Chat','#/chat']];
+function dnavHtml(page){const it=hubNav();
  return `<nav class="dnav hide-sm" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" class="${k==page?'on':''}">${l}</a>`).join('')}</nav>`}
 function hubShell(page,body){document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg=page;
  $('#root').innerHTML=topHtml(page)+`<main class="hub hub-${page}${page=='home'?' hub-home':''}">${body}</main>`+gnavHtml(page);bindTop()}
@@ -1780,11 +1851,13 @@ function longDate(s){const t=new Date(dP(s));return ['Sunday','Monday','Tuesday'
 /* ---- Home ---- */
 function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" href="${href}"><span class="ti">${ico(icon)}</span><span class="tn">${num}</span><span class="tl">${label}</span>${sub?`<span class="ts">${sub}</span>`:''}</a>`}
 function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():'';const nFold=Object.values((DATA.common||{}).job_links||{}).filter(j=>(j.items||[]).some(i=>i.kind=='dropbox')).length;
- const tiles=[tile('#/jobs','jobs','Jobs',S.jobs,'Schedules & workspaces','navy'),
+ const prelimN=(typeof prelimHomeCount==='function')?prelimHomeCount():0;
+ const tiles=[(typeof canSeeMoney==='function'&&canSeeMoney())?tile('#/money','money','Money',prelimN,'Budget vs actual','navy'):'',tile('#/jobs','jobs','Jobs',S.jobs,'Schedules & workspaces','navy'),
   tile('#/trackers/today','cal','Today',S.today.length,S.overdue.length?`<b class="red">${S.overdue.length} overdue</b>`:'Nothing overdue',S.overdue.length?'warn':''),
   tile('#/trackers/bids','doc','Bids',S.bWeek.length+S.bPast.length,`${S.bPast.length?`<b class="red">${S.bPast.length} past due</b> · `:''}${S.bWeek.length} this week`,S.bPast.length?'warn':''),
   tile('#/files','files','Files',nFold,'Job folders & forms'),
   tile('#/trackers/orders','truck','Orders',S.toPlace,`to place · ${S.dlWeek.length} deliver${S.dlWeek.length==1?'y':'ies'}`,S.toPlace?'amber':''),
+  tile('#/trackers/pos','box','POs',(typeof poCounts==='function'?poCounts(poAll()):{all:0}).all,(function(){if(typeof poCounts!='function')return '';const c=poCounts(poAll());return `${c.draft} draft · ${c.approved} approved · ${c.entered_in_adaptive} entered`})()),
   tile('#/trackers/fups','user','Follow-ups',S.fu.length,`${S.fuDue.length} due this week`),
   tile('#/trackers/conflicts','alert','Conflicts',S.high.length,'high priority',S.high.length?'warn':''),
   tile('#/chat','chat','Chat','<span class="soon">Soon</span>','Linked to Slack','ghost')].join('');
@@ -1794,10 +1867,10 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
   <section class="dcard"><h3>${ico('doc')} Bids due<a href="#/trackers/bids">All</a></h3>${top(S.bPast.concat(S.bWeek),6,b=>hrow('#/trackers/bids',esc(b.vendor),esc(b.trade+' · '+b.job),dchip(b.due,S.td)))}</section>
   <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
- hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
+ hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
  <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);document.title='Harswells · Home'}
 /* ---- Trackers ---- */
-const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['fups','Follow-ups'],['conflicts','Conflicts']];
+const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
 function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
  const seg=`<div class="seg2" role="tablist">${TSUB.map(([k,l])=>`<a href="#/trackers/${k}" class="${k==sub?'on':''}" role="tab">${l}</a>`).join('')}</div>`;
  let body='';
@@ -1809,6 +1882,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
   <div class="cards">${L.map(b=>`<div class="bcard${b.pastDue?' late':''}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
    <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''}${b.amount?' · <b>'+esc(b.amount)+'</b>':''}</div>
+   <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
    ${(b.links||[]).length?`<div class="lbtns">${b.links.map(x=>lbtn(x)).join('')}</div>`:'<div class="ls none2">No file or email on file yet</div>'}</div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
  if(sub=='orders'){const extra=h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id));
   const openO=h.orders.filter(o=>(o.flags||[]).length&&!/not ordered/i.test(o.status||''));
@@ -1820,9 +1894,12 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   <h2 class="sh2">Open orders needing attention <span>${openO.length}</span></h2><div class="rows">${openO.map(o=>orow(o.slug?jobHref(o.slug,'pos'):'#/trackers/orders',esc(o.item),`${esc(o.job)} · ${esc(o.vendor||'')}${o.eta?' · ETA '+esc(o.eta):''}${o.flagNotes?' · '+esc(o.flagNotes):''}`,o.owner?`<span class="own">${esc(o.owner)}</span>`:'',o)).join('')}</div>`}
  if(sub=='fups'){const by={};S.fu.forEach(f=>(by[f.owner||'Unassigned']=by[f.owner||'Unassigned']||[]).push(f));
   body=Object.entries(by).sort((a,b)=>b[1].length-a[1].length).map(([o,l])=>`<h2 class="sh2">${esc(o)} <span>${l.length}</span></h2><div class="rows">${l.sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1).map(f=>hrow(f.slug?jobHref(f.slug,'todos'):'#/trackers/fups',esc(f.item),`${esc(f.job||'')}${f.waiting?' · waiting on '+esc(f.waiting):''}${f.next?' · next: '+esc(f.next):''}`,`${f.pri?`<span class="pri ${esc(f.pri)}">${esc(f.pri)}</span>`:''}${dchip(f.due,S.td)}`)).join('')}</div>`).join('')||'<div class="none">No follow-ups owed</div>'}
+ if(sub=='pos'){body=typeof renderPosTrackers==='function'?renderPosTrackers():'<div class="none">Purchase orders are not in this copy yet</div>'}
  if(sub=='conflicts'){body=`<div class="rows">${S.high.map(x=>hrow(jobHref(x.slug,'conflicts'),esc(x.c.title),esc(x.job)+' · '+esc(x.c.kind),'<span class="dchip overdue">high</span>')).join('')||'<div class="none">No high conflicts</div>'}</div>`}
  hubShell('trackers',`<div class="hph"><h1>Trackers</h1><a class="small" href="${esc(safeUrl(((HL().company||[]).find(g=>/Trackers/.test(g.title))||{items:[{}]}).items[0].url||''))}" target="_blank" rel="noopener">Open sheets ${ico('ext','sm')}</a></div>${seg}${body}`);
  document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{st.hbF=b.dataset.bf;saveUi();renderTrackers('bids')});
+ if(sub=='pos'&&typeof poBindList==='function') poBindList(document.getElementById('root'),()=>renderTrackers('pos'));
+ const poq=$('#poq');if(poq)poq.oninput=e=>{st.poQ=e.target.value;saveUi();const p=poq.selectionStart;renderTrackers('pos');const n=$('#poq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}};
  const bq=$('#bq');if(bq)bq.oninput=e=>{st.bq=e.target.value;saveUi();const p=bq.selectionStart;renderTrackers('bids');const n=$('#bq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
  document.title='Harswells · Trackers'}
 /* ---- Files ---- */
@@ -1859,7 +1936,7 @@ function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
-function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
+function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
 /* Attention screen (owner request 9/27 7:51 PM): ONE place for what needs attention today vs this week. Phone-first.
    Four parts, each drills down count -> list -> item (with actions on the same tap; no dead-end numbers, 7:52 PM):
@@ -1898,7 +1975,8 @@ function attFlags(){const out=[];attSlugs().forEach(slug=>{const i=attInfo(slug)
 function attSub(key){const a=AT();return a&&a.subs&&a.subs[key]||null}
 function attTaskLinks(slug,t){const a=AT();const L=[{type:'job',id:slug,label:(attJ(slug)||{}).name||slug}];
  ((a&&a.task_links&&a.task_links[slug]||{})[t.id]||[]).forEach(x=>L.push(x));
- ((a&&a.job_links&&a.job_links[slug])||[]).filter(x=>x.type!='job').forEach(x=>L.push(x));return L}
+ ((a&&a.job_links&&a.job_links[slug])||[]).filter(x=>x.type!='job').forEach(x=>L.push(x));
+ if(typeof moneyLinksForTask==='function')moneyLinksForTask(slug,t.id).forEach(x=>{if(!L.some(y=>y.type==x.type&&y.id==x.id))L.push(x)});return L}
 function attJobLinks(slug){const a=AT();return ((a&&a.job_links&&a.job_links[slug])||[{type:'job',id:slug,label:slug}]).slice()}
 function attContactSub(links){/* the sub to message for a task: an assigned owner with contact, else none (bidders are listed in Related) */
  const as=(links||[]).filter(x=>x.type=='sub'&&x.role=='assigned');return as.length?attSub(as[0].id)||{name:as[0].label}:null}
@@ -2006,8 +2084,9 @@ function attMsg(sub,ctxText){if(!sub)return `<span class="nocontact">No sub assi
 function attNote(i){const J=attJ(i.slug)||{};const d=i.t?(i.t.start==i.t.finish?md(i.t.start):md(i.t.start)+'–'+md(i.t.finish)):md(i.date);
  return `${J.name||''}${J.address?' ('+J.address+')':''}: ${i.title}, scheduled ${d}. Can you confirm you're on track? Thanks${attSig()?', '+attSig():''}${attOwn().company?' · '+attOwn().company:''}`}
 function attOpenItem(slug,kind,id){const i=attFind(slug,kind,id);if(!i){toast('That item is no longer on the list');return}
- const J=attJ(slug)||{};const t=i.t;const links=t?attTaskLinks(slug,t):(i.bid?[{type:'job',id:slug,label:i.job},{type:'bid',id:i.bid.id,label:`${i.bid.vendor} · ${i.bid.trade}`},{type:'sub',id:attSubKey(i.bid.vendor),label:i.bid.vendor}].concat(attJobLinks(slug).filter(x=>x.type!='job')):
+ const J=attJ(slug)||{};const t=i.t;let links=t?attTaskLinks(slug,t):(i.bid?[{type:'job',id:slug,label:i.job},{type:'bid',id:i.bid.id,label:`${i.bid.vendor} · ${i.bid.trade}`},{type:'sub',id:attSubKey(i.bid.vendor),label:i.bid.vendor}].concat(attJobLinks(slug).filter(x=>x.type!='job')):
   (i.fup?[{type:'job',id:slug,label:i.job}].concat(attJobLinks(slug).filter(x=>x.type!='job')):(i.ref?[{type:'job',id:slug,label:i.job},{type:'order',id:i.ref,label:'Order '+i.ref}].concat(attJobLinks(slug).filter(x=>x.type!='job')):attJobLinks(slug))));
+ if(typeof poLinksFor==='function'){if(t)links=links.concat(poLinksFor('task',t.id));if(i.bid)links=links.concat(poLinksFor('bid',i.bid.id));links=links.concat(poLinksFor('job',slug))}
  const D=t?attDrift(slug):null;const b=D&&D.B&&D.B.tasks?D.B.tasks[t.id]:null;const slip=b&&t.finish?attDays(b.f,t.finish):null;
  const sub=t?attContactSub(links):(i.bid?attSub(attSubKey(i.bid.vendor)):null);const fl=t?attFlag(slug,t.id):null;
  const kv=t?`<table class="kv small"><tr><td class="mut">Dates</td><td>${esc(dow(t.start))} ${esc(md(t.start))}${t.finish&&t.finish!=t.start?' – '+esc(dow(t.finish))+' '+esc(md(t.finish)):''} · ${esc(t.duration||'')}d</td></tr>
@@ -2079,8 +2158,8 @@ function attOpenTask(slug,t){const i=attFind(slug,t.milestone_type=='inspection'
 const _attFind0=attFind;attFind=function(slug,kind,id){const x=_attFind0(slug,kind,id);if(x)return x;const e=window.__attExtra;if(e&&e.slug==slug&&String(e.id)==id){const J=attJ(slug);const t=(J.tasks||[]).find(y=>y.id==id);if(t)return Object.assign({},e,{t,title:t.task,flag:attFlag(slug,t.id)})}return null};
 /* ---- shared Related panel: one item = one thread (standing rule 8). Types: job, task, sub, bid, order, selection, dropbox, url.
    Future modules add links of these (or new) types to their items and get the same panel. */
-window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'doc',order:'truck',selection:'grid',dropbox:'files',url:'ext',spec:'doc',designbook:'doc'};
- const LBL={job:'Job',task:'Task',sub:'Sub / vendor',bid:'Bid / quote',order:'Order / PO',selection:'Selection',dropbox:'Dropbox',url:'Link',spec:'Spec sheet',designbook:'Design book'};
+window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'doc',order:'truck',selection:'grid',dropbox:'files',url:'ext',spec:'doc',designbook:'doc',po:'box',takeoff:'grid',adaptive:'doc',file:'files',budget:'sheet'};
+ const LBL={job:'Job',task:'Task',sub:'Sub / vendor',bid:'Bid / quote',order:'Order / PO',selection:'Selection',dropbox:'Dropbox',url:'Link',spec:'Spec sheet',designbook:'Design book',po:'Purchase order',takeoff:'Takeoff',adaptive:'Adaptive PO',file:'File',budget:'Budget line'};
  function html(links,o){const L=(links||[]).filter(Boolean);if(!L.length)return '';const g={};L.forEach(x=>(g[x.type]=g[x.type]||[]).push(x));
   return `<div class="related"><h3 class="sh3">Related <span class="mut">${L.length}</span></h3>${Object.keys(g).map(k=>`<div class="rgrp"><div class="rg">${esc(LBL[k]||k)}</div>${g[k].map(x=>{
    const u=x.url&&/^https:\/\//.test(x.url)?x.url:'';if(u)return `<a class="rrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||u)}</span>${ico('ext','go')}</a>`;
@@ -2091,22 +2170,254 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
   if(type=='task'){const [s,tid]=String(id).includes(':')?id.split(':'):[slug,id];const t=((attJ(s)||{}).tasks||[]).find(x=>x.id==tid);if(t)attOpenTask(s,t);return}
   if(type=='sub'){const s=attSub(id);if(!s){toast('No record for this sub yet');return}const h=H();const bids=(h.bids||[]).filter(b=>s.bids.includes(b.id));const ords=(h.orders||[]).filter(x=>s.orders.includes(x.id));
    const tl=[];(s.tasks||[]).forEach(k=>{const [js,tid]=k.split(':');const t=((attJ(js)||{}).tasks||[]).find(x=>x.id==tid);if(t&&!attDone(t))tl.push({type:'task',id:js+':'+tid,label:`${(attJ(js)||{}).name} · ${t.task} (${md(t.start)})`})});
-   const links=s.jobs.map(j=>({type:'job',id:j,label:(attJ(j)||{}).name||j})).concat(tl,bids.map(b=>({type:'bid',id:b.id,label:`${b.job} · ${b.trade} (${b.status}${b.amount?' · '+b.amount:''})`})),ords.map(x=>({type:'order',id:x.id,label:`${x.job} · ${x.item} (${x.status})`})));
+   const links=s.jobs.map(j=>({type:'job',id:j,label:(attJ(j)||{}).name||j})).concat(tl,bids.map(b=>({type:'bid',id:b.id,label:`${b.job} · ${b.trade} (${b.status}${b.amount?' · '+b.amount:''})`})),ords.map(x=>({type:'order',id:x.id,label:`${x.job} · ${x.item} (${x.status})`})),(typeof poLinksFor==='function'?poLinksFor('sub',id):[]));
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(s.trades.join(', ')||'Sub / vendor')}</div><h2>${esc(s.name)}</h2></div>
     <div class="aacts">${attMsg(s,'Hi, this is '+(attSig()||'the office')+(attOwn().company?' with '+attOwn().company:'')+'. ')}</div><div class="small mut">${s.phone||s.email?'Contact from '+esc(s.contact_src||'trackers'):'No phone or email on file for this sub yet.'}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
   if(type=='bid'){const b=(H().bids||[]).find(x=>x.id==id);if(!b){toast('Bid not found');return}
-   const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).map(x=>({type:x.kind&&x.kind.startsWith('dropbox')?'dropbox':'url',url:x.url,label:x.label+(x.sub?' · '+x.sub:'')})));
+   const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).filter(x=>x.type!='po').map(x=>({type:x.kind&&x.kind.startsWith('dropbox')?'dropbox':(x.type=='po'?'po':'url'),id:x.id,url:x.url,label:x.label+(x.sub?' · '+x.sub:'')}))).concat(typeof poLinksFor==='function'?poLinksFor('bid',b.id):[]).concat(typeof moneyLinksForBid==='function'?moneyLinksForBid(id):[]);
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(b.job)} · ${esc(b.trade)} · bid ${esc(b.id)}</div><h2>${esc(b.vendor)}</h2></div>
+    <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
     <table class="kv small"><tr><td class="mut">Status</td><td>${esc(b.status)}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr><tr><td class="mut">Sent / due</td><td>${esc(md(b.sent))} / ${esc(md(b.due))}</td></tr><tr><td class="mut">Owner</td><td>${esc(b.owner||'')}</td></tr>${b.amount?`<tr><td class="mut">Amount</td><td>${esc(b.amount)}</td></tr>`:''}</table>
     <div class="aacts">${attMsg(attSub(attSubKey(b.vendor)),`Harswells bid request, ${b.job} ${b.trade}: checking on your quote${b.due?' (due '+md(b.due)+')':''}. Thanks${attSig()?', '+attSig():''}`)}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
   if(type=='order'){const x=(H().orders||[]).find(y=>y.id==id);if(!x){toast('Order not found');return}
-   const links=[{type:'job',id:x.slug,label:x.job},{type:'sub',id:attSubKey(x.vendor),label:x.vendor}].concat(attJobLinks(x.slug).filter(l=>l.type=='dropbox'&&/Orders/.test(l.label)));
+   const links=[{type:'job',id:x.slug,label:x.job},{type:'sub',id:attSubKey(x.vendor),label:x.vendor}].concat(attJobLinks(x.slug).filter(l=>l.type=='dropbox'&&/Orders/.test(l.label))).concat(typeof poLinksFor==='function'?poLinksFor('order',x.id):[]).concat(typeof moneyLinksForOrder==='function'?moneyLinksForOrder(id):[]);
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(x.job)} · ${esc(x.trade)} · ${esc(x.id)}${x.po?' · PO '+esc(x.po):''}</div><h2>${esc(x.item)}</h2></div>
     <table class="kv small"><tr><td class="mut">Vendor</td><td>${esc(x.vendor||'')}</td></tr><tr><td class="mut">Status</td><td>${esc(x.status||'')}</td></tr>${x.eta?`<tr><td class="mut">ETA</td><td>${esc(x.eta)}</td></tr>`:''}<tr><td class="mut">Owner</td><td>${esc(x.owner||'')}</td></tr>${x.next?`<tr><td class="mut">Next</td><td>${esc(x.next)}</td></tr>`:''}${x.flagNotes?`<tr><td class="mut">Notes</td><td>${esc(x.flagNotes)}</td></tr>`:''}</table>
     ${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
+  if(type=='selection'){const parts=String(id).split(':');const s=parts.length>1?parts[0]:slug;const sid=parts.length>1?parts.slice(1).join(':'):id;if(typeof openSelection==='function'){openSelection(s,sid);return}toast('Selection not found');return}
+  if(type=='budget'){const i=String(id).indexOf(':');const s=i>=0?id.slice(0,i):(slug||'');const code=i>=0?id.slice(i+1):String(id);closeModal();if(s)location.hash='#/job/'+encodeURIComponent(s)+'/money/'+encodeURIComponent(code);return}
+  if(type=='takeoff'||type=='designbook'){let hit=null;Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{if(hit)return;const list=typeof jobSelections==='function'?jobSelections(js):(((DATA.jobs[js]||{}).selections)||[]);list.forEach(sel=>{if(hit)return;const ok=(sel.links||[]).some(l=>l.type==type&&String(l.id)===String(id))||(type=='takeoff'&&String(js+':'+sel.takeoff_id)===String(id))||(type=='designbook'&&(sel.designbook_id==id||js+':'+(sel.category||'')===String(id)));if(ok)hit={slug:js,id:sel.id}});});if(hit&&typeof openSelection==='function'){openSelection(hit.slug,hit.id);return}toast(type=='takeoff'?'Takeoff':'Design book');return}
   toast('Nothing linked yet')}
  function bind(root,o){root.querySelectorAll('[data-rel]').forEach(b=>b.onclick=e=>{e.preventDefault();const [k,...rest]=b.dataset.rel.split('|');open(k,rest.join('|'),o)})}
  return {html,open,bind}})();
+
+/* Purchase orders. A person marking a bid accepted creates one draft, keyed on the bid id.
+   Dollars never live in this shell: the card says "amount on money page". An approver approves.
+   Entering an Adaptive PO number is a person typing it. Nothing here writes to Adaptive or QuickBooks. */
+window.HWSPos=(function(E){
+ const OPS=['bid_status','po_status','accept_proposed'];
+ const ACCEPTED=['accepted','awarded','won'];
+ const NEXT={draft:'approved',approved:'entered_in_adaptive',entered_in_adaptive:'matched',matched:'closed'};
+ const BOT={'':'1',hub:'1',refresh:'1',workspace:'1',bot:'1',system:'1',retro:'1'};
+ function meta(ctx){return (ctx&&ctx.poMeta)||((typeof DATA!=='undefined'&&DATA.common&&DATA.common.po_meta)||{})}
+ function roles(ctx){return (ctx&&ctx.poRoles)||((typeof DATA!=='undefined'&&DATA.common&&DATA.common.po_roles)||{})}
+ function person(who){return !BOT[String(who||'').trim().toLowerCase()]}
+ function roleOk(who,kind,ctx){return (roles(ctx)[kind]||[]).some(function(r){try{return new RegExp(r.match,'i').test(who||'')}catch(e){return false}})}
+ function tradeCode(text,ctx){
+  const m=meta(ctx), raw=String(text||'').trim().toUpperCase(), words=m.trade_words||[], known=m.trade_adaptive||{};
+  if(known[raw]) return raw;
+  const low=String(text||'').toLowerCase();
+  for(let i=0;i<words.length;i++){if(low.indexOf(words[i][0])>=0) return words[i][1]}
+  return 'MSC'}
+ function prefix(slug,ctx){const p=(meta(ctx).prefixes||{})[slug];if(p) return p;return (String(slug||'JOB').replace(/[^A-Za-z0-9]/g,'').toUpperCase()+'XXXX').slice(0,4)}
+ function nextId(pos,slug,trade,ctx){
+  const pre=prefix(slug,ctx), code=tradeCode(trade,ctx), taken={};
+  (pos||[]).forEach(function(p){taken[p.po_id]=1});
+  let n=1,id;do{id=pre+'-'+code+'-'+String(n).padStart(3,'0');n++}while(taken[id]);
+  return id}
+ function preferCogs(name,ctx){if(!name) return '';if(/ COGS$/.test(name)) return name;return (meta(ctx).cogs_twin||{})[name]||name}
+ function adaptiveCode(bt,trade,text,ctx){
+  const m=meta(ctx), code=tradeCode(trade||bt,ctx), blob=String(text||'')+' '+String(bt||'');
+  if(code=='TIL'&&/install/i.test(blob)) return 'Tile Installation';
+  if(bt&&(m.bt_to_adaptive||{})[bt]) return preferCogs(m.bt_to_adaptive[bt],ctx);
+  return preferCogs((m.trade_adaptive||{})[code]||'Misc. Fee COGS',ctx)}
+ function subKey(name){return String(name||'').replace(/\(.*?\)/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'unknown'}
+ function jobName(slug,fallback){const j=((typeof DATA!=='undefined'&&DATA.common&&DATA.common.all_jobs)||[]).find(function(x){return x.slug==slug});return (j&&j.name)||fallback||slug||''}
+ function dedupe(links){const out=[],seen={};(links||[]).forEach(function(lk){const k=(lk.type||'')+'|'+(lk.id||lk.url||'');if(!k.split('|')[1]||seen[k])return;seen[k]=1;out.push(lk)});return out}
+ function setLinks(po,extra){
+  const links=[{type:'job',id:po.job_slug,label:po.job_display||po.job_slug},{type:'sub',id:po.sub_id||subKey(po.vendor_display),label:po.vendor_display||'Vendor'}];
+  if(po.source_bid_id) links.push({type:'bid',id:po.source_bid_id,label:'Bid '+po.source_bid_id,role:'source'});
+  (po.lines||[]).forEach(function(ln){
+   if(ln.order_row_id) links.push({type:'order',id:ln.order_row_id,label:'Order '+ln.order_row_id});
+   if(ln.takeoff_id) links.push({type:'takeoff',id:ln.takeoff_id,label:'Takeoff '+ln.takeoff_id,role:'item'});
+   if(ln.selection_id) links.push({type:'selection',id:ln.selection_id,label:'Selection '+ln.selection_id});
+   if(ln.bid_id&&ln.bid_id!=po.source_bid_id) links.push({type:'bid',id:ln.bid_id,label:'Bid '+ln.bid_id});
+  });
+  (po.task_ids||[]).forEach(function(tid){links.push({type:'task',id:tid,label:'Task '+tid})});
+  (extra||[]).forEach(function(lk){if(lk&&lk.type) links.push(lk)});
+  if(po.adaptive_po_number||po.adaptive_link){const link={type:'adaptive',id:po.adaptive_po_number||po.po_id,label:('Adaptive PO '+(po.adaptive_po_number||'')).trim()};if(po.adaptive_link) link.url=po.adaptive_link;links.push(link)}
+  po.links=dedupe(links)}
+ function stamp(){return (typeof nowAZ==='function'?nowAZ():new Date().toISOString().slice(0,16).replace('T',' '))}
+ function blank(pid,slug,vendor,trade,scope,who,ctx){
+  const ts=(ctx&&ctx.stamp)||stamp();
+  const po={po_id:pid,job_slug:slug,job_display:jobName(slug),vendor_display:vendor||'',vendor_adaptive:'',vendor_unmatched:true,vendor_type:'sub',
+   sub_id:subKey(vendor),trade:tradeCode(trade,ctx),scope:scope||'',terms:'',status:'draft',retro:false,orphaned:false,evidence_level:'quote_only',
+   source_bid_id:'',source_order_id:'',adaptive_po_number:'',adaptive_link:'',created_by:who||'',created_at:ts,approved_by:'',approved_at:'',entered_by:'',entered_at:'',
+   lines:[],links:[],task_ids:[],history:[{at:ts,who:who||'',from:'',to:'draft',note:'draft created'}],amount_private:true,amount_label:'amount on money page'};
+  return po}
+ function findBid(pos,id){return (pos||[]).find(function(p){return p.source_bid_id==id})}
+ function findLine(pos,oid){for(let i=0;i<(pos||[]).length;i++){const p=pos[i];const ln=(p.lines||[]).find(function(x){return x.order_row_id==oid});if(ln) return [p,ln]}return [null,null]}
+ function peel(ops){const po=[],rest=[];(ops||[]).forEach(function(o){(OPS.indexOf(o.op)>=0?po:rest).push(o)});return {po:po,rest:rest}}
+ function apply(state,ops,ctx){
+  ctx=ctx||{};
+  const pos=E.clone(state.pos||[]), bid_status=E.clone(state.bid_status||{}), msgs=[], who=String(ctx.who||'').trim(), ts=ctx.stamp||stamp();
+  function requirePerson(action){if(!person(who)) throw new Error('only a person can '+action+'; the hub does not move a PO past draft')}
+  (ops||[]).forEach(function(op){
+   if(op.op=='bid_status'){
+    const id=String(op.id||''), status=String(op.status||'').toLowerCase(), hint=op.bid||{};
+    if(!id||!status) throw new Error('bid_status needs id and status');
+    bid_status[id]={status:status,by:who,at:ts,slug:hint.slug||''};
+    if(ACCEPTED.indexOf(status)>=0){
+     requirePerson('mark a bid accepted');
+     let po=findBid(pos,id);
+     if(po){if(po.status=='draft'&&po.orphaned){po.orphaned=false;po.history.push({at:ts,who:who,from:'draft',to:'draft',note:'source bid accepted again'})}msgs.push('bid '+id+' already has PO '+po.po_id)}
+     else{
+      const slug=hint.slug||'', trade=hint.trade||hint.cost_code||'', pid=nextId(pos,slug,trade,ctx);
+      po=blank(pid,slug,hint.vendor||hint.vendor_display||'',trade,hint.scope||hint.notes||hint.trade||'',who,ctx);
+      po.job_display=jobName(slug,hint.job);po.source_bid_id=id;po.terms=hint.terms||'';po.evidence_level=hint.evidence_level||'quote_only';
+      if(hint.vendor_adaptive){po.vendor_adaptive=hint.vendor_adaptive;po.vendor_unmatched=false}
+      if(hint.task_id) po.task_ids=[hint.task_id];
+      po.lines=[{line_id:pid+'-L1',description:po.scope||trade,qty:hint.qty||1,unit:hint.unit||'LS',cost_code_adaptive:adaptiveCode(hint.cost_code||hint.cost_code_bt,trade,po.scope,ctx),cost_code_bt:hint.cost_code||'',order_row_id:hint.order_row_id||'',selection_id:hint.selection_id||'',takeoff_id:hint.takeoff_id||'',bid_id:id}];
+      const extra=[];(hint.links||[]).forEach(function(lk){const url=lk.url||'';if(lk.type=='dropbox'||lk.kind=='dropbox'||lk.kind=='dropbox-file'||url) extra.push({type:'dropbox',id:lk.id||url||'bid-file',url:url,label:lk.label||'Bid file',role:'quote'})});
+      setLinks(po,extra);pos.push(po);msgs.push('draft PO '+pid+' from bid '+id)}}
+    else{const po=findBid(pos,id);if(po&&po.status=='draft'&&!po.orphaned){po.orphaned=true;po.history.push({at:ts,who:who,from:'draft',to:'draft',note:'orphaned: source bid is no longer accepted'});msgs.push('bid '+id+' set to '+status+'; draft '+po.po_id+' orphaned')}else msgs.push('bid '+id+' set to '+status)}}
+   else if(op.op=='po_status'){
+    const id=op.po_id||op.id, status=String(op.status||'').toLowerCase();
+    const po=pos.find(function(p){return p.po_id==id});
+    if(!po) throw new Error('PO '+id+' not found');
+    if(po.status==status){msgs.push(po.po_id+' '+status);return}
+    if(NEXT[po.status]!=status) throw new Error(po.po_id+' cannot go from '+po.status+' to '+status);
+    requirePerson('move '+po.po_id+' to '+status);
+    if(status=='approved'){if(!roleOk(who,'approve',ctx)) throw new Error('only an approver can approve a PO');if(po.orphaned) throw new Error(po.po_id+' is orphaned; accept the bid again before approving');po.approved_by=who;po.approved_at=ts}
+    else if(status=='entered_in_adaptive'){const n=String(op.adaptive_po_number||'').trim();if(!n) throw new Error('enter the Adaptive PO number');po.adaptive_po_number=n;po.adaptive_link=String(op.adaptive_link||'').trim();po.entered_by=who;po.entered_at=ts}
+    po.history.push({at:ts,who:who,from:po.status,to:status,note:''});po.status=status;setLinks(po);msgs.push(po.po_id+' '+status)}
+   else if(op.op=='accept_proposed'){
+    requirePerson('accept a proposed order');
+    const hint=op.order||op, oid=String(op.order_id||op.id||hint.id||'').trim(), st=String(hint.status||'proposed').toLowerCase();
+    if(!oid) throw new Error('proposed order id required');
+    if(['proposed','accept','accepted'].indexOf(st)<0) throw new Error('order '+oid+' is '+st+'; only a proposed row can roll into a draft PO');
+    let found=findLine(pos,oid); if(found[0]){msgs.push('proposed '+oid+' on '+found[0].po_id);return}
+    const slug=hint.slug||hint.job_slug||'', vendor=hint.vendor||hint.vendor_display||'', bidId=String(hint.bid_id||'');
+    let po=bidId?findBid(pos,bidId):null;
+    if(!po&&vendor) po=pos.find(function(p){return p.job_slug==slug&&p.status=='draft'&&!p.orphaned&&String(p.vendor_display||'').toLowerCase()==vendor.toLowerCase()})||null;
+    if(!po){const trade=hint.trade||'', pid=nextId(pos,slug,trade,ctx);po=blank(pid,slug,vendor,trade,hint.scope||hint.description||hint.item||'',who,ctx);po.job_display=jobName(slug,hint.job);po.source_order_id=oid;if(bidId) po.source_bid_id=bidId;if(hint.task_id) po.task_ids=[hint.task_id];pos.push(po)}
+    const n=po.lines.length+1, desc=hint.description||hint.item||hint.scope||oid;
+    po.lines.push({line_id:po.po_id+'-L'+n,description:desc,qty:hint.qty||hint.quantity||1,unit:hint.unit||'EA',cost_code_adaptive:adaptiveCode(hint.cost_code||hint.cost_code_bt,po.trade,desc,ctx),cost_code_bt:hint.cost_code||'',order_row_id:oid,selection_id:hint.selection_id||'',takeoff_id:hint.takeoff_id||'',bid_id:bidId});
+    setLinks(po,hint.links||[]);
+    if(!po.links.some(function(lk){return lk.type=='bid'||lk.type=='dropbox'})) po.links.push({type:'dropbox',id:'proposed:'+oid,label:'Proposed order '+oid,role:'quote'});
+    msgs.push('draft PO '+po.po_id+' from proposed '+oid)}
+   else throw new Error('unknown op '+op.op)});
+  return {state:{rows:state.rows,flags:state.flags||[],pos:pos,bid_status:bid_status},summary:msgs.join('; '),new_ids:[]}}
+ return {OPS:OPS,peel:peel,apply:apply,roleOk:roleOk}})(typeof HWSEngine!=='undefined'?HWSEngine:{clone:function(o){return JSON.parse(JSON.stringify(o))}});
+
+const PO_LAB={draft:'Draft',approved:'Approved',entered_in_adaptive:'Entered in Adaptive',matched:'Matched',closed:'Closed'};
+const PO_NEXT={draft:'approved',approved:'entered_in_adaptive',entered_in_adaptive:'matched',matched:'closed'};
+function poMeta(){return (DATA&&DATA.common&&DATA.common.po_meta)||{}}
+function poRole(kind){const who=STORE&&STORE.who?STORE.who():'';return window.HWSPos.roleOk(who,kind,{poRoles:(DATA.common||{}).po_roles})}
+function poAll(){
+ const by={};(((DATA.common||{}).hub||{}).pos||[]).forEach(function(p){by[p.po_id]=p});
+ if(typeof STORE!=='undefined'&&STORE){Object.keys(DATA.jobs||{}).forEach(function(slug){
+  if(STORE.pending&&!STORE.pending(slug)&&!(J&&J.slug==slug)) return;
+  let J2;try{J2=STORE.getJob(slug)}catch(e){return}(J2&&J2.hub_pos||[]).forEach(function(p){by[p.po_id]=p})})}
+ if(J&&J.hub_pos) J.hub_pos.forEach(function(p){by[p.po_id]=p});
+ return Object.keys(by).map(function(k){return by[k]})}
+function poCounts(list){const c={draft:0,approved:0,entered_in_adaptive:0,matched:0,closed:0,orphaned:0,all:(list||[]).length};
+ (list||[]).forEach(function(p){if(p.orphaned&&p.status=='draft') c.orphaned++;else if(c[p.status]!=null) c[p.status]++});return c}
+function poFind(id){return poAll().find(function(p){return p.po_id==id})}
+function poForBid(id){const p=poAll().find(function(x){return x.source_bid_id==id||(x.lines||[]).some(function(l){return l.bid_id==id})});return p?p.po_id:''}
+function poStatusChip(p){const lab=p.orphaned&&p.status=='draft'?'Orphaned draft':(PO_LAB[p.status]||p.status||'Draft');const cls=p.orphaned?'high':(p.status=='approved'?'ok':(p.status=='draft'?'medium':'low'));return chip(lab,cls)}
+function poLinksFor(type,id){
+ const bucket={bid:'bids',order:'orders',takeoff:'takeoffs',task:'tasks',selection:'selections',sub:'subs',job:'jobs',dropbox:'files'}[type];
+ const pub=(((DATA.common||{}).po_back||{})[bucket]||{})[id]||[];
+ const rows=pub.slice();
+ poAll().forEach(function(p){if((p.links||[]).some(function(lk){return lk.type==type&&String(lk.id)==String(id)})&&!rows.some(function(x){return x.id==p.po_id}))
+  rows.push({type:'po',id:p.po_id,label:(p.po_id+' · '+(p.vendor_display||'')).replace(/ · $/,''),status:p.status,job_slug:p.job_slug})});
+ return rows.map(function(x){return {type:'po',id:x.id,label:x.label||x.id,status:x.status}})}
+function poEdit(slug,ops,msg){
+ if(!STORE){toast('Editing is not available here');return}
+ if(!STORE.who()){ensureName(function(){poEdit(slug,ops,msg)});return}
+ if(J&&J.slug==slug&&typeof edit==='function'&&typeof canEditJob==='function'&&canEditJob()){edit(ops,msg);return}
+ try{const r=STORE.edit(slug,ops);toast(msg||(r.result&&r.result.summary)||'Saved');
+  const p=typeof parseHash==='function'?parseHash():{};
+  if(p.slug==slug){J=r.J;renderJob()}
+  else if(p.page=='trackers'&&typeof renderTrackers==='function') renderTrackers('pos');
+  else if(p.page=='money') renderMoney();
+  else if(typeof route==='function') route()}
+ catch(e){toast('Not saved: '+e.message)}}
+function poAcceptBid(b){
+ const slug=b.slug||(J&&J.slug)||'';
+ poEdit(slug,[{op:'bid_status',id:b.id,status:'accepted',bid:{id:b.id,slug:slug,job:b.job||(J&&J.name)||'',trade:b.trade||'',vendor:b.vendor||'',scope:b.scope||b.notes||b.trade||'',cost_code:b.cost_code||b.cost_codes||'',terms:b.terms||'',task_id:b.task_id||'',links:b.links||[]}}],'Accepted '+b.id)}
+function poApprove(p){poEdit(p.job_slug,[{op:'po_status',id:p.po_id,status:'approved'}],p.po_id+' approved')}
+function poAdvance(p,status){poEdit(p.job_slug,[{op:'po_status',id:p.po_id,status:status}],p.po_id+' '+status)}
+function poEnter(p){
+ openModal('<div class="asheet"><h2>Adaptive PO number</h2><p class="small mut">Type the number Adaptive already has. This saves it on the hub PO. Nothing is sent to Adaptive or QuickBooks.</p><form id="pe"><input name="n" required placeholder="Adaptive PO number" autocomplete="off" style="width:100%"><div class="mbtns"><button class="pri" type="submit">Save number</button><button type="button" data-close>Cancel</button></div></form></div>',
+  function(m){m.querySelector('#pe').onsubmit=function(ev){ev.preventDefault();const n=ev.target.n.value.trim();if(!n)return;closeModal();poEdit(p.job_slug,[{op:'po_status',id:p.po_id,status:'entered_in_adaptive',adaptive_po_number:n}],p.po_id+' entered')}})}
+function poOpenBid(p){closeModal();if(p.source_bid_id&&window.HWSRelated){const b=(H().bids||[]).find(function(x){return x.id==p.source_bid_id});if(b){HWSRelated.open('bid',p.source_bid_id,{slug:p.job_slug});return}}if(p.job_slug) location.hash=jobHref(p.job_slug,'bids')}
+function poActions(p){
+ const bits=[];
+ if(p.status=='draft'&&!p.orphaned){if(poRole('approve')) bits.push('<button type="button" class="pri small" data-poact="approve">Approve</button>');else bits.push('<span class="small mut">An approver can approve</span>')}
+ if(p.status=='approved') bits.push('<button type="button" class="pri small" data-poact="enter">Enter Adaptive PO #</button>');
+ if(p.status=='entered_in_adaptive') bits.push('<button type="button" class="small" data-poact="matched">Mark matched</button>');
+ if(p.status=='matched') bits.push('<button type="button" class="small" data-poact="closed">Close</button>');
+ if(p.source_bid_id) bits.push('<button type="button" class="small" data-poact="bid">Open bid</button>');
+ if(p.job_slug) bits.push('<a class="small" href="'+jobHref(p.job_slug,"pos")+'">Open job</a>');
+ return bits.join(' ')}
+function poBindActs(root,p){if(!root)return;root.querySelectorAll('[data-poact]').forEach(function(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();
+ const a=b.dataset.poact;if(a=='approve') poApprove(p);else if(a=='enter') poEnter(p);else if(a=='matched') poAdvance(p,'matched');else if(a=='closed') poAdvance(p,'closed');else if(a=='bid') poOpenBid(p)}})}
+function poSheet(id){
+ const p=poFind(id);if(!p){toast('PO not found');return}
+ const lines=(p.lines||[]).map(function(ln){return '<tr><td>'+esc(ln.description||'')+'</td><td class="small">'+esc(ln.cost_code_adaptive||'')+'</td><td class="num">'+esc(ln.qty||'')+' '+esc(ln.unit||'')+'</td></tr>'}).join('');
+ const ev={signed:'Signed',order_confirmation:'Order confirmation',invoice_only:'Invoice only',quote_only:'Quote only'}[p.evidence_level]||p.evidence_level||'';
+ openModal('<div class="asheet"><div class="ahead"><div class="small mut">'+esc(p.job_display||p.job_slug||'')+(p.retro?' · retro':'')+'</div><h2>'+esc(p.po_id)+'</h2><div>'+poStatusChip(p)+'</div></div>'
+  +'<table class="kv small"><tr><td class="mut">Vendor</td><td>'+esc(p.vendor_adaptive||p.vendor_display||'')+(p.vendor_unmatched?' <span class="mut">(name not matched to Adaptive)</span>':'')+'</td></tr>'
+  +'<tr><td class="mut">Scope</td><td>'+esc(p.scope||'')+'</td></tr>'
+  +'<tr><td class="mut">Amount</td><td class="poamt">'+esc(p.amount_label||'amount on money page')+'</td></tr>'
+  +(p.terms?'<tr><td class="mut">Terms</td><td>'+esc(p.terms)+'</td></tr>':'')
+  +'<tr><td class="mut">Evidence</td><td>'+esc(ev)+'</td></tr>'
+  +(p.adaptive_po_number?'<tr><td class="mut">Adaptive PO</td><td>'+(p.adaptive_link&&/^https:\/\//.test(p.adaptive_link)?'<a href="'+esc(p.adaptive_link)+'" target="_blank" rel="noopener">'+esc(p.adaptive_po_number)+'</a>':esc(p.adaptive_po_number))+'</td></tr>':'')
+  +'<tr><td class="mut">Created</td><td>'+esc(p.created_by||'')+' '+esc(p.created_at||'')+'</td></tr>'
+  +(p.approved_by?'<tr><td class="mut">Approved</td><td>'+esc(p.approved_by)+' '+esc(p.approved_at||'')+'</td></tr>':'')
+  +(p.entered_by?'<tr><td class="mut">Entered</td><td>'+esc(p.entered_by)+' '+esc(p.entered_at||'')+'</td></tr>':'')
+  +'</table>'+(lines?'<div class="tw"><table><tr><th>Line</th><th>Cost code</th><th class="num">Qty</th></tr>'+lines+'</table></div>':'')
+  +'<div class="pacts">'+poActions(p)+'</div>'
+  +(window.HWSRelated?HWSRelated.html(p.links||[],{slug:p.job_slug}):'')
+  +'<p><button class="small" data-close>Close</button></p></div>',
+  function(m){poBindActs(m,p);if(window.HWSRelated) HWSRelated.bind(m,{slug:p.job_slug})})}
+function poCard(p){return '<button type="button" class="pocard" data-po="'+esc(p.po_id)+'"><div class="ph"><span class="pid">'+esc(p.po_id)+'</span>'+poStatusChip(p)+(p.retro?chip('retro','low'):'')+'</div><div class="ps"><b>'+esc(p.vendor_display||'Vendor')+'</b> · '+esc(p.job_display||'')+'</div><div class="ps">'+esc(p.scope||'')+'</div><div class="ps poamt">'+esc(p.amount_label||'amount on money page')+'</div></button>'}
+function poFilterBar(list,f){const c=poCounts(list);const chips=[['all','All',c.all],['draft','Draft',c.draft],['approved','Approved',c.approved],['entered_in_adaptive','Entered',c.entered_in_adaptive],['matched','Matched',c.matched],['closed','Closed',c.closed]];
+ if(c.orphaned) chips.push(['orphaned','Orphaned',c.orphaned]);
+ return '<div class="fbar"><div class="chips">'+chips.map(function(x){return '<button type="button" class="fchip '+(f==x[0]?'on':'')+'" data-pof="'+x[0]+'">'+x[1]+' <b>'+x[2]+'</b></button>'}).join('')+'</div></div>'
+  +'<div class="hint">'+c.draft+' draft · '+c.approved+' approved · '+c.entered_in_adaptive+' entered in Adaptive. Amounts stay on the money page.</div>'}
+function poFiltered(list,f){if(!f||f=='all') return list;if(f=='orphaned') return list.filter(function(p){return p.orphaned&&p.status=='draft'});return list.filter(function(p){return p.status==f&&!(f=='draft'&&p.orphaned)})}
+function poBindList(root,onFilter){if(!root)return;root.querySelectorAll('[data-pof]').forEach(function(b){b.onclick=function(){st.poF=b.dataset.pof;if(typeof saveUi==='function') saveUi();onFilter()}});
+ root.querySelectorAll('[data-po]').forEach(function(b){b.onclick=function(){poSheet(b.dataset.po)}});
+ root.querySelectorAll('[data-accept]').forEach(function(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();const id=b.dataset.accept;const row=(J&&J.bids||[]).reduce(function(a,p){return a||(p.subs||[]).find(function(s){return s.id==id})},null)||(H().bids||[]).find(function(x){return x.id==id});
+  if(row) poAcceptBid(row)}})}
+function poBidExtras(b){const id=b.po_id||poForBid(b.id);let h='';if(id) h+='<button type="button" class="fchip" data-po="'+esc(id)+'">PO '+esc(id)+'</button>';
+ const stt=String(b.status||'').toLowerCase();
+ if(!id&&['awarded','accepted','won','declined','closed'].indexOf(stt)<0) h+='<button type="button" class="small" data-accept="'+esc(b.id)+'">Accept bid</button>';
+ return h}
+function mPos(M){
+ const list=poFiltered((J&&J.hub_pos)||[],st.poF||'all');
+ const cards=list.map(poCard).join('')||emptyState('No purchase orders yet','A draft appears here when a bid on this job is marked accepted.');
+ const tracker=(J.pos||[]);
+ const desk=tracker.length&&!(typeof isPhone==='function'&&isPhone())?'<div class="tw" style="margin-top:12px"><table><tr><th>Tracker PO</th><th>Issued to</th><th>Status</th><th>Ordered</th></tr>'+tracker.map(function(p){return '<tr><td class="nowrap">'+esc(p.po)+'<div class="mut small">'+esc(p.id)+'</div></td><td>'+esc(p.vendor)+'</td><td>'+esc(p.tracker_status||p.status||'')+'</td><td class="nowrap">'+esc(mdy(p.ordered))+'</td></tr>'}).join('')+'</table></div>':'';
+ M.innerHTML=panel('Purchase orders','Drafts appear when a bid is accepted. Dollar amounts stay on the money page.',poFilterBar((J&&J.hub_pos)||[],st.poF||'all')+'<div class="pocards">'+cards+'</div>'+desk,'');
+ poBindList(M,function(){mPos(M)})}
+function renderPosTrackers(){
+ const all=poAll(), f=st.poF||'draft', list=poFiltered(all,f);
+ const q=(st.poQ||'').toLowerCase();
+ const rows=list.filter(function(p){return !q||[p.po_id,p.vendor_display,p.job_display,p.scope,p.status].join(' ').toLowerCase().indexOf(q)>=0});
+ return poFilterBar(all,f)+'<label class="sbox">'+ico('search')+'<input type="search" id="poq" placeholder="PO, vendor, job" value="'+esc(st.poQ||'')+'"></label><div class="pocards">'+rows.map(poCard).join('')+'</div>'+(rows.length?'':'<div class="none">No purchase orders in this filter</div>')}
+function renderMoney(){
+ const who=STORE&&STORE.who?STORE.who():'';
+ const list=poAll();
+ let body;
+ if(!poRole('money')) body='<div class="moneybox"><b>Amounts stay on the money page.</b><div class="small mut">Money viewers can open dollar amounts. Everyone else sees the PO, the vendor, the status, and the scope.</div></div>';
+ else body='<div class="moneybox" id="moneybox"><b>Private amounts</b><div class="small mut">Loaded only for '+esc(who||'you')+' from the office money file. They are not in the team data file.</div><button class="pri small" id="loadmoney" type="button">Load amounts</button></div>';
+ const cards=list.map(function(p){return '<div class="pocard" data-po="'+esc(p.po_id)+'"><div class="ph"><span class="pid">'+esc(p.po_id)+'</span>'+poStatusChip(p)+'</div><div class="ps">'+esc(p.vendor_display||'')+' · '+esc(p.job_display||'')+'</div><div class="ps poamt" data-money="'+esc(p.po_id)+'">'+esc(p.amount_label||'amount on money page')+'</div></div>'}).join('')||'<div class="none">No purchase orders yet</div>';
+ hubShell('home','<div class="hph"><h1>Money</h1></div>'+body+'<div class="pocards">'+cards+'</div>');
+ document.querySelectorAll('[data-po]').forEach(function(b){b.onclick=function(){poSheet(b.dataset.po)}});
+ const btn=document.getElementById('loadmoney');if(btn) btn.onclick=function(){poLoadMoney()}}
+function poLoadMoney(){
+ const who=STORE&&STORE.who?STORE.who():'';
+ fetch('api/money/pos?who='+encodeURIComponent(who),{credentials:'same-origin'}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.ok) throw new Error(j.error||'Could not load amounts') ;return j.money||{}})}).then(function(money){
+  document.querySelectorAll('[data-money]').forEach(function(el){const row=money[el.dataset.money];if(!row) return;const n=row.total;el.textContent=(n==null?'':('$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})))});
+  const box=document.getElementById('moneybox');if(box) box.querySelector('#loadmoney').remove()}).catch(function(e){toast(e.message||'Amounts are not in this copy')})}
+(function(){const R=window.HWSRelated;if(!R||R._po) return;const open=R.open.bind(R),bind=R.bind.bind(R);
+ R.open=function(type,id,o){if(type=='po'){poSheet(id);return}if(type=='takeoff'){toast('Takeoff '+id);return}if(type=='selection'){const slug=o&&o.slug;if(slug){closeModal();location.hash=jobHref(slug,'selections');return}}return open(type,id,o)};
+ R.bind=function(root,o){bind(root,o);root.querySelectorAll('[data-po]').forEach(function(b){b.onclick=function(e){e.preventDefault();poSheet(b.dataset.po)}});root.querySelectorAll('[data-accept]').forEach(function(b){b.onclick=function(e){e.preventDefault();const id=b.dataset.accept;const row=(H().bids||[]).find(function(x){return x.id==id});if(row) poAcceptBid(row)}})};
+ R._po=1})();
 
 /* "Who did it" (warranty & service), request 9/27 8:10 PM.
    Per job: each trade with company, contact, one-tap Text / Call / Email (sms: / tel: / mailto: only; they open the phone's own composer,
@@ -2149,6 +2460,538 @@ function mWhoDid(M){const W=wdJob(J.slug);const q=(st.wdq||'');const T=wdTrades(
 /* Jobs tab: trade matches shown on the job card */
 function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
  return `<div class="wdm">${m.slice(0,4).map(t=>`<div><b>${esc(t.trade_label||t.trade)}</b>: ${esc(t.company||'')}${t.contact_name?' · '+esc(t.contact_name):''}${wdPhones(t).length?' · '+esc(wdPhones(t)[0].number):''}</div>`).join('')}${m.length>4?`<div class="mut">+${m.length-4} more</div>`:''}</div>`}
+
+/* Budget vs actual and the Preliminary selection status.
+   Dollar amounts are read from the private money file (window.__HWS_MONEY, or GET /api/money.json
+   on the office box) and from this phone's overlay. They are not taken from the team schedule
+   payload. The money page is limited to common.money_viewers.
+   Committed POs may also arrive later in money.pos (data/money-pos.json). A missing list changes nothing. */
+let MONEY=window.__HWS_MONEY||{version:1,selections:{},jobs:{},pos:[],actuals:[]};
+const MONEY_KEY='hws-money-overlay-v1';
+function moneyViewers(){return ((DATA&&DATA.common&&DATA.common.money_viewers)||[])}
+function cogsName(raw){raw=String(raw||'').trim();if(!raw)return '';const map=(DATA&&DATA.common&&DATA.common.adaptive_map)||{};
+ if(map[raw])return map[raw];const hit=Object.keys(map).find(k=>String(map[k]).toLowerCase()===raw.toLowerCase());return hit?map[hit]:raw}
+function canSeeMoney(){const blob=[(STORE&&STORE.who)?STORE.who():'',(SY&&SY.A&&SY.A.describe)?SY.A.describe():''].join(' ');
+ return moneyViewers().some(n=>new RegExp('\\b'+String(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(blob))}
+function overlay(){let o={status:{},estimates:{}};try{o=Object.assign(o,JSON.parse(localStorage.getItem(MONEY_KEY)||'{}'))}catch(e){}
+ o.status=o.status||{};o.estimates=o.estimates||{};return o}
+function saveOverlay(o){try{localStorage.setItem(MONEY_KEY,JSON.stringify(o))}catch(e){}}
+function withOverlay(s){const o=overlay().status[s.id];if(!o)return s;
+ return Object.assign({},s,{budget_status:o.budget_status||'',cost_code:o.cost_code||s.cost_code||'',bt_cost_code:o.bt_cost_code||s.bt_cost_code||'',vendor:o.vendor!=null?o.vendor:(s.vendor||''),estimate_kind:o.estimate_kind||s.estimate_kind||'',bid_id:o.bid_id||s.bid_id||'',po_id:o.po_id||s.po_id||'',task_id:o.task_id||s.task_id||'',takeoff_id:o.takeoff_id||s.takeoff_id||'',designbook_id:o.designbook_id||s.designbook_id||'',takeoff_label:o.takeoff_label||s.takeoff_label||''})}
+function estimateOf(id){const o=overlay().estimates[id];if(o&&o.estimate!=null&&o.estimate!=='')return o;return (MONEY.selections||{})[id]||null}
+function budgetBucket(s){const b=String(s.budget_status||'').toLowerCase();if(b==='preliminary')return 'preliminary';
+ if(b==='approved'||String(s.approval||'').toLowerCase().startsWith('approved')||s.status==='Client Approved')return 'committed';return ''}
+function selBudgetChip(s){const x=withOverlay(s);const b=budgetBucket(x);if(b==='preliminary')return chip('Preliminary','prelim');
+ if((x.budget_status||'').toLowerCase()==='approved')return chip('Approved','ok');return ''}
+function poFirm(status){const s=String(status||'').trim().toLowerCase();if(!s||s.startsWith('draft')||s.includes('not ordered'))return false;
+ return ['approved','released','issued','open','committed','work complete','paid'].some(p=>s.startsWith(p))}
+function jobSelections(slug){let job=null;try{job=STORE&&STORE.getJob?STORE.getJob(slug):(DATA.jobs||{})[slug]}catch(e){job=(DATA.jobs||{})[slug]}
+ return ((job&&job.selections)||[]).map(withOverlay)}
+function jobPos(slug){const by={};(MONEY.pos||[]).filter(p=>p.job===slug).forEach(p=>{if(p.id)by[p.id]=p});
+ let job=null;try{job=STORE&&STORE.getJob?STORE.getJob(slug):(DATA.jobs||{})[slug]}catch(e){job=(DATA.jobs||{})[slug]}
+ (job&&job.pos||[]).forEach(p=>{const id=p.id||p.po;if(id&&!by[id])by[id]=p});return Object.values(by)}
+function blankLine(code){return {cost_code:code,bt_code:'',title:code,budget:0,preliminary:0,committed:0,pending:0,actual:0,remaining:0,projected:0,firm:0,preliminary_items:[],committed_items:[],po_items:[],pending_items:[],actual_items:[],budget_items:[]}}
+function lineMap(lines){const m={};(lines||[]).forEach(l=>{m[l.cost_code]=Object.assign(blankLine(l.cost_code),JSON.parse(JSON.stringify(l)))});return m}
+function jobDirty(slug){return Object.values(overlay().status).some(s=>s.slug===slug)}
+function recompute(slug, baseLines){const acc=lineMap(baseLines);Object.values(acc).forEach(l=>{l.preliminary=0;l.committed=0;l.pending=0;l.preliminary_items=[];l.committed_items=[];l.po_items=[];l.pending_items=[]});
+ const firmIds={};
+ jobPos(slug).forEach(p=>{const code=p.cost_code||'';if(!code)return;const r=acc[code]||(acc[code]=blankLine(code));
+  const amt=+p.amount||0;const item={id:p.id||p.po||'',kind:'po',label:p.title||p.vendor||p.id,amount:amt,vendor:p.vendor||'',status:p.status||'',selection_id:p.selection_id||''};
+  if(!poFirm(p.status)){r.pending+=amt;r.pending_items.push(item);return}
+  r.committed+=amt;r.po_items.push(item);r.committed_items.push(item);if(item.id)firmIds[item.id]=true});
+ jobSelections(slug).forEach(s=>{const bucket=budgetBucket(s);if(!bucket||!s.cost_code)return;const r=acc[s.cost_code]||(acc[s.cost_code]=blankLine(s.cost_code));
+  const est=estimateOf(s.id);const amt=est&&est.estimate!=null?+est.estimate||0:0;
+  const item={id:s.id,kind:'selection',label:s.choice||s.location||s.title||s.id,amount:amt,estimate_kind:(est&&est.kind)||s.estimate_kind||'',vendor:s.vendor||'',budget_status:bucket,preliminary:bucket==='preliminary'};
+  if(bucket==='preliminary'){r.preliminary+=amt;r.preliminary_items.push(item);return}
+  const ids=new Set();if(s.po_id)ids.add(String(s.po_id));String(s.order_link||'').split(/[,;/]/).forEach(p=>{p=p.trim();if(p)ids.add(p)});
+  let covered='';ids.forEach(id=>{if(firmIds[id])covered=id});
+  if(covered){item.on_po=covered;item.amount=0;r.committed_items.push(item)}
+  else{r.committed+=amt;r.committed_items.push(item)}});
+ const lines=Object.values(acc);lines.forEach(r=>{r.firm=r.committed;r.remaining=r.budget-Math.max(r.committed,r.actual||0);r.projected=r.committed+r.preliminary});
+ lines.sort((a,b)=>a.cost_code<b.cost_code?-1:1);return lines}
+function linesFor(slug){const base=(MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].lines)||[];
+ if(!canSeeMoney())return base.map(l=>({cost_code:l.cost_code,title:l.title,bt_code:l.bt_code,preliminary_count:(l.preliminary_items||[]).length,committed_count:(l.committed_items||[]).length,po_count:(l.po_items||[]).length,pending_count:(l.pending_items||[]).length,actual_count:(l.actual_items||[]).length}));
+ if(!jobDirty(slug)&&base.length)return base;return recompute(slug,base)}
+function totalsOf(lines){const t={budget:0,preliminary:0,committed:0,pending:0,actual:0,remaining:0,projected:0,firm:0};
+ lines.forEach(l=>Object.keys(t).forEach(k=>{t[k]+=+l[k]||0}));return t}
+function moneyJobName(slug){const j=((DATA.common||{}).all_jobs||[]).find(x=>x.slug===slug);return (j&&j.name)||(DATA.jobs[slug]&&DATA.jobs[slug].name)||slug}
+function clientLinks(s,slug){const L=(s.links||[]).filter(x=>x&&x.type!=='selection');
+ if(s.cost_code&&!L.some(x=>x.type==='budget'))L.unshift({type:'budget',id:slug+':'+s.cost_code,label:s.cost_code});return L}
+function renderSelPhone(M){const all=(J.selections||[]).map(withOverlay);const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};
+ show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
+ M.innerHTML=panel('Selections',`${real.length} real · ${all.length-real.length} template`,
+  show.length?Object.entries(cats).map(([c,l])=>`<div class="pgh">${esc(c)} <span class="mut">(${l.length})</span></div>`+l.map(x=>`<button type="button" class="selcard" data-sel="${esc(x.id)}"><span class="pbody"><span class="pt">${esc(x.location||x.choice||x.title)}</span><span class="ps">${esc([x.choice&&x.location?x.choice:'',x.vendor||x.brand||'',x.cost_code||''].filter(Boolean).join(' · '))}</span></span><span class="psrc">${selBudgetChip(x)}${chip(x.status||'—','low')}</span></button>`).join('')).join(''):emptyState('No selections yet',''),
+  (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:''));
+ const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};
+ bindSelRows(M);const focus=parseHash().focus;if(focus&&!modalEl)openSelection(J.slug,focus)}
+function bindSelRows(M){M.querySelectorAll('[data-sel]').forEach(el=>{el.onclick=()=>openSelection((J&&J.slug)||parseHash().slug,el.getAttribute('data-sel'))})}
+function openSelection(slug,id){const s=jobSelections(slug).find(x=>x.id===id);if(!s){toast('Selection not found');return}
+ const moneyOk=canSeeMoney();const est=estimateOf(id);const b=budgetBucket(s);const codes=(DATA.common&&DATA.common.adaptive_codes)||[];
+ const kind=(est&&est.kind)||s.estimate_kind||'allowance';
+ const estField=moneyOk?`<label>Estimated cost<input name="estimate" inputmode="decimal" value="${est&&est.estimate!=null?esc(est.estimate):''}" placeholder="Allowance or quote"></label>
+  <label>Kind<select name="estimate_kind"><option value="allowance" ${kind!=='quote'?'selected':''}>Allowance</option><option value="quote" ${kind==='quote'?'selected':''}>Quote</option></select></label>`:'<p class="small mut">The estimate is on the money page.</p>';
+ const edit=moneyOk?`<label class="cb"><input type="checkbox" name="prelim" ${b==='preliminary'?'checked':''}> Preliminary <span class="mut">in the budget before the client approves</span></label>
+  ${estField}<label>Cost code<input name="cost_code" list="acodes" value="${esc(s.cost_code||'')}" placeholder="Tile Materials"></label>
+  <datalist id="acodes">${codes.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+  <label>Vendor <span class="mut">if known</span><input name="vendor" value="${esc(s.vendor||'')}" placeholder="Optional"></label>`:`<p>${selBudgetChip(s)||chip(s.status||'—','low')}</p><p class="small">${esc(s.cost_code||'')} ${s.vendor?'· '+esc(s.vendor):''}</p>`;
+ const h=`<div class="asheet"><div class="ahead"><div class="small mut">${esc(moneyJobName(slug))} · selection</div><h2>${esc(s.choice||s.title||id)}</h2></div>
+  <p>${chip(s.status||'—','low')} ${selBudgetChip(s)} ${s.estimate_kind&&moneyOk?chip(s.estimate_kind,'low'):''}</p>
+  <form id="sf" class="fg">${edit}<div class="mbtns sticky">${moneyOk?'<button class="pri" type="submit">Save</button>':''}${moneyOk&&b==='preliminary'?'<button type="button" id="appr">Approve</button>':''}<span class="sp"></span><button type="button" data-close>Close</button></div></form>
+  ${(typeof HWSRelated==='function'||(window.HWSRelated))?HWSRelated.html(clientLinks(s,slug),{slug}):''}</div>`;
+ openModal(h,m=>{if(window.HWSRelated)HWSRelated.bind(m,{slug});const f=m.querySelector('#sf');if(f)f.onsubmit=ev=>{ev.preventDefault();const fd=new FormData(f);
+  const prelim=!!(f.elements.prelim&&f.elements.prelim.checked);const body={id,budget_status:prelim?'preliminary':(b==='committed'&&!prelim?(s.budget_status==='approved'?'approved':''):''),
+   estimate:fd.get('estimate'),estimate_kind:fd.get('estimate_kind')||'allowance',cost_code:fd.get('cost_code')||'',vendor:fd.get('vendor')||'',who:STORE&&STORE.who?STORE.who():''};
+  if(!prelim&&b==='preliminary')body.budget_status='';
+  saveSelection(slug,body)};
+  const ap=m.querySelector('#appr');if(ap)ap.onclick=()=>{const fd=new FormData(f);saveSelection(slug,{id,budget_status:'approved',estimate:fd.get('estimate'),estimate_kind:fd.get('estimate_kind')||s.estimate_kind||'allowance',cost_code:fd.get('cost_code')||s.cost_code||'',vendor:fd.get('vendor')||s.vendor||'',who:STORE&&STORE.who?STORE.who():''})}})}
+function saveSelection(slug,body){body.slug=slug;const bs=String(body.budget_status||'').toLowerCase();
+ if(bs==='preliminary'||bs==='approved'){const n=String(body.estimate==null?'':body.estimate).replace(/[$,]/g,'');
+  body.cost_code=cogsName(body.cost_code);if(!body.cost_code){toast('Preliminary needs a cost code');return}
+  if(n===''||isNaN(+n)||+n<=0){const prev=estimateOf(body.id);if(bs==='approved'&&prev&&prev.estimate){body.estimate=prev.estimate;body.estimate_kind=body.estimate_kind||prev.kind||'allowance'}
+   else{toast('Preliminary needs an estimated cost (allowance or quote)');return}}
+  else body.estimate=+n}
+ const o=overlay();if(bs){o.status[body.id]={slug,budget_status:bs,cost_code:body.cost_code||'',vendor:body.vendor||'',estimate_kind:body.estimate_kind||'allowance'};
+  if(body.estimate!=null&&body.estimate!=='')o.estimates[body.id]={estimate:+body.estimate,kind:body.estimate_kind||'allowance',job:slug}}
+ else{delete o.status[body.id]}
+ saveOverlay(o);closeModal();
+ if(parseHash().focus)history.replaceState(null,'','#/job/'+slug+'/'+(parseHash().mod||'selections'));
+ const post=()=>{if(!/^(127\.0\.0\.1|localhost)$/.test(location.hostname)||!canSeeMoney())return;
+  fetch('/api/job/'+slug+'/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(!j.ok)toast(j.error||'Office save failed')}).catch(()=>{})};
+ post();toast(bs==='approved'?'Approved — moved to committed':(bs==='preliminary'?'Marked preliminary':'Updated'));
+ if(J&&J.slug===slug){const fn=MODFN()[curMod()];if(fn)fn($('#mod'))}else if(typeof renderMoney==='function'&&parseHash().page==='money')renderMoney()}
+function bvaCard(slug,l,show$){const code=l.cost_code;const row=(kind,label,val,n,tag)=>show$?`<button type="button" class="bvanum" data-drill="${kind}" data-slug="${esc(slug)}" data-code="${esc(code)}"><span>${label}${tag?' '+chip('Preliminary','prelim'):''}${n?` <span class="mut">${n}</span>`:''}</span><b>${fmt$(val)}</b></button>`
+ :`<div class="bvanum"><span>${label}${tag?' '+chip('Preliminary','prelim'):''} <span class="mut">${n||0}</span></span></div>`;
+ return `<article class="bvacard"><h3>${esc(l.title&&l.title!==code?l.title:code)}</h3><div class="small mut">${esc(code)}${l.bt_code&&l.bt_code!==code?' · '+esc(l.bt_code):''}</div>
+  ${row('budget','Budget',l.budget,(l.budget_items||[]).length)}${row('preliminary','Preliminary',l.preliminary,(l.preliminary_items||[]).length,true)}
+  ${row('committed','Committed',l.committed,(l.committed_items||[]).length)}
+  ${row('pending','Pending',l.pending,(l.pending_items||[]).length)}
+  ${row('actual','Actual',l.actual,(l.actual_items||[]).length)}${row('remaining','Remaining',l.remaining,0)}
+  ${show$?`<button type="button" class="bvanum proj" data-drill="projected" data-slug="${esc(slug)}" data-code="${esc(code)}"><span>Projected ${chip('Preliminary','prelim')} <span class="mut">firm + preliminary</span></span><b>${fmt$(l.projected)}</b></button>`:''}</article>`}
+function bindDrill(root){root.querySelectorAll('[data-drill]').forEach(b=>b.onclick=()=>openDrill(b.dataset.slug,b.dataset.code,b.dataset.drill));
+ root.querySelectorAll('[data-jobmoney]').forEach(b=>b.onclick=()=>{location.hash='#/job/'+b.dataset.jobmoney+'/money'})}
+function itemsFor(slug,code,kind){const lines=code?linesFor(slug).filter(l=>l.cost_code===code):linesFor(slug);const out=[];
+ lines.forEach(l=>{const pick=kind==='budget'?l.budget_items:kind==='preliminary'?l.preliminary_items:kind==='pending'?l.pending_items:kind==='actual'?l.actual_items:kind==='po'?l.po_items:kind==='projected'?(l.committed_items||[]).concat(l.preliminary_items||[]):(kind==='remaining'?[]:l.committed_items);
+  (pick||[]).forEach(it=>out.push(Object.assign({cost_code:l.cost_code},it)))});return out}
+function openDrill(slug,code,kind){if(!canSeeMoney()){toast('Money is limited to the money viewers');return}
+ const labels={budget:'Budget',preliminary:'Preliminary',committed:'Committed',pending:'Pending',actual:'Actual',po:'Purchase orders',projected:'Projected',remaining:'Remaining'};
+ if(kind==='remaining'){toast('Remaining is budget minus the larger of committed and actual');return}
+ const items=itemsFor(slug,code,kind);
+ const rows=items.map(it=>`<button type="button" class="hrow" data-item="${esc(it.kind||'selection')}|${esc(it.id)}|${esc(slug)}"><span class="lb"><span class="lt">${esc(it.label||it.id)}${it.preliminary?' '+chip('Preliminary','prelim'):''}</span><span class="ls">${esc(it.cost_code||code)}${it.vendor?' · '+esc(it.vendor):''}${it.status?' · '+esc(it.status):''}${it.on_po?' · on '+esc(it.on_po):''}</span></span><b>${fmt$(it.amount)}</b></button>`).join('')||'<div class="none">Nothing in this column.</div>';
+ openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(moneyJobName(slug))}${code?' · '+esc(code):''}</div><h2>${esc(labels[kind]||kind)} <span class="mut">${items.length}</span></h2></div><div class="rows">${rows}</div><p><button type="button" data-close>Close</button></p></div>`,
+  m=>m.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>{const [k,id,s]=b.dataset.item.split('|');openMoneyItem(s,k,id,code)}))}
+function openMoneyItem(slug,kind,id){if(kind==='selection'){openSelection(slug,id);return}
+ if(kind==='po'&&window.HWSRelated){const hit=(H().orders||[]).find(x=>x.id===id);if(hit){HWSRelated.open('order',id,{slug});return}}
+ const lines=linesFor(slug);let it=null;lines.forEach(l=>['po_items','pending_items','actual_items','budget_items','committed_items','preliminary_items'].forEach(k=>{(l[k]||[]).forEach(x=>{if(x.id===id)it=Object.assign({cost_code:l.cost_code},x)})}));
+ if(!it){toast('Item not found');return}
+ const back=it.selection_id?`<button type="button" class="hrow" id="backsel"><span class="lb"><span class="lt">Selection</span><span class="ls">${esc(it.selection_id)}</span></span></button>`:'';
+ openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(moneyJobName(slug))} · ${esc(it.cost_code||'')}</div><h2>${esc(it.label||id)}</h2></div>
+  <table class="kv small"><tr><td class="mut">Amount</td><td>${fmt$(it.amount)}</td></tr>${it.status?`<tr><td class="mut">Status</td><td>${esc(it.status)}</td></tr>`:''}${it.vendor?`<tr><td class="mut">Vendor</td><td>${esc(it.vendor)}</td></tr>`:''}${it.memo?`<tr><td class="mut">Memo</td><td>${esc(it.memo)}</td></tr>`:''}${it.source?`<tr><td class="mut">Source</td><td>${esc(it.source)}</td></tr>`:''}</table>
+  ${back}<p><button type="button" class="hrow" id="backbud"><span class="lb"><span class="lt">Budget line</span><span class="ls">${esc(it.cost_code||'')}</span></span></button></p>
+  <p><button type="button" data-close>Close</button></p></div>`,
+  m=>{const s=m.querySelector('#backsel');if(s)s.onclick=()=>openSelection(slug,it.selection_id);m.querySelector('#backbud').onclick=()=>{closeModal();location.hash='#/job/'+slug+'/money/'+encodeURIComponent(it.cost_code)}})}
+function moneySection(slug){const show$=canSeeMoney();const lines=linesFor(slug);const idx=((DATA.jobs||{})[slug]||{}).budget_index||[];
+ const src=show$?lines:(idx.length?idx.map(l=>({cost_code:l.cost_code,title:l.title,bt_code:l.bt_code,preliminary_count:l.preliminary_count,committed_count:l.committed_count,po_count:l.po_count,pending_count:l.pending_count,actual_count:l.actual_count})):lines);
+ if(!src.length)return '<div class="none">No budget lines for this job yet.</div>';
+ if(!show$)return `<div class="note">Dollar amounts are on the money page, limited to ${esc(moneyViewers().join(' and '))}.</div>`+src.map(l=>`<article class="bvacard"><h3>${esc(l.title||l.cost_code)}</h3><div class="small mut">${esc(l.cost_code)}</div><div class="small">Preliminary ${l.preliminary_count||0} · Committed ${l.committed_count||0} · Pending ${l.pending_count||0} · POs ${l.po_count||0} · Actual ${l.actual_count||0}</div></article>`).join('');
+ const grab=k=>lines.reduce((a,l)=>a.concat(l[k]||[]),[]);
+ const total=Object.assign({cost_code:'',title:'Job total',bt_code:''},totalsOf(lines),{budget_items:grab('budget_items'),preliminary_items:grab('preliminary_items'),committed_items:grab('committed_items'),pending_items:grab('pending_items'),po_items:grab('po_items'),actual_items:grab('actual_items')});
+ return `<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
+}
+function mMoney(M){if(!J)return;M.innerHTML=panel('Budget vs actual',esc(J.name),moneySection(J.slug));bindDrill(M);
+ const focus=parseHash().focus;if(focus&&canSeeMoney()&&!modalEl)openDrill(J.slug,focus,'budget')}
+function prelimHomeCount(){let n=0;Object.keys(DATA.jobs||{}).forEach(slug=>{const idx=((DATA.jobs[slug]||{}).budget_index)||[];if(idx.length)idx.forEach(l=>{n+=+l.preliminary_count||0});else jobSelections(slug).forEach(s=>{if(budgetBucket(s)==='preliminary')n++})});return n}
+function renderMoney(){if(!canSeeMoney()){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="none">Budget vs actual is limited to ${esc(moneyViewers().join(' and '))}.</div>`);return}
+ const slugs=Object.keys(DATA.jobs||{});
+ const cards=slugs.map(slug=>{const lines=linesFor(slug);if(!lines.length)return '';const t=totalsOf(lines);const n=lines.reduce((a,l)=>a+(l.preliminary_items||[]).length,0);
+  return `<button type="button" class="hrow" data-jobmoney="${esc(slug)}"><span class="lb"><span class="lt">${esc(moneyJobName(slug))}</span><span class="ls">Budget ${fmt$(t.budget)} · Committed ${fmt$(t.committed)}${n?' · '+n+' preliminary':''}</span></span>${n?chip(n+' preliminary','prelim'):''}</button>`}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
+ hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut">Budget vs actual · private amounts</div></div><div class="rows">${cards}</div>`);bindDrill(document)}
+function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
+function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
+function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
+async function loadMoneyFile(){if(!canSeeMoney())return;if(window.__HWS_MONEY)return;if(!/^(127\.0\.0\.1|localhost)$/.test(location.hostname))return;
+ try{const who=STORE&&STORE.who?STORE.who():'';const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
+  const ct=r.headers.get('content-type')||'';if(!r.ok||!/json/.test(ct))return;const doc=await r.json();if(doc&&doc.jobs){MONEY=doc;if(typeof route==='function')route()}}catch(e){}}
+
+/* Plan Room: list a job's plan PDFs from the signed-in Dropbox, then open one in the
+   massing-pdf viewer. The access token stays in localStorage (hws-dbx-auth).
+   Folder rules match planroom.py. This file runs before ui3.js boot() and wraps the
+   shell functions so the button and nav do not edit the shared templates. */
+const PROJ = "/Harswells Team Folder/Harswells Projects";
+const PLAN_CANDIDATES = [
+  "030 Plans & Permits/01 Active Construction Documents",
+  "030 Plans & Permits",
+  "030 Plans, Permits & Engineering",
+  "010 Plans",
+  "Plans",
+];
+const NUMBERED_PLANS_RE = /^\d+\s+plans\b/i;
+
+function isArchiveName(name) {
+  const n = String(name || "").trim().replace(/\s+/g, " ").toLowerCase();
+  if (n === "archive") return true;
+  return /^99\s*archive\b/.test(n);
+}
+function relSkipped(rel) {
+  const parts = String(rel || "").replace(/\\/g, "/").split("/").filter((p) => p && p !== ".");
+  if (parts.length < 2) return false;
+  return parts.slice(0, -1).some((p) => isArchiveName(p) || p.toLowerCase() === "_takeoffs");
+}
+function loadedJob(slug) {
+  let job = null;
+  try {
+    if (typeof STORE !== "undefined" && STORE && STORE.getJob) job = STORE.getJob(slug);
+  } catch (e) { job = null; }
+  if (!job && typeof DATA !== "undefined" && DATA && DATA.jobs) job = DATA.jobs[slug];
+  return job || {};
+}
+function jobFolder(slug) {
+  const hit = (JL(slug).items || []).find((x) => x.label === "Job folder" && x.sub);
+  if (hit) return String(hit.sub).replace(/^\/+|\/+$/g, "");
+  // Dropbox folder comes from the private job record (data.json jobs[slug].folder).
+  return String(loadedJob(slug).folder || "").replace(/^\/+|\/+$/g, "");
+}
+function jobTitle(slug) {
+  const name = String(loadedJob(slug).name || "").trim();
+  return name || "This job";
+}
+function plansRelFromLinks(slug) {
+  const hit = (JL(slug).items || []).find((x) => x.label === "Plans (active set)" && x.sub);
+  return hit ? String(hit.sub).replace(/^\/+|\/+$/g, "") : "";
+}
+function takeoffPage() {
+  return new URL("plan-room/takeoff/index.html", location.href);
+}
+function sampleTakeoffHref(demo) {
+  const u = takeoffPage();
+  u.searchParams.set("sample", "1");
+  if (demo) u.searchParams.set("demo", demo);
+  u.searchParams.set("back", location.hash || "#/plans");
+  return u.href;
+}
+function sheetHref(slug, plansPath, file) {
+  const u = takeoffPage();
+  u.searchParams.set("job", slug);
+  u.searchParams.set("pdf", file.path);
+  u.searchParams.set("name", file.name);
+  u.searchParams.set("rel", file.rel);
+  u.searchParams.set("plans", plansPath);
+  u.searchParams.set("back", location.hash || ("#/job/" + slug + "/plans"));
+  return u.href;
+}
+function azWhen(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleString("en-US", { timeZone: "America/Phoenix", month: "short", day: "numeric", year: "numeric" });
+}
+function fmtSize(n) {
+  n = +n || 0;
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + " KB";
+  return (n / 1048576).toFixed(n < 10485760 ? 1 : 0) + " MB";
+}
+
+async function dbxRpc(ep, body) {
+  const A = HWSSync.DropboxBackend();
+  if (!A.ready()) { const e = new Error("Sign in with Dropbox to see this job's plans."); e.code = "auth"; throw e; }
+  await A.account();
+  const auth = HWSSync.LS.get("hws-dbx-auth");
+  if (!auth || !auth.access_token) { const e = new Error("Sign in with Dropbox to see this job's plans."); e.code = "auth"; throw e; }
+  const headers = { Authorization: "Bearer " + auth.access_token, "Content-Type": "application/json" };
+  const cfg = (HWSSync.CFG && HWSSync.CFG.dropbox) || {};
+  if (cfg.pathRoot === "home") headers["Dropbox-API-Path-Root"] = '{".tag": "home"}';
+  else if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
+  const r = await fetch("https://api.dropboxapi.com/2/" + ep, {
+    method: "POST", credentials: "omit", headers, body: body == null ? "null" : JSON.stringify(body),
+  });
+  if (r.status === 401) { const e = new Error("Dropbox session expired. Sign in again."); e.code = "auth"; throw e; }
+  if (r.status === 409) {
+    const t = await r.text();
+    if (/not_found/.test(t)) return null;
+    throw new Error("Dropbox could not read that folder.");
+  }
+  if (!r.ok) throw new Error("Dropbox HTTP " + r.status);
+  return r.json();
+}
+async function listFolder(path, recursive) {
+  let j = await dbxRpc("files/list_folder", { path: path, recursive: !!recursive, limit: 2000 });
+  if (!j) return null;
+  const entries = (j.entries || []).slice();
+  while (j.has_more) {
+    j = await dbxRpc("files/list_folder/continue", { cursor: j.cursor });
+    if (!j) break;
+    (j.entries || []).forEach((x) => entries.push(x));
+  }
+  return entries;
+}
+async function folderExists(path) {
+  const entries = await listFolder(path, false);
+  return entries != null;
+}
+async function resolvePlansRel(jobPath, topNames) {
+  const cache = {};
+  async function exists(rel) {
+    const parts = rel.split("/");
+    if (topNames.indexOf(parts[0]) < 0) return false;
+    if (parts.length === 1) return true;
+    if (!(parts[0] in cache)) cache[parts[0]] = (await listFolder(jobPath + "/" + parts[0], false)) || [];
+    return cache[parts[0]].some((x) => x[".tag"] === "folder" && x.name === parts[1]);
+  }
+  for (let i = 0; i < PLAN_CANDIDATES.length; i++) {
+    if (await exists(PLAN_CANDIDATES[i])) return PLAN_CANDIDATES[i];
+  }
+  const extra = topNames.filter((name) => PLAN_CANDIDATES.indexOf(name) < 0 && !isArchiveName(name) && NUMBERED_PLANS_RE.test(String(name || "").trim()));
+  extra.sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+  for (let i = 0; i < extra.length; i++) {
+    if (await exists(extra[i])) return extra[i];
+  }
+  return "";
+}
+async function loadPlans(slug) {
+  const folder = jobFolder(slug);
+  if (!folder) return { error: "This job has no Dropbox project folder yet.", code: "nofolder" };
+  const jobPath = PROJ + "/" + folder;
+  let plansRel = plansRelFromLinks(slug);
+  if (plansRel && !(await folderExists(jobPath + "/" + plansRel))) plansRel = "";
+  if (!plansRel) {
+    const top = await listFolder(jobPath, false);
+    if (!top) return { error: "The project folder for " + jobTitle(slug) + " is not in Dropbox.", code: "missing" };
+    const names = top.filter((x) => x[".tag"] === "folder").map((x) => x.name);
+    plansRel = await resolvePlansRel(jobPath, names);
+  }
+  if (!plansRel) return { error: "No Plans folder for " + jobTitle(slug) + ". Looked for 030 Plans & Permits, 010 Plans, and other numbered Plans folders.", code: "noplans" };
+  const plansPath = jobPath + "/" + plansRel;
+  const entries = await listFolder(plansPath, true);
+  if (!entries) return { error: "The Plans folder is not in Dropbox.", code: "noplans", folder: folder, plansRel: plansRel };
+  const pdfs = [];
+  entries.forEach((x) => {
+    if (x[".tag"] !== "file" || !/\.pdf$/i.test(x.name || "")) return;
+    const full = x.path_display || x.path_lower || "";
+    const prefix = plansPath.replace(/\/$/, "");
+    let rel = full;
+    if (full.toLowerCase().indexOf(prefix.toLowerCase() + "/") === 0) rel = full.slice(prefix.length + 1);
+    else rel = x.name;
+    if (relSkipped(rel)) return;
+    pdfs.push({ name: x.name, path: full, rel: rel, modified: x.server_modified || "", size: x.size || 0 });
+  });
+  pdfs.sort((a, b) => (a.modified < b.modified ? 1 : a.modified > b.modified ? -1 : (a.name < b.name ? -1 : 1)));
+  return { folder: folder, plansRel: plansRel, plansPath: plansPath, pdfs: pdfs };
+}
+
+function takeoffFileName(rel) {
+  rel = String(rel || "").replace(/\\/g, "/").replace(/^\/+/, "");
+  return rel.replace(/\//g, "__") + ".json";
+}
+function autoRequestPath(plansPath, rel) {
+  return String(plansPath || "").replace(/\/$/, "") + "/_takeoffs/requests/" + takeoffFileName(rel);
+}
+function autoRequestBody(slug, plansPath, file) {
+  return {
+    schema: "harswells.autotakeoff_request.v1",
+    job: slug,
+    pdf: file.path,
+    name: file.name,
+    rel: file.rel,
+    plans: plansPath,
+    default_wall_height_ft: 8,
+    surfaces: ["floor", "wall"],
+    requested_at: new Date().toISOString(),
+  };
+}
+async function dbxUploadJson(path, obj) {
+  const A = HWSSync.DropboxBackend();
+  if (!A.ready()) throw new Error("Sign in with Dropbox to request an auto takeoff.");
+  await A.account();
+  const auth = HWSSync.LS.get("hws-dbx-auth");
+  if (!auth || !auth.access_token) throw new Error("Sign in with Dropbox to request an auto takeoff.");
+  const headers = {
+    Authorization: "Bearer " + auth.access_token,
+    "Content-Type": "application/octet-stream",
+    "Dropbox-API-Arg": JSON.stringify({ path: path, mode: { ".tag": "overwrite" }, autorename: false, mute: true }),
+  };
+  const cfg = (HWSSync.CFG && HWSSync.CFG.dropbox) || {};
+  if (cfg.pathRoot === "home") headers["Dropbox-API-Path-Root"] = '{".tag": "home"}';
+  else if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
+  const r = await fetch("https://content.dropboxapi.com/2/files/upload", {
+    method: "POST", credentials: "omit", headers, body: JSON.stringify(obj),
+  });
+  if (!r.ok) throw new Error("Could not save the auto takeoff request.");
+}
+/* Stub only. The button writes the request JSON. It does not measure the sheet.
+   The office runner, built separately, reads that request and writes
+   opentakeoff.takeoff_canvas.v1 plus a harswells block. See docs/takeoff-format.md. */
+function bindAuto(root, slug, plansPath) {
+  root.querySelectorAll("button.pr-auto").forEach((b) => {
+    b.onclick = async (ev) => {
+      ev.preventDefault();
+      const file = { path: b.getAttribute("data-path") || "", name: b.getAttribute("data-name") || "", rel: b.getAttribute("data-rel") || "" };
+      b.disabled = true;
+      const prev = b.textContent;
+      b.textContent = "Requesting…";
+      try {
+        await dbxUploadJson(autoRequestPath(plansPath, file.rel), autoRequestBody(slug, plansPath, file));
+        b.textContent = "Requested";
+        toast("Auto takeoff requested. The office computer measures this sheet. A reviewed takeoff already on the PDF is left as it is.");
+      } catch (e) {
+        b.textContent = prev;
+        b.disabled = false;
+        toast(e.message || String(e));
+      }
+    };
+  });
+}
+function sampleBlock() {
+  return `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref())}"><span class="lb"><span class="lt">Public sample plan</span><span class="ls">OpenTakeoff demo sheet · not a Harswells plan</span></span>${ico("chev", "go")}</a>`
+    + `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref("tile"))}"><span class="lb"><span class="lt">Tile and wall sample</span><span class="ls">Floor tile by room, and wall tile with a height you can change · not a Harswells plan</span></span>${ico("chev", "go")}</a>`
+    + `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref("auto"))}"><span class="lb"><span class="lt">Auto takeoff sample</span><span class="ls">Detected rooms and walls to review · not a Harswells plan</span></span>${ico("chev", "go")}</a>`;
+}
+function planSignIn(msg) {
+  return `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(msg || "Sign in with Dropbox to see this job's plans.")}</b>Plans stay in the Harswells Dropbox. This page uses the sign-in already on this phone.</div>
+  <button type="button" class="pri pr-signin" id="pr-signin">Sign in with Dropbox</button>
+  <div class="rows">${sampleBlock()}</div></div>`;
+}
+function bindSignIn(root) {
+  const b = root.querySelector("#pr-signin");
+  if (!b) return;
+  b.onclick = async () => {
+    try { await HWSSync.DropboxBackend().connect(); }
+    catch (e) { toast(e.message || String(e)); }
+  };
+}
+
+let prGen = 0;
+async function mPlanRoom(M) {
+  const gen = ++prGen;
+  const slug = J && J.slug;
+  if (!slug) return;
+  M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="hint">Loading plans from Dropbox…</div></div>`;
+  let got;
+  try { got = await loadPlans(slug); }
+  catch (e) {
+    if (gen !== prGen || !J || J.slug !== slug) return;
+    M.innerHTML = planSignIn(e.code === "auth" ? e.message : ("Could not read Dropbox. " + (e.message || "")));
+    bindSignIn(M);
+    return;
+  }
+  if (gen !== prGen || !J || J.slug !== slug) return;
+  if (got.error) {
+    M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(got.error)}</b></div><div class="rows">${sampleBlock()}</div></div>`;
+    return;
+  }
+  const rows = got.pdfs.map((f) => {
+    const where = f.rel.indexOf("/") >= 0 ? f.rel.slice(0, f.rel.lastIndexOf("/")) : "";
+    const meta = [where, azWhen(f.modified), fmtSize(f.size)].filter(Boolean).join(" · ");
+    return `<div class="hrow pr-file"><a class="pr-open" href="${esc(sheetHref(slug, got.plansPath, f))}"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta || "PDF")}</span></span>${ico("chev", "go")}</a><button type="button" class="pr-auto" data-path="${esc(f.path)}" data-name="${esc(f.name)}" data-rel="${esc(f.rel)}">Auto takeoff</button></div>`;
+  }).join("");
+  M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room <span class="mut small">${got.pdfs.length} PDF${got.pdfs.length === 1 ? "" : "s"}</span></h2>
+    <div class="hint">${esc(got.plansRel)} · newest first · archive folders skipped</div>
+    <div class="rows">${rows || '<div class="none">No PDFs in this Plans folder yet.</div>'}</div>
+    <div class="rows">${sampleBlock()}</div>
+    <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer.</div></div>`;
+  bindAuto(M, slug, got.plansPath);
+}
+
+function renderPlanIndex() {
+  const jobs = ((DATA && DATA.common && DATA.common.all_jobs) || []).slice();
+  const body = `<div class="hph"><h1>Plan Room</h1></div><p class="hint">Pick a job to open its plan PDFs and measure them.</p>
+    <div class="rows">${jobs.map((j) => `<a class="hrow" href="${jobHref(j.slug, "plans")}"><span class="lb"><span class="lt">${esc(j.name)}</span>${j.address ? `<span class="ls">${esc(j.address)}</span>` : ""}</span>${ico("chev", "go")}</a>`).join("") || '<div class="none">No jobs yet</div>'}</div>
+    <div class="rows">${sampleBlock()}</div>`;
+  hubShell("plans", body);
+  injectMainNav();
+  document.title = "Harswells · Plan Room";
+}
+function injectMainNav() {
+  let on = false;
+  try { const p = parseHash(); on = p.page === "plans" || p.mod === "plans"; } catch (e) { on = false; }
+  const dnav = document.querySelector("nav.dnav");
+  if (dnav && !dnav.querySelector("[data-hws-plans]")) {
+    const a = document.createElement("a");
+    a.href = "#/plans";
+    a.setAttribute("data-hws-plans", "");
+    a.textContent = "Plan Room";
+    if (on) a.className = "on";
+    dnav.appendChild(a);
+  } else if (dnav) {
+    const a = dnav.querySelector("[data-hws-plans]");
+    if (a) a.classList.toggle("on", on);
+  }
+  const gt = document.querySelector("nav.gtabs");
+  if (gt && !gt.querySelector("[data-hws-plans]")) {
+    const a = document.createElement("a");
+    a.href = "#/plans";
+    a.setAttribute("data-hws-plans", "");
+    a.setAttribute("data-g", "plans");
+    a.innerHTML = ico("doc") + "<span>Plan Room</span>";
+    if (on) { a.className = "on"; a.setAttribute("aria-current", "page"); }
+    gt.appendChild(a);
+  } else if (gt) {
+    const a = gt.querySelector("[data-hws-plans]");
+    if (a) a.classList.toggle("on", on);
+  }
+}
+function injectJobChrome() {
+  const row = document.querySelector(".jh .jrow");
+  if (row && !row.querySelector(".hws-planbtn")) {
+    const a = document.createElement("a");
+    a.className = "btn hws-planbtn";
+    a.href = modHref("plans");
+    a.textContent = "Plan Room";
+    row.appendChild(a);
+  }
+  const side = document.querySelector("nav.side");
+  if (side && !side.querySelector("[data-hws-plans]")) {
+    const a = document.createElement("a");
+    a.href = modHref("plans");
+    a.setAttribute("data-hws-plans", "");
+    a.textContent = "Plan Room";
+    side.insertBefore(a, side.firstChild);
+  }
+  if (curMod() === "plans") {
+    document.querySelectorAll("nav.tabbar a.on").forEach((el) => el.classList.remove("on"));
+    const s = document.querySelector("nav.side [data-hws-plans]");
+    if (s) s.className = "on";
+    const M = document.getElementById("mod");
+    if (M) mPlanRoom(M);
+  }
+  injectMainNav();
+}
+
+const _hwsParseHash = parseHash;
+parseHash = function () {
+  const h = location.hash.replace(/^#\/?/, "");
+  const p = h.split("/");
+  if ((p[0] || "").split("?")[0] === "plans") return { slug: null, page: "plans", sub: p[1] || "", mod: "" };
+  return _hwsParseHash();
+};
+const _hwsRenderHub = renderHub;
+renderHub = function (p) {
+  if (p && p.page === "plans") { renderPlanIndex(); return; }
+  _hwsRenderHub(p);
+  injectMainNav();
+};
+const _hwsRenderList = renderList;
+renderList = function () {
+  _hwsRenderList();
+  injectMainNav();
+};
+const _hwsRenderJob = renderJob;
+renderJob = function () {
+  _hwsRenderJob();
+  if (!J) { injectMainNav(); return; }
+  injectJobChrome();
+};
+const _hwsOpenMore = openMore;
+openMore = function () {
+  _hwsOpenMore();
+  const list = document.querySelector(".modal .mlist");
+  if (!list || list.querySelector("[data-hws-plans]") || !J) return;
+  const a = document.createElement("a");
+  a.href = modHref("plans");
+  a.setAttribute("data-close", "");
+  a.setAttribute("data-hws-plans", "");
+  a.textContent = "Plan Room";
+  list.insertBefore(a, list.firstChild);
+};
 
 function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
@@ -2256,7 +3099,7 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
  ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span><span>${chip(j.bt_status=='in Buildertrend'?'BT':'not in BT',j.bt_status=='in Buildertrend'?'inbt':'notbt')}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
- <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
+ <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
 /* ---------- boot ---------- */
@@ -2295,7 +3138,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();route();startLive();
+  await syncBoot();openStore();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>
