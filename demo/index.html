@@ -37,6 +37,28 @@ tr.rowlink{cursor:pointer}tr.rowlink:hover td{background:#f5f8ff}tr.od td{backgr
 .mut{color:var(--mut)}.small{font-size:11.5px}.red{color:var(--red)}.b{font-weight:600}.nowrap{white-space:nowrap}
 .empty{padding:22px;color:var(--mut);text-align:center}.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
 .note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12.5px}
+.slack-tab{display:flex;flex-direction:column;gap:8px;max-width:680px}
+.slack-head{display:flex;align-items:center;gap:8px}
+.slack-head h2{margin:0;font-size:18px}
+.slack-live{margin-left:auto;font-size:12px;font-weight:800;color:#067647}
+.slack-bubble{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.slack-bubble.me{background:#eef4ff}
+.slack-meta{display:flex;gap:8px;align-items:baseline}.slack-meta time{margin-left:auto;color:var(--mut);font-size:12px}
+.slack-body{margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.slack-replies{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}.slack-bubble.open .slack-replies{display:block}
+.slack-reply{font-size:13px;padding:4px 0}
+.slack-foot{position:sticky;bottom:0;z-index:5;background:var(--bg);padding:6px 0 4px}
+.slack-compose{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;position:sticky;bottom:0;background:var(--bg);padding:8px 0}
+.slack-foot .slack-compose{position:static}
+.slack-compose textarea{width:100%;min-height:44px;font-size:16px;border-radius:12px;padding:10px 12px}
+.slack-compose .slack-note{grid-column:1 / -1;margin:0;color:var(--mut);font-size:12.5px}
+.slack-compose.is-off textarea,.slack-compose.is-off button{opacity:.6}
+.slack-name{display:flex;gap:8px;align-items:center;margin:0 0 6px;font-size:13px}.slack-name input{flex:1;min-height:40px}
+.slack-state{font-size:12px;font-weight:700}.slack-state.sent{color:#067647}.slack-state.failed{color:var(--red)}.slack-state.sending{color:var(--mut)}
+.slack-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.slack-acts{display:flex;gap:8px;align-items:center;margin-top:8px}
+.lbtn{display:inline-flex;align-items:center;min-height:36px;padding:0 10px;border-radius:10px;background:#eef3fb;font-weight:600;font-size:13px;text-decoration:none}
+.fchip{min-height:32px;border-radius:16px;padding:0 10px;background:#fff}
+.sh2{font-size:12px;letter-spacing:.04em;color:#667085;margin:10px 0 0}
 .list .it{display:flex;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:flex-start}.list .it:last-child{border-bottom:0}
 .list .dt{width:70px;flex:none;color:var(--mut);font-size:11.5px}.list .bd{flex:1;min-width:0}.list .t{font-weight:600}.list .s{color:var(--mut);font-size:11.5px;overflow-wrap:anywhere}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#475467;padding:6px 12px;border-bottom:1px solid var(--line)}.legend i{display:inline-block;width:18px;height:9px;border-radius:2px;vertical-align:middle;margin-right:4px}
@@ -238,6 +260,36 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .permits{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:6px}
 .permit{display:flex;align-items:center;gap:10px;min-height:60px;padding:8px 12px;border-radius:12px;background:linear-gradient(145deg,var(--navy),var(--navy3));color:#fff;text-decoration:none!important}.permit .ls{color:#c9d3e3}.permit .go{color:#c9d3e3}
 .filesmod{max-width:860px}
+/* Slack tab, phone-first */
+.slack-tab{display:flex;flex-direction:column;gap:8px;max-width:680px}
+.slack-head{display:flex;align-items:center;gap:8px;padding:2px 2px 0}
+.slack-head h2{margin:0;font-size:20px;line-height:1.2}
+.slack-live{margin-left:auto;font-size:12px;font-weight:800;color:#067647}
+.slack-log{display:flex;flex-direction:column;gap:8px}
+.slack-bubble{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px}
+.slack-bubble.me{background:#eef4ff;border-color:#d5e2f7}
+.slack-meta{display:flex;align-items:baseline;gap:8px}
+.slack-meta b{font-size:14px}
+.slack-meta time{margin-left:auto;color:var(--mut);font-size:12px;font-weight:600}
+.slack-body{margin:4px 0 0;font-size:16px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
+.slack-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.slack-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.slack-replies{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #e6ebf2}
+.slack-bubble.open .slack-replies{display:block}
+.slack-reply{font-size:14px;padding:6px 0;line-height:1.35}
+.slack-foot{position:sticky;bottom:0;z-index:5;background:#f4f5f7;padding:6px 0 4px}
+body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
+.slack-compose{position:sticky;bottom:0;z-index:4;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;background:#f4f5f7;padding:8px 0 4px}
+.slack-foot .slack-compose{position:static}
+.slack-replies .slack-compose{position:static;background:transparent;padding:8px 0 0}
+.slack-compose textarea{width:100%;min-height:44px;max-height:120px;border-radius:12px;padding:10px 12px;font-size:16px;resize:vertical}
+.slack-compose button{min-height:44px;border-radius:12px;padding:0 16px}
+.slack-compose.is-off textarea,.slack-compose.is-off button{opacity:.6}
+.slack-compose .slack-note{grid-column:1 / -1;margin:0;color:#667085;font-size:12.5px;line-height:1.35}
+.slack-name{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:13px;color:#475467}
+.slack-name input{flex:1;min-height:40px;border-radius:12px;padding:0 12px;font-size:16px}
+.slack-state{font-size:12px;font-weight:700;margin-top:4px}
+.slack-state.sending{color:#667085}.slack-state.sent{color:#067647}.slack-state.failed{color:#b42318}
 .soonc{max-width:460px;margin:40px auto;text-align:center;background:#fff;border:1px solid #dde3ec;border-radius:20px;padding:34px 24px}
 .soonc .bubble{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;background:linear-gradient(145deg,var(--navy),var(--navy3));color:#fff;display:flex;align-items:center;justify-content:center}.soonc .bubble .ico{width:34px;height:34px}
 .soonc h1{font-size:22px}.soonc p{color:#475467;font-size:15px;line-height:1.5;margin:10px 0 18px}
@@ -1132,8 +1184,8 @@ function topHtml(page){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];
 function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value,isPhone()?'schedule':curMod())};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
-const TABS=[['schedule','Schedule','📅'],['todos','To-Dos','☑️'],['selections','Selections','🎨'],['files','Files','📁'],['more','More','☰']];
-const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,logs:mLogs,messages:mMsgs,todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
+const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
+const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -1146,7 +1198,9 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a><span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
- const side=`<nav class="side">${(J.modules||[]).map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${c[k]||''}</span></a>`).join('')}
+ const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
+ const slackN=(typeof slackRows==='function'?slackRows().length:0);
+ const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}
  <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files and links<span class="cnt">${(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
  const tabs=`<nav class="tabbar" aria-label="Modules">${TABS.map(([k,l,ic])=>{const on=k==mod||(k=='more'&&!TABS.some(t=>t[0]==mod));const n=k=='more'?hc:0;
   return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}"><span class="ic">${ic}</span><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
@@ -1157,8 +1211,8 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
  document.title=J.name+' · Sample Builders';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
-function openMore(){const c=J.counts||{};const items=[['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']];
- openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${c[k]||(k=='history'?(J.history||[]).length||'':'')}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
+function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']];
+ openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${k==='slack'?(typeof slackRows==='function'?slackRows().length||'':''):(c[k]||(k=='history'?(J.history||[]).length||'':''))}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
  m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
 function panel(title,sub,body,right){return `<div class="panel"><h3>${title} ${sub?`<span class="mut small">${sub}</span>`:''}<span class="sp"></span>${right||''}</h3>${body}</div>`}
@@ -1410,11 +1464,11 @@ function msgOpenLabel(i){const k=msgKind(i);return k==='email'?'Open in Gmail':(
 function msgClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)return '';let h=+m[1];const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m[2]+' '+ap}
 function msgCard(i){const k=msgKind(i);const reps=asList(i.replies);const n=+i.reply_count||reps.length;const files=asList(i.files);const link=/^https:\/\//.test(i.link||'')?i.link:'';
  return `<article class="msgcard"><div class="msghead">${msgIco(k)}<span class="chip">${esc(i.channel||k)}</span><span class="msgwho">${esc(i.author||'')}</span><span class="msgwhen">${esc(msgClock(i.time))}</span></div>
- <button type="button" class="msgtext" data-expand>${esc(i.text||'')}</button>
+ <button type="button" class="msgtext" data-expand>${k==='slack'&&typeof slackMarkup==='function'?slackMarkup(i.text||''):esc(i.text||'')}</button>
  <div class="msgacts">${n?`<button type="button" class="fchip replypill" data-replies>${n} repl${n==1?'y':'ies'}</button>`:''}
  ${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=esc(f.name||'Attachment');return u?`<a class="lbtn" href="${esc(u)}" target="_blank" rel="noopener">${name}</a>`:`<span class="lbtn">${name}</span>`}).join('')}
  ${link?`<a class="msgopen" href="${esc(link)}" target="_blank" rel="noopener">${esc(msgOpenLabel(i))}</a>`:''}${i.class?chip(i.class,'low'):''}</div>
- ${reps.length?`<div class="msgreplies">${reps.map(r=>`<div class="msgreply"><b>${esc(r.user_name||r.user_id||'')}</b> <span class="mut">${esc(msgClock(r.time))}</span><div>${esc(r.text||'')}</div></div>`).join('')}</div>`:''}</article>`}
+ ${reps.length?`<div class="msgreplies">${reps.map(r=>`<div class="msgreply"><b>${esc(r.user_name||r.user_id||'')}</b> <span class="mut">${esc(msgClock(r.time))}</span><div>${k==='slack'&&typeof slackMarkup==='function'?slackMarkup(r.text||''):esc(r.text||'')}</div></div>`).join('')}</div>`:''}</article>`}
 const LOG_IC={slack:MSG_IC.slack,email:MSG_IC.email,text:MSG_IC.text,
  plaud:'<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>',
  schedule:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'};
@@ -1427,15 +1481,16 @@ function logOpen(x){const ref=String(x.ref||'');const src=((x.src||'')+' '+(x.so
  if(/schedule|workcal|history/.test(src)){const by={};(J.tasks||[]).forEach(t=>{by[t.id]=t});if(ref&&by[ref]&&typeof taskModal==='function')taskModal(by[ref]);else location.hash=modHref('schedule');return}
  if(https)window.open(ref,'_blank','noopener')}
 const LOG_SRC_NAME={imessage:'texts',email:'email',slack:'slack',team_update:'email',plaud:'plaud',schedule:'schedule',workcal:'calendar',history:'history',trade:'trade',team:'team'};
-function logCountsLabel(counts){return Object.entries(counts||{}).filter(([,n])=>n).map(([k,n])=>n+' '+(LOG_SRC_NAME[k]||k)).join(' · ')}
+function logShownCounts(counts){const out={};Object.entries(counts||{}).forEach(([k,n])=>{if(n&&k!=='trade')out[k]=n});return out}
+function logCountsLabel(counts){return Object.entries(logShownCounts(counts)).map(([k,n])=>n+' '+(LOG_SRC_NAME[k]||k)).join(' · ')}
 function logWhen(t){const s=String(t||'');if(!s)return '';if(s==='all day'||/^\d{4}-\d{2}-\d{2}$/.test(s)||/T00:00(?::00)?(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)?$/.test(s))return 'all day';return msgClock(s)}
 function logSourceLabel(s){const k=logKind(s);return k==='email'?'Open in Gmail':(k==='slack'?'Open in Slack':(k==='text'?'Open in Messages':'Open'))}
 function logSourceRow(s){const href=/^https:\/\//.test(s.ref||'')?s.ref:'';
  const open=href?`<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">${esc(logSourceLabel(s))}</a>`:`<button type="button" class="msgopen" data-logsrc="${esc(s.src||'')}" data-logref="${esc(s.ref||'')}">${esc(logSourceLabel(s))}</button>`;
  return `<div class="logsrc">${logIco(logKind(s))}<span class="logwhen">${esc(logWhen(s.time))}</span>${open}</div>`}
 function logDayCounts(items){const auto=items.find(x=>x.source==='auto'&&x.counts&&typeof x.counts==='object'&&Object.keys(x.counts).length);
- const counts=auto?Object.assign({},auto.counts):{};const team=items.filter(x=>x.source!=='auto').length;if(team)counts.team=(counts.team||0)+team;
- if(Object.keys(counts).length)return counts;const fallback={};items.forEach(x=>{const k=x.source==='auto'?(x.src||'auto'):'team';fallback[k]=(fallback[k]||0)+1});return fallback}
+ if(auto){const counts=Object.assign({},auto.counts);const team=items.filter(x=>x.source!=='auto').length;if(team)counts.team=(counts.team||0)+team;delete counts.trade;return counts}
+ const fallback={};items.forEach(x=>{const k=x.source==='auto'?(x.src||'auto'):'team';if(k==='trade')return;fallback[k]=(fallback[k]||0)+1});return fallback}
 function logSourcesBlock(items){const groups=items.filter(x=>!x.pending&&asList(x.sources).length);if(!groups.length)return '';
  const n=groups.reduce((a,x)=>a+asList(x.sources).length,0);
  const body=groups.map(x=>`<div class="logsrcgrp"><div class="logsrctitle">${esc(x.title||x.text||'')}</div>${asList(x.sources).map(logSourceRow).join('')}</div>`).join('');
@@ -1449,7 +1504,7 @@ function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
  const chips=[['all','All'],['auto','Auto'],['team','Team']].map(([k,lab])=>`<button type="button" class="fchip ${f===k?'on':''}" data-lf="${k}">${lab}</button>`).join('');
  const jump=`<label class="logjump"><span class="mut small">Month</span> <select id="logmonth" aria-label="Jump to month"><option value="">All months</option>${months.map(m=>`<option value="${esc(m)}" ${month===m?'selected':''}>${esc((MON[+m.slice(5)-1]||m)+' '+m.slice(0,4))}</option>`).join('')}</select></label>`;
  const cards=order.map(d=>{const items=by[d];const counts=logDayCounts(items);
-  const countChips=Object.entries(counts).filter(([,n])=>n).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
+  const countChips=Object.entries(logShownCounts(counts)).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
   const team=items.filter(x=>x.source!=='auto').map((x,i)=>`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(x.title||x.text||'')}</span></button>`).join('');
   const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span></div>`).join('');
   const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
@@ -1478,6 +1533,235 @@ function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show
  `<label class="small"><input type="checkbox" id="ta" ${st.todoAll?'checked':''}> show all (${items.length})</label>`+csvBtn('todos'));const ta=$('#ta');if(ta)ta.onchange=e=>{st.todoAll=e.target.checked;saveUi();mTodos(M)};bindCsv(M)}
 function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, BT vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
  bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
+
+/* Job Slack tab (phone-first). New rows arrive on the office server over SSE.
+   The static public site has the same tab with the compose box disabled. */
+'use strict';
+function slackEsc(v){return (typeof esc==='function'?esc:String)(v)}
+function slackHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function slackMode(){
+  if(typeof MODE!=='undefined')return MODE;
+  try{if(typeof globalThis!=='undefined'&&globalThis.MODE)return globalThis.MODE}catch(e){}
+  return '';
+}
+function slackJob(){
+  if(typeof J!=='undefined')return J;
+  try{if(typeof globalThis!=='undefined'&&globalThis.J)return globalThis.J}catch(e){}
+  return null;
+}
+/* Office hub only. The host comes from a Slack archives URL already on this job.
+   The share and Pages builds render #channel as text, so the shell has no workspace domain. */
+function slackArchiveRoot(){
+  if(slackMode()!=='live')return '';
+  const job=slackJob();
+  const rows=(job&&job.messages)||[];
+  for(let i=0;i<rows.length;i++){
+    const link=String(rows[i]&&rows[i].link||'');
+    const m=link.match(/^https:\/\/([a-z0-9-]+\.slack\.com)\/archives\/[CG][A-Z0-9]+\b/i);
+    if(m)return 'https://'+m[1].toLowerCase();
+  }
+  return '';
+}
+function slackMarkup(text){
+  const src=String(text==null?'':text);
+  const re=/<(@[UW][A-Z0-9]+)(?:\|([^|>]*))?>|<#([CG][A-Z0-9]+)(?:\|([^|>]*))?>|<(![a-z0-9^]+)(?:\|([^|>]*))?>|<(https?:\/\/[^|>\s]+)(?:\|([^>]*))?>/gi;
+  let out='', i=0, m;
+  while((m=re.exec(src))){
+    out+=slackHtml(src.slice(i,m.index));
+    if(m[1]){
+      const name=(m[2]||'').trim().replace(/^@/,'')||m[1].slice(1);
+      out+=slackHtml('@'+name);
+    }else if(m[3]){
+      const name=(m[4]||'').trim().replace(/^#/,'')||m[3];
+      const root=slackArchiveRoot();
+      if(root)out+=`<a href="${slackHtml(root+'/archives/'+String(m[3]).toUpperCase())}" target="_blank" rel="noopener">${slackHtml('#'+name)}</a>`;
+      else out+=slackHtml('#'+name);
+    }else if(m[5]){
+      let name=(m[6]||'').trim().replace(/^@/,'');
+      if(!name){const spec=m[5].slice(1);name=spec.indexOf('subteam^')===0?'group':spec}
+      out+=slackHtml('@'+name);
+    }else if(m[7]){
+      const label=(m[8]||'').trim()||m[7];
+      out+=`<a href="${slackHtml(m[7])}" target="_blank" rel="noopener">${slackHtml(label)}</a>`;
+    }
+    i=m.index+m[0].length;
+  }
+  return out+slackHtml(src.slice(i));
+}
+function slackRows(){
+  return (J&&J.messages||[]).filter(i=>{
+    const s=((i.source||'')+' '+(i.id||'')+' '+(i.channel||'')).toLowerCase();
+    if(!(/slack/.test(s)||String(i.id||'').indexOf('slack:')===0))return false;
+    if(i.class==='system'||i.status==='system')return false;
+    if(i.deleted)return false;
+    return true});
+}
+function slackClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)return '';let h=+m[1];const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m[2]+' '+ap}
+function slackDay(t){return String(t||'').slice(0,10)||''}
+function slackFiles(v){if(Array.isArray(v))return v;if(!v)return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
+function slackReplies(v){return slackFiles(v)}
+function slackCanPost(){return typeof MODE!=='undefined'&&MODE==='live'&&!!(J&&J.channel)}
+function slackWho(){
+  try{if(typeof STORE!=='undefined'&&STORE&&STORE.who){const w=STORE.who();if(w)return w}}catch(e){}
+  try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
+function slackPin(){const el=typeof document!=='undefined'&&document.getElementById('slackpin');return el?String(el.value||''):''}
+function slackSetWho(n){n=String(n||'').trim().slice(0,60);try{if(typeof STORE!=='undefined'&&STORE&&STORE.setWho)STORE.setWho(n);else localStorage.setItem('hws-who',n)}catch(e){}}
+function slackPending(){const k=J&&J.slug||'';window._slackPend=window._slackPend||{};return window._slackPend[k]||(window._slackPend[k]=[])}
+function slackComposeBox(opts){
+  opts=opts||{};
+  const live=!!opts.live, channel=opts.channel||'', on=live&&!!channel, thread=opts.thread||'';
+  const label=String(opts.label||'').replace(/^#/,'');
+  let note='';
+  if(!thread&&!live)note='Posting is off on this copy. Use the office hub to send.';
+  else if(!thread&&live&&!channel)note='This job has no Slack channel yet.';
+  const dis=on?'':'disabled';
+  const ph=thread?'Reply in thread':(label?('Message #'+label):'Message');
+  const e=typeof esc==='function'?esc:v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return `<form class="slack-compose${on?'':' is-off'}" data-thread="${e(thread)}" ${on?'':'aria-disabled="true"'}>
+    <textarea name="text" rows="1" ${dis} placeholder="${e(ph)}" aria-label="${e(ph)}"></textarea>
+    <button type="submit" class="pri" ${dis}>${thread?'Reply':'Send'}</button>
+    ${note?`<p class="slack-note">${e(note)}</p>`:''}</form>`;
+}
+function slackTs(i){
+  if(i&&i.ts)return String(i.ts);
+  const m=String(i&&i.id||'').match(/^slack:[^:]+:(.+)$/);
+  if(m)return m[1];
+  return String(i&&i.thread_ts||'');
+}
+function withSlackMod(mods){
+  mods=(mods||[]).filter(x=>x[0]!=='slack').map(x=>x.slice?x.slice():x);
+  const at=mods.findIndex(x=>x[0]==='schedule');
+  mods.splice(at<0?0:at+1,0,['slack','Slack']);
+  return mods;
+}
+function slackState(i){
+  if(!i._state)return '';
+  const word=i._state==='sending'?'Sending…':(i._state==='sent'?'Sent':('Failed'+(i._err?': '+slackEsc(i._err):'')));
+  const retry=i._state==='failed'?` <button type="button" class="small" data-retry="${slackEsc(i.id)}">Retry</button>`:'';
+  return `<div class="slack-state ${slackEsc(i._state)}">${word}${retry}</div>`;
+}
+function slackBubble(i,mine){
+  const files=slackFiles(i.files), reps=slackReplies(i.replies), link=/^https:\/\//.test(i.link||'')?i.link:'';
+  const ts=slackTs(i);
+  const pendingRe=ts?slackPending().filter(p=>p.thread_ts===ts):[];
+  const label=(J.slack||'').replace(/^#/,'');
+  const replyBox=i._state?'':slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label,thread:ts});
+  const n=reps.length+pendingRe.length;
+  return `<article class="slack-bubble${mine?' me':''}${i._state?' '+slackEsc(i._state):''}" id="sl-${slackEsc(String(i.id||ts))}">
+    <div class="slack-meta"><b>${slackEsc(i.author||'Someone')}</b><time>${slackEsc(slackClock(i.time))}</time></div>
+    <div class="slack-body">${slackMarkup(i.text||'')}</div>
+    ${files.length?`<div class="slack-files">${files.map(f=>{const u=/^https:\/\//.test(f.permalink||'')?f.permalink:'';const name=slackEsc(f.name||'File');return u?`<a class="lbtn" href="${slackEsc(u)}" target="_blank" rel="noopener">${name}</a>`:`<span class="lbtn">${name}</span>`}).join('')}</div>`:''}
+    <div class="slack-acts"><button type="button" class="fchip" data-open>${n?n+' repl'+(n===1?'y':'ies'):'Reply'}</button>${link?`<a class="msgopen" href="${slackEsc(link)}" target="_blank" rel="noopener">Open in Slack</a>`:''}</div>
+    ${slackState(i)}
+    <div class="slack-replies">${reps.map(r=>`<div class="slack-reply"><b>${slackEsc(r.user_name||r.user_id||'')}</b> <span class="mut">${slackEsc(slackClock(r.time))}</span><div>${slackMarkup(r.text||'')}</div></div>`).join('')}
+    ${pendingRe.map(p=>`<div class="slack-reply me">${slackEsc(p.text||'')}${slackState(p)}</div>`).join('')}${replyBox}</div>
+  </article>`;
+}
+function slackApplyPush(msg){
+  if(!J)return;
+  const gone=new Set(msg.deleted||[]);
+  J.messages=(J.messages||[]).filter(i=>!gone.has(i.id));
+  (msg.rows||[]).forEach(r=>{
+    if(!r||!r.id)return;
+    const i=(J.messages||[]).findIndex(x=>x.id===r.id);
+    if(i>=0)J.messages[i]=Object.assign({},J.messages[i],r);
+    else J.messages.push(r);
+  });
+  const texts=new Set((msg.rows||[]).map(r=>String(r.text||'')+'|'+(r.author||'')));
+  window._slackPend=window._slackPend||{};
+  const pend=window._slackPend[J.slug]||[];
+  window._slackPend[J.slug]=pend.filter(p=>p._state==='failed'||p._state==='sending'||!texts.has(String(p.text||'')+'|'+(p.author||'')));
+}
+function startSlackStream(){
+  if(typeof MODE==='undefined'||MODE!=='live'||!window.EventSource||window._slackES)return;
+  const es=new EventSource('/api/slack/stream');
+  window._slackES=es;
+  es.onmessage=ev=>{
+    let msg;try{msg=JSON.parse(ev.data)}catch(e){return}
+    if(!msg||!J||msg.slug!==J.slug)return;
+    slackApplyPush(msg);
+    if(typeof curMod==='function'&&curMod()==='slack'){const M=document.getElementById('mod');if(M)mSlack(M)}
+  };
+}
+async function slackSend(text, thread, pendingId){
+  const who=slackWho();
+  if(!who){if(typeof toast==='function')toast('Add your name, then send');return}
+  const pin=slackPin();
+  text=String(text||'').trim();
+  if(!text)return;
+  const pend=slackPending();
+  let row=pendingId?pend.find(p=>p.id===pendingId):null;
+  if(!row){
+    row={id:'local:'+Date.now(),author:who,text,time:new Date().toISOString(),thread_ts:thread||'',_state:'sending',source:'Slack',channel:J.slack||'Slack'};
+    pend.push(row);
+  }else row._state='sending';
+  const M=document.getElementById('mod');if(M&&typeof curMod==='function'&&curMod()==='slack')mSlack(M);
+  try{
+    const read=async r=>{try{return await r.json()}catch(e){return {ok:false,error:'not sent'}}};
+    if(pin){
+      const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
+      const sj=await read(s);if(!sj.ok)throw new Error(sj.error||'name or PIN does not match');
+      const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
+    }
+    const r=await fetch('/api/job/'+encodeURIComponent(J.slug)+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,thread_ts:thread||'',who})});
+    const j=await read(r);if(!j.ok)throw new Error(j.error||'not sent');
+    row._state='sent';row.ts=j.ts||'';
+  }catch(e){row._state='failed';row._err=e.message||'not sent'}
+  const M2=document.getElementById('mod');if(M2&&typeof curMod==='function'&&curMod()==='slack')mSlack(M2);
+}
+function mSlack(M){
+  if(typeof startSlackStream==='function')startSlackStream();
+  const label=(J.slack||'').replace(/^#/,'');
+  const title=J.slack||'Slack';
+  const live=slackCanPost();
+  const rows=slackRows().slice().sort((a,b)=>String(a.time||'')<String(b.time||'')?-1:String(a.time||'')>String(b.time||'')?1:0);
+  const pend=slackPending().filter(p=>!p.thread_ts);
+  const who=slackWho();
+  const mine=a=>who&&String(a.author||'').toLowerCase()===who.toLowerCase();
+  let last='', blocks='';
+  rows.forEach(i=>{
+    const d=slackDay(i.time);
+    if(d&&d!==last){last=d;const head=typeof mdy==='function'?mdy(d):d;blocks+=`<h2 class="sh2">${slackEsc(head)}</h2>`}
+    blocks+=slackBubble(i,mine(i));
+  });
+  pend.forEach(p=>{blocks+=slackBubble(p,true)});
+  if(!blocks)blocks=`<div class="empty"><b>No Slack messages yet</b>${J.channel?'New messages show up here.':'This job has no Slack channel yet.'}</div>`;
+  const name=live?`<label class="slack-name">Your name <input id="slackwho" value="${slackEsc(who)}" placeholder="Your name" autocomplete="name" enterkeyhint="next"></label><label class="slack-name">PIN <input id="slackpin" type="password" placeholder="PIN" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-label="PIN"></label>`:'';
+  const prev=M.querySelector('.slack-foot textarea');
+  const draft=prev?prev.value:'';
+  M.innerHTML=`<div class="slack-tab"><div class="slack-head"><h2>${slackEsc(J.name||'')}</h2><span class="chip">${slackEsc(title)}</span>${live?'<span class="slack-live">Live</span>':''}</div>
+    <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label})}</div></div>`;
+  const box=M.querySelector('.slack-foot textarea');
+  if(box&&draft)box.value=draft;
+  const whoIn=M.querySelector('#slackwho');
+  if(whoIn)whoIn.onchange=()=>slackSetWho(whoIn.value);
+  M.querySelectorAll('.slack-compose').forEach(form=>{
+    form.onsubmit=ev=>{
+      ev.preventDefault();
+      if(!slackCanPost())return;
+      const ta=form.querySelector('textarea');
+      const text=ta?ta.value:'';
+      const thread=form.getAttribute('data-thread')||'';
+      if(whoIn)slackSetWho(whoIn.value);
+      if(ta)ta.value='';
+      slackSend(text, thread);
+    };
+  });
+  M.querySelectorAll('[data-open]').forEach(b=>{
+    b.onclick=()=>{const card=b.closest('.slack-bubble');if(card)card.classList.toggle('open')};
+  });
+  M.querySelectorAll('[data-retry]').forEach(b=>b.onclick=()=>{
+    const row=slackPending().find(p=>p.id===b.getAttribute('data-retry'));
+    if(row)slackSend(row.text, row.thread_ts||'', row.id);
+  });
+  const log=M.querySelector('.slack-log');
+  if(log && !M.querySelector('.slack-compose textarea:focus')){const lastB=log.querySelector('.slack-bubble:last-of-type');if(lastB)lastB.scrollIntoView({block:'nearest'})}
+}
+if(typeof document!=='undefined'){
+  const go=()=>{if(typeof MODE!=='undefined'&&MODE==='live')startSlackStream()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+}
+if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,slackMarkup};
 
 /* Sample Builders employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
