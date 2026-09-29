@@ -476,17 +476,32 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 /* Plan Room: job-page button, list, and the main-nav entry. Phone tap targets stay at least 44px. */
 a.hws-planbtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:var(--blue);border:1px solid var(--blue);color:#fff!important;font-weight:700;font-size:15px;text-decoration:none!important;flex:none}
 a.hws-planbtn:hover,a.hws-planbtn:active{text-decoration:none;filter:brightness(1.05)}
-.planroom{max-width:860px}
-.planroom .pr-open,.planroom .pr-sample{min-height:64px}
+.planroom{max-width:860px;overflow-x:hidden}
+.planroom .pr-open{min-height:64px}
 .planroom .pr-file{display:flex;align-items:stretch;gap:8px;min-height:64px}
 .planroom .pr-file .pr-open{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:64px;text-decoration:none;color:inherit}
 .planroom button.pr-auto{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-weight:700;font-size:14px;white-space:nowrap}
 .planroom button.pr-cad{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--navy);background:#fff;color:var(--navy);font-weight:700;font-size:14px;white-space:normal;text-align:center}
+.planroom button.pr-cad-name{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:64px;border:0;background:transparent;font:inherit;text-align:left;color:inherit}
 .planroom .pr-drawing{align-items:center}
 .planroom .pr-drawing .lb{flex:1;min-width:0;padding:8px 0 8px 10px}
 .planroom button.pr-auto:disabled{opacity:.7}
 .planroom .rows{margin-bottom:8px}
 .planroom .pr-signin{min-height:48px;margin:8px 0 14px;padding:0 16px}
+.planroom .pr-back{min-height:44px;margin:0 0 6px;padding:0 14px;border-radius:10px;border:1px solid #d7dde7;background:#fff;color:var(--navy);font-weight:700}
+.planroom .pr-crumbs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 0 6px}
+.planroom .pr-crumbs button{flex:none;border:0;background:transparent;color:var(--blue);font-weight:650;font-size:14px;min-height:44px;padding:0 4px}
+.planroom .pr-crumbs button[aria-current="page"]{color:var(--ink);font-weight:750}
+.planroom .pr-crumbs .sep{flex:none;color:var(--mut);align-self:center}
+.planroom .pr-filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 8px;padding-bottom:2px}
+.planroom .pr-filters button{flex:none;min-height:44px;padding:0 14px;border-radius:20px;border:1px solid #d7dde7;background:#fff;color:#344054;font-weight:650}
+.planroom .pr-filters button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.planroom .pr-folder,.planroom a.pr-pdf{min-height:64px;width:100%;border:0;background:transparent;font:inherit;text-align:left;color:inherit;text-decoration:none}
+.planroom .pr-older{display:block;width:100%;min-height:44px;margin:0;padding:8px 14px 8px 28px;border:0;border-top:1px solid #edf0f4;background:#f8fafc;color:var(--navy);font-weight:650;text-align:left}
+.planroom .pr-olds{margin:0 0 4px 14px;border-left:2px solid #e4e9f1}
+.planroom .pr-set{background:#fff}
+.planroom .pr-open .ls,.planroom .pr-folder .ls{white-space:normal}
+.planroom .none{padding:14px;color:var(--mut)}
 nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:center}
 @media(max-width:760px){
  .jh .jrow .hws-planbtn{flex:1 1 100%;min-height:48px}
@@ -561,6 +576,15 @@ nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:cent
 .facts{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
 .facts a,.facts button{flex:1 1 40%;min-height:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-align:center;text-decoration:none;font-weight:650;display:inline-flex;align-items:center;justify-content:center}
 .facts a[data-fplan]{background:#1f4b99;color:#fff;font-weight:700}
+.facts [data-fextract]{flex:1 1 100%;background:#1f4b99;color:#fff;font-weight:700}
+.fextract{display:flex;flex-direction:column;gap:8px;padding:8px 10px;max-height:46vh;overflow:auto;background:#152033}
+.fextract h3{margin:0;font-size:16px}
+.fextract p{margin:0;color:#c5d0e0;font-size:13px}
+.fextract label{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:650}
+.fextract input{width:22px;height:22px;flex:none}
+.fextract .xactions{display:flex;gap:8px}
+.fextract .xactions button{min-height:44px;flex:1;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;font-weight:700}
+.fextract .xactions [data-xsave]{background:#1f4b99;border-color:#1f4b99}
 .facts [data-fcad]{flex:1 1 100%}
 .fstage.hws-cad-stage{display:flex;flex-direction:column;overflow:hidden;padding:0}
 .hws-cad-mount{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
@@ -3976,10 +4000,11 @@ function renderJobBids(M){if(!J)return;const packs=bidSort(bidSource().filter(fu
  M.innerHTML=panel('Bids',packs.length+(packs.length===1?' package':' packages'),'<div class="bid-board">'+(packs.map(bidCard).join('')||emptyState('No bid packages yet',''))+'</div>');
  bindBidTracker(M)}
 
-/* Plan Room: list a job's plan PDFs from the signed-in Dropbox, then open one in the
-   massing-pdf viewer. The access token stays in localStorage (hws-dbx-auth).
-   Folder rules match planroom.py. This file runs before ui3.js boot() and wraps the
-   shell functions so the button and nav do not edit the shared templates. */
+/* Plan Room: browse one job's Dropbox folder, then open a PDF in the massing-pdf
+   viewer. Other files open in the hub preview. The access token stays in
+   localStorage (hws-dbx-auth). Folder rules match planroom.py. This file runs
+   before ui3.js boot() and wraps the shell functions so the button and nav do
+   not edit the shared templates. */
 const PROJ = "/Sample Builders Team Folder/Sample Builders Projects";
 const PLAN_CANDIDATES = [
   "030 Plans & Permits/01 Active Construction Documents",
@@ -4033,13 +4058,6 @@ function plansRelFromLinks(slug) {
 }
 function takeoffPage() {
   return new URL("plan-room/takeoff/index.html", location.href);
-}
-function sampleTakeoffHref(demo) {
-  const u = takeoffPage();
-  u.searchParams.set("sample", "1");
-  if (demo) u.searchParams.set("demo", demo);
-  u.searchParams.set("back", location.hash || "#/plans");
-  return u.href;
 }
 function sheetHref(slug, plansPath, file) {
   const u = takeoffPage();
@@ -4190,12 +4208,12 @@ function autoRequestBody(slug, plansPath, file) {
     requested_at: new Date().toISOString(),
   };
 }
-async function dbxUploadJson(path, obj) {
+async function dbxUploadBytes(path, bytes, fail) {
   const A = HWSSync.DropboxBackend();
-  if (!A.ready()) throw new Error("Sign in with Dropbox to request an auto takeoff.");
+  if (!A.ready()) throw new Error(fail || "Sign in with Dropbox to save this.");
   await A.account();
   const auth = HWSSync.LS.get("hws-dbx-auth");
-  if (!auth || !auth.access_token) throw new Error("Sign in with Dropbox to request an auto takeoff.");
+  if (!auth || !auth.access_token) throw new Error(fail || "Sign in with Dropbox to save this.");
   const headers = {
     Authorization: "Bearer " + auth.access_token,
     "Content-Type": "application/octet-stream",
@@ -4205,9 +4223,14 @@ async function dbxUploadJson(path, obj) {
   if (cfg.pathRoot === "home") headers["Dropbox-API-Path-Root"] = '{".tag": "home"}';
   else if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
   const r = await fetch("https://content.dropboxapi.com/2/files/upload", {
-    method: "POST", credentials: "omit", headers, body: JSON.stringify(obj),
+    method: "POST", credentials: "omit", headers, body: bytes,
   });
-  if (!r.ok) throw new Error("Could not save the auto takeoff request.");
+  if (!r.ok) throw new Error(fail || "Could not save that file.");
+}
+async function dbxUploadJson(path, obj) {
+  const A = HWSSync.DropboxBackend();
+  if (!A.ready()) throw new Error("Sign in with Dropbox to request an auto takeoff.");
+  await dbxUploadBytes(path, JSON.stringify(obj), "Could not save the auto takeoff request.");
 }
 /* Stub only. The button writes the request JSON. It does not measure the sheet.
    The office runner, built separately, reads that request and writes
@@ -4232,15 +4255,9 @@ function bindAuto(root, slug, plansPath) {
     };
   });
 }
-function sampleBlock() {
-  return `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref())}"><span class="lb"><span class="lt">Public sample plan</span><span class="ls">OpenTakeoff demo sheet · not a Sample Builders plan</span></span>${ico("chev", "go")}</a>`
-    + `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref("tile"))}"><span class="lb"><span class="lt">Tile and wall sample</span><span class="ls">Floor tile by room, and wall tile with a height you can change · not a Sample Builders plan</span></span>${ico("chev", "go")}</a>`
-    + `<a class="hrow pr-sample" href="${esc(sampleTakeoffHref("auto"))}"><span class="lb"><span class="lt">Auto takeoff sample</span><span class="ls">Detected rooms and walls to review · not a Sample Builders plan</span></span>${ico("chev", "go")}</a>`;
-}
 function planSignIn(msg) {
   return `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(msg || "Sign in with Dropbox to see this job's plans.")}</b>Plans stay in the Sample Builders Dropbox. This page uses the sign-in already on this phone.</div>
-  <button type="button" class="pri pr-signin" id="pr-signin">Sign in with Dropbox</button>
-  <div class="rows">${sampleBlock()}</div></div>`;
+  <button type="button" class="pri pr-signin" id="pr-signin">Sign in with Dropbox</button></div>`;
 }
 function bindSignIn(root) {
   const b = root.querySelector("#pr-signin");
@@ -4251,35 +4268,421 @@ function bindSignIn(root) {
   };
 }
 
-function paintJobFiles(M, slug) {
-  if (!M || !slug || typeof fileOfficeEntries !== "function" || typeof fileKind !== "function") return;
-  const host = M.querySelector(".planroom");
-  if (!host || host.querySelector("[data-jobfiles]")) return;
-  const rows = fileOfficeEntries(slug).filter((e) => {
-    if (!e || e.tag === "folder") return false;
-    const k = fileKind(e.name);
-    return k === "pdf" || k === "image" || k === "svg";
-  });
-  if (!rows.length) return;
-  const seen = {};
-  host.querySelectorAll(".pr-file .lt").forEach((el) => { seen[(el.textContent || "").trim()] = 1; });
-  const items = rows.filter((e) => {
-    const label = typeof fileLabel === "function" ? fileLabel(e.label || e.name) : e.name;
-    return !seen[e.name] && !seen[label];
-  });
-  if (!items.length) return;
-  const html = items.map((e) => {
-    const k = fileKind(e.name);
-    const where = String(e.rel || "").indexOf("/") >= 0 ? e.rel.slice(0, e.rel.lastIndexOf("/")) : "";
-    const meta = [where, azWhen(e.modified), fmtSize(e.size)].filter(Boolean).join(" · ");
-    const open = `<button type="button" class="pr-open" data-file-path="${esc(e.path || "")}" data-file-name="${esc(e.name || "")}" data-file-rel="${esc(e.rel || "")}"><span class="lb"><span class="lt">${esc(typeof fileLabel === "function" ? fileLabel(e.label || e.name) : e.name)}</span><span class="ls">${esc(meta || (k === "pdf" ? "PDF" : "Photo"))}</span></span></button>`;
-    if (k === "pdf" && typeof filePlanHref === "function") {
-      const href = filePlanHref(slug, e);
-      return `<div class="hrow pr-file">${open}<a class="pr-measure" href="${esc(href)}">Open in Plan Room</a></div>`;
+let prUI = { slug: "", path: "", q: "", filter: "all", open: {}, entries: [], source: "" };
+
+function prAttr(v) {
+  return typeof fileAttr === "function" ? fileAttr(v) : esc(v);
+}
+function prScrub(s) {
+  return String(s || "")
+    .replace(/\$\s?\d[\d,]*(?:\.\d+)?\s*[kKmMbB]?/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+\./g, ".")
+    .replace(/^\s+|\s+$/g, "");
+}
+function prTitle(entry) {
+  const raw = (entry && (entry.label || entry.name)) || "File";
+  const labeled = typeof fileLabel === "function" ? fileLabel(raw) : raw;
+  const clean = prScrub(labeled);
+  return clean || "File";
+}
+function prStamp(entry) {
+  const t = Date.parse((entry && entry.modified) || "");
+  return isNaN(t) ? 0 : t;
+}
+function prSetKey(name) {
+  let s = String(name || "").replace(/\.[^.]+$/, "");
+  s = s.replace(/\b(?:rev(?:ision)?|ver(?:sion)?)\s*[.#]?\s*\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\bv\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\b20\d{2}[-./]\d{1,2}[-./]\d{1,2}\b/g, " ");
+  s = s.replace(/\b\d{1,2}[-./]\d{1,2}[-./](?:20)?\d{2}\b/g, " ");
+  s = s.replace(/\b(?:final|issued|current|latest|updated|copy|draft)\b/gi, " ");
+  s = s.replace(/\(\s*\d+\s*\)/g, " ");
+  s = s.replace(/[\s_\-]+/g, " ").replace(/^\s+|\s+$/g, "").toLowerCase();
+  return s || String(name || "").toLowerCase();
+}
+function prSkipRel(rel) {
+  const parts = String(rel || "").split("/");
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    if (!p) continue;
+    if (/^buildertrend$/i.test(p)) return true;
+    if (p.toLowerCase() === "_takeoffs") {
+      const rest = parts.slice(i + 1);
+      const file = rest[rest.length - 1] || "";
+      if (rest[0] && rest[0].toLowerCase() === "sheets" && /\.pdf$/i.test(file)) return false;
+      return true;
     }
-    return `<div class="hrow pr-file">${open}</div>`;
+  }
+  return false;
+}
+function prSafeFile(s) {
+  return String(s || "").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "").slice(0, 80);
+}
+function prSetName(name) {
+  let s = String(name || "").replace(/\.pdf$/i, "");
+  s = s.replace(/\b(?:rev(?:ision)?|ver(?:sion)?)\s*[.#]?\s*\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\bv\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\b20\d{2}[-./]\d{1,2}[-./]\d{1,2}\b/g, " ");
+  s = s.replace(/\b\d{1,2}[-./]\d{1,2}[-./](?:20)?\d{2}\b/g, " ");
+  s = s.replace(/\b(?:final|issued|current|latest|updated|copy|draft)\b/gi, " ");
+  s = s.replace(/\(\s*\d+\s*\)/g, " ");
+  s = s.replace(/[\s_]+/g, " ").replace(/^\s+|\s+$/g, "");
+  s = s.replace(/[-\s]+$/g, "").replace(/^[-\s]+/g, "");
+  return prSafeFile(s) || "Sheet";
+}
+function prSheetFileName(setName, page, title) {
+  const set = prSafeFile(setName) || "Sheet";
+  const n = "p" + (page || 1);
+  const t = title ? prSafeFile(title) : "";
+  return t ? (set + " - " + n + " - " + t + ".pdf") : (set + " - " + n + ".pdf");
+}
+function prBrowseHome(entries) {
+  const rels = (entries || []).map((e) => String((e && e.rel) || ""));
+  const have = (rel) => rels.some((r) => r === rel || r.indexOf(rel + "/") === 0);
+  const named = ["030 Plans & Permits", "030 Plans, Permits & Engineering", "010 Plans", "Plans"];
+  for (let i = 0; i < named.length; i++) if (have(named[i])) return named[i];
+  const tops = [];
+  rels.forEach((r) => { const n = r.split("/")[0]; if (n && tops.indexOf(n) < 0) tops.push(n); });
+  const extra = tops.filter((name) => PLAN_CANDIDATES.indexOf(name) < 0 && !isArchiveName(name) && NUMBERED_PLANS_RE.test(String(name || "").trim()));
+  extra.sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+  if (extra.length) return extra[0];
+  for (let i = 0; i < PLAN_CANDIDATES.length; i++) if (have(PLAN_CANDIDATES[i])) return PLAN_CANDIDATES[i];
+  return "";
+}
+function prWithExtracts(slug, entries) {
+  const saved = (window.HWSExtract && HWSExtract.list) ? HWSExtract.list(slug) : [];
+  const list = (entries || []).slice();
+  saved.forEach((rec) => {
+    if (!rec || !rec.rel) return;
+    if (list.some((e) => e && (e.rel === rec.rel || (rec.path && e.path === rec.path)))) return;
+    list.push({
+      tag: "file", name: rec.name, label: rec.name, rel: rec.rel, path: rec.path || "",
+      modified: rec.modified || "", pages: 1, size: rec.size || 0,
+    });
+  });
+  return list;
+}
+function prArchived(rel) {
+  const parts = String(rel || "").split("/").filter(Boolean);
+  return parts.some((p, i) => (i < parts.length - 1 || !/\.[A-Za-z0-9]{1,8}$/.test(p)) && isArchiveName(p));
+}
+function prSegBucket(seg) {
+  const s = String(seg || "").toLowerCase();
+  if (/permit/.test(s) && !/plans?\s*[&+,]\s*permits?/.test(s)) return "permits";
+  if (/engineer|structural|\bcivil\b|\bmep\b|mechanical|electrical/.test(s)) return "engineering";
+  if (/\bplans?\b|blueprint|construction document|\bdrawings?\b/.test(s)) return "plans";
+  return "";
+}
+function prBucket(rel) {
+  const parts = String(rel || "").split("/").filter(Boolean);
+  const last = parts[parts.length - 1] || "";
+  const isFile = /\.[A-Za-z0-9]{1,8}$/.test(last);
+  const dirs = isFile ? parts.slice(0, -1) : parts;
+  let folderBucket = "";
+  for (let i = dirs.length - 1; i >= 0; i--) {
+    const b = prSegBucket(dirs[i]);
+    if (b) { folderBucket = b; break; }
+  }
+  const nameBucket = isFile ? (prSegBucket(last) || "") : "";
+  if (nameBucket && nameBucket !== "plans") return nameBucket;
+  return folderBucket || nameBucket || "other";
+}
+function prMatches(entry, filter) {
+  if (!filter || filter === "all") return true;
+  return prBucket((entry && (entry.rel || entry.name)) || "") === filter;
+}
+function prFolderVisible(folder, entries, filter) {
+  if (!folder) return false;
+  if (!filter || filter === "all") return true;
+  if (prBucket(folder.rel || folder.name || "") === filter) return true;
+  const prefix = String(folder.rel || "") + "/";
+  return (entries || []).some((e) => e && e.tag !== "folder" && String(e.rel || "").indexOf(prefix) === 0 && prMatches(e, filter));
+}
+function prPrepare(entries) {
+  const who = typeof fileWho === "function" ? fileWho() : "";
+  const list = typeof fileVisible === "function" ? fileVisible(entries, who) : (entries || []);
+  const by = new Map();
+  (list || []).forEach((e) => {
+    if (!e || !e.rel || prSkipRel(e.rel)) return;
+    const k = e.rel.toLowerCase();
+    const prev = by.get(k);
+    if (!prev || prStamp(e) >= prStamp(prev)) by.set(k, e);
+  });
+  return Array.from(by.values());
+}
+function prExt(name) {
+  const m = String(name || "").toLowerCase().match(/\.([a-z0-9]{1,8})$/);
+  return m ? m[1] : "";
+}
+function prGroupKey(entry) {
+  const rel = String((entry && entry.rel) || "");
+  const parent = rel.indexOf("/") >= 0 ? rel.slice(0, rel.lastIndexOf("/")).toLowerCase() : "";
+  const kind = typeof fileKind === "function" ? fileKind(entry.name) : "file";
+  // Same plan set means the same folder and the same extension. site.jpg and site.png stay separate.
+  return parent + "|" + kind + "|" + prExt(entry.name) + "|" + prSetKey(entry.name);
+}
+function prGroupFiles(files) {
+  const order = [];
+  const map = {};
+  (files || []).forEach((e) => {
+    const key = prGroupKey(e);
+    if (!map[key]) { map[key] = { key: key, items: [] }; order.push(map[key]); }
+    map[key].items.push(e);
+  });
+  order.forEach((g) => {
+    g.items.sort((a, b) => prStamp(b) - prStamp(a) || String(a.name).localeCompare(String(b.name), undefined, { numeric: true, sensitivity: "base" }));
+  });
+  order.sort((a, b) => String(a.items[0].name).localeCompare(String(b.items[0].name), undefined, { numeric: true, sensitivity: "base" }));
+  return order;
+}
+function prRecent(entries, filter) {
+  const best = new Map();
+  (entries || []).forEach((e) => {
+    if (!e || e.tag === "folder" || prArchived(e.rel) || !prMatches(e, filter)) return;
+    const key = prGroupKey(e);
+    const prev = best.get(key);
+    if (!prev || prStamp(e) > prStamp(prev) || (prStamp(e) === prStamp(prev) && String(e.name).localeCompare(String(prev.name)) < 0)) best.set(key, e);
+  });
+  return Array.from(best.values()).sort((a, b) => prStamp(b) - prStamp(a) || String(a.name).localeCompare(String(b.name), undefined, { numeric: true, sensitivity: "base" })).slice(0, 5);
+}
+function prChildren(entries, path, filter) {
+  const prefix = path ? path + "/" : "";
+  const folders = {};
+  const files = [];
+  (entries || []).forEach((e) => {
+    if (!e || !e.rel) return;
+    if (path && e.rel !== path && e.rel.indexOf(prefix) !== 0) return;
+    if (path && e.rel === path) return;
+    const rest = path ? e.rel.slice(prefix.length) : e.rel;
+    if (!rest) return;
+    if (e.tag === "folder" && rest.indexOf("/") < 0) { folders[e.rel] = e; return; }
+    if (e.tag === "folder") return;
+    if (rest.indexOf("/") < 0) {
+      if (prMatches(e, filter)) files.push(e);
+      return;
+    }
+    const top = rest.split("/")[0];
+    const rel = prefix + top;
+    if (!folders[rel]) folders[rel] = { tag: "folder", name: top, label: top, rel: rel, path: "", modified: "" };
+  });
+  const folderList = Object.keys(folders).map((k) => folders[k]).filter((f) => prFolderVisible(f, entries, filter));
+  folderList.sort((a, b) => String(a.name).localeCompare(String(b.name), undefined, { numeric: true, sensitivity: "base" }));
+  return { folders: folderList, files: files };
+}
+function prParentName(rel) {
+  const parent = String(rel || "").indexOf("/") >= 0 ? rel.slice(0, rel.lastIndexOf("/")).split("/").pop() : "";
+  if (!parent) return "";
+  return typeof fileLabel === "function" ? fileLabel(parent) : parent;
+}
+function prKindLabel(name) {
+  const k = typeof fileKind === "function" ? fileKind(name) : "file";
+  return {
+    pdf: "PDF", image: "Photo", svg: "SVG", cad: "CAD", doc: "Document", sheet: "Spreadsheet",
+    slides: "Slides", csv: "CSV", rtf: "Document", text: "Text", email: "Email", zip: "Archive",
+    video: "Video", file: "File",
+  }[k] || "File";
+}
+function prCountLabel(entry) {
+  const n = entry && (+entry.pages || 0);
+  if (n > 0) return n === 1 ? "1 sheet" : (n + " sheets");
+  const base = String((entry && entry.name) || "");
+  const named = base.match(/\b(\d+)\s*(sheets?|pages?|pgs?)\b/i);
+  if (named) {
+    const num = +named[1];
+    const pages = /page/i.test(named[2]) && !/sheet/i.test(named[2]);
+    const word = pages ? (num === 1 ? "page" : "pages") : (num === 1 ? "sheet" : "sheets");
+    return num + " " + word;
+  }
+  return "";
+}
+function prWhen(iso) {
+  const s = String(iso || "").trim();
+  if (!s) return "";
+  const day = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (day) {
+    const d = new Date(Date.UTC(+day[1], +day[2] - 1, +day[3], 15, 0, 0));
+    return d.toLocaleDateString("en-US", { timeZone: "America/Phoenix", month: "short", day: "numeric", year: "numeric" });
+  }
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleString("en-US", { timeZone: "America/Phoenix", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+function prMeta(entry, extra) {
+  return [extra, prCountLabel(entry), prWhen(entry && entry.modified), prKindLabel(entry && entry.name)].filter(Boolean).join(" · ");
+}
+function prPlansPath(slug, entries) {
+  const root = projectsRoot().replace(/\/$/, "");
+  const folder = String(jobFolder(slug) || "").replace(/^\/+|\/+$/g, "");
+  const jobPath = root && folder ? root + "/" + folder : root;
+  const rels = (entries || []).map((e) => String((e && e.rel) || ""));
+  let plansRel = plansRelFromLinks(slug);
+  const have = (rel) => rels.some((r) => r === rel || r.indexOf(rel + "/") === 0);
+  if (plansRel && !have(plansRel)) plansRel = "";
+  if (!plansRel) {
+    for (let i = 0; i < PLAN_CANDIDATES.length; i++) {
+      if (have(PLAN_CANDIDATES[i])) { plansRel = PLAN_CANDIDATES[i]; break; }
+    }
+  }
+  if (!plansRel) {
+    const tops = [];
+    rels.forEach((r) => { const n = r.split("/")[0]; if (n && tops.indexOf(n) < 0) tops.push(n); });
+    const extra = tops.filter((name) => PLAN_CANDIDATES.indexOf(name) < 0 && !isArchiveName(name) && NUMBERED_PLANS_RE.test(String(name || "").trim()));
+    extra.sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+    if (extra.length) plansRel = extra[0];
+  }
+  if (!plansRel) return jobPath;
+  return jobPath ? jobPath + "/" + plansRel : plansRel;
+}
+function prFileRow(slug, entry, plansPath, extra) {
+  const title = prTitle(entry);
+  const meta = prMeta(entry, extra || "");
+  const kind = typeof fileKind === "function" ? fileKind(entry.name) : "file";
+  const relAttr = prAttr(entry.rel || "");
+  if (kind === "cad" && typeof cadPage === "function") {
+    const href = prAttr(cadPage(slug, { path: entry.path || "", name: entry.name || "drawing", rel: entry.rel || "" }));
+    return `<div class="hrow pr-file pr-drawing" data-pr-rel="${relAttr}"><button type="button" class="pr-cad-name" data-cad-href="${href}"><span class="lb"><span class="lt">${esc(title)}</span><span class="ls">${esc(meta)}</span></span></button><button type="button" class="pr-cad" data-cad-href="${href}">Open in Plan Room</button></div>`;
+  }
+  const shown = prTitle(entry);
+  const auto = kind === "pdf"
+    ? `<button type="button" class="pr-auto" data-path="${prAttr(entry.path || "")}" data-name="${prAttr(entry.name || "")}" data-rel="${relAttr}">Auto takeoff</button>`
+    : "";
+  return `<div class="hrow pr-file" data-pr-rel="${relAttr}"><button type="button" class="pr-open" data-file-path="${prAttr(entry.path || "")}" data-file-name="${prAttr(shown)}" data-file-rel="${relAttr}"><span class="lb"><span class="lt">${esc(title)}</span><span class="ls">${esc(meta)}</span></span></button>${auto}</div>`;
+}
+function prFolderRow(folder) {
+  const name = typeof fileLabel === "function" ? fileLabel(folder.label || folder.name) : (folder.name || "Folder");
+  return `<button type="button" class="hrow pr-folder" data-prpath="${prAttr(folder.rel)}"><span class="lb"><span class="lt">${esc(prScrub(name) || "Folder")}</span><span class="ls">Folder</span></span></button>`;
+}
+function prGroupHtml(slug, group, plansPath, showWhere) {
+  const head = group.items[0];
+  const rest = group.items.slice(1);
+  const where = showWhere ? prParentName(head.rel) : "";
+  let html = prFileRow(slug, head, plansPath, where);
+  if (rest.length) {
+    const open = !!prUI.open[group.key];
+    const label = rest.length === 1 ? "1 older version" : (rest.length + " older versions");
+    html += `<button type="button" class="pr-older" data-prolder="${prAttr(group.key)}" aria-expanded="${open ? "true" : "false"}">${esc(label)}</button>`;
+    if (open) html += `<div class="pr-olds">${rest.map((e) => prFileRow(slug, e, plansPath, showWhere ? prParentName(e.rel) : "")).join("")}</div>`;
+  }
+  return `<div class="pr-set">${html}</div>`;
+}
+function prQueryHits(entries, query, filter) {
+  const words = String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
+  const folders = [];
+  const files = [];
+  const seenFolder = {};
+  (entries || []).forEach((e) => {
+    if (!e) return;
+    if (e.tag === "folder") {
+      if (!prFolderVisible(e, entries, filter)) return;
+      const blob = ((e.name || "") + " " + (e.label || "")).toLowerCase();
+      if (words.every((w) => blob.indexOf(w) >= 0) && !seenFolder[e.rel]) { seenFolder[e.rel] = 1; folders.push(e); }
+      return;
+    }
+    if (!prMatches(e, filter)) return;
+    const blob = ((e.name || "") + " " + (e.label || "") + " " + (e.rel || "")).toLowerCase();
+    if (words.every((w) => blob.indexOf(w) >= 0)) files.push(e);
+  });
+  folders.sort((a, b) => String(a.name).localeCompare(String(b.name), undefined, { numeric: true, sensitivity: "base" }));
+  return { folders: folders, files: files };
+}
+function prCrumbs(slug) {
+  const home = jobTitle(slug);
+  const parts = prUI.path ? prUI.path.split("/") : [];
+  let html = `<button type="button" data-prpath=""${parts.length ? "" : ' aria-current="page"'}>${esc(home)}</button>`;
+  parts.forEach((p, i) => {
+    const rel = parts.slice(0, i + 1).join("/");
+    const last = i === parts.length - 1;
+    const label = typeof fileLabel === "function" ? fileLabel(p) : p;
+    html += `<span class="sep">/</span><button type="button" data-prpath="${prAttr(rel)}"${last ? ' aria-current="page"' : ""}>${esc(prScrub(label) || label)}</button>`;
+  });
+  return html;
+}
+function prDraw(M) {
+  const slug = prUI.slug;
+  const entries = prUI.entries || [];
+  const plansPath = prPlansPath(slug, entries);
+  const q = prUI.q || "";
+  const filter = prUI.filter || "all";
+  const atHome = prUI.path === (prUI.home || "") && !q.trim();
+  const recent = atHome ? prRecent(entries, filter) : [];
+  let folders;
+  let files;
+  if (q.trim()) {
+    const hit = prQueryHits(entries, q, filter);
+    folders = hit.folders;
+    files = hit.files;
+  } else {
+    const kids = prChildren(entries, prUI.path, filter);
+    folders = kids.folders;
+    files = kids.files;
+  }
+  const groups = prGroupFiles(files);
+  const showWhere = !!q.trim();
+  const recentHtml = recent.map((e) => prFileRow(slug, e, plansPath, prParentName(e.rel))).join("");
+  const browseHtml = folders.map(prFolderRow).join("") + groups.map((g) => prGroupHtml(slug, g, plansPath, showWhere)).join("");
+  const empty = q.trim() ? "No files match that search." : (prUI.path ? "This folder is empty." : "No files in this job folder yet.");
+  const filters = [["all", "All"], ["plans", "Plans"], ["permits", "Permits"], ["engineering", "Engineering"], ["other", "Other"]].map((pair) => {
+    return `<button type="button" data-prfilter="${pair[0]}" class="${filter === pair[0] ? "on" : ""}">${pair[1]}</button>`;
   }).join("");
-  host.insertAdjacentHTML("beforeend", `<div data-jobfiles="1"><h2 class="sh2">From this job's files</h2><div class="hint">PDFs and photos from this job open here. A PDF can also open in the Plan Room, and a takeoff is saved next to the plans.</div><div class="rows">${html}</div></div>`);
+  M.innerHTML = `<div class="planroom" data-pr-browser="1"><h2 class="sh2 first">Plan Room</h2>
+    <button type="button" class="pr-back" data-prback>Back</button>
+    <div class="pr-crumbs">${prCrumbs(slug)}</div>
+    <div class="ftools pr-tools"><label class="sbox">${typeof ico === "function" ? ico("search") : ""}<input type="search" id="prq" placeholder="Search this job" value="${esc(q)}" autocomplete="off"></label></div>
+    <div class="pr-filters" role="group" aria-label="File filters">${filters}</div>
+    ${atHome ? `<h2 class="sh2">Recent</h2><div class="rows" data-pr-recent>${recentHtml || '<div class="none">No recent files.</div>'}</div>` : ""}
+    <h2 class="sh2">${q.trim() ? "Search" : "Browse files"}</h2>
+    <div class="rows" data-pr-browse>${browseHtml || `<div class="none">${esc(empty)}</div>`}</div>
+    <div class="hint foot">A saved takeoff is stored in Dropbox next to the plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer. DWG and DXF drawings open in Plan Room with layers, measure, and snap.</div></div>`;
+  if (window.HWSFiles && HWSFiles.remember) HWSFiles.remember(slug, entries);
+  bindAuto(M, slug, plansPath);
+  bindCad(M);
+  const input = M.querySelector("#prq");
+  if (input) input.oninput = () => {
+    prUI.q = input.value;
+    const p = input.selectionStart;
+    prDraw(M);
+    const n = M.querySelector("#prq");
+    if (n) { n.focus(); try { n.setSelectionRange(p, p); } catch (e) {} }
+  };
+  M.querySelectorAll("[data-prfilter]").forEach((b) => b.onclick = () => { prUI.filter = b.getAttribute("data-prfilter") || "all"; prDraw(M); });
+  M.querySelectorAll("[data-prolder]").forEach((b) => b.onclick = () => {
+    const id = b.getAttribute("data-prolder") || "";
+    prUI.open[id] = !prUI.open[id];
+    prDraw(M);
+  });
+  M.querySelectorAll("[data-prpath]").forEach((b) => b.onclick = () => {
+    prUI.path = b.getAttribute("data-prpath") || "";
+    prUI.q = "";
+    prDraw(M);
+  });
+  const back = M.querySelector("[data-prback]");
+  if (back) back.onclick = () => {
+    if (prUI.path) {
+      const i = prUI.path.lastIndexOf("/");
+      prUI.path = i < 0 ? "" : prUI.path.slice(0, i);
+      prUI.q = "";
+      prDraw(M);
+      return;
+    }
+    if (prUI.q) { prUI.q = ""; prDraw(M); return; }
+    location.hash = typeof jobHref === "function" ? jobHref(slug, "schedule") : ("#/job/" + slug + "/schedule");
+  };
+  paintSavedPlans(M);
+}
+async function prLoad(slug) {
+  let entries = typeof fileOfficeEntries === "function" ? fileOfficeEntries(slug) : [];
+  let source = entries.length ? "office" : "";
+  let error = null;
+  try {
+    if (typeof fileListLive === "function") {
+      const live = await fileListLive(slug);
+      if (live) { entries = live; source = "dropbox"; }
+    }
+  } catch (e) {
+    error = e;
+  }
+  return { entries: entries, source: source, error: entries.length ? null : error };
 }
 function paintSavedPlans(el) {
   if (!el) return;
@@ -4291,51 +4694,60 @@ async function mPlanRoom(M) {
   const gen = ++prGen;
   const slug = J && J.slug;
   if (!slug) return;
-  M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="hint">Loading plans from Dropbox…</div></div>`;
-  let got;
-  try { got = await loadPlans(slug); }
-  catch (e) {
-    if (gen !== prGen || !J || J.slug !== slug) return;
-    M.innerHTML = planSignIn(e.code === "auth" ? e.message : ("Could not read Dropbox. " + (e.message || "")));
+  if (prUI.slug !== slug) prUI = { slug: slug, path: null, home: "", q: "", filter: "all", open: {}, entries: [], source: "" };
+  else prUI.slug = slug;
+  M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="hint">Loading files from Dropbox…</div></div>`;
+  const got = await prLoad(slug);
+  if (gen !== prGen || !J || J.slug !== slug) return;
+  if (got.error && !(got.entries || []).length) {
+    const msg = got.error.code === "auth" ? got.error.message : ("Could not read Dropbox. " + (got.error.message || ""));
+    M.innerHTML = planSignIn(msg);
     bindSignIn(M);
     paintSavedPlans(M);
-    paintJobFiles(M, slug);
     return;
   }
-  if (gen !== prGen || !J || J.slug !== slug) return;
-  if (got.error) {
-    M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(got.error)}</b></div><div class="rows">${sampleBlock()}</div></div>`;
-    paintSavedPlans(M);
-    paintJobFiles(M, slug);
-    return;
-  }
-  const rows = got.pdfs.map((f) => {
-    const where = f.rel.indexOf("/") >= 0 ? f.rel.slice(0, f.rel.lastIndexOf("/")) : "";
-    const meta = [where, azWhen(f.modified), fmtSize(f.size)].filter(Boolean).join(" · ");
-    return `<div class="hrow pr-file"><button type="button" class="pr-open" data-file-path="${esc(f.path)}" data-file-name="${esc(f.name)}" data-file-rel="${esc(f.rel)}"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta || "PDF")}</span></span></button><a class="pr-measure" href="${esc(sheetHref(slug, got.plansPath, f))}">Measure</a><button type="button" class="pr-auto" data-path="${esc(f.path)}" data-name="${esc(f.name)}" data-rel="${esc(f.rel)}">Auto takeoff</button></div>`;
+  prUI.entries = prPrepare(prWithExtracts(slug, got.entries || []));
+  prUI.home = prBrowseHome(prUI.entries);
+  if (prUI.path == null) prUI.path = prUI.home;
+  prUI.source = got.source || "";
+  prDraw(M);
+}
+function mTakeoffs(M) {
+  const slug = J && J.slug;
+  if (!slug || !M) return;
+  const saved = (window.HWSExtract && HWSExtract.list) ? HWSExtract.list(slug) : [];
+  const office = typeof fileOfficeEntries === "function" ? fileOfficeEntries(slug) : [];
+  const fromFiles = (office || []).filter((e) => e && /\/_takeoffs\/sheets\/[^/]+\.pdf$/i.test("/" + String(e.rel || "")));
+  const by = new Map();
+  fromFiles.concat(saved).forEach((e) => {
+    if (!e || !(e.path || e.rel)) return;
+    const key = e.path || e.rel;
+    if (!by.has(key)) by.set(key, e);
+  });
+  const rows = Array.from(by.values()).sort((a, b) => prStamp(b) - prStamp(a) || String(a.name).localeCompare(String(b.name)));
+  const plans = prPlansPath(slug, prPrepare(prWithExtracts(slug, office)));
+  const html = rows.map((e) => {
+    const href = typeof sheetHref === "function" ? sheetHref(slug, plans, {
+      path: e.path || "",
+      name: e.name || "sheet.pdf",
+      rel: e.planRel || ("_takeoffs/sheets/" + (e.name || "sheet.pdf")),
+    }) : "#";
+    const scaleBit = e.scale_label ? (" · " + e.scale_label) : "";
+    const from = e.source_name ? ("From " + e.source_name + (e.page ? " · page " + e.page : "") + scaleBit) : ("Extracted sheet" + scaleBit);
+    return `<a class="hrow" href="${prAttr(href)}"><span class="lb"><span class="lt">${esc(prTitle(e))}</span><span class="ls">${esc(from)}</span></span></a>`;
   }).join("");
-  const draws = (got.drawings || []).map((f) => {
-    const where = f.rel.indexOf("/") >= 0 ? f.rel.slice(0, f.rel.lastIndexOf("/")) : "";
-    const meta = [where, azWhen(f.modified), fmtSize(f.size), "CAD"].filter(Boolean).join(" · ");
-    return `<div class="hrow pr-file pr-drawing"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta)}</span></span><button type="button" class="pr-cad" data-cad-href="${esc(cadPage(slug, f))}">Open in Plan Room</button></div>`;
-  }).join("");
-  M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room <span class="mut small">${got.pdfs.length} PDF${got.pdfs.length === 1 ? "" : "s"}</span></h2>
-    <div class="hint">${esc(got.plansRel)} · newest first · archive folders skipped</div>
-    <div class="rows">${rows || '<div class="none">No PDFs in this Plans folder yet.</div>'}</div>
-    ${draws ? `<h2 class="sh2">Drawings</h2><div class="rows">${draws}</div>` : ""}
-    <div class="rows">${sampleBlock()}</div>
-    <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer. DWG and DXF drawings open in Plan Room with layers, measure, and snap.</div></div>`;
-  bindAuto(M, slug, got.plansPath);
-  bindCad(M);
-  paintSavedPlans(M);
-  paintJobFiles(M, slug);
+  M.innerHTML = `<div class="planroom" data-takeoffs="1"><h2 class="sh2 first">Takeoffs</h2>
+    <button type="button" class="pr-back" data-prback>Back</button>
+    <div class="rows" data-takeoff-sheets>${html || '<div class="none">No extracted sheets yet.</div>'}</div>
+    <div class="hint foot">A sheet saved for takeoff is one page from a plan PDF. It is stored in Dropbox under the plans folder, in <b>_takeoffs/sheets</b>.</div></div>`;
+  const back = M.querySelector("[data-prback]");
+  if (back) back.onclick = () => { location.hash = typeof jobHref === "function" ? jobHref(slug, "plans") : ("#/job/" + slug + "/plans"); };
 }
 
 function renderPlanIndex() {
   const jobs = ((DATA && DATA.common && DATA.common.all_jobs) || []).slice();
   const body = `<div class="hph"><h1>Plan Room</h1></div><p class="hint">Pick a job to open its plan PDFs and measure them.</p>
-    <div class="rows">${jobs.map((j) => `<a class="hrow" href="${jobHref(j.slug, "plans")}"><span class="lb"><span class="lt">${esc(j.name)}</span>${j.address ? `<span class="ls">${esc(j.address)}</span>` : ""}</span>${ico("chev", "go")}</a>`).join("") || '<div class="none">No jobs yet</div>'}</div>
-    <div class="rows">${sampleBlock()}</div>`;
+    <div class="rows">${jobs.map((j) => `<a class="hrow" href="${jobHref(j.slug, "plans")}"><span class="lb"><span class="lt">${esc(j.name)}</span>${j.address ? `<span class="ls">${esc(j.address)}</span>` : ""}</span>${ico("chev", "go")}</a>`).join("") || '<div class="none">No jobs yet</div>'}</div>`;
   hubShell("plans", body);
   injectMainNav();
   document.title = "Sample Builders · Plan Room";
@@ -4386,12 +4798,28 @@ function injectJobChrome() {
     a.textContent = "Plan Room";
     side.insertBefore(a, side.firstChild);
   }
+  if (side && !side.querySelector("[data-hws-takeoffs]")) {
+    const a = document.createElement("a");
+    a.setAttribute("href", modHref("takeoffs"));
+    a.setAttribute("data-hws-takeoffs", "");
+    a.textContent = "Takeoffs";
+    const plans = side.querySelector("[data-hws-plans]");
+    if (plans && plans.nextSibling) side.insertBefore(a, plans.nextSibling);
+    else side.insertBefore(a, side.firstChild);
+  }
   if (curMod() === "plans") {
     document.querySelectorAll("nav.jtabs a.on").forEach((el) => el.classList.remove("on"));
     const s = document.querySelector("nav.side [data-hws-plans]");
     if (s) s.className = "on";
     const M = document.getElementById("mod");
     if (M) mPlanRoom(M);
+  }
+  if (curMod() === "takeoffs") {
+    document.querySelectorAll("nav.tabbar a.on").forEach((el) => el.classList.remove("on"));
+    const s = document.querySelector("nav.side [data-hws-takeoffs]");
+    if (s) s.className = "on";
+    const M = document.getElementById("mod");
+    if (M) mTakeoffs(M);
   }
   injectMainNav();
 }
@@ -4424,14 +4852,46 @@ const _hwsOpenMore = openMore;
 openMore = function () {
   _hwsOpenMore();
   const list = document.querySelector(".modal .mlist");
-  if (!list || list.querySelector("[data-hws-plans]") || !J) return;
-  const a = document.createElement("a");
-  a.setAttribute("href", modHref("plans"));
-  a.setAttribute("data-close", "");
-  a.setAttribute("data-hws-plans", "");
-  a.textContent = "Plan Room";
-  list.insertBefore(a, list.firstChild);
+  if (!list || !J) return;
+  if (!list.querySelector("[data-hws-plans]")) {
+    const a = document.createElement("a");
+    a.setAttribute("href", modHref("plans"));
+    a.setAttribute("data-close", "");
+    a.setAttribute("data-hws-plans", "");
+    a.textContent = "Plan Room";
+    list.insertBefore(a, list.firstChild);
+  }
+  if (!list.querySelector("[data-hws-takeoffs]")) {
+    const a = document.createElement("a");
+    a.setAttribute("href", modHref("takeoffs"));
+    a.setAttribute("data-close", "");
+    a.setAttribute("data-hws-takeoffs", "");
+    a.textContent = "Takeoffs";
+    const plans = list.querySelector("[data-hws-plans]");
+    if (plans && plans.nextSibling) list.insertBefore(a, plans.nextSibling);
+    else list.insertBefore(a, list.firstChild);
+  }
 };
+if (typeof window !== "undefined") {
+  window.HWSPlanBrowser = { // not HWSPlan: that name is the offline plan viewer (plans/viewer.js) that offline.js loads on demand
+    setKey: prSetKey,
+    bucket: prBucket,
+    prepare: prPrepare,
+    children: prChildren,
+    recent: prRecent,
+    group: prGroupFiles,
+    when: prWhen,
+    title: prTitle,
+    count: prCountLabel,
+    meta: prMeta,
+    plansPath: prPlansPath,
+    browseHome: prBrowseHome,
+    sheetName: prSheetFileName,
+    setName: prSetName,
+    folderRow: prFolderRow,
+    fileRow: prFileRow,
+  };
+}
 
 /* Per-job Files tab. Names, folders, and who may see budget files come from data.json
    after sign-in. This file does not list jobs, people, or folder paths.
@@ -4499,6 +4959,15 @@ function fileLabel(name) {
   });
   s = s.replace(/\bbuildertrend\b/gi, "").replace(/[ \t]{2,}/g, " ").replace(/^[\s.\-]+|[\s.\-]+$/g, "");
   return s;
+}
+function fileDisplayTitle(entry) {
+  const raw = (entry && (entry.label || entry.name)) || "File";
+  const clean = fileLabel(raw)
+    .replace(/\$\s?\d[\d,]*(?:\.\d+)?\s*[kKmMbB]?/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+\./g, ".")
+    .replace(/^\s+|\s+$/g, "");
+  return clean || "File";
 }
 function fileBtName(name) {
   return /^buildertrend$/i.test(String(name || "").trim());
@@ -4701,12 +5170,18 @@ function fileNorm(raw, root) {
   if (!rel || rel.indexOf("..") >= 0) return null;
   const name = raw.name || rel.split("/").pop();
   const money = raw.money != null ? !!raw.money : fileIsMoney(rel, tag);
+  const pages = filePageCount(raw);
   return {
     tag: tag, name: name, label: raw.label || name, rel: rel, path: full || (prefix && rel ? prefix + "/" + rel : ""),
     size: +raw.size || 0, modified: raw.modified || raw.client_modified || raw.server_modified || "",
     id: raw.id || "", content_hash: raw.content_hash || "", money: money, bt: raw.bt || null,
-    preview_path: raw.preview_path || "", thumb: !!raw.thumb,
+    preview_path: raw.preview_path || "", thumb: !!raw.thumb, pages: pages,
   };
+}
+function filePageCount(raw) {
+  const n = raw && (raw.pages != null ? raw.pages : (raw.page_count != null ? raw.page_count : raw.sheet_count));
+  const v = parseInt(n, 10);
+  return v > 0 ? v : 0;
 }
 function fileVisible(entries, who) {
   const see = fileCanSeeMoney(who, fileAllow().money);
@@ -4817,14 +5292,19 @@ async function fileRecall(key) {
   return fileIdb("get", "blob:" + key);
 }
 
+function fileEncodeSeg(seg) {
+  // Match hlib.dbx_url: every character outside the unreserved set is percent-encoded.
+  return encodeURIComponent(seg).replace(/[!'()*]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase());
+}
 function fileDropboxUrl(entry) {
   const path = entry.path || "";
   if (!path) return "";
-  const parts = path.split("/").filter(Boolean).map(encodeURIComponent);
+  const parts = path.split("/").filter(Boolean).map(fileEncodeSeg);
   // Same shape as hlib.dbx_url: encoded segments and role=work. The file name is the Dropbox name.
   if (entry.tag === "folder") return "https://www.dropbox.com/home/" + parts.join("/") + "?role=work";
   const parent = parts.slice(0, -1).join("/");
-  return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(entry.name || "") + "&role=work";
+  const name = entry.name || path.split("/").filter(Boolean).pop() || "";
+  return "https://www.dropbox.com/home/" + parent + "?preview=" + fileEncodeSeg(name) + "&role=work";
 }
 function filePlansPath(slug) {
   const entries = fileOfficeEntries(slug);
@@ -4849,9 +5329,9 @@ function filePlansPath(slug) {
   if (!plansRel) return jobPath;
   return jobPath ? jobPath + "/" + plansRel : plansRel;
 }
-function filePlanRel(slug, entry) {
+function filePlanRel(slug, entry, plansPath) {
   const rel = String((entry && entry.rel) || "");
-  const plans = filePlansPath(slug);
+  const plans = plansPath || filePlansPath(slug);
   const root = (typeof projectsRoot === "function" ? projectsRoot() : filesRoot()).replace(/\/$/, "");
   const folder = String(typeof jobFolder === "function" ? jobFolder(slug) : fileFolder(slug) || "").replace(/^\/+|\/+$/g, "");
   const jobPath = root && folder ? root + "/" + folder + "/" : "";
@@ -4869,7 +5349,7 @@ function filePlanHref(slug, entry, plansPath) {
   return sheetHref(slug, plans, {
     path: entry.path || "",
     name: entry.name || "plan.pdf",
-    rel: filePlanRel(slug, entry),
+    rel: filePlanRel(slug, entry, plans),
   });
 }
 
@@ -5137,15 +5617,16 @@ function openSheet(slug, entry, images, index) {
   document.querySelectorAll(".fview").forEach((n) => n.remove());
   const view = document.createElement("div");
   view.className = "fview";
-  view.innerHTML = '<div class="fshell"><div class="fbar"><button type="button" data-fclose aria-label="Close">Close</button><h2>' + esc(fileLabel(entry.label || entry.name)) + '</h2></div><div class="fswipe"' + (images.length > 1 ? "" : ' hidden') + '><button type="button" data-fprev aria-label="Previous">Prev</button><span class="mut" data-fcount></span><button type="button" data-fnext aria-label="Next">Next</button></div><div class="fstage" data-fstage><div class="fnote">Opening…</div></div><div class="facts"><a data-fplan hidden>Open in Plan Room</a><button type="button" data-fdl>Download</button><a data-fsrc target="_blank" rel="noopener" hidden>View source</a></div></div>';
+  view.innerHTML = '<div class="fshell"><div class="fbar"><button type="button" data-fclose aria-label="Close">Close</button><h2>' + esc(fileDisplayTitle(entry)) + '</h2></div><div class="fswipe"' + (images.length > 1 ? "" : ' hidden') + '><button type="button" data-fprev aria-label="Previous">Prev</button><span class="mut" data-fcount></span><button type="button" data-fnext aria-label="Next">Next</button></div><div class="fstage" data-fstage><div class="fnote">Opening…</div></div><div class="facts"><button type="button" data-fextract hidden>Extract page for takeoff</button><a data-fplan hidden>Open in Plan Room</a><button type="button" data-fdl>Download</button><a data-fsrc target="_blank" rel="noopener" hidden>View source</a></div></div>';
   document.body.appendChild(view);
-  const state = { slug: slug, entry: entry, images: images, index: index, bytes: null, type: "", found: false, entries: fileBytes.get(slug) || fileOfficeEntries(slug) };
+  const state = { slug: slug, entry: entry, images: images, index: index, bytes: null, type: "", found: false, pages: 0, entries: fileBytes.get(slug) || fileOfficeEntries(slug) };
+  view._hwsFile = state;
   function showNav() {
     const swipe = view.querySelector(".fswipe");
     const many = state.images.length > 1 && fileKind(state.entry.name) === "image";
     swipe.hidden = !many;
     view.querySelector("[data-fcount]").textContent = many ? (state.index + 1) + " / " + state.images.length : "";
-    view.querySelector(".fbar h2").textContent = fileLabel(state.entry.label || state.entry.name);
+    view.querySelector(".fbar h2").textContent = fileDisplayTitle(state.entry);
     const src = state.found ? fileSourceUrl(state.entry) : "";
     const a = view.querySelector("[data-fsrc]");
     if (src) { a.href = src; a.hidden = false; } else { a.removeAttribute("href"); a.hidden = true; }
@@ -5563,6 +6044,12 @@ function fileShowPdf(stage, offline, got) {
   const onMsg = (ev) => {
     if (ev.origin !== location.origin || !ev.data) return;
     if (ev.data.type === "hws-pdf-listening") send();
+    if (ev.data.type === "hws-pdf-ready") {
+      stage.setAttribute("data-fpages", String(+ev.data.pages || 0));
+      const view = stage.closest(".fview");
+      if (view && view._hwsFile) view._hwsFile.pages = +ev.data.pages || 0;
+      if (view && window.HWSExtract && HWSExtract.sync) HWSExtract.sync(view);
+    }
     if (ev.data.type === "hws-pdf-error") {
       window.removeEventListener("message", onMsg);
       stage.innerHTML = fileNotPdfHtml(offline);
@@ -5745,7 +6232,7 @@ function fileLinkName(href) {
 function markedFileEl(el) {
   if (!el || !el.closest) return null;
   const chip = el.closest("[data-flink], [data-file], [data-file-path], [data-file-rel]");
-  if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure") || chip.hasAttribute("data-fsrc") || chip.hasAttribute("data-fplan")) return null;
+  if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure") || chip.classList.contains("pr-pdf") || chip.hasAttribute("data-fsrc") || chip.hasAttribute("data-fplan")) return null;
   return chip;
 }
 /* The app, an OAuth return (?code= / ?state=), and ordinary controls are never files.
@@ -5830,6 +6317,7 @@ window.HWSFiles = {
   emailSummary: fileEmailSummary,
   planHref: filePlanHref,
   plansPath: filePlansPath,
+  remember(slug, entries) { if (slug) fileBytes.set(slug, entries || []); },
   label: fileLabel,
   refs: fileRefs,
   exifOrientation: fileExifOrientation,
@@ -5837,6 +6325,398 @@ window.HWSFiles = {
 };
 window.HWSFiles.registerPreview = fileRegisterPreview;
 function fileChip(row) { return fileChips(row); }
+
+/* Extract one page of a plan PDF into its own file for a takeoff.
+   Runs in the hub preview and on the Plan Room page. pdf-lib copies the
+   page, including rotation and user-unit scale. Nothing here is measured. */
+const XKEY = "hws-sheet-extracts";
+
+function xToast(msg) {
+  if (typeof toast === "function") { toast(msg); return; }
+  const s = document.getElementById("hws-status");
+  if (s) s.textContent = msg;
+}
+function xVendor(name) {
+  const path = String(location.pathname || "");
+  const prefix = /\/plan-room\/takeoff\//.test(path) ? "../../" : "";
+  return new URL(prefix + "vendor/" + name, location.href).href;
+}
+function xLoadScript(url) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = url;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("Could not load a library for this PDF."));
+    document.head.appendChild(s);
+  });
+}
+async function xLib() {
+  if (window.PDFLib) return window.PDFLib;
+  await xLoadScript(xVendor("pdf-lib.min.js"));
+  if (!window.PDFLib) throw new Error("Could not load a library for this PDF.");
+  return window.PDFLib;
+}
+function xAuth() {
+  try { return JSON.parse(localStorage.getItem("hws-dbx-auth") || "null"); } catch (e) { return null; }
+}
+function xHeaders(auth, extra) {
+  const headers = Object.assign({ Authorization: "Bearer " + auth.access_token }, extra || {});
+  if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
+  return headers;
+}
+async function xEnsureAuth() {
+  const auth = xAuth();
+  if (!auth || !auth.access_token) throw new Error("Sign in with Dropbox to save this sheet.");
+  if (auth.root_ns) return auth;
+  try {
+    const r = await fetch("https://api.dropboxapi.com/2/users/get_current_account", {
+      method: "POST", credentials: "omit",
+      headers: { Authorization: "Bearer " + auth.access_token, "Content-Type": "application/json" },
+      body: "null",
+    });
+    if (r.ok) {
+      const a = await r.json();
+      auth.root_ns = a.root_info && a.root_info.root_namespace_id;
+      localStorage.setItem("hws-dbx-auth", JSON.stringify(auth));
+    }
+  } catch (e) {}
+  return xAuth() || auth;
+}
+async function xUpload(path, bytes) {
+  const auth = await xEnsureAuth();
+  const r = await fetch("https://content.dropboxapi.com/2/files/upload", {
+    method: "POST", credentials: "omit",
+    headers: xHeaders(auth, {
+      "Content-Type": "application/octet-stream",
+      "Dropbox-API-Arg": JSON.stringify({ path: path, mode: { ".tag": "overwrite" }, autorename: false, mute: true }),
+    }),
+    body: bytes,
+  });
+  if (!r.ok) throw new Error("Could not save the sheet.");
+}
+async function xDownload(path) {
+  const auth = await xEnsureAuth();
+  const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+    method: "POST", credentials: "omit",
+    headers: xHeaders(auth, { "Dropbox-API-Arg": JSON.stringify({ path: path }) }),
+  });
+  if (!r.ok) throw new Error("Could not download that PDF.");
+  return new Uint8Array(await r.arrayBuffer());
+}
+function xSetName(name) {
+  if (typeof prSetName === "function") return prSetName(name);
+  let s = String(name || "").replace(/\.pdf$/i, "");
+  s = s.replace(/\b(?:rev(?:ision)?|ver(?:sion)?)\s*[.#]?\s*\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\bv\d+[a-z]?\b/gi, " ");
+  s = s.replace(/\b20\d{2}[-./]\d{1,2}[-./]\d{1,2}\b/g, " ");
+  s = s.replace(/\b(?:final|issued|current|latest|updated|copy|draft)\b/gi, " ");
+  s = s.replace(/[\s_]+/g, " ").replace(/^\s+|\s+$/g, "").replace(/[-\s]+$/g, "");
+  return s || "Sheet";
+}
+function xSheetName(fileName, page, title) {
+  const set = xSetName(fileName);
+  if (typeof prSheetFileName === "function") return prSheetFileName(set, page, title);
+  const t = title ? String(title).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim() : "";
+  return t ? (set + " - p" + page + " - " + t + ".pdf") : (set + " - p" + page + ".pdf");
+}
+function xList(slug) {
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem(XKEY) || "{}") || {}; } catch (e) { all = {}; }
+  return (all[slug] || []).slice();
+}
+function xRemember(slug, rec) {
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem(XKEY) || "{}") || {}; } catch (e) { all = {}; }
+  const list = (all[slug] || []).filter((row) => row && row.rel !== rec.rel);
+  list.unshift(rec);
+  all[slug] = list.slice(0, 40);
+  localStorage.setItem(XKEY, JSON.stringify(all));
+  if (typeof prUI !== "undefined" && prUI && prUI.slug === slug && typeof prPrepare === "function") {
+    const next = (prUI.entries || []).filter((e) => e && e.rel !== rec.rel);
+    next.push({
+      tag: "file", name: rec.name, label: rec.name, rel: rec.rel, path: rec.path,
+      modified: rec.modified, pages: 1, size: rec.size || 0,
+    });
+    prUI.entries = prPrepare(next);
+  }
+}
+async function xExtractPages(bytes, pages) {
+  const lib = await xLib();
+  const src = await lib.PDFDocument.load(bytes, { ignoreEncryption: true });
+  const out = [];
+  for (let i = 0; i < pages.length; i++) {
+    const n = pages[i];
+    const doc = await lib.PDFDocument.create();
+    const copied = await doc.copyPages(src, [n - 1]);
+    doc.addPage(copied[0]);
+    out.push({ page: n, doc: doc, count: src.getPageCount() });
+  }
+  return out;
+}
+function xPlans(slug) {
+  const entries = (typeof prUI !== "undefined" && prUI && prUI.slug === slug && prUI.entries && prUI.entries.length)
+    ? prUI.entries
+    : (typeof fileOfficeEntries === "function" ? fileOfficeEntries(slug) : []);
+  if (typeof prPlansPath === "function") return prPlansPath(slug, entries);
+  if (typeof filePlansPath === "function") return filePlansPath(slug);
+  return "";
+}
+function xDest(slug, plans, fileName) {
+  const full = String(plans || "").replace(/\/$/, "") + "/_takeoffs/sheets/" + fileName;
+  const root = (typeof projectsRoot === "function" ? projectsRoot() : "").replace(/\/$/, "");
+  const folder = typeof jobFolder === "function" ? String(jobFolder(slug) || "").replace(/^\/+|\/+$/g, "") : "";
+  const base = root && folder ? root + "/" + folder + "/" : "";
+  const rel = base && full.indexOf(base) === 0 ? full.slice(base.length) : ("_takeoffs/sheets/" + fileName);
+  return { full: full, rel: rel, planRel: "_takeoffs/sheets/" + fileName };
+}
+function xAskFrame(view) {
+  const frame = view && view.querySelector && view.querySelector("iframe[data-fpdf]");
+  if (!frame || !frame.contentWindow) return Promise.resolve([]);
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => { window.removeEventListener("message", on); resolve([]); }, 5000);
+    function on(ev) {
+      if (!ev.data || ev.data.type !== "hws-pdf-titles") return;
+      if (ev.origin && location.origin && ev.origin !== location.origin) return;
+      clearTimeout(timer);
+      window.removeEventListener("message", on);
+      resolve(ev.data.titles || []);
+    }
+    window.addEventListener("message", on);
+    frame.contentWindow.postMessage({ type: "hws-pdf-titles" }, location.origin);
+  });
+}
+async function xTitles(bytes, view) {
+  const fromFrame = await xAskFrame(view);
+  if (fromFrame && fromFrame.length) return fromFrame;
+  try {
+    if (!window.pdfjsLib) await xLoadScript(xVendor("pdf.min.js"));
+    const lib = window.pdfjsLib;
+    if (!lib || !lib.getDocument) return [];
+    if (lib.GlobalWorkerOptions) lib.GlobalWorkerOptions.workerSrc = xVendor("pdf.worker.min.js");
+    const doc = await lib.getDocument({ data: bytes.slice ? bytes.slice(0) : bytes }).promise;
+    const out = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const content = await doc.getPage(i).then((page) => page.getTextContent());
+      let best = "";
+      (content.items || []).forEach((it) => {
+        const s = String(it.str || "").replace(/\s+/g, " ").trim();
+        if (s.length < 4 || s.length > 60 || !/[A-Za-z]/.test(s)) return;
+        if (s.length > best.length) best = s;
+      });
+      out.push(best);
+    }
+    return out;
+  } catch (e) { return []; }
+}
+function xPanel(host, pages, titles) {
+  const old = host.querySelector("[data-xpanel]");
+  if (old) old.remove();
+  const box = document.createElement("div");
+  box.className = host.classList && host.classList.contains("fview") ? "fextract" : "hws-xpanel";
+  box.setAttribute("data-xpanel", "1");
+  const rows = [];
+  for (let n = 1; n <= pages; n++) {
+    const title = (titles && titles[n - 1]) || "";
+    rows.push('<label><input type="checkbox" data-xpage="' + n + '"> Page ' + n + (title ? " · " + xEsc(title) : "") + "</label>");
+  }
+  box.innerHTML = '<h3>Extract page for takeoff</h3><p>Each selected page is saved as its own PDF.</p>' + rows.join("")
+    + '<div class="xactions"><button type="button" data-xcancel>Cancel</button><button type="button" data-xsave>Save page for takeoff</button></div>';
+  if (host.classList && host.classList.contains("fview")) {
+    const facts = host.querySelector(".facts");
+    if (facts) facts.parentNode.insertBefore(box, facts);
+    else host.appendChild(box);
+  } else {
+    document.body.appendChild(box);
+  }
+  box.querySelector("[data-xcancel]").onclick = () => box.remove();
+  return box;
+}
+function xEsc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function xFacts(page) {
+  let rotation = 0;
+  let user_unit = 1;
+  try { rotation = page.getRotation().angle || 0; } catch (e) {}
+  try {
+    const lib = window.PDFLib;
+    const raw = page.node && page.node.get && lib && lib.PDFName && page.node.get(lib.PDFName.of("UserUnit"));
+    if (raw && typeof raw.asNumber === "function") user_unit = raw.asNumber();
+  } catch (e) {}
+  return { rotation: rotation, user_unit: user_unit };
+}
+async function xSave(opts) {
+  const pages = opts.pages || [];
+  if (!pages.length) { xToast("Pick at least one page."); return; }
+  const bytes = opts.bytes;
+  const made = await xExtractPages(bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes, pages);
+  const titles = opts.titles || [];
+  const saved = [];
+  for (let i = 0; i < made.length; i++) {
+    const item = made[i];
+    const title = titles[item.page - 1] || "";
+    const meta = (opts.meta && opts.meta[item.page]) || {};
+    const facts = xFacts(item.doc.getPage(0));
+    const name = xSheetName(opts.sourceName, item.page, title);
+    item.doc.setTitle(name.replace(/\.pdf$/i, ""));
+    item.doc.setSubject("source " + (opts.sourcePath || opts.sourceRel || "") + " page " + item.page);
+    const raw = await item.doc.save();
+    const dest = xDest(opts.slug, opts.plans, name);
+    await xUpload(dest.full, raw);
+    const sidecar = {
+      schema: "harswells.sheet_extract.v1",
+      source_path: opts.sourcePath || "",
+      source_rel: opts.sourceRel || "",
+      source_name: opts.sourceName || "",
+      page: item.page,
+      title: title,
+      sheet: name,
+      sheet_id: meta.sheet || "",
+      scale: meta.scale || null,
+      rotation: facts.rotation,
+      user_unit: facts.user_unit,
+    };
+    await xUpload(dest.full.replace(/\.pdf$/i, ".source.json"), new TextEncoder().encode(JSON.stringify(sidecar)));
+    const rec = {
+      tag: "file", name: name, label: name, rel: dest.rel, path: dest.full, planRel: dest.planRel,
+      modified: new Date().toISOString(), pages: 1, size: raw.byteLength || raw.length || 0,
+      source_name: opts.sourceName || "", source_rel: opts.sourceRel || "", source_path: opts.sourcePath || "",
+      page: item.page, title: title,
+      sheet_id: meta.sheet || "",
+      scale_label: (meta.scale && meta.scale.label) || "",
+      rotation: facts.rotation,
+      user_unit: facts.user_unit,
+    };
+    xRemember(opts.slug, rec);
+    saved.push(rec);
+  }
+  const first = saved[0];
+  if (!first) return;
+  if (opts.navigate === "stay") {
+    xToast(saved.length === 1 ? "Saved 1 page for takeoff." : ("Saved " + saved.length + " pages for takeoff."));
+    window.dispatchEvent(new CustomEvent("hws-pages-saved", { detail: saved }));
+    return saved;
+  }
+  if (opts.navigate === "plan" && typeof sheetHref === "function") {
+    location.href = sheetHref(opts.slug, opts.plans, { path: first.path, name: first.name, rel: first.planRel });
+    return;
+  }
+  const u = new URL(location.href);
+  u.searchParams.set("pdf", first.path);
+  u.searchParams.set("name", first.name);
+  u.searchParams.set("rel", first.planRel);
+  location.href = u.href;
+}
+function xSync(view) {
+  const btn = view && view.querySelector && view.querySelector("[data-fextract]");
+  if (!btn) return;
+  const stage = view.querySelector("[data-fstage]");
+  const pages = stage ? (+stage.getAttribute("data-fpages") || 0) : 0;
+  const kind = stage ? (stage.getAttribute("data-preview") || "") : "";
+  btn.hidden = !(kind === "pdf" && pages > 1);
+  if (!btn._xbound) {
+    btn._xbound = true;
+    btn.onclick = () => xOpenPreview(view);
+  }
+}
+async function xOpenPreview(view) {
+  const state = view._hwsFile || {};
+  const stage = view.querySelector("[data-fstage]");
+  const pages = (state.pages || (stage && +stage.getAttribute("data-fpages"))) || 0;
+  if (pages < 2) { xToast("This PDF has one page."); return; }
+  if (!state.bytes) { xToast("This PDF is not open yet."); return; }
+  const titles = await xTitles(state.bytes, view);
+  const box = xPanel(view, pages, titles);
+  const save = box.querySelector("[data-xsave]");
+  save.onclick = async () => {
+    const picked = Array.from(box.querySelectorAll("[data-xpage]:checked")).map((el) => +el.getAttribute("data-xpage"));
+    save.disabled = true;
+    save.textContent = "Saving…";
+    try {
+      await xSave({
+        slug: state.slug || (typeof J !== "undefined" && J && J.slug) || "",
+        bytes: state.bytes,
+        pages: picked,
+        titles: titles,
+        sourceName: (state.entry && state.entry.name) || "plan.pdf",
+        sourceRel: (state.entry && state.entry.rel) || "",
+        sourcePath: (state.entry && state.entry.path) || "",
+        plans: xPlans(state.slug || (J && J.slug) || ""),
+        navigate: "plan",
+      });
+    } catch (e) {
+      save.disabled = false;
+      save.textContent = "Save page for takeoff";
+      xToast(e.message || String(e));
+    }
+  };
+}
+async function xOpenPlan() {
+  const params = new URLSearchParams(location.search);
+  const path = params.get("pdf") || "";
+  const name = params.get("name") || "plan.pdf";
+  const slug = params.get("job") || "";
+  const plans = params.get("plans") || "";
+  if (!path) { xToast("This Plan Room has no PDF yet."); return; }
+  const btn = document.getElementById("hws-extract");
+  if (btn) btn.disabled = true;
+  try {
+    const bytes = await xDownload(path);
+    const lib = await xLib();
+    const src = await lib.PDFDocument.load(bytes, { ignoreEncryption: true });
+    const pages = src.getPageCount();
+    if (pages < 2) { xToast("This PDF has one page."); return; }
+    const titles = await xTitles(bytes, null);
+    const box = xPanel(document.body, pages, titles);
+    const save = box.querySelector("[data-xsave]");
+    save.onclick = async () => {
+      const picked = Array.from(box.querySelectorAll("[data-xpage]:checked")).map((el) => +el.getAttribute("data-xpage"));
+      save.disabled = true;
+      save.textContent = "Saving…";
+      try {
+        await xSave({
+          slug: slug,
+          bytes: bytes,
+          pages: picked,
+          titles: titles,
+          sourceName: name,
+          sourceRel: params.get("rel") || "",
+          sourcePath: path,
+          plans: plans,
+          navigate: "here",
+        });
+      } catch (e) {
+        save.disabled = false;
+        save.textContent = "Save page for takeoff";
+        xToast(e.message || String(e));
+      }
+    };
+  } catch (e) {
+    xToast(e.message || String(e));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+function xBoot() {
+  const btn = document.getElementById("hws-extract");
+  if (!btn || btn._xbound) return;
+  btn._xbound = true;
+  btn.onclick = () => xOpenPlan();
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", xBoot);
+  else xBoot();
+}
+window.HWSExtract = {
+  list: xList,
+  sync: xSync,
+  extractPages: xExtractPages,
+  sheetName: xSheetName,
+  openPreview: xOpenPreview,
+  openPlan: xOpenPlan,
+  save: xSave,
+  download: xDownload,
+};
 
 /* DWG/DXF preview. The viewer module is imported only when a drawing opens.
    Plan Room is a button, not a link, so the file click handler does not treat it as a plan PDF. */

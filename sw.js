@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='ff188974d1';
+const VERSION='ec9537c2b3';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
@@ -12,7 +12,7 @@ const FILES='hws-files';
 /* CAD viewer, worker, and wasm. Runtime only: not listed in ASSETS, so the shell
    install does not download LibreDWG. v1 bumps this cache without a shell change. */
 const CAD='hws-cad-v1-'+VERSION;
-const ASSETS=['./','index.html','manifest.webmanifest','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','plans/viewer.html','plans/viewer.js','vendor/pdf.min.js','vendor/pdf.worker.min.js','plan-room/preview/index.html','plan-room/preview/vendor/pdf.min.mjs','plan-room/preview/vendor/pdf.worker.min.mjs'];
+const ASSETS=['./','index.html','manifest.webmanifest','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','plans/viewer.html','plans/viewer.js','vendor/pdf.min.js','vendor/pdf.worker.min.js','vendor/pdf-lib.min.js','plan-room/preview/index.html','plan-room/preview/vendor/pdf.min.mjs','plan-room/preview/vendor/pdf.worker.min.mjs'];
 function dataUrl(url){try{return new URL(url).pathname.endsWith('/data/data.json')}catch(e){return false}}
 async function copyData(fromName,dest){
   let box;try{box=await caches.open(fromName)}catch(e){return}

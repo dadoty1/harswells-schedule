@@ -22,6 +22,6 @@ npm install
 npm run build
 ```
 
-The Vite build was copied here. Asset URLs are relative. `demo/sample-finish-plan.pdf` is the public sample sheet, not a Harswells plan. `demo/hws-tile-demo.json` is a hand takeoff in the older OpenTakeoff canvas format; the viewer converts it on open. `demo/hws-auto-sample.json` is an automatic takeoff in that same canvas format, also converted on open, with every shape still unreviewed.
+The Vite build was copied here. Asset URLs are relative. `demo/sample-finish-plan.pdf`, `demo/hws-tile-demo.json`, and `demo/hws-auto-sample.json` stay in this folder for tests. The Pages build does not copy `demo/`.
 
 `?sample=1` does not upload to Dropbox. A signed-in job PDF saves `harswells.planroom.v1` to `<Plans>/_takeoffs/<pdf path>.json`.

@@ -8,10 +8,39 @@
   <style>
   #hws-bar > #hws-rotate{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid #fff;background:transparent;color:#fff;font:15px/1.3 -apple-system,"Segoe UI",sans-serif;font-weight:700}
   </style>
+  <script>
+  /* Keep the PDF bytes the viewer downloads so the text index can run
+     without a second full fetch. Dropbox JSON downloads are ignored. */
+  (function () {
+    var orig = window.fetch;
+    window.fetch = function (input, init) {
+      return orig.apply(this, arguments).then(function (res) {
+        try {
+          var arg = "";
+          var headers = init && init.headers;
+          if (headers) {
+            if (typeof headers.get === "function") arg = headers.get("Dropbox-API-Arg") || "";
+            else arg = headers["Dropbox-API-Arg"] || "";
+          }
+          var url = typeof input === "string" ? input : (input && input.url) || "";
+          var pdf = /\.pdf(\?|$)/i.test(url) || /\.pdf"/.test(arg) || /\.pdf}/.test(arg);
+          if (pdf && res && res.ok && !window.__hwsPdfBytes) {
+            res.clone().arrayBuffer().then(function (buf) {
+              window.__hwsPdfBytes = buf;
+              window.dispatchEvent(new Event("hws-pdf-bytes"));
+            }).catch(function () {});
+          }
+        } catch (e) {}
+        return res;
+      });
+    };
+  })();
+  </script>
   <script type="module" src="./chrome.js"></script>
   <script type="module" crossorigin src="./assets/index-CI5vU8u8.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-miIV9Ess.css">
   <link rel="stylesheet" href="./chrome.css">
+  <link rel="stylesheet" href="./planview.css">
 </head>
 <body>
   <div id="hws-bar">
@@ -21,9 +50,13 @@
     <button type="button" id="hws-rotate" aria-label="Rotate page">Rotate page</button>
     <button type="button" id="hws-tools" aria-pressed="false">Tools</button>
     <button type="button" id="hws-close" aria-label="Close">×</button>
+    <button type="button" id="hws-extract" aria-label="Extract page for takeoff">Extract</button>
     <button type="button" id="hws-sheets" aria-label="Sheet list">Sheets</button>
     <button type="button" id="hws-takeoff" aria-label="Tile and wall takeoff">Takeoff</button>
   </div>
   <div id="viewer"></div>
+  <script src="./planindex.js"></script>
+  <script src="./planview.js"></script>
+  <script src="./extract.js"></script>
 </body>
 </html>

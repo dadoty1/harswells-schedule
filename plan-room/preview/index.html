@@ -17,6 +17,7 @@ canvas{max-width:100%;height:auto;background:#fff}
 import * as pdfjs from "./vendor/pdf.min.mjs";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdf.worker.min.mjs", import.meta.url).href;
 
+let live = null;
 function say(text) {
   const msg = document.getElementById("msg");
   if (msg) msg.textContent = text;
@@ -50,6 +51,7 @@ async function show(bytes) {
   }
   const data = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
   const doc = await pdfjs.getDocument({ data: data }).promise;
+  live = doc;
   const c = document.getElementById("c");
   c.innerHTML = "";
   const width = Math.max(280, c.clientWidth || document.documentElement.clientWidth || 360);
@@ -76,6 +78,33 @@ window.addEventListener("message", (ev) => {
   show(d.bytes).catch(() => {
     say("This is not a PDF.");
     parent.postMessage({ type: "hws-pdf-error", message: "This is not a PDF.", notPdf: true }, location.origin);
+  });
+});
+function bestTitle(items) {
+  let best = "";
+  (items || []).forEach((it) => {
+    const s = String((it && it.str) || "").replace(/\s+/g, " ").trim();
+    if (s.length < 4 || s.length > 60 || !/[A-Za-z]/.test(s)) return;
+    if (/^(sheet|date|rev|revision|scale|drawn|checked|project|north|page)$/i.test(s)) return;
+    if (s.length > best.length) best = s;
+  });
+  return best;
+}
+async function titles() {
+  if (!live) return [];
+  const out = [];
+  for (let i = 1; i <= live.numPages; i++) {
+    const content = await live.getPage(i).then((page) => page.getTextContent());
+    out.push(bestTitle(content.items));
+  }
+  return out;
+}
+window.addEventListener("message", (ev) => {
+  if (ev.origin !== location.origin) return;
+  const d = ev.data || {};
+  if (d.type !== "hws-pdf-titles") return;
+  titles().then((list) => parent.postMessage({ type: "hws-pdf-titles", titles: list }, location.origin)).catch(() => {
+    parent.postMessage({ type: "hws-pdf-titles", titles: [] }, location.origin);
   });
 });
 parent.postMessage({ type: "hws-pdf-listening" }, location.origin);
