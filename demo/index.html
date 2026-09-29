@@ -425,6 +425,9 @@ a.hws-planbtn:hover,a.hws-planbtn:active{text-decoration:none;filter:brightness(
 .planroom .pr-file{display:flex;align-items:stretch;gap:8px;min-height:64px}
 .planroom .pr-file .pr-open{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:64px;text-decoration:none;color:inherit}
 .planroom button.pr-auto{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-weight:700;font-size:14px;white-space:nowrap}
+.planroom button.pr-cad{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--navy);background:#fff;color:var(--navy);font-weight:700;font-size:14px;white-space:normal;text-align:center}
+.planroom .pr-drawing{align-items:center}
+.planroom .pr-drawing .lb{flex:1;min-width:0;padding:8px 0 8px 10px}
 .planroom button.pr-auto:disabled{opacity:.7}
 .planroom .rows{margin-bottom:8px}
 .planroom .pr-signin{min-height:48px;margin:8px 0 14px;padding:0 16px}
@@ -502,6 +505,17 @@ nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:cent
 .facts{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
 .facts a,.facts button{flex:1 1 40%;min-height:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-align:center;text-decoration:none;font-weight:650;display:inline-flex;align-items:center;justify-content:center}
 .facts a[data-fplan]{background:#1f4b99;color:#fff;font-weight:700}
+.facts [data-fcad]{flex:1 1 100%}
+.fstage.hws-cad-stage{display:flex;flex-direction:column;overflow:hidden;padding:0}
+.hws-cad-mount{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.hws-cad-host{position:relative;display:flex;flex-direction:column;flex:1;min-height:0;width:100%;overflow:hidden;background:#1b1f27}
+.hws-cad-canvas{position:relative;flex:1;min-height:0;min-width:0;overflow:hidden}
+.hws-cad-canvas-inner{position:absolute;inset:0;overflow:hidden;touch-action:none}
+.hws-cad-loading,.hws-cad-fail{padding:22px 14px;color:#e8edf5}
+.hws-cad-fail b{display:block;color:#fff;font-size:16px;margin-bottom:6px}
+.hws-cad-fail p{margin:0;color:#c5d0e0}
+.hws-cad-host .ml-ex-ui-toolbar{--ml-ex-ui-toolbar-btn-size:44px}
+.hws-cad-host .ml-ex-ui-toolbar-btn{min-width:44px;min-height:44px}
 .facts a[data-fsrc]{flex:0 1 auto;background:transparent;color:#c5d0e0;font-weight:600}
 .filechip{display:inline-flex;align-items:center;min-height:36px;margin:2px 4px 2px 0;padding:4px 10px;border-radius:999px;border:1px solid #c7d2e2;background:#f4f7fb;color:#1f3a5f;font-weight:650;font-size:13px}
 button.lrow,button.rrow,button.permit{width:100%;border:0;background:transparent;font:inherit;text-align:left;cursor:pointer}
@@ -3629,18 +3643,37 @@ async function loadPlans(slug) {
   const entries = await listFolder(plansPath, true);
   if (!entries) return { error: "The Plans folder is not in Dropbox.", code: "noplans", folder: folder, plansRel: plansRel };
   const pdfs = [];
+  const drawings = [];
   entries.forEach((x) => {
-    if (x[".tag"] !== "file" || !/\.pdf$/i.test(x.name || "")) return;
+    if (x[".tag"] !== "file" || !/\.(pdf|dwg|dxf)$/i.test(x.name || "")) return;
     const full = x.path_display || x.path_lower || "";
     const prefix = plansPath.replace(/\/$/, "");
     let rel = full;
     if (full.toLowerCase().indexOf(prefix.toLowerCase() + "/") === 0) rel = full.slice(prefix.length + 1);
     else rel = x.name;
     if (relSkipped(rel)) return;
-    pdfs.push({ name: x.name, path: full, rel: rel, modified: x.server_modified || "", size: x.size || 0 });
+    const row = { name: x.name, path: full, rel: rel, modified: x.server_modified || "", size: x.size || 0 };
+    if (/\.pdf$/i.test(x.name || "")) pdfs.push(row);
+    else drawings.push(row);
   });
-  pdfs.sort((a, b) => (a.modified < b.modified ? 1 : a.modified > b.modified ? -1 : (a.name < b.name ? -1 : 1)));
-  return { folder: folder, plansRel: plansRel, plansPath: plansPath, pdfs: pdfs };
+  const byNewest = (a, b) => (a.modified < b.modified ? 1 : a.modified > b.modified ? -1 : (a.name < b.name ? -1 : 1));
+  pdfs.sort(byNewest);
+  drawings.sort(byNewest);
+  return { folder: folder, plansRel: plansRel, plansPath: plansPath, pdfs: pdfs, drawings: drawings };
+}
+function cadPage(slug, file) {
+  const u = new URL("plan-room/cad/index.html", location.href);
+  u.searchParams.set("job", slug);
+  u.searchParams.set("path", file.path);
+  u.searchParams.set("name", file.name);
+  u.searchParams.set("rel", file.rel);
+  u.searchParams.set("back", location.hash || ("#/job/" + slug + "/plans"));
+  return u.href;
+}
+function bindCad(root) {
+  root.querySelectorAll("[data-cad-href]").forEach((b) => {
+    b.onclick = () => { location.href = b.getAttribute("data-cad-href") || ""; };
+  });
 }
 
 function takeoffFileName(rel) {
@@ -3787,12 +3820,19 @@ async function mPlanRoom(M) {
     const meta = [where, azWhen(f.modified), fmtSize(f.size)].filter(Boolean).join(" · ");
     return `<div class="hrow pr-file"><button type="button" class="pr-open" data-file-path="${esc(f.path)}" data-file-name="${esc(f.name)}" data-file-rel="${esc(f.rel)}"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta || "PDF")}</span></span></button><a class="pr-measure" href="${esc(sheetHref(slug, got.plansPath, f))}">Measure</a><button type="button" class="pr-auto" data-path="${esc(f.path)}" data-name="${esc(f.name)}" data-rel="${esc(f.rel)}">Auto takeoff</button></div>`;
   }).join("");
+  const draws = (got.drawings || []).map((f) => {
+    const where = f.rel.indexOf("/") >= 0 ? f.rel.slice(0, f.rel.lastIndexOf("/")) : "";
+    const meta = [where, azWhen(f.modified), fmtSize(f.size), "CAD"].filter(Boolean).join(" · ");
+    return `<div class="hrow pr-file pr-drawing"><span class="lb"><span class="lt">${esc(f.name)}</span><span class="ls">${esc(meta)}</span></span><button type="button" class="pr-cad" data-cad-href="${esc(cadPage(slug, f))}">Open in Plan Room</button></div>`;
+  }).join("");
   M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room <span class="mut small">${got.pdfs.length} PDF${got.pdfs.length === 1 ? "" : "s"}</span></h2>
     <div class="hint">${esc(got.plansRel)} · newest first · archive folders skipped</div>
     <div class="rows">${rows || '<div class="none">No PDFs in this Plans folder yet.</div>'}</div>
+    ${draws ? `<h2 class="sh2">Drawings</h2><div class="rows">${draws}</div>` : ""}
     <div class="rows">${sampleBlock()}</div>
-    <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer.</div></div>`;
+    <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer. DWG and DXF drawings open in Plan Room with layers, measure, and snap.</div></div>`;
   bindAuto(M, slug, got.plansPath);
+  bindCad(M);
   paintSavedPlans(M);
   paintJobFiles(M, slug);
 }
@@ -4116,6 +4156,7 @@ function fileShowSource(stage) {
 function fileKind(name) {
   const ext = (String(name || "").split(".").pop() || "").toLowerCase();
   if (ext === "pdf") return "pdf";
+  if (ext === "dwg" || ext === "dxf") return "cad";
   if (/^(png|jpe?g|gif|webp|heic|tiff?|bmp)$/.test(ext)) return "image";
   if (ext === "svg") return "svg";
   if (/^(dwg|dxf|dwf)$/.test(ext)) return "cad";
@@ -4134,6 +4175,7 @@ function fileIcon(kind) {
   const p = {
     folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
     pdf: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h2a2 2 0 0 1 0 4H8z"/>',
+    cad: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 15l3-4 2 2 3-5"/>',
     image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
     doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
     sheet: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
@@ -4983,6 +5025,9 @@ async function renderStage(stage, entry, got, slug) {
   const type = (got.type || "").toLowerCase();
   const sniff = fileSniff(entry.name, got.type, got.bytes);
   const offline = got.offline ? '<div class="fnote">Saved on this phone</div>' : "";
+  const kind = fileKind(entry.name);
+  /* Viewers registered by extension (DWG/DXF from cad.js) run before the content sniff, so a DXF is not shown as text. */
+  if (fileRunPreview(stage, entry, got, kind, offline)) return;
   if (sniff === "pdf" || sniff === "not-pdf") {
     fileShowPdf(stage, offline, got);
     return;
@@ -5060,6 +5105,17 @@ async function renderStage(stage, entry, got, slug) {
     return;
   }
   fileShowCard(stage, offline, entry);
+}
+const filePreviewByExt = {};
+function fileRegisterPreview(exts, fn) {
+  (exts || []).forEach((ext) => { filePreviewByExt[String(ext || "").toLowerCase()] = fn; });
+}
+function fileRunPreview(stage, entry, got, kind, offline) {
+  const ext = (String(entry && entry.name || "").split(".").pop() || "").toLowerCase();
+  const fn = filePreviewByExt[ext];
+  if (typeof fn !== "function") return false;
+  fn(stage, entry, got, kind, offline);
+  return true;
 }
 function fileCsvTable(text) {
   const rows = [];
@@ -5192,7 +5248,56 @@ window.HWSFiles = {
   label: fileLabel,
   refs: fileRefs,
 };
+window.HWSFiles.registerPreview = fileRegisterPreview;
 function fileChip(row) { return fileChips(row); }
+
+/* DWG/DXF preview. The viewer module is imported only when a drawing opens.
+   Plan Room is a button, not a link, so the file click handler does not treat it as a plan PDF. */
+(function () {
+  function cadPage(entry) {
+    const u = new URL("plan-room/cad/index.html", location.href);
+    const slug = (typeof J !== "undefined" && J && J.slug) || "";
+    if (slug) u.searchParams.set("job", slug);
+    if (entry && entry.path) u.searchParams.set("path", entry.path);
+    if (entry && entry.rel) u.searchParams.set("rel", entry.rel);
+    if (entry && entry.name) u.searchParams.set("name", entry.name);
+    const back = location.hash || (slug ? "#/job/" + slug + "/files" : "#/files");
+    u.searchParams.set("back", back);
+    return u.href;
+  }
+  function planButton(stage, entry) {
+    const view = stage.closest ? stage.closest(".fview") : null;
+    const facts = view && view.querySelector(".facts");
+    if (!facts || facts.querySelector("[data-fcad]")) return;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("data-fcad", "");
+    b.textContent = "Open in Plan Room";
+    b.addEventListener("click", () => { location.href = cadPage(entry); });
+    facts.appendChild(b);
+  }
+  const fail = '<div class="hws-cad-fail" data-cad-fail="1"><b>This drawing is too large to open on a phone. Use View source.</b><p>A DXF export of this drawing may open.</p></div>';
+  async function preview(stage, entry, got, kind, offline) {
+    stage.classList.add("hws-cad-stage");
+    if (stage.setAttribute) stage.setAttribute("data-preview", "cad");
+    planButton(stage, entry);
+    stage.innerHTML = offline || "";
+    const mount = document.createElement("div");
+    mount.className = "hws-cad-mount";
+    mount.innerHTML = '<div class="hws-cad-loading" data-cad-loading="1">Opening drawing…</div>';
+    stage.appendChild(mount);
+    try {
+      const url = new URL("plan-room/cad/hws-cad.js", location.href).href;
+      const mod = await import(url);
+      const result = await mod.openDrawing({ container: mount, bytes: got.bytes, name: entry.name, mode: "preview" });
+      if (!result || !result.ok) return;
+    } catch (e) {
+      mount.innerHTML = fail;
+      mount.setAttribute("data-cad-fail", "1");
+    }
+  }
+  if (window.HWSFiles && typeof HWSFiles.registerPreview === "function") HWSFiles.registerPreview(["dwg", "dxf"], preview);
+})();
 
 function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});

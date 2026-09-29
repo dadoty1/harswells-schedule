@@ -2,10 +2,13 @@
    cache so a deploy cannot leave a phone on stuck files. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='bfb6afef3f';
+const VERSION='bd4a7b9b6e';
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
 const FILES='hws-files';
+/* CAD viewer, worker, and wasm. Runtime only: not listed in ASSETS, so the shell
+   install does not download LibreDWG. v1 bumps this cache without a shell change. */
+const CAD='hws-cad-v1-'+VERSION;
 const ASSETS=['./','index.html','manifest.webmanifest','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','plans/viewer.html','plans/viewer.js','vendor/pdf.min.js','vendor/pdf.worker.min.js','plan-room/preview/index.html','plan-room/preview/vendor/pdf.min.mjs','plan-room/preview/vendor/pdf.worker.min.mjs'];
 function dataUrl(url){try{return new URL(url).pathname.endsWith('/data/data.json')}catch(e){return false}}
 async function copyData(fromName,dest){
@@ -25,7 +28,8 @@ self.addEventListener('activate',e=>{
     const dest=await caches.open(DATA);
     const keys=await caches.keys();
     await Promise.all(keys.map(async k=>{
-      if(k===SHELL||k===DATA||k===FILES)return;
+      if(k===SHELL||k===DATA||k===FILES||k===CAD)return;
+      if(k.startsWith('hws-cad-')){await caches.delete(k);return}
       if(k.startsWith('hws-shell-')||k.startsWith('hws-data-')||k==='hws-data'){
         await copyData(k,dest);
         await caches.delete(k);
@@ -100,6 +104,14 @@ async function cacheFirst(req){
     throw e;
   }
 }
+async function runtimeCad(req){
+  const cache=await caches.open(CAD);
+  const hit=await cache.match(req,{ignoreSearch:true});
+  if(hit)return hit;
+  const res=await fetch(req);
+  if(res&&res.ok){const copy=res.clone();cache.put(req,copy).catch(()=>{})}
+  return res;
+}
 async function filesThenNet(req){
   const box=await caches.open(FILES);
   const hit=await box.match(req,{ignoreSearch:true});
@@ -118,6 +130,7 @@ self.addEventListener('fetch',e=>{
   let url;try{url=new URL(req.url)}catch(err){return}
   /* This origin only. dropbox.com is another host, so those links are never cached. */
   if(url.origin!==self.location.origin||url.pathname.includes('/demo/')||/(^|\.)dropbox\.com$|(^|\.)dropboxusercontent\.com$/i.test(url.hostname))return;
+  if(url.pathname.indexOf('/plan-room/cad/')>=0){e.respondWith(runtimeCad(req));return}
   if(dataUrl(url)){e.respondWith(staleWhileRevalidate(req));return}
   const shell=ASSETS.some(a=>{
     if(a==='./')return url.pathname.endsWith('/');

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plan Room</title>
+<style>
+html,body{margin:0;height:100%;background:#0f1520;color:#f2f4f7}
+body{display:flex;flex-direction:column;font:15px/1.35 -apple-system,Segoe UI,sans-serif}
+#bar{flex:none;display:flex;align-items:center;gap:8px;min-height:52px;padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top))}
+#bar a,#bar button{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 10px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-decoration:none;font-weight:650}
+#title{flex:1;min-width:0;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#src{flex:none;background:transparent;color:#c5d0e0;font-weight:600}
+#view{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.hws-cad-loading,.hws-cad-fail{padding:22px 14px;color:#e8edf5}
+.hws-cad-fail b{display:block;color:#fff;font-size:16px;margin-bottom:6px}
+.hws-cad-fail p{margin:0;color:#c5d0e0}
+.hws-cad-host{position:relative;display:flex;flex-direction:column;flex:1;min-height:0;width:100%;overflow:hidden;background:#1b1f27}
+.hws-cad-canvas{position:relative;flex:1;min-height:0;min-width:0;overflow:hidden}
+.hws-cad-canvas-inner{position:absolute;inset:0;overflow:hidden;touch-action:none}
+.hws-cad-host .ml-ex-ui-toolbar{--ml-ex-ui-toolbar-btn-size:44px}
+.hws-cad-host .ml-ex-ui-toolbar-btn{min-width:44px;min-height:44px}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a id="back" href="../../index.html">Plan Room</a>
+  <span id="title">Drawing</span>
+  <a id="src" target="_blank" rel="noopener" hidden>View source</a>
+</div>
+<div id="view"><div class="hws-cad-loading" data-cad-loading="1">Opening drawing…</div></div>
+<script type="module">
+import { openDrawing } from "./hws-cad.js";
+
+const params = new URLSearchParams(location.search);
+const name = params.get("name") || "sample.dwg";
+const title = document.getElementById("title");
+title.textContent = name;
+const back = document.getElementById("back");
+const hash = params.get("back") || (params.get("job") ? "#/job/" + params.get("job") + "/plans" : "#/plans");
+const home = new URL("../../index.html", location.href);
+home.hash = hash.charAt(0) === "#" ? hash : "#" + hash;
+back.href = home.href;
+
+function dropboxUrl(path, fileName) {
+  const raw = String(path || "");
+  if (!raw || /buildertrend/i.test(raw)) return "";
+  const parts = raw.split("/").filter(Boolean).map(encodeURIComponent);
+  if (!parts.length) return "";
+  const parent = parts.slice(0, -1).join("/");
+  const leaf = fileName || decodeURIComponent(parts[parts.length - 1] || "");
+  return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(leaf) + "&role=work";
+}
+const src = document.getElementById("src");
+const href = dropboxUrl(params.get("path") || "", name);
+if (href) { src.href = href; src.hidden = false; }
+
+function asciiJson(o) {
+  return JSON.stringify(o).replace(/[\u007f-\uffff]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+}
+function readAuth() {
+  try { return JSON.parse(localStorage.getItem("hws-dbx-auth") || "null"); } catch (e) { return null; }
+}
+function authHeaders(auth) {
+  const h = { Authorization: "Bearer " + auth.access_token };
+  if (auth.root_ns) h["Dropbox-API-Path-Root"] = asciiJson({ ".tag": "root", root: auth.root_ns });
+  return h;
+}
+function recall(key) {
+  return new Promise((resolve) => {
+    if (!key || !window.indexedDB) { resolve(null); return; }
+    const req = indexedDB.open("hws-files", 1);
+    req.onerror = () => resolve(null);
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains("kv")) { resolve(null); return; }
+      const g = db.transaction("kv", "readonly").objectStore("kv").get("blob:" + key);
+      g.onsuccess = () => resolve(g.result && g.result.bytes ? g.result.bytes : null);
+      g.onerror = () => resolve(null);
+    };
+  });
+}
+async function download(path) {
+  const auth = readAuth();
+  if (!auth || !auth.access_token || !path) return null;
+  const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+    method: "POST",
+    credentials: "omit",
+    headers: Object.assign(authHeaders(auth), { "Dropbox-API-Arg": asciiJson({ path: path }) }),
+  });
+  if (!r.ok) return null;
+  return r.arrayBuffer();
+}
+function sampleName(fileName) {
+  const base = String(fileName || "").split("/").pop();
+  if (base === "sample.dwg" || base === "sample.dxf") return base;
+  return "";
+}
+async function loadBytes() {
+  if (params.get("sample") === "1") {
+    const file = sampleName(name) || "sample.dwg";
+    const r = await fetch(new URL("samples/" + file, import.meta.url).href);
+    if (!r.ok) throw new Error("sample missing");
+    return r.arrayBuffer();
+  }
+  const path = params.get("path") || "";
+  const rel = params.get("rel") || "";
+  const saved = await recall(path || rel || name);
+  if (saved) return saved;
+  const got = await download(path);
+  if (got) return got;
+  throw new Error("missing");
+}
+
+const view = document.getElementById("view");
+view.innerHTML = '<div class="hws-cad-loading" data-cad-loading="1">Opening drawing…</div>';
+loadBytes().then((bytes) => openDrawing({
+  container: view,
+  bytes: bytes,
+  name: name,
+  mode: "plan",
+  measure: params.get("measure") === "1",
+})).catch(() => {
+  view.innerHTML = '<div class="hws-cad-fail" data-cad-fail="1"><b>This drawing is too large to open on a phone. Use View source.</b><p>A DXF export of this drawing may open.</p></div>';
+});
+</script>
+</body>
+</html>
