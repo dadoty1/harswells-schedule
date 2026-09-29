@@ -615,6 +615,22 @@ button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:
  .fwhen{display:none}
  .fn{font-size:16px}
 }
+
+.selloc{font-size:13px;margin:12px 0 6px;color:#344054}
+.selroll{margin:0 0 10px}
+.selprice{font-weight:650;margin:6px 0}
+.selpic{display:block;width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin:0 0 6px}
+.selfile{margin:0 0 8px}
+.selnote{padding:8px 0;border-bottom:1px solid #eaecf0}
+.selalerts{margin:0 0 12px}
+.selblock{margin:0 0 12px}
+@media (max-width:760px){
+ .main .selphone.panel{margin-left:-8px;margin-right:-8px;width:calc(100% + 16px);border-radius:0;border-left:0;border-right:0}
+ .hub-home .selalerts,.hub-home .selclient{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}
+ .selphone .selcard,.selalerts .selcard,.selclient .selcard,.seldetail .selcard{width:100%;border-radius:0;box-sizing:border-box;min-height:72px}
+ .jh .selalerts{margin:10px -16px 0}
+ .jh .selcard{border-radius:0}
+}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Sample Builders schedule</h2><p>Loading&hellip;</p>
@@ -2076,11 +2092,11 @@ try{Object.assign(st,JSON.parse(localStorage.getItem(UIKEY)||'{}'))}catch(e){}
 function saveUi(){try{const o=Object.assign({},st);delete o._scroll;localStorage.setItem(UIKEY,JSON.stringify(o))}catch(e){}}
 const mq=window.matchMedia?matchMedia('(max-width: 760px)'):{matches:false};const isPhone=()=>mq.matches;
 const coarse=window.matchMedia?matchMedia('(pointer: coarse)').matches:false;
-/* ---------- links (hash routing: #/ = all jobs, #/job/<slug>/<module>) ---------- */
+/* ---------- links (hash routing: #/ = all jobs, #/job/<slug>/<module>, #/client/<slug>) ---------- */
 function jobHref(slug,mod){return '#/job/'+slug+'/'+(mod||'schedule')}
 function homeHref(){return '#/'}
 function modHref(mod){return '#/job/'+J.slug+'/'+mod}
-function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule',focus};const pg=(p[0]||'home').split('?')[0];return {slug:null,page:HUB_PAGES.includes(pg)?pg:'home',sub:p[1]||'',focus:''}}
+function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule',focus};if(p[0]==='client'&&p[1])return {slug:null,page:'client',sub:decodeURIComponent(p[1]),focus:''};const pg=(p[0]||'home').split('?')[0];return {slug:null,page:HUB_PAGES.includes(pg)?pg:'home',sub:p[1]||'',focus:''}}
 function curMod(){return parseHash().mod||'schedule'}
 /* ---------- calendar helpers (job workday calendar) ---------- */
 function isWd(s){const c=J.cal||{};const d=new Date(dP(s)).getUTCDay();return (d>=1&&d<=5||(c.saturday&&d==6))&&!(c.holidays||{})[s]}
@@ -2129,7 +2145,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
- ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
+ ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}</div>`;
  const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
  const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
@@ -2368,7 +2384,7 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
   if(t){m.querySelector('#tc').onclick=()=>{closeModal();edit([{op:'complete',id:t.id,done:!t.done}])};m.querySelector('#tdl').onclick=()=>{if(confirm(`Delete ${t.id} “${t.task}”? Links to it are removed. (Undo restores it.)`)){closeModal();edit([{op:'delete',id:t.id}])}}}})}
 
 /* ---------- other modules ---------- */
-function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhone==='function'){renderSelPhone(M);return}const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
+function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhone==='function'){renderSelPhone(M);return}const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{const g=(x.location||'Whole house')+' · '+(x.category||'Other');(cats[g]=cats[g]||[]).push(x)});
  M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} template selections (DRAFT, due = “Finalize …” schedule task)`,
  all.length?`<div class="tw"><table><tr><th>Title / Room-Location</th><th>Fixture / Choice</th><th>Brand</th><th>Model</th><th>Finish</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th class="num">Allowance</th><th>Deadline</th><th>Client approval</th><th>Status</th><th>Order status</th><th>Order date</th><th>ETA</th><th>Link / PO</th><th>Src</th></tr>
  ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';const ext=x.link&&/^https?:/.test(x.link)&&!/buildertrend\.(net|com)/i.test(x.link);return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'price',x.price):(isNaN(+x.price)?esc(x.price):fmt$(x.price))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'total',x.total):(isNaN(+x.total)?esc(x.total):fmt$(x.total))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'allowance',x.allowance):fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${ext&&typeof fileMaybeLink==='function'?fileMaybeLink(x.link,'link','dropbox-file','lbtn'):''}${ext&&!(typeof fileHosted==='function'&&fileHosted(x.link,''))?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}${typeof fileChip==='function'?fileChip(x):''}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the selection template.'),
@@ -2980,7 +2996,7 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
   <section class="dcard"><h3>${ico('doc')} Bids due<a href="#/trackers/bids">All</a></h3>${typeof bidDeskHtml==='function'?bidDeskHtml(S):top(S.bPast.concat(S.bWeek),6,b=>hrow('#/trackers/bids',esc(b.vendor),esc(b.trade+' · '+b.job),dchip(b.due,S.td)))}</section>
   <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
- hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
+ hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}${typeof selectionHomeCard==='function'?selectionHomeCard():''}<div class="tiles">${tiles}</div>${dash}
  ${homeComparison()}
  <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidTracker==='function')bindBidTracker(document.getElementById('root'));if(typeof bindBidCards==='function')bindBidCards(document);document.title='Sample Builders · Home'}
 /* ---- Trackers ---- */
@@ -3797,12 +3813,13 @@ function openMoneyItem(slug,kind,id){if(kind==='selection'){openSelection(slug,i
   ${back}<p><button type="button" class="hrow" id="backbud"><span class="lb"><span class="lt">Budget line</span><span class="ls">${esc(it.cost_code||'')}</span></span></button></p>
   <p><button type="button" data-close>Close</button></p></div>`,
   m=>{const s=m.querySelector('#backsel');if(s)s.onclick=()=>openSelection(slug,it.selection_id);m.querySelector('#backbud').onclick=()=>{closeModal();location.hash='#/job/'+slug+'/money/'+encodeURIComponent(it.cost_code)}})}
-function moneySection(slug){if(!moneyReady())return `<div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`;
+function moneySection(slug){const roll=typeof selectionRollupHtml==='function'?selectionRollupHtml(slug):'';
+ if(!moneyReady())return roll+`<div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`;
  const lines=linesFor(slug);
- if(!lines.length)return '<div class="none">No budget lines for this job yet.</div>';
+ if(!lines.length)return roll+'<div class="none">No budget lines for this job yet.</div>';
  const grab=k=>lines.reduce((a,l)=>a.concat(l[k]||[]),[]);
  const total=Object.assign({cost_code:'',title:'Job total',bt_code:''},totalsOf(lines),{budget_items:grab('budget_items'),preliminary_items:grab('preliminary_items'),committed_items:grab('committed_items'),pending_items:grab('pending_items'),po_items:grab('po_items'),actual_items:grab('actual_items')});
- return `<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+moneyExtras(slug)+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
+ return roll+`<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+moneyExtras(slug)+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
 }
 function moneyExtras(slug){if(typeof canSeeMoney==='function'&&!canSeeMoney())return '';
  const drafts=((MONEY.imports&&MONEY.imports.po_amounts)||[]).filter(p=>p.job===slug&&String(p.status||'draft')==='draft');
@@ -6718,6 +6735,187 @@ window.HWSExtract = {
   download: xDownload,
 };
 
+/* Selections board: location, then category. Dollar amounts stay on the private money file.
+   This file loads after money.js so renderSelPhone and openSelection here are the ones that run. */
+const SEL_STAGES=['Pending','Client selected','Approved','Ordered','Installed'];
+const SEL_OPEN=['Pending','Client selected'];
+const SEL_BOARD='hws-selection-board-v1';
+function selBoard(){let o={comments:{},picks:{}};try{o=Object.assign(o,JSON.parse(localStorage.getItem(SEL_BOARD)||'{}'))}catch(e){}
+ o.comments=o.comments||{};o.picks=o.picks||{};return o}
+function selSaveBoard(o){try{localStorage.setItem(SEL_BOARD,JSON.stringify(o))}catch(e){}}
+function selStage(s){if(!s)return 'Pending';const cur=s.stage||'';if(SEL_STAGES.indexOf(cur)>=0&&!s._stageRaw)return cur;
+ const status=String(s.status||'').trim().toLowerCase();const order=String(s.order_status||'').trim().toLowerCase();
+ const approval=String(s.approval||'').trim().toLowerCase();const budget=String(s.budget_status||'').trim().toLowerCase();
+ if(status.indexOf('install')>=0||status.indexOf('deliver')>=0||order.indexOf('deliver')>=0)return 'Installed';
+ if(status==='ordered'||order.indexOf('ordered')>=0||s.order_date)return 'Ordered';
+ const notApproved=approval.indexOf('not approved')>=0||status==='not approved'||status==='unreleased';
+ if(!notApproved&&(status==='approved'||status==='client approved'||approval.indexOf('approved')===0||budget==='approved'))return 'Approved';
+ if(status==='selected'||status==='client selected'||approval.indexOf('selected')===0)return 'Client selected';
+ return 'Pending'}
+function selView(s){const b=selBoard();const pick=b.picks[s.id]||null;const extra=b.comments[s.id]||[];
+ const out=Object.assign({},s,{comments:(s.comments||[]).concat(extra),stage:s.stage||selStage(s)});
+ if(pick){out.picked_option=pick.option_id||out.picked_option||'';out.picked_by=pick.who||out.picked_by||'';out.picked_at=pick.at||out.picked_at||'';
+  if(selStage(s)==='Pending')out.stage='Client selected'}
+ else out.stage=selStage(out);
+ return out}
+function selToday(job){return (job&&job.today)||(DATA&&DATA.today)||''}
+function selAddDays(day,n){if(!day||typeof addD!=='function')return '';return addD(day,n)}
+function selAlerts(items,today){const overdue=[],upcoming=[];if(!today)return {overdue:overdue,upcoming:upcoming};
+ const horizon=selAddDays(today,14);(items||[]).forEach(raw=>{const s=selView(raw);const stage=s.stage||selStage(s);
+  if(SEL_OPEN.indexOf(stage)<0)return;const due=String(s.deadline||'').slice(0,10);if(!due)return;
+  if(due<today)overdue.push(s);else if(horizon&&due<=horizon)upcoming.push(s)});return {overdue:overdue,upcoming:upcoming}}
+function selGroup(list){const tree={},order=[];(list||[]).forEach(s=>{const loc=String(s.location||'').trim()||'Whole house';const cat=String(s.category||'').trim()||'Other';
+ if(!tree[loc]){tree[loc]={};order.push(loc)}(tree[loc][cat]=tree[loc][cat]||[]).push(s)});
+ return order.map(loc=>[loc,Object.keys(tree[loc]).map(cat=>[cat,tree[loc][cat]])])}
+function selJob(slug){let job=null;try{job=STORE&&STORE.getJob?STORE.getJob(slug):(DATA.jobs||{})[slug]}catch(e){job=(DATA.jobs||{})[slug]}return job}
+function selFind(slug,id){const job=selJob(slug);return ((job&&job.selections)||[]).find(x=>x.id===id)||null}
+function selClientOn(slug){const c=window.HWSSelections&&HWSSelections.client;return !!(c&&c.prices&&c.slug===slug&&c.money)}
+function selAmt(id,key){if(id==null||id==='')return null;
+ if(typeof canSeeMoney==='function'&&canSeeMoney()&&typeof moneyNum==='function'){const n=moneyNum(id,key);if(n!=null)return n}
+ const c=window.HWSSelections&&HWSSelections.client;if(c&&c.prices&&c.money&&c.money.records){const rec=c.money.records[String(id)];
+  if(rec&&rec[key]!=null&&rec[key]!==''){const n=+String(rec[key]).replace(/[$,]/g,'');if(!isNaN(n))return n}}
+ return null}
+function selMoneyLine(id){const see=(typeof canSeeMoney==='function'&&canSeeMoney())||selClientOn((J&&J.slug)||(parseHash().page==='client'?parseHash().sub:''));
+ if(!see||(!selClientOn((J&&J.slug)||(parseHash().page==='client'?parseHash().sub:''))&&typeof moneyReady==='function'&&!moneyReady()))return '<p class="small mut" data-money-hidden>'+esc(typeof moneyHiddenNote==='function'?moneyHiddenNote():MONEY_NOTE)+'</p>';
+ const a=selAmt(id,'allowance'),p=selAmt(id,'price'),d=selAmt(id,'difference');
+ if(a==null&&p==null&&d==null)return '<p class="small mut">'+MONEY_NOTE+'</p>';
+ const bits=[];if(a!=null)bits.push('Allowance '+fmt$(a));if(p!=null)bits.push('Selected '+fmt$(p));
+ if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));
+ return '<p class="selprice">'+esc(bits.join(' · '))+'</p>'}
+function selPhoto(url){url=String(url||'');if(!url||/buildertrend/i.test(url))return '';
+ if(/dropbox\.com\/s\/|dl\.dropbox/i.test(url))return '';
+ if(!/\.(jpe?g|png|webp|gif)(\?|$)/i.test(url))return '';return url}
+function selSourceUrl(att){if(!att)return '';const blob=[att.url||'',att.path||'',att.name||''].join(' ');
+ if(/buildertrend/i.test(blob))return '';
+ if(typeof fileDropboxUrl==='function'&&att.path){const u=fileDropboxUrl({path:att.path,name:att.name||'',tag:'file'});if(u&&!/buildertrend/i.test(u))return u}
+ const url=att.url||'';if(/^https:\/\/www\.dropbox\.com\/home\//i.test(url))return url;return ''}
+function selCardHtml(x){const today=selToday(J);const late=x.deadline&&today&&String(x.deadline).slice(0,10)<today&&SEL_OPEN.indexOf(x.stage)>=0;
+ const sub=[x.location&&x.title?x.location:'',x.category||'',x.deadline?('due '+md(x.deadline)):'',x.cost_code||''].filter(Boolean).join(' · ');
+ return `<button type="button" class="selcard" data-sel="${esc(x.id)}"><span class="pbody"><span class="pt">${esc(x.title||x.choice||x.location||'Selection')}</span><span class="ps">${esc(sub)}</span></span><span class="psrc">${chip(x.stage||'Pending','low')}${late?chip('Overdue','overdue'):''}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</span></button>`}
+function selSuggestHtml(){const rows=(J&&J.selection_suggestions)||[];if(!rows.length)return '';
+ return `<h2 class="selloc">Suggestions to review</h2>`+rows.map(s=>`<button type="button" class="selcard selsug" data-sug="${esc(s.selection_id||'')}"><span class="pbody"><span class="pt">${esc(s.title||'Suggestion')}</span><span class="ps">${esc([s.location,s.category,s.snippet].filter(Boolean).join(' · '))}</span></span><span class="psrc">${chip('Review','medium')}</span></button>`).join('')}
+function renderSelPhone(M){const all=(J.selections||[]).map(withOverlay).map(selView);const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;
+ const groups=selGroup(show);const body=show.length?groups.map(([loc,cats])=>`<h2 class="selloc">${esc(loc)}</h2>`+cats.map(([cat,rows])=>`<div class="pgh">${esc(cat)} <span class="mut">(${rows.length})</span></div>`+rows.map(selCardHtml).join('')).join('')).join('')+selSuggestHtml():emptyState('No selections yet','');
+ M.innerHTML=panel('Selections',`${real.length} real · ${all.length-real.length} template`,body,(real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:''));
+ const box=M.querySelector('.panel');if(box)box.classList.add('selphone');
+ const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};
+ bindSelRows(M);M.querySelectorAll('[data-sug]').forEach(el=>{el.onclick=()=>{const id=el.getAttribute('data-sug');if(id)openSelection(J.slug,id);else toast('Review this note, then add the selection.')}});
+ const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl)openSelection(J.slug,focus)}
+function selAlertLink(slug,s,kind){const due=s.deadline?md(s.deadline):'';
+ return `<a class="selcard" href="#/job/${esc(slug)}/selections/${encodeURIComponent(s.id)}"><span class="pbody"><span class="pt">${esc(s.title||s.choice||'Selection')}</span><span class="ps">${esc([s.location,s.category,kind,due].filter(Boolean).join(' · '))}</span></span>${chip(kind,kind==='Overdue'?'overdue':'medium')}</a>`}
+function selectionHomeCard(){if(!DATA||!DATA.jobs)return '';const today=(DATA.today)||'';const bits=[];
+ Object.keys(DATA.jobs).forEach(slug=>{const job=DATA.jobs[slug]||{};const found=selAlerts(job.selections||[],job.today||today);
+  found.overdue.forEach(s=>bits.push(selAlertLink(slug,s,'Overdue')));found.upcoming.forEach(s=>bits.push(selAlertLink(slug,s,'Due soon')))});
+ if(!bits.length)return '';
+ return `<section class="selalerts"><h2 class="selloc">Selection deadlines</h2>${bits.join('')}</section>`}
+function selectionJobAlert(){if(!J)return '';const found=selAlerts(J.selections||[],selToday(J));
+ const bits=found.overdue.map(s=>selAlertLink(J.slug,s,'Overdue')).concat(found.upcoming.map(s=>selAlertLink(J.slug,s,'Due soon')));
+ if(!bits.length)return '';return `<div class="selalerts">${bits.join('')}</div>`}
+function selectionRollupHtml(slug){const job=(DATA.jobs||{})[slug]||{};const sum=job.selection_summary||{};
+ const see=typeof moneyReady==='function'?moneyReady():(typeof canSeeMoney==='function'&&canSeeMoney());
+ let roll=null;if(see&&typeof MONEY!=='undefined'&&MONEY){roll=(MONEY.selection_rollups||{})[slug]||((MONEY.jobs||{})[slug]||{}).selection_rollup||null}
+ const counts=`<div class="small">${sum.count||(job.selections||[]).length} selections · ${sum.pending||0} pending · ${sum.overdue||0} overdue · ${sum.upcoming||0} due soon${sum.over_count?(' · '+sum.over_count+' over'):''}${sum.under_count?(' · '+sum.under_count+' under'):''}</div>`;
+ if(!see)return `<div class="selroll">${counts}</div>`;
+ if(!roll)return `<div class="selroll">${counts}<div class="small mut">${MONEY_NOTE}</div></div>`;
+ const diff=+roll.difference||0;const word=diff>0?'Over':(diff<0?'Under':'Even');
+ return `<div class="selroll"><div class="small"><b>Allowance</b> ${fmt$(roll.allowance)} · <b>Selected</b> ${fmt$(roll.selected)} · <b>${word}</b> ${fmt$(Math.abs(diff))}</div>${counts}</div>`}
+function selOnBox(){return /^(127\.0\.0\.1|localhost)$/.test(location.hostname)}
+function selPost(slug,tail,body){if(!selOnBox())return;fetch('/api/job/'+slug+'/'+tail,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(j&&j.ok===false)toast(j.error||'Not saved')}).catch(()=>{})}
+function selRecordPick(slug,id,optionId){const s=selFind(slug,id);if(!s){toast('Selection not found');return}
+ const stage=selStage(s);if(stage==='Approved'||stage==='Ordered'||stage==='Installed'){toast('This selection is already '+stage);return}
+ const who=(STORE&&STORE.who&&STORE.who())||'';const at=new Date().toISOString().slice(0,10);
+ s.stage='Client selected';s.picked_by=who;s.picked_at=at;s.picked_option=optionId;
+ const opt=(s.options||[]).find(o=>o.id===optionId);if(opt&&opt.title)s.choice=opt.title;
+ const b=selBoard();b.picks[id]={option_id:optionId,who:who,at:at,slug:slug};selSaveBoard(b);
+ selPost(slug,'selection-pick',{id:id,option_id:optionId,who:who});toast('Choice saved')}
+function selAddComment(slug,id,text){text=String(text||'').trim();if(!text)return;
+ const who=(STORE&&STORE.who&&STORE.who())||'';const at=new Date().toISOString().slice(0,10);
+ const s=selFind(slug,id);if(s){(s.comments=s.comments||[]).push({at:at,who:who,text:text})}
+ const b=selBoard();(b.comments[id]=b.comments[id]||[]).push({at:at,who:who,text:text,slug:slug});selSaveBoard(b);
+ selPost(slug,'selection-note',{id:id,text:text,who:who});toast('Comment saved')}
+function selDraft(slug,id,kind){if(!selOnBox()){toast('Drafts are saved on the office hub.');return}
+ const who=(STORE&&STORE.who&&STORE.who())||'';
+ fetch('/api/job/'+slug+'/selection-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,kind:kind,who:who})}).then(r=>r.json()).then(j=>{
+  if(!j||j.ok===false)toast((j&&j.error)||'Could not save the draft');
+  else toast(kind==='co'?'Change order draft saved':'Purchase order draft saved')}).catch(()=>toast('Could not reach the office hub'))}
+function selDetailHtml(s,slug){const opts=(s.options||[]).map(o=>{const photo=selPhoto(o.photo);
+ return `<button type="button" class="selcard selopt" data-opt="${esc(o.id)}"><span class="pbody">${photo?`<img class="selpic" alt="" src="${esc(photo)}">`:''}<span class="pt">${esc(o.title||'Choice')}</span><span class="ps">${esc([o.vendor,o.sku,o.finish,o.note].filter(Boolean).join(' · '))}${o.open?' · open choice':''}</span></span>${s.picked_option===o.id?chip('Picked','ok'):chip('Choose','low')}</button>`}).join('')||'<div class="none">No listed choices yet.</div>';
+ const files=(s.attachments||[]).map((a,i)=>{const src=selSourceUrl(a);
+  return `<div class="selfile"><button type="button" class="selcard" data-satt="${i}"><span class="pbody"><span class="pt">${esc(a.name||'File')}</span><span class="ps">Open in the hub</span></span></button>${src?`<a class="lbtn" data-fsrc href="${esc(src)}" target="_blank" rel="noopener">View source</a>`:''}</div>`}).join('');
+ const notes=(s.comments||[]).map(c=>`<div class="selnote"><div class="small mut">${esc([c.who,c.at].filter(Boolean).join(' · '))}</div><div>${esc(c.text||'')}</div></div>`).join('')||'<div class="none">No comments yet.</div>';
+ const approved=s.stage==='Approved'||s.stage==='Ordered'||s.stage==='Installed';
+ const diff=selAmt(s.id,'difference');const co=approved&&!(diff!=null&&diff<=0);
+ const drafts=approved?`<p class="small">Draft only. The owner approves before it is sent.</p><div class="mbtns"><button type="button" id="selpo">Draft purchase order</button>${co?'<button type="button" id="selco">Draft change order</button>':''}</div>`:'';
+ return `<p>${chip(s.stage||'Pending','low')} ${s.location?esc(s.location):''} ${s.category?'· '+esc(s.category):''}</p>
+  ${s.description?`<p>${esc(s.description)}</p>`:''}
+  <p class="small">${s.deadline?('Due '+esc(mdy(s.deadline))):'No deadline'}${s.deadline_task?' · '+esc(s.deadline_task):''}</p>
+  ${s.picked_by||s.picked_at?`<p class="small">Picked ${esc(s.picked_by||'')} ${s.picked_at?esc(s.picked_at):''}</p>`:''}
+  ${selMoneyLine(s.id)}
+  <h3 class="sh">Choices</h3>${opts}
+  ${files?`<h3 class="sh">Files</h3>${files}`:''}
+  <h3 class="sh">Comments</h3>${notes}
+  <form id="selnote" class="fg"><label>Comment<textarea name="text" rows="2"></textarea></label><button class="pri" type="submit">Add comment</button></form>
+  ${drafts}`}
+function openSelection(slug,id){const raw=selFind(slug,id);if(!raw){toast('Selection not found');return}
+ const s=selView(typeof withOverlay==='function'?withOverlay(raw):raw);const moneyOk=typeof canSeeMoney==='function'&&canSeeMoney();const est=typeof estimateOf==='function'?estimateOf(id):null;
+ const b=typeof budgetBucket==='function'?budgetBucket(s):'';const codes=(DATA.common&&DATA.common.adaptive_codes)||[];
+ const kind=(est&&est.kind)||s.estimate_kind||'allowance';
+ const estField=moneyOk?`<label>Estimated cost<input name="estimate" inputmode="decimal" value="${est&&est.estimate!=null?esc(est.estimate):''}" placeholder="Allowance or quote"></label>
+  <label>Kind<select name="estimate_kind"><option value="allowance" ${kind!=='quote'?'selected':''}>Allowance</option><option value="quote" ${kind==='quote'?'selected':''}>Quote</option></select></label>`:'<p class="small mut">The estimate is on the money page.</p>';
+ const edit=moneyOk?`<label class="cb"><input type="checkbox" name="prelim" ${b==='preliminary'?'checked':''}> Preliminary <span class="mut">in the budget before the client approves</span></label>
+  ${estField}<label>Cost code<input name="cost_code" list="acodes" value="${esc(s.cost_code||'')}" placeholder="Tile Materials"></label>
+  <datalist id="acodes">${codes.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+  <label>Vendor <span class="mut">if known</span><input name="vendor" value="${esc(s.vendor||'')}" placeholder="Optional"></label>`:`<p class="small">${esc(s.cost_code||'')} ${s.vendor?'· '+esc(s.vendor):''}</p>`;
+ const h=`<div class="asheet seldetail"><div class="ahead"><div class="small mut">${esc(typeof moneyJobName==='function'?moneyJobName(slug):slug)} · selection</div><h2>${esc(s.title||s.choice||id)}</h2></div>
+  ${selDetailHtml(s,slug)}
+  <form id="sf" class="fg">${edit}<div class="mbtns sticky">${moneyOk?'<button class="pri" type="submit">Save</button>':''}${moneyOk&&b==='preliminary'?'<button type="button" id="appr">Approve</button>':''}<span class="sp"></span><button type="button" data-close>Close</button></div></form>
+  ${(typeof HWSRelated==='function'||window.HWSRelated)?HWSRelated.html(typeof clientLinks==='function'?clientLinks(s,slug):(s.links||[]),{slug}):''}</div>`;
+ openModal(h,m=>{if(window.HWSRelated)HWSRelated.bind(m,{slug});
+  m.querySelectorAll('[data-opt]').forEach(el=>{el.onclick=()=>{selRecordPick(slug,id,el.getAttribute('data-opt'));closeModal();if(J&&J.slug===slug){const fn=MODFN()[curMod()];if(fn)fn($('#mod'))}else if(parseHash().page==='client')renderClientSelections(slug)}});
+  m.querySelectorAll('[data-satt]').forEach(el=>{el.onclick=()=>{const att=(s.attachments||[])[+el.getAttribute('data-satt')];if(!att||!window.HWSFiles)return;
+   HWSFiles.open(slug,att.rel||'',null,{path:att.path||'',name:att.name||'File',url:(att.url&&!/buildertrend/i.test(att.url))?att.url:''})}});
+  const nf=m.querySelector('#selnote');if(nf)nf.onsubmit=ev=>{ev.preventDefault();selAddComment(slug,id,nf.elements.text.value);closeModal();openSelection(slug,id)};
+  const po=m.querySelector('#selpo');if(po)po.onclick=()=>selDraft(slug,id,'po');
+  const co=m.querySelector('#selco');if(co)co.onclick=()=>selDraft(slug,id,'co');
+  const f=m.querySelector('#sf');if(f)f.onsubmit=ev=>{ev.preventDefault();const fd=new FormData(f);
+   const prelim=!!(f.elements.prelim&&f.elements.prelim.checked);const body={id,budget_status:prelim?'preliminary':(b==='committed'&&!prelim?(s.budget_status==='approved'?'approved':''):''),
+    estimate:fd.get('estimate'),estimate_kind:fd.get('estimate_kind')||'allowance',cost_code:fd.get('cost_code')||'',vendor:fd.get('vendor')||'',who:STORE&&STORE.who?STORE.who():''};
+   if(!prelim&&b==='preliminary')body.budget_status='';
+   saveSelection(slug,body)};
+  const ap=m.querySelector('#appr');if(ap)ap.onclick=()=>{const fd=new FormData(f);saveSelection(slug,{id,budget_status:'approved',estimate:fd.get('estimate'),estimate_kind:fd.get('estimate_kind')||s.estimate_kind||'allowance',cost_code:fd.get('cost_code')||s.cost_code||'',vendor:fd.get('vendor')||s.vendor||'',who:STORE&&STORE.who?STORE.who():''})}})}
+function itemsForClient(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};
+ return (job.selections||[]).filter(s=>s&&s.client_visible!==false&&s.source!=='DRAFT'&&String(s.status||'').toLowerCase()!=='unreleased').map(s=>{
+  const view=selView(s);const stage=view.stage||selStage(s);let detail='';const picked=view.picked_option||'';
+  (s.options||[]).forEach(o=>{if(o.id===picked)detail=o.title||''});if(!detail&&stage!=='Pending')detail=s.choice||'';
+  return {id:s.id||'',title:s.title||s.choice||'Selection',location:s.location||'',category:s.category||'',stage:stage,
+   deadline:String(s.deadline||'').slice(0,10),detail:detail,client_visible:true,
+   options:(s.options||[]).filter(o=>o&&o.title).map(o=>({id:o.id||'',title:o.title}))}})}
+function renderClientSelections(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||null;
+ if(!job){if(typeof hubShell==='function')hubShell('home','<div class="none">This job is not on this phone.</div>');return}
+ const items=itemsForClient(slug);const priced=selClientOn(slug);
+ const cards=items.map(it=>{const opts=(it.options||[]).map(o=>`<button type="button" class="selcard" data-cpick="${esc(it.id)}" data-opt="${esc(o.id)}"><span class="pbody"><span class="pt">${esc(o.title)}</span><span class="ps">Choose this</span></span></button>`).join('');
+  const price=priced&&window.HWSSelections?HWSSelections.pricesFor(it.id):'';
+  return `<section class="selblock"><button type="button" class="selcard" data-sel="${esc(it.id)}"><span class="pbody"><span class="pt">${esc(it.title)}</span><span class="ps">${esc([it.location,it.category,it.stage,it.deadline?('due '+md(it.deadline)):'',it.detail].filter(Boolean).join(' · '))}</span></span>${chip(it.stage||'Pending','low')}</button>${price?`<p class="selprice">${esc(price)}</p>`:''}${opts}</section>`}).join('')||'<div class="none">No selections to review.</div>';
+ const html=`<div class="hello"><h1>${esc(job.name||'Selections')}</h1><div class="date">Selections to review</div></div><div class="selphone selclient">${cards}</div>`;
+ if(typeof hubShell==='function')hubShell('home',html);else{$('#root').innerHTML=html}
+ document.querySelectorAll('[data-sel]').forEach(el=>{el.onclick=()=>openSelection(slug,el.getAttribute('data-sel'))});
+ document.querySelectorAll('[data-cpick]').forEach(el=>{el.onclick=()=>{selRecordPick(slug,el.getAttribute('data-cpick'),el.getAttribute('data-opt'));renderClientSelections(slug)}})}
+window.HWSSelections={
+ client:null,
+ bindClient(opts){this.client=opts||null},
+ itemsForClient:itemsForClient,
+ pricesFor(id){const c=this.client;if(!c||!c.prices)return '';
+  const rec=c.money&&c.money.records&&c.money.records[String(id)];if(!rec)return '';
+  const num=k=>{const v=rec[k];if(v==null||v==='')return null;const n=+String(v).replace(/[$,]/g,'');return isNaN(n)?null:n};
+  const a=num('allowance'),p=num('price')!=null?num('price'):num('selected'),d=num('difference');
+  if(a==null&&p==null&&d==null)return '';
+  const bits=[];if(a!=null)bits.push('Allowance '+fmt$(a));if(p!=null)bits.push('Selected '+fmt$(p));
+  if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));return bits.join(' · ')},
+ pick:selRecordPick,
+ open:openSelection,
+ alerts(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};return selAlerts(job.selections||[],selToday(job))}
+};
+
 /* DWG/DXF preview. The viewer module is imported only when a drawing opens.
    Plan Room is a button, not a link, so the file click handler does not treat it as a plan PDF. */
 (function () {
@@ -6886,7 +7084,9 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
 /* ---------- boot ---------- */
 function route(){closeModal();if(!DATA)return;const p=parseHash();
  if(p.slug){if(!DATA.jobs[p.slug]){location.hash='#/';return}if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0)}
- else if(p.page=='jobs'){J=null;L=STORE.getList();renderList()}else{J=null;L=null;renderHub(p)}}
+ else if(p.page=='jobs'){J=null;L=STORE.getList();renderList()}
+ else if(p.page=='client'&&typeof renderClientSelections==='function'){J=null;L=null;renderClientSelections(p.sub)}
+ else{J=null;L=null;renderHub(p)}}
 window.addEventListener('hashchange',route);
 let lastPhone=isPhone();window.addEventListener('resize',()=>{const p=isPhone();if(p!==lastPhone){lastPhone=p;if(!modalEl)route()}});
 function openStore(){const live=liveOn();STORE=HWSStore.create({data:DATA,live,version:MODE==='share'?B.version:(live?'pwa-live':'pwa-'+String(DATA.built).replace(/[^0-9A-Za-z]+/g,'')),extra:DATA.extra,onSaveError:e=>toast('Could not save in this browser: '+e.message+' (export your changes)')})}
@@ -6906,7 +7106,7 @@ setInterval(()=>{if(LIVE)paintLive()},20000);
 function busyTyping(){if(modalEl||ptrDown)return true;const a=document.activeElement;const r=document.getElementById('root');return !!(a&&a!==document.body&&r&&r.contains(a)&&(a.tagName=='TEXTAREA'||a.tagName=='SELECT'||(a.tagName=='INPUT'&&!/^(checkbox|radio|button|submit|range|color)$/.test(a.type))))}
 /* re-render after a remote change without touching an open edit sheet or a field someone is typing in (retries until they are done) */
 function safeRender(){clearTimeout(rrT);if(busyTyping()){rrT=setTimeout(safeRender,700);return}if(!DATA||!STORE)return;const p=parseHash();const y=window.scrollY;
- if(p.slug&&DATA.jobs[p.slug]){J=STORE.getJob(p.slug);renderJob()}else if(!p.slug){J=null;if(p.page=='jobs'){L=STORE.getList();renderList()}else{renderHub(p)}}window.scrollTo(0,y)}
+ if(p.slug&&DATA.jobs[p.slug]){J=STORE.getJob(p.slug);renderJob()}else if(!p.slug){J=null;if(p.page=='jobs'){L=STORE.getList();renderList()}else if(p.page=='client'&&typeof renderClientSelections==='function')renderClientSelections(p.sub);else{renderHub(p)}}window.scrollTo(0,y)}
 function dataUpdated(){const pend=STORE?STORE.pendingTotal():0;DATA=WSData.data();openStore();if(!STORE.live&&pend&&!STORE.pendingTotal())toast('New data arrived; open “Changes” to bring your unsent edits over');J=null;if(LIVE)safeRender();else route()}
 function startLive(){if(!liveOn()||!STORE||!STORE.live){if(window.WSData)WSData.liveMode=false;return}if(!STORE.who()&&SY.A.who)STORE.setWho(SY.A.who());if(LIVE)return;
  if(window.WSData)WSData.liveMode=true;
