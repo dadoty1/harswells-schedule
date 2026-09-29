@@ -380,6 +380,23 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .fg .cb input{width:22px;height:22px;min-height:22px;margin:0;flex:none}
 tr[data-sel]{cursor:pointer}
 @media(max-width:760px){.gtabs a span{font-size:10px}.hub-money .hph{margin-bottom:8px}}
+.jbudget{width:100%;max-width:100%;box-sizing:border-box}
+.jbudget .sumcard,.jbudget .catcard,.jbudget .linecard,.jbudget .revcard{display:block;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px;margin:0 0 8px;color:inherit;font:inherit}
+.jbudget .sumcard{background:#15233b;color:#fff;border-color:#15233b}
+.jbudget .sumcard .mut,.jbudget .sumcard .small,.jbudget .sumcard .amt-hidden{color:#d5deea}
+.jbudget h2{margin:0 0 4px;font-size:20px}
+.jbudget .meter{display:block;height:8px;background:#e6ebf2;border-radius:99px;overflow:hidden;margin:8px 0}
+.jbudget .meter b{display:block;height:8px;background:#1f3a68}
+.jbudget .sumcard .meter{background:#314864}
+.jbudget .sumcard .meter b{background:#fff}
+.jbudget .amt-hidden{color:#667085;font-size:13px}
+.jbudget .cols{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin-top:6px;font-size:14px;width:100%}
+.jbudget .sumcard .cols{color:#fff}
+.jbudget .pgh{margin:14px 2px 6px}
+@media(max-width:760px){
+ .jbudget{width:auto;max-width:none;margin-left:-8px;margin-right:-8px}
+ .jbudget .sumcard,.jbudget .catcard,.jbudget .linecard,.jbudget .revcard{border-radius:0;border-left:0;border-right:0}
+}
 .unlock{max-width:440px;margin:32px auto;padding:0 18px}
 .unlock h1{margin:0 0 8px}
 .unlock label{display:block;margin:14px 0 0;font-weight:650}
@@ -650,7 +667,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'0c81145040',built:'9/29/2026 1:30 PM AZ'};
+const HWS_BUILD={version:'e81a4d3b1f',built:'9/29/2026 3:09 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -2361,7 +2378,7 @@ function mRfis(M){const rows=J.rfis||[];
 function mSpecs(M){const rows=J.specs||[];
  M.innerHTML=panel('Specs','Spec sheets for this job',rows.length?rows.map(r=>`<div class="it"><div class="bd"><div class="t">${esc(r.title||'')}</div><div class="s">${esc([r.section,r.cost_code].filter(Boolean).join(' · '))}</div>${window.HWSRelated?HWSRelated.html(r.links||[],{slug:J.slug}):''}</div></div>`).join(''):emptyState('No specs yet',''));
  if(window.HWSRelated)HWSRelated.bind(M,{slug:J.slug})}
-function mBudget(M){const l=J.budget_index||J.budget||[];
+function mBudget(M){if(typeof jobBudgetHtml==='function'){budgetNav={cat:'',line:''};M.innerHTML=jobBudgetHtml(J.slug);bindJobBudget(M);return}const l=J.budget_index||J.budget||[];
  M.innerHTML=panel('Budget','Counts only. Dollar amounts are on the money page.',
   l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Preliminary</th><th class="num">Committed</th><th class="num">Pending</th><th class="num">POs</th><th class="num">Actual</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title||'')}${b.conflict_count?`<div class="mut small">${b.conflict_count} conflict${b.conflict_count==1?'':'s'} on the money page</div>`:''}</td><td class="num">${b.preliminary_count||0}</td><td class="num">${b.committed_count||0}</td><td class="num">${b.pending_count||0}</td><td class="num">${b.po_count||0}</td><td class="num">${b.actual_count||0}</td></tr>`).join('')}</table></div>`:emptyState('No budget lines yet','The running budget is imported into the private money file.'),
   (typeof mMoney==='function'?`<button type="button" class="pri" id="openmoney">Open money</button>`:''));
@@ -3779,7 +3796,8 @@ function moneyExtras(slug){if(typeof canSeeMoney==='function'&&!canSeeMoney())re
  const drafts=((MONEY.imports&&MONEY.imports.po_amounts)||[]).filter(p=>p.job===slug&&String(p.status||'draft')==='draft');
  if(!drafts.length)return '';
  return `<div class="note"><b>Draft purchase orders</b> <span class="mut">need approval</span><div class="small">${drafts.map(p=>esc(p.title||p.id||'PO')+' · '+fmt$(p.amount)).join('<br>')}</div></div>`}
-function mMoney(M){if(!J)return;M.innerHTML=panel('Budget vs actual',esc(J.name),moneySection(J.slug));bindDrill(M);
+function mMoney(M){if(!J)return;if(typeof canSeeMoney==='function'&&canSeeMoney()&&!moneyLoaded&&typeof loadMoneyFile==='function')loadMoneyFile();if(typeof jobBudgetHtml==='function'){const focus=parseHash().focus;budgetNav={cat:'',line:focus||''};M.innerHTML=jobBudgetHtml(J.slug);bindJobBudget(M);return}
+ M.innerHTML=panel('Budget vs actual',esc(J.name),moneySection(J.slug));bindDrill(M);
  const focus=parseHash().focus;if(focus&&canSeeMoney()&&!modalEl)openDrill(J.slug,focus,'budget')}
 function prelimHomeCount(){let n=0;Object.keys(DATA.jobs||{}).forEach(slug=>{const idx=((DATA.jobs[slug]||{}).budget_index)||[];if(idx.length)idx.forEach(l=>{n+=+l.preliminary_count||0});else jobSelections(slug).forEach(s=>{if(budgetBucket(s)==='preliminary')n++})});return n}
 function moneyHiddenHtml(){return `<div class="hph"><h1>Money</h1></div><div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`}
@@ -3808,6 +3826,111 @@ async function loadMoneyFile(){if(!canSeeMoney()||moneyLoaded||moneyLoading)retu
    const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
    const ct=r.headers.get('content-type')||'';if(r.ok&&/json/.test(ct)){const doc=await r.json();if(applyMoneyDoc(doc)){if(typeof route==='function')route()}}}catch(e){}}
  }finally{moneyLoading=false}}
+var budgetNav={cat:'',line:''};
+function pctText(n){n=+n||0;if(n<0)n=0;if(n>100)n=100;var t=Math.round(n*10)/10;return (t%1?String(t):String(Math.round(t)))+'%'}
+function budgetMeter(n){var w=Math.max(0,Math.min(100,+n||0));return '<span class="meter"><b style="width:'+w+'%"></b></span>'}
+function budgetAmt(show,n){if(!show)return '<span class="amt-hidden">Amounts hidden</span>';return typeof fmt$==='function'?fmt$(n):(n==null?'':String(n))}
+function sameBudgetCode(a,b){if(!a||!b)return false;var x=typeof cogsName==='function'?cogsName(a):a;var y=typeof cogsName==='function'?cogsName(b):b;
+ return String(x).toLowerCase()===String(y).toLowerCase()||String(a).toLowerCase()===String(b).toLowerCase()}
+function budgetLines(slug,show){
+ var job=(DATA.jobs||{})[slug]||{};
+ var idx=job.budget_index||[];
+ var moneyLines=show&&typeof linesFor==='function'?linesFor(slug):((MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].lines)||[]);
+ if(show&&moneyLines.length)return moneyLines.map(function(l){
+  var revised=l.revised!=null?+l.revised:(+l.budget||0);
+  var projected=l.projected_cost!=null?+l.projected_cost:Math.max(revised,+l.committed||0,+l.actual||0);
+  return Object.assign({},l,{category:l.category||'Other',pct_complete:+l.pct_complete||0,original:+l.original||0,approved_cos:+l.approved_cos||0,
+   revised:revised,committed:+l.committed||0,actual:+l.actual||0,projected_cost:projected,variance:l.variance!=null?+l.variance:(revised-projected),
+   po_labels:(l.po_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
+   bill_labels:(l.actual_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
+   co_labels:(l.co_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
+   bid_labels:(l.bid_items||[]).map(function(i){return i.label||i.id}).filter(Boolean)});
+ });
+ return idx.map(function(l){return {cost_code:l.cost_code,title:l.title||l.cost_code,bt_code:l.bt_code||'',category:l.category||'Other',pct_complete:+l.pct_complete||0,
+  po_count:+l.po_count||0,actual_count:+l.actual_count||0,co_count:+l.co_count||0,bid_count:+l.bid_count||0,pending_count:+l.pending_count||0,
+  po_labels:l.po_labels||[],bill_labels:l.bill_labels||[],co_labels:l.co_labels||[],bid_labels:l.bid_labels||[]}})}
+function budgetGroups(slug,lines){
+ var order=(((DATA.jobs||{})[slug]||{}).budget_categories||[]).map(function(c){return c.category});
+ var map={},seq=[];
+ lines.forEach(function(l){var c=l.category||'Other';if(!map[c]){map[c]=[];seq.push(c)}map[c].push(l)});
+ seq.sort(function(a,b){var ia=order.indexOf(a),ib=order.indexOf(b);if(ia<0)ia=1e3;if(ib<0)ib=1e3;if(ia!==ib)return ia-ib;return a<b?-1:1});
+ return seq.map(function(c){return {category:c,lines:map[c]}})}
+function sumKey(lines,k){return lines.reduce(function(a,l){return a+(+l[k]||0)},0)}
+function catPct(slug,cat,lines,show){
+ if(show){var p=sumKey(lines,'projected_cost');return p?Math.round(1000*sumKey(lines,'actual')/p)/10:0}
+ var hit=((((DATA.jobs||{})[slug]||{}).budget_categories)||[]).filter(function(c){return c.category===cat})[0];
+ if(hit&&hit.pct_complete!=null)return +hit.pct_complete||0;
+ if(!lines.length)return 0;
+ return Math.round(10*lines.reduce(function(a,l){return a+(+l.pct_complete||0)},0)/lines.length)/10}
+function budgetCols(l,show){
+ var rows=[['Original budget',l.original],['Approved change orders',l.approved_cos],['Revised budget',l.revised],['Committed',l.committed],['Actual costs',l.actual],['Projected cost',l.projected_cost],['Variance',l.variance]];
+ return '<div class="cols">'+rows.map(function(r){return '<span>'+r[0]+'</span>'+budgetAmt(show,r[1])}).join('')+'<span>Complete</span><span>'+pctText(l.pct_complete)+'</span></div>'}
+function revenueCard(slug,show){
+ var rev=(show&&MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].revenue)||{};
+ var rows=[['Contract amount','contract'],['Approved change orders','approved_cos'],['Invoiced to date','invoiced'],['Received','received'],['Balance to finish','balance_to_finish']];
+ return '<section class="revcard"><div class="small">Revenue</div>'+rows.map(function(r){return '<div class="cols"><span>'+r[0]+'</span>'+budgetAmt(show,rev[r[1]]||0)+'</div>'}).join('')+'</section>'}
+function drillList(title,labels,items,show){
+ var body='';
+ if(show&&items&&items.length)body=items.map(function(it){return '<div class="linecard"><b>'+esc(it.label||it.id||title)+'</b><div class="small mut">'+esc([it.vendor,it.status].filter(Boolean).join(' · '))+'</div>'+budgetAmt(true,it.amount)+'</div>'}).join('');
+ else if(labels&&labels.length)body=labels.map(function(t){return '<div class="linecard"><b>'+esc(t)+'</b>'+budgetAmt(false)+'</div>'}).join('');
+ else body='<div class="small mut">None on this line.</div>';
+ return '<h3 class="pgh">'+esc(title)+'</h3>'+body}
+function jobBudgetHtml(slug){
+ var show=typeof moneyReady==='function'?moneyReady():(typeof canSeeMoney==='function'&&canSeeMoney());
+ var job=(DATA.jobs||{})[slug]||{};
+ var lines=budgetLines(slug,show);
+ var name=typeof moneyJobName==='function'?moneyJobName(slug):(job.name||slug);
+ var nav=budgetNav||{cat:'',line:''};
+ var roll=typeof selectionRollupHtml==='function'?selectionRollupHtml(slug):'';
+ var hid=show?'':'<div class="note" id="money-hidden">'+esc(typeof moneyHiddenNote==='function'?moneyHiddenNote():'Amounts hidden')+'</div>';
+ if(!lines.length)return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+'<div class="sumcard" data-budget="summary"><h2>Budget</h2><div class="small">'+esc(name)+'</div><p>No budget lines for this job yet.</p></div></div>';
+ if(nav.line){
+  var line=null;lines.forEach(function(l){if(l.cost_code===nav.line)line=l});
+  if(!line)nav.line='';
+  else{
+   var poItems=show?(line.po_items||[]).concat(line.pending_items||[]):[];
+   var bills=show?(line.actual_items||[]):[];
+   var cos=show?(line.co_items||[]):[];
+   var bids=show?(line.bid_items||[]):[];
+   return '<div class="jbudget" data-slug="'+esc(slug)+'">'+
+    '<button type="button" class="linecard" data-budget-back="cat">Back to '+esc(line.category||'categories')+'</button>'+
+    '<article class="sumcard" data-budget="line"><div class="small">'+esc(line.category||'')+'</div><h2>'+esc(line.title||line.cost_code)+'</h2><div class="small">'+esc(line.cost_code)+'</div>'+
+    budgetMeter(line.pct_complete)+'<div class="small">'+pctText(line.pct_complete)+' complete</div>'+
+    (show?budgetCols(line,true):'<p class="amt-hidden">Amounts hidden</p>')+'</article>'+
+    drillList('Purchase orders',line.po_labels,poItems,show)+
+    drillList('Bills',line.bill_labels,bills,show)+
+    drillList('Change orders',line.co_labels,cos,show)+
+    drillList('Awarded bids',line.bid_labels,bids,show)+
+    '</div>';
+  }
+ }
+ if(nav.cat){
+  var grp=budgetGroups(slug,lines).filter(function(g){return g.category===nav.cat})[0];
+  var list=(grp&&grp.lines)||[];
+  return '<div class="jbudget" data-slug="'+esc(slug)+'">'+
+   '<button type="button" class="linecard" data-budget-back="home">Back to budget</button>'+
+   '<article class="sumcard" data-budget="category"><h2>'+esc(nav.cat)+'</h2><div class="small">'+list.length+' lines · '+pctText(catPct(slug,nav.cat,list,show))+' complete</div>'+
+   budgetMeter(catPct(slug,nav.cat,list,show))+(show?'<div class="small">Revised '+budgetAmt(true,sumKey(list,'revised'))+'</div>':'<p class="amt-hidden">Amounts hidden</p>')+'</article>'+
+   list.map(function(l){return '<button type="button" class="linecard" data-budget-line="'+esc(l.cost_code)+'"><b>'+esc(l.title||l.cost_code)+'</b><div class="small mut">'+esc(l.cost_code)+' · '+pctText(l.pct_complete)+' complete</div>'+budgetMeter(l.pct_complete)+(show?'<div class="small">Revised '+budgetAmt(true,l.revised)+' · Variance '+budgetAmt(true,l.variance)+'</div>':'<div class="amt-hidden">Amounts hidden</div>')+'</button>'}).join('')+
+   '</div>';
+ }
+ var progress=job.budget_progress!=null?+job.budget_progress:catPct(slug,'',lines,show);
+ if(show){var proj=sumKey(lines,'projected_cost');progress=proj?Math.round(1000*sumKey(lines,'actual')/proj)/10:0}
+ var groups=budgetGroups(slug,lines);
+ return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+
+  '<article class="sumcard" data-budget="summary"><div class="small">Job budget</div><h2>'+esc(name)+'</h2>'+
+  '<div class="small">'+lines.length+' lines · '+pctText(progress)+' complete</div>'+budgetMeter(progress)+
+  (show?budgetCols({original:sumKey(lines,'original'),approved_cos:sumKey(lines,'approved_cos'),revised:sumKey(lines,'revised'),committed:sumKey(lines,'committed'),actual:sumKey(lines,'actual'),projected_cost:sumKey(lines,'projected_cost'),variance:sumKey(lines,'variance'),pct_complete:progress},true):'<p class="amt-hidden">Amounts hidden</p>')+
+  '</article>'+revenueCard(slug,show)+
+  '<h3 class="pgh">Categories</h3>'+
+  groups.map(function(g){var pct=catPct(slug,g.category,g.lines,show);return '<button type="button" class="catcard" data-budget-cat="'+esc(g.category)+'"><b>'+esc(g.category)+'</b><div class="small mut">'+g.lines.length+' lines · '+pctText(pct)+' complete</div>'+budgetMeter(pct)+(show?'<div class="small">Revised '+budgetAmt(true,sumKey(g.lines,'revised'))+'</div>':'<div class="amt-hidden">Amounts hidden</div>')+'</button>'}).join('')+
+  (show&&typeof moneyExtras==='function'?moneyExtras(slug):'')+
+  '</div>'}
+function paintJobBudget(root){if(!root)return;var slug=root.getAttribute('data-slug')||(typeof J!=='undefined'&&J&&J.slug)||'';if(root.querySelector){var box=root.querySelector('.jbudget');if(box)slug=box.getAttribute('data-slug')||slug}root.innerHTML=jobBudgetHtml(slug);bindJobBudget(root)}
+function bindJobBudget(root){if(!root)return;
+ root.querySelectorAll('[data-budget-cat]').forEach(function(el){el.onclick=function(){budgetNav.cat=el.getAttribute('data-budget-cat');budgetNav.line='';paintJobBudget(root)}});
+ root.querySelectorAll('[data-budget-line]').forEach(function(el){el.onclick=function(){budgetNav.line=el.getAttribute('data-budget-line');paintJobBudget(root)}});
+ root.querySelectorAll('[data-budget-back]').forEach(function(el){el.onclick=function(){if(el.getAttribute('data-budget-back')==='home'){budgetNav.cat='';budgetNav.line=''}else budgetNav.line='';paintJobBudget(root)}})}
 
 /* Bid tracker: one tile per job, then that job's trade packages. Amounts come from the private money file. */
 function bidSeeMoney(){if(typeof moneyReady==='function')return !!moneyReady();return typeof canSeeMoney==='function'&&canSeeMoney()}
@@ -4288,7 +4411,21 @@ function prSkipRel(rel) {
   return false;
 }
 function prSafeFile(s) {
-  return String(s || "").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "").slice(0, 80);
+  return String(s || "")
+    .replace(/[\u0000-\u001F\u007F]/g, " ")
+    .replace(/[^\u0020-\u007E]/g, " ")
+    .replace(/[\\/:*?"<>|]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^\s+|\s+$/g, "")
+    .slice(0, 80);
+}
+function prJunkTitle(s) {
+  const letters = String(s || "").replace(/[^A-Za-z]/g, "");
+  if (letters.length < 2) return true;
+  const vowels = (letters.match(/[AEIOUaeiou]/g) || []).length;
+  if (vowels === 0 && letters.length >= 4) return true;
+  if (letters.length >= 8 && vowels / letters.length < 0.15) return true;
+  return false;
 }
 function prSetName(name) {
   let s = String(name || "").replace(/\.pdf$/i, "");
@@ -4304,9 +4441,12 @@ function prSetName(name) {
 }
 function prSheetFileName(setName, page, title) {
   const set = prSafeFile(setName) || "Sheet";
-  const n = "p" + (page || 1);
-  const t = title ? prSafeFile(title) : "";
-  return t ? (set + " - " + n + " - " + t + ".pdf") : (set + " - " + n + ".pdf");
+  const n = page || 1;
+  const raw = String(title == null ? "" : title);
+  if (!raw.trim()) return set + " - p" + n + ".pdf";
+  let t = prSafeFile(raw);
+  if (!t || prJunkTitle(t)) t = "Sheet p" + n;
+  return set + " - p" + n + " - " + t + ".pdf";
 }
 function prBrowseHome(entries) {
   const rels = (entries || []).map((e) => String((e && e.rel) || ""));
@@ -6386,8 +6526,9 @@ function xSetName(name) {
 }
 function xSheetName(fileName, page, title) {
   const set = xSetName(fileName);
+  if (window.HWSPlanIndex && HWSPlanIndex.sheetFileName) return HWSPlanIndex.sheetFileName(set, page, title);
   if (typeof prSheetFileName === "function") return prSheetFileName(set, page, title);
-  const t = title ? String(title).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim() : "";
+  const t = title ? String(title).replace(/[\u0000-\u001F\u007F]/g, " ").replace(/[^\u0020-\u007E]/g, " ").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim() : "";
   return t ? (set + " - p" + page + " - " + t + ".pdf") : (set + " - p" + page + ".pdf");
 }
 function xList(slug) {
@@ -6731,10 +6872,10 @@ function selAmt(id,key){if(id==null||id==='')return null;
  return null}
 function selMoneyLine(id){const see=(typeof canSeeMoney==='function'&&canSeeMoney())||selClientOn((J&&J.slug)||(parseHash().page==='client'?parseHash().sub:''));
  if(!see||(!selClientOn((J&&J.slug)||(parseHash().page==='client'?parseHash().sub:''))&&typeof moneyReady==='function'&&!moneyReady()))return '<p class="small mut" data-money-hidden>'+esc(typeof moneyHiddenNote==='function'?moneyHiddenNote():MONEY_NOTE)+'</p>';
- const a=selAmt(id,'allowance'),p=selAmt(id,'price'),d=selAmt(id,'difference');
+ let a=selAmt(id,'allowance'),p=selAmt(id,'price'),d=selAmt(id,'difference');const noAllow=!(a>0);if(noAllow){a=null;d=null}
  if(a==null&&p==null&&d==null)return '<p class="small mut">'+MONEY_NOTE+'</p>';
  const bits=[];if(a!=null)bits.push('Allowance '+fmt$(a));if(p!=null)bits.push('Selected '+fmt$(p));
- if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));
+ if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));if(noAllow&&p!=null)bits.push('no allowance set yet');
  return '<p class="selprice">'+esc(bits.join(' · '))+'</p>'}
 function selPhoto(url){url=String(url||'');if(!url||/buildertrend/i.test(url))return '';
  if(/dropbox\.com\/s\/|dl\.dropbox/i.test(url))return '';
@@ -6771,6 +6912,7 @@ function selectionRollupHtml(slug){const job=(DATA.jobs||{})[slug]||{};const sum
  const counts=`<div class="small">${sum.count||(job.selections||[]).length} selections · ${sum.pending||0} pending · ${sum.overdue||0} overdue · ${sum.upcoming||0} due soon${sum.over_count?(' · '+sum.over_count+' over'):''}${sum.under_count?(' · '+sum.under_count+' under'):''}</div>`;
  if(!see)return `<div class="selroll">${counts}</div>`;
  if(!roll)return `<div class="selroll">${counts}<div class="small mut">${MONEY_NOTE}</div></div>`;
+ if(!(+roll.allowance>0))return `<div class="selroll"><div class="small"><b>Selected</b> ${fmt$(roll.selected)} · no allowances set yet</div>${counts}</div>`;
  const diff=+roll.difference||0;const word=diff>0?'Over':(diff<0?'Under':'Even');
  return `<div class="selroll"><div class="small"><b>Allowance</b> ${fmt$(roll.allowance)} · <b>Selected</b> ${fmt$(roll.selected)} · <b>${word}</b> ${fmt$(Math.abs(diff))}</div>${counts}</div>`}
 function selOnBox(){return /^(127\.0\.0\.1|localhost)$/.test(location.hostname)}
@@ -6864,7 +7006,7 @@ window.HWSSelections={
   const a=num('allowance'),p=num('price')!=null?num('price'):num('selected'),d=num('difference');
   if(a==null&&p==null&&d==null)return '';
   const bits=[];if(a!=null)bits.push('Allowance '+fmt$(a));if(p!=null)bits.push('Selected '+fmt$(p));
-  if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));return bits.join(' · ')},
+  if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));if(noAllow&&p!=null)bits.push('no allowance set yet');return bits.join(' · ')},
  pick:selRecordPick,
  open:openSelection,
  alerts(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};return selAlerts(job.selections||[],selToday(job))}

@@ -87,8 +87,9 @@ function xSetName(name) {
 }
 function xSheetName(fileName, page, title) {
   const set = xSetName(fileName);
+  if (window.HWSPlanIndex && HWSPlanIndex.sheetFileName) return HWSPlanIndex.sheetFileName(set, page, title);
   if (typeof prSheetFileName === "function") return prSheetFileName(set, page, title);
-  const t = title ? String(title).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim() : "";
+  const t = title ? String(title).replace(/[\u0000-\u001F\u007F]/g, " ").replace(/[^\u0020-\u007E]/g, " ").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim() : "";
   return t ? (set + " - p" + page + " - " + t + ".pdf") : (set + " - p" + page + ".pdf");
 }
 function xList(slug) {

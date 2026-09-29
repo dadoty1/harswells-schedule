@@ -14,9 +14,168 @@
 
   function normText(s) {
     return String(s || "")
-      .replace(/[\u2032\u2018\u2019]/g, "'")
-      .replace(/[\u2033\u201c\u201d]/g, '"')
+      .replace(/[\u2032\u2035\u02B9\u02BC\u2018\u2019\u201A\u201B\u00B4]/g, "'")
+      .replace(/[\u2033\u2036\u02BA\u201C\u201D\u201E\u201F]/g, '"')
+      .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-")
+      .replace(/\u2044/g, "/")
+      .replace(/\u00BC/g, "1/4")
+      .replace(/\u00BD/g, "1/2")
+      .replace(/\u00BE/g, "3/4")
+      .replace(/\u215B/g, "1/8")
+      .replace(/\u215C/g, "3/8")
+      .replace(/\u215D/g, "5/8")
+      .replace(/\u215E/g, "7/8")
       .replace(/''/g, '"');
+  }
+
+  /* Common English and sheet words. A font whose letters are shifted by a
+     constant (no usable ToUnicode map) scores near zero until the shift
+     that restores these words. */
+  var DICT = {};
+  ("a an as at be by do go if in is it no of on or so to we all and for the not per see this that with from are was were been has had have its but can may will over under about than then them they you your our out off any each more most such only also other into plan site notes note scale sheet floor roof wall door window room cover project detail section elevation foundation north south east west general legend schedule architectural structural mechanical electrical plumbing civil landscape existing proposed building trades contractor drawing drawings title date revision typical similar grid level finish kitchen bath garage living dining bedroom closet porch deck stair stairs ramp area areas line lines symbol symbols material materials abbreviation abbreviations owner architect engineer survey grading utility dimension dimensions block number numbers noted inch inches feet foot information details read sheet").split(/\s+/).forEach(function (w) {
+    if (w) DICT[w] = 1;
+  });
+
+  function caesar(str, delta) {
+    var n = ((Number(delta) % 26) + 26) % 26;
+    if (!n) return String(str || "");
+    return String(str || "").replace(/[A-Za-z]/g, function (ch) {
+      var base = ch <= "Z" ? 65 : 97;
+      return String.fromCharCode(base + ((ch.charCodeAt(0) - base + n) % 26));
+    });
+  }
+
+  function scoreText(text) {
+    var words = String(text || "").toLowerCase().match(/[a-z]{2,}/g) || [];
+    var hits = 0;
+    words.forEach(function (w) { if (DICT[w]) hits++; });
+    return { hits: hits, words: words.length, ratio: words.length ? hits / words.length : 0 };
+  }
+
+  function planBonus(text) {
+    var up = String(text || "").toUpperCase();
+    var n = 0;
+    if (/\b(?:SCALE|PLAN|NOTES|SHEET|SITE|FLOOR|ELEVATION|FOUNDATION|COVER)\b/.test(up)) n += 2;
+    if (/(?:FP|[GCLASMPE])\s*[-.]?\s*\d{1,3}\s*\.\s*\d{1,3}/.test(up)) n += 2;
+    if (/\d+\s*\/\s*\d+/.test(up) && /=/.test(up)) n += 1;
+    return n;
+  }
+
+  function betterScore(a, b) {
+    if (a.hits !== b.hits) return a.hits > b.hits;
+    if (Math.abs(a.ratio - b.ratio) > 0.02) return a.ratio > b.ratio;
+    return (a.bonus || 0) > (b.bonus || 0);
+  }
+
+  function bestShift(text) {
+    var raw = String(text || "");
+    var letters = (raw.match(/[A-Za-z]/g) || []).length;
+    var base = scoreText(raw);
+    base.bonus = planBonus(raw);
+    if (letters < 4) return { delta: 0, reliable: true, skip: true, score: base };
+    if (base.hits >= 2 && base.ratio >= 0.45) return { delta: 0, reliable: true, skip: false, score: base };
+    var best = { delta: 0, score: base };
+    for (var d = 1; d <= 13; d++) {
+      [d, -d].forEach(function (delta) {
+        var shifted = caesar(raw, delta);
+        var sc = scoreText(shifted);
+        sc.bonus = planBonus(shifted);
+        if (betterScore(sc, best.score)) best = { delta: delta, score: sc };
+      });
+    }
+    var sc = best.score;
+    var clear = (sc.hits >= 2 && sc.ratio >= 0.4 && (best.delta === 0 || sc.hits > base.hits))
+      || (sc.hits >= 1 && sc.ratio >= 0.66 && sc.words <= 4 && letters >= 4 && (best.delta === 0 || sc.hits > base.hits));
+    return { delta: clear ? best.delta : 0, reliable: !!clear, skip: false, score: sc };
+  }
+
+  function correctItems(items) {
+    var list = items || [];
+    if (!list.length) return { items: [], reliable: false, shifted: false, empty: true };
+    var letters = 0;
+    list.forEach(function (it) { letters += (String(it && it.str || "").match(/[A-Za-z]/g) || []).length; });
+    if (letters < 4) return { items: list.slice(), reliable: false, shifted: false, empty: true };
+    var grouped = {};
+    list.forEach(function (it, i) {
+      var key = String((it && it.font) || "");
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(i);
+    });
+    var deltas = {};
+    var reliable = true;
+    var keys = Object.keys(grouped);
+    keys.forEach(function (key) {
+      var text = grouped[key].map(function (i) { return list[i].str; }).join(" ");
+      var found = bestShift(text);
+      deltas[key] = found;
+      if (!found.skip && !found.reliable) reliable = false;
+    });
+    if (!reliable) {
+      var whole = bestShift(list.map(function (it) { return it.str; }).join(" "));
+      if (whole.reliable) {
+        reliable = true;
+        keys.forEach(function (key) {
+          if (!deltas[key].skip) deltas[key] = whole;
+        });
+      }
+    }
+    var shifted = false;
+    var out = list.map(function (it) {
+      var key = String((it && it.font) || "");
+      var delta = (deltas[key] && deltas[key].delta) || 0;
+      if (delta) shifted = true;
+      var copy = {
+        str: delta ? caesar(it.str, delta) : String((it && it.str) || ""),
+        x: it.x, y: it.y, w: it.w, h: it.h,
+      };
+      if (it && it.font) copy.font = it.font;
+      return copy;
+    });
+    return { items: out, reliable: reliable, shifted: shifted, empty: false };
+  }
+
+  function cleanFilePart(s) {
+    var t = String(s || "");
+    t = t.replace(/[\u0000-\u001F\u007F]/g, " ");
+    t = t.replace(/[^\u0020-\u007E]/g, " ");
+    t = t.replace(/[\\/:*?"<>|]/g, " ");
+    t = t.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+    return t;
+  }
+
+  function isJunkTitle(s) {
+    var letters = String(s || "").replace(/[^A-Za-z]/g, "");
+    if (letters.length < 2) return true;
+    var vowels = (letters.match(/[AEIOUaeiou]/g) || []).length;
+    if (vowels === 0 && letters.length >= 4) return true;
+    if (letters.length >= 8 && vowels / letters.length < 0.15) return true;
+    var words = String(s || "").toLowerCase().match(/[a-z]{3,}/g) || [];
+    if (words.length && letters.length >= 8) {
+      var hits = 0;
+      words.forEach(function (w) { if (DICT[w]) hits++; });
+      if (!hits && vowels / letters.length < 0.28) return true;
+    }
+    return false;
+  }
+
+  function sanitizeTitle(title, page) {
+    var original = String(title == null ? "" : title);
+    if (!original.trim()) return "";
+    var s = cleanFilePart(original);
+    var n = page || 1;
+    if (!s || isJunkTitle(s)) return "Sheet p" + n;
+    return s.slice(0, 80);
+  }
+
+  function sheetFileName(setName, page, title) {
+    var set = cleanFilePart(setName).slice(0, 80) || "Sheet";
+    var n = page || 1;
+    var raw = String(title == null ? "" : title);
+    var visible = raw.replace(/[\u0000-\u001F\u007F]/g, "").trim();
+    if (!visible && !raw.trim()) return set + " - p" + n + ".pdf";
+    var t = sanitizeTitle(raw, n);
+    if (!t) return set + " - p" + n + ".pdf";
+    return set + " - p" + n + " - " + t + ".pdf";
   }
 
   function parseInches(s) {
@@ -107,16 +266,17 @@
     var itemsUse = items && items.length ? items : [];
     var spans = [];
     var out = [];
-    var arch = /(?:(SCALE)\s*[:.]?\s*)?(\d+\s+\d+\s*\/\s*\d+|\d+\s*\/\s*\d+|\d+(?:\.\d+)?)\s*(?:"|in\b\.?)?\s*=\s*(\d+(?:\.\d+)?)\s*(?:'|ft\b)\s*(?:-\s*(\d+(?:\.\d+)?)\s*(?:"|in\b)?)?/gi;
+    var arch = /(?:(SCALE)\s*[:.]?\s*)?(\d+\s+\d+\s*\/\s*\d+|\d+\s*\/\s*\d+|\d+(?:\.\d+)?)\s*(?:"|in(?:ches|ch)?\b\.?)?\s*=\s*(\d+(?:\.\d+)?)\s*(?:'|ft\b|feet\b|foot\b)\.?\s*(?:-\s*(\d+(?:\.\d+)?)(?:\s*(?:"|in(?:ches|ch)?\b\.?))?|(\d+(?:\.\d+)?)\s*(?:"|in(?:ches|ch)?\b\.?))?/gi;
     var m;
     while ((m = arch.exec(src))) {
       var paper = parseInches(m[2]);
-      var feet = Number(m[3]) + (m[4] ? Number(m[4]) / 12 : 0);
+      var inch = m[4] != null && m[4] !== "" ? m[4] : (m[5] || "");
+      var feet = Number(m[3]) + (inch !== "" ? Number(inch) / 12 : 0);
       if (!(paper > 0) || !(feet > 0)) continue;
       var kind = (Math.abs(paper - 1) < 1e-6 && feet >= 10) ? "engineering" : "architectural";
       var label;
-      if (kind === "engineering") label = '1" = ' + (m[4] ? (m[3] + "'-" + m[4] + '"') : (m[3] + "'"));
-      else label = fracLabel(paper) + '" = ' + m[3] + "'" + (m[4] ? "-" + m[4] + '"' : "-0\"");
+      if (kind === "engineering") label = '1" = ' + (inch !== "" ? (m[3] + "'-" + inch + '"') : (m[3] + "'"));
+      else label = fracLabel(paper) + '" = ' + m[3] + "'" + (inch !== "" ? "-" + inch + '"' : "-0\"");
       pushScale(out, spans, {
         kind: kind,
         nts: false,
@@ -178,7 +338,11 @@
   function inTitleBlock(box, width, height) {
     if (!box || !(width > 0) || !(height > 0)) return false;
     var c = center(box);
-    return c.x >= width * 0.52 && c.y >= height * 0.58;
+    var rx = c.x / width;
+    var ry = c.y / height;
+    if (rx >= 0.55 && ry >= 0.55) return true;
+    if (rx >= 0.7 && height >= width) return true;
+    return false;
   }
 
   function dist(a, b) {
@@ -187,30 +351,54 @@
     return Math.hypot(ca.x - cb.x, ca.y - cb.y);
   }
 
-  function pickDefault(scales, width, height, anchor) {
-    if (!scales || !scales.length) return null;
-    var pool = scales.slice();
-    if (anchor) {
-      pool.sort(function (a, b) { return dist(a.box, anchor) - dist(b.box, anchor); });
-      var near = pool.filter(function (s) { return dist(s.box, anchor) < Math.max(width, height) * 0.35; });
-      if (near.length) {
-        var explicit = near.filter(function (s) { return s.explicit; });
-        return (explicit[0] || near[0]);
-      }
-    }
-    var block = scales.filter(function (s) { return inTitleBlock(s.box, width, height); });
-    if (block.length) {
-      var titled = block.filter(function (s) { return s.explicit; });
-      return (titled[0] || block[0]);
-    }
-    var measured = scales.filter(function (s) { return !s.nts && s.unitsPerPoint > 0; });
-    return measured[0] || scales[0];
+  function chooseScale(list) {
+    if (!list || !list.length) return null;
+    var measuredExplicit = list.filter(function (s) { return s.explicit && !s.nts && s.unitsPerPoint > 0; });
+    if (measuredExplicit.length) return measuredExplicit[0];
+    var under = list.filter(function (s) { return s.underTitle && !s.nts && s.unitsPerPoint > 0; });
+    if (under.length) return under[0];
+    var measured = list.filter(function (s) { return !s.nts && s.unitsPerPoint > 0; });
+    if (measured.length) return measured[0];
+    var noted = list.filter(function (s) { return s.explicit && s.nts; });
+    return noted[0] || list[0];
   }
 
-  function sheetToken(s) {
-    var m = String(s || "").toUpperCase().match(/^([A-Z]{1,3})[-.]?(\d{1,3}(?:\.\d{1,3})?)$/);
-    if (!m) return "";
-    return m[1] + m[2];
+  function pickDefault(scales, width, height, anchor) {
+    if (!scales || !scales.length) return null;
+    var block = scales.filter(function (s) { return inTitleBlock(s.box, width, height); });
+    if (block.length) return chooseScale(block);
+    if (anchor) {
+      var near = scales.filter(function (s) { return dist(s.box, anchor) < Math.max(width, height) * 0.35; });
+      near.sort(function (a, b) { return dist(a.box, anchor) - dist(b.box, anchor); });
+      if (near.length) return chooseScale(near);
+    }
+    var under = scales.filter(function (s) { return s.underTitle; });
+    if (under.length) return chooseScale(under);
+    return chooseScale(scales);
+  }
+
+  function markUnderTitles(scales, titles) {
+    (scales || []).forEach(function (s) {
+      s.underTitle = (titles || []).some(function (t) {
+        if (!s.box || !t.box) return false;
+        var dy = s.box.y - t.box.y;
+        var dx = Math.abs(center(s.box).x - center(t.box).x);
+        return dy >= -10 && dy <= Math.max(56, (t.box.h || 12) * 4.5) && dx <= Math.max(240, t.box.w || 40);
+      });
+    });
+  }
+
+  var ONE_TITLE = { NOTES: 1, LEGEND: 1, COVER: 1, INDEX: 1, DETAILS: 1, ELEVATION: 1 };
+
+  function sheetId(prefix, major, minor) {
+    return String(prefix || "").toUpperCase() + String(major) + "." + String(minor);
+  }
+
+  function isDoorOrRoom(token) {
+    var t = String(token || "").toUpperCase().replace(/[\s-]+/g, "");
+    if (/^[DW]\d{1,3}[A-Z]?$/.test(t)) return true;
+    if (/^\d{2,4}[A-Z]$/.test(t)) return true;
+    return false;
   }
 
   function detectSheet(items, text, width, height) {
@@ -218,31 +406,42 @@
     var src = joined.text;
     var sheet = "";
     var anchor = null;
-    var labeled = /SHEET(?:\s*(?:NO\.?|NUMBER))?\s*[:.]?\s*([A-Z]{1,3}\s*[-.]?\s*\d{1,3}(?:\.\d{1,3})?)/i.exec(src);
-    if (labeled) {
-      sheet = sheetToken(labeled[1].replace(/\s+/g, ""));
-      anchor = boxOf(itemAt(joined.map, items || [], labeled.index));
+    var hits = [];
+    var re = /(?:^|[^A-Z0-9])((?:FP|[GCLASMPE]))\s*[-.]?\s*(\d{1,3})\s*\.\s*(\d{1,3})(?![0-9A-Z])/gi;
+    var hm;
+    while ((hm = re.exec(src))) {
+      var token = sheetId(hm[1], hm[2], hm[3]);
+      if (isDoorOrRoom(token)) continue;
+      var at = hm.index + hm[0].toUpperCase().lastIndexOf(hm[1].toUpperCase());
+      if (at < 0) at = hm.index;
+      var box = boxOf(itemAt(joined.map, items || [], at));
+      var before = src.slice(Math.max(0, at - 16), at).toUpperCase();
+      var labeled = /SHEET(?:\s*(?:NO\.?|NUMBER))?\s*[:.]?\s*$/.test(before);
+      var score = (inTitleBlock(box, width, height) ? 4 : 0) + (labeled ? 2 : 0);
+      var cy = box ? center(box).y : 0;
+      hits.push({ token: token, box: box, score: score, y: cy });
     }
-    if (!sheet) {
-      var bare = /\b([A-Z]{1,2}\d{1,3}(?:\.\d{1,2})?)\b/g;
-      var bm, best = null;
-      while ((bm = bare.exec(src))) {
-        var token = sheetToken(bm[1]);
-        if (!token) continue;
-        var box = boxOf(itemAt(joined.map, items || [], bm.index));
-        var score = inTitleBlock(box, width, height) ? 2 : 1;
-        if (!best || score > best.score) best = { token: token, box: box, score: score };
-      }
-      if (best) { sheet = best.token; anchor = best.box; }
+    if (hits.length) {
+      hits.sort(function (a, b) {
+        if (b.score !== a.score) return b.score - a.score;
+        return b.y - a.y;
+      });
+      sheet = hits[0].token;
+      anchor = hits[0].box;
     }
     var title = "";
-    var banned = { SCALE: 1, SHEET: 1, DETAIL: 1, NOTED: 1, NOT: 1, NTS: 1 };
+    var titles = [];
+    var banned = { SCALE: 1, SHEET: 1, DETAIL: 1, NOTED: 1, NOT: 1, NTS: 1, DOOR: 1, WINDOW: 1 };
     var rawWords = src.split(/\s+/);
     var pos = 0;
     var run = [];
     var runs = [];
     function flushRun() {
-      if (run.length >= 2) runs.push({ phrase: run.map(function (w) { return w.word; }).join(" "), index: run[0].index });
+      if (run.length >= 2) {
+        runs.push({ phrase: run.map(function (w) { return w.word; }).join(" "), index: run[0].index });
+      } else if (run.length === 1 && ONE_TITLE[run[0].word]) {
+        runs.push({ phrase: run[0].word, index: run[0].index, single: true });
+      }
       run = [];
     }
     rawWords.forEach(function (word) {
@@ -257,32 +456,45 @@
     var titleBest = null;
     runs.forEach(function (tm) {
       var phrase = tm.phrase;
-      if (phrase.length < 5) return;
+      if (phrase.length < 4) return;
       var tbox = boxOf(itemAt(joined.map, items || [], tm.index));
-      var tscore = 0;
-      if (anchor) tscore = 1000 - Math.min(1000, dist(tbox, anchor));
-      else if (inTitleBlock(tbox, width, height)) tscore = 100 + phrase.length;
-      else tscore = phrase.length;
-      if (!titleBest || tscore > titleBest.score) titleBest = { phrase: phrase, score: tscore };
+      var inBlock = inTitleBlock(tbox, width, height);
+      if (tm.single && !inBlock) return;
+      var tscore = phrase.length;
+      if (inBlock) tscore += 5000;
+      if (anchor) tscore += 1000 - Math.min(1000, dist(tbox, anchor));
+      titles.push({ phrase: phrase, box: tbox });
+      if (!titleBest || tscore > titleBest.score) titleBest = { phrase: phrase, score: tscore, box: tbox };
     });
     if (titleBest) title = titleBest.phrase;
-    return { sheet: sheet, title: title, anchor: anchor };
+    return { sheet: sheet, title: title, anchor: anchor, titles: titles };
   }
 
   function buildPage(input) {
-    var items = (input.items || []).map(function (it) {
+    var raw = (input.items || []).map(function (it) {
       return {
         str: String(it.str || ""),
-        x: round(it.x),
-        y: round(it.y),
-        w: round(it.w),
-        h: round(it.h),
+        x: Number(it.x) || 0,
+        y: Number(it.y) || 0,
+        w: Number(it.w) || 0,
+        h: Number(it.h) || 0,
+        font: it.font || "",
       };
     }).filter(function (it) { return it.str.trim(); });
+    var fixed = correctItems(raw);
+    var items = fixed.items.map(function (it) {
+      return { str: it.str, x: round(it.x), y: round(it.y), w: round(it.w), h: round(it.h) };
+    }).filter(function (it) { return it.str.trim(); });
     var text = items.map(function (it) { return it.str; }).join(" ").replace(/\s+/g, " ").trim();
-    if (!text && input.text) text = String(input.text).replace(/\s+/g, " ").trim();
+    if (!text && input.text) {
+      var whole = bestShift(String(input.text));
+      text = (whole.reliable && whole.delta) ? caesar(input.text, whole.delta) : String(input.text);
+      text = text.replace(/\s+/g, " ").trim();
+      if (whole.delta) fixed.shifted = true;
+    }
     var found = detectSheet(items, text, input.width, input.height);
     var scales = parseScales(text, items);
+    markUnderTitles(scales, found.titles);
     var chosen = pickDefault(scales, input.width, input.height, found.anchor);
     var scale = null;
     if (chosen) {
@@ -299,10 +511,12 @@
         source: chosen.nts ? "noted" : "detected",
       };
     }
+    var title = found.title ? sanitizeTitle(found.title, input.page) : "";
     return {
       page: input.page,
       sheet: found.sheet || "",
-      title: found.title || "",
+      title: title,
+      corrected: !!fixed.shifted,
       text: text,
       source: input.source || "text",
       width: round(input.width),
@@ -467,6 +681,9 @@
     unitsPerPoint: unitsPerPoint,
     pickDefault: pickDefault,
     detectSheet: detectSheet,
+    correctItems: correctItems,
+    sanitizeTitle: sanitizeTitle,
+    sheetFileName: sheetFileName,
     buildPage: buildPage,
     measure: measure,
     measureUser: measureUser,

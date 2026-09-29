@@ -140,11 +140,22 @@
       var t = it.transform;
       var w = Number(it.width) || 0;
       var h = Number(it.height) || Math.hypot(t[2] || 0, t[3] || 0) || 0;
+      var slen = Math.hypot(t[0] || 0, t[1] || 0) || 1;
+      var hlen = Math.hypot(t[2] || 0, t[3] || 0) || 1;
+      var x1 = t[4] + ((t[0] || 0) / slen) * w + ((t[2] || 0) / hlen) * h;
+      var y1 = t[5] + ((t[1] || 0) / slen) * w + ((t[3] || 0) / hlen) * h;
       var p0 = vp.convertToViewportPoint(t[4], t[5]);
-      var p1 = vp.convertToViewportPoint(t[4] + w, t[5] + h);
+      var p1 = vp.convertToViewportPoint(x1, y1);
       var x = Math.min(p0[0], p1[0]);
       var y = Math.min(p0[1], p1[1]);
-      items.push({ str: str, x: x, y: y, w: Math.abs(p1[0] - p0[0]) || 1, h: Math.abs(p1[1] - p0[1]) || 1 });
+      items.push({
+        str: str,
+        x: x,
+        y: y,
+        w: Math.abs(p1[0] - p0[0]) || 1,
+        h: Math.abs(p1[1] - p0[1]) || 1,
+        font: it.fontName || "",
+      });
     });
     return {
       items: items,
@@ -177,7 +188,7 @@
     });
   }
 
-  function ocrPage(pdfPage) {
+  function ocrPage(pdfPage, region) {
     var scale = 2;
     var vp = pdfPage.getViewport({ scale: scale });
     var canvas = document.createElement("canvas");
@@ -185,33 +196,63 @@
     canvas.height = Math.max(1, Math.ceil(vp.height));
     var ctx = canvas.getContext("2d", { willReadFrequently: true });
     return pdfPage.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
-      return ensureOcr();
-    }).then(function (worker) {
-      return worker.recognize(canvas);
-    }).then(function (res) {
-      var data = (res && res.data) || {};
-      var words = data.words || [];
-      var items = [];
-      words.forEach(function (word) {
-        var text = word && (word.text || word.str) || "";
-        if (!String(text).trim()) return;
-        var b = word.bbox || {};
-        var x0 = b.x0 != null ? b.x0 : 0;
-        var y0 = b.y0 != null ? b.y0 : 0;
-        var x1 = b.x1 != null ? b.x1 : x0;
-        var y1 = b.y1 != null ? b.y1 : y0;
-        items.push({
-          str: String(text),
-          x: x0 / scale,
-          y: y0 / scale,
-          w: Math.max(1, (x1 - x0) / scale),
-          h: Math.max(1, (y1 - y0) / scale),
-        });
-      });
-      if (!items.length && data.text) {
-        return { items: [], text: String(data.text), source: "ocr", width: vp.width / scale, height: vp.height / scale };
+      var src = canvas;
+      var ox = 0;
+      var oy = 0;
+      if (region) {
+        var wide = vp.width >= vp.height;
+        var sx = Math.floor(vp.width * (wide ? 0.52 : 0.66));
+        var sy = Math.floor(wide ? vp.height * 0.42 : 0);
+        var sw = Math.max(1, Math.ceil(vp.width - sx));
+        var sh = Math.max(1, Math.ceil(vp.height - sy));
+        var crop = document.createElement("canvas");
+        crop.width = sw;
+        crop.height = sh;
+        crop.getContext("2d", { willReadFrequently: true }).drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+        src = crop;
+        ox = sx / scale;
+        oy = sy / scale;
       }
-      return { items: items, text: "", source: "ocr", width: vp.width / scale, height: vp.height / scale };
+      return ensureOcr().then(function (worker) {
+        return worker.recognize(src);
+      }).then(function (res) {
+        var data = (res && res.data) || {};
+        var words = data.words || [];
+        var items = [];
+        words.forEach(function (word) {
+          var text = word && (word.text || word.str) || "";
+          if (!String(text).trim()) return;
+          var b = word.bbox || {};
+          var x0 = b.x0 != null ? b.x0 : 0;
+          var y0 = b.y0 != null ? b.y0 : 0;
+          var x1 = b.x1 != null ? b.x1 : x0;
+          var y1 = b.y1 != null ? b.y1 : y0;
+          items.push({
+            str: String(text),
+            x: ox + x0 / scale,
+            y: oy + y0 / scale,
+            w: Math.max(1, (x1 - x0) / scale),
+            h: Math.max(1, (y1 - y0) / scale),
+          });
+        });
+        if (!items.length && data.text) {
+          return { items: [], text: String(data.text), source: "ocr", width: vp.width / scale, height: vp.height / scale };
+        }
+        return { items: items, text: "", source: "ocr", width: vp.width / scale, height: vp.height / scale };
+      });
+    });
+  }
+
+  function pageFrom(n, got, items, text, source) {
+    return API.buildPage({
+      page: n,
+      items: items,
+      text: text || "",
+      source: source,
+      width: got.width,
+      height: got.height,
+      userUnit: got.userUnit,
+      rotate: got.rotate,
     });
   }
 
@@ -220,29 +261,24 @@
       return pdfPage.getTextContent().then(function (content) {
         var got = itemsFromContent(pdfPage, content);
         var text = got.items.map(function (it) { return it.str; }).join(" ").replace(/\s+/g, " ").trim();
-        if (text.length >= 2 || !allowOcr) {
-          return API.buildPage({
-            page: n,
-            items: got.items,
-            text: text,
-            source: "text",
-            width: got.width,
-            height: got.height,
-            userUnit: got.userUnit,
-            rotate: got.rotate,
+        var verdict = API.correctItems(got.items);
+        if (verdict.reliable) return pageFrom(n, got, got.items, text, "text");
+        if (!allowOcr) return pageFrom(n, got, got.items, text, "text");
+        // Title-block OCR on every text page made a real plan set take minutes to index.
+        // Until the font decode is fixed, OCR only a page with no text layer at all.
+        if (text.length >= 2) return pageFrom(n, got, got.items, text, "text");
+        if (text.length < 2) {
+          note("Reading scan on page " + n + "…");
+          return ocrPage(pdfPage, false).then(function (ocr) {
+            return pageFrom(n, { width: ocr.width || got.width, height: ocr.height || got.height, userUnit: got.userUnit, rotate: got.rotate }, ocr.items, ocr.text, "ocr");
           });
         }
-        note("Reading scan on page " + n + "…");
-        return ocrPage(pdfPage).then(function (ocr) {
-          return API.buildPage({
-            page: n,
-            items: ocr.items,
-            text: ocr.text,
-            source: "ocr",
-            width: ocr.width || got.width,
-            height: ocr.height || got.height,
-            userUnit: got.userUnit,
-            rotate: got.rotate,
+        note("Reading title block on page " + n + "…");
+        return ocrPage(pdfPage, true).then(function (ocr) {
+          var row = pageFrom(n, got, ocr.items, ocr.text, "ocr");
+          if (row.sheet || (row.scale && row.scale.label)) return row;
+          return ocrPage(pdfPage, false).then(function (full) {
+            return pageFrom(n, got, full.items, full.text, "ocr");
           });
         });
       });
