@@ -215,6 +215,26 @@ a.bidcard .bt{display:block}
 a.bidcard .bv{display:block;width:100%;flex:none;white-space:normal}
 .cmpbar{height:8px;background:#e4e9f1;border-radius:6px;margin-top:8px;overflow:hidden}.cmpbar b{display:block;height:100%;background:#98a2b3;border-radius:6px}.cmpbar b.low{background:#12a150}
 .home-cmp{margin:8px 0 4px}
+.bid-h2{margin:8px 0 10px;font-size:20px;font-weight:650;letter-spacing:-.02em;color:#15233b}
+.bid-board{display:flex;flex-direction:column;gap:10px;width:100%}
+button.bpkg{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px 16px;color:inherit;font:inherit;cursor:pointer}
+button.bpkg .bjob{font-size:13px;color:#667085}
+button.bpkg .btrade{font-size:18px;font-weight:650;letter-spacing:-.02em;color:#15233b;line-height:1.25}
+button.bpkg .bmeta{font-size:14px;color:#344054;line-height:1.35}
+button.bpkg .bmeta.late{color:#b42318}
+button.bpkg .bvend{font-size:14px;color:#475467;line-height:1.35}
+button.bjobt{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px 16px;font:inherit;color:inherit;cursor:pointer}
+.bjobtop{display:flex;align-items:center;width:100%;gap:8px}
+.bjobname{font-size:18px;font-weight:650;color:#15233b;flex:1;letter-spacing:-.02em;line-height:1.25}
+.bbadge{flex:none;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#d92d20;color:#fff;font-size:13px;font-weight:700;line-height:22px;text-align:center}
+.bid-back{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
+.bid-back .bid-h2{margin:0;flex:1}
+.bid-cols{display:flex;gap:10px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.bid-col{flex:0 0 78%;max-width:280px;background:#f7f8fa;border:1px solid #e4e9f1;border-radius:12px;padding:12px}
+.bid-col h3{margin:0 0 6px;font-size:16px;color:#15233b}
+.bid-col p{margin:8px 0;font-size:14px;line-height:1.4}
+.bid-amt{font-size:16px}
+.bid-bud{display:inline-block;margin-top:8px;font-weight:650}
 .bt{display:flex;align-items:center;gap:8px}.bv{font-weight:700;font-size:16px;flex:1;min-width:0}.bs{color:#475467;font-size:13px;margin-top:4px;line-height:1.6}.bs .dchip{padding:1px 6px}
 .lbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.none2{margin-top:8px;font-style:italic}
 .orow .olinks{padding:0 14px 12px;margin-top:-4px}
@@ -2055,10 +2075,12 @@ function liveSaved(slug){if(LIVE&&STORE&&STORE.live)LIVE.schedule(slug)}
 function needCheckout(){toast(syncOn()?'Check out this job first (tap “Check out”), so nobody else edits it at the same time.':'Editing is not available here.')}
 /* ---------- shell ---------- */
 function builtShort(){return String((DATA&&DATA.built)||'').replace(/^[A-Z][a-z]{2} /,'').replace(/ AZ$/,'')}
+/* Signed out there is no data yet: say so instead of 'Data as of  AZ' with no time. */
+function asOfHtml(label){const b=builtShort();return b?`<b>${label} ${esc(b)} AZ</b>`:'<b>No schedule data loaded yet</b>'}
 function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
- if(STORE&&STORE.live)return `<div class="banner" id="banner"><b>Data as of ${esc(builtShort())} AZ</b> · edits save to the shared Sample Builders Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
- const main=(window.WSData&&WSData.demo)?`<b>Sample data</b> · edits stay in this browser`:MODE==='share'?`<b>Snapshot as of ${esc(builtShort())} AZ</b> · your edits save in this browser only · Export to send changes back to the office`
-  :`<b>Data as of ${esc(builtShort())} AZ</b> · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
+ if(STORE&&STORE.live)return `<div class="banner" id="banner">${asOfHtml('Data as of')} · edits save to the shared Sample Builders Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
+ const main=(window.WSData&&WSData.demo)?`<b>Sample data</b> · edits stay in this browser`:MODE==='share'?`${asOfHtml('Snapshot as of')} · your edits save in this browser only · Export to send changes back to the office`
+  :`${asOfHtml('Data as of')} · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
  const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
  return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
@@ -2328,7 +2350,7 @@ function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhon
  ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';const ext=x.link&&/^https?:/.test(x.link)&&!/buildertrend\.(net|com)/i.test(x.link);return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'price',x.price):(isNaN(+x.price)?esc(x.price):fmt$(x.price))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'total',x.total):(isNaN(+x.total)?esc(x.total):fmt$(x.total))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'allowance',x.allowance):fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${ext&&typeof fileMaybeLink==='function'?fileMaybeLink(x.link,'link','dropbox-file','lbtn'):''}${ext&&!(typeof fileHosted==='function'&&fileHosted(x.link,''))?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}${typeof fileChip==='function'?fileChip(x):''}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the selection template.'),
  (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:'')+csvBtn('selections'));
  const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M);if(typeof bindSelRows==='function')bindSelRows(M);const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl&&typeof openSelection==='function')openSelection(J.slug,focus)}
-function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
+function mBids(M){if(typeof renderJobBids==='function'){renderJobBids(M);return}const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
  M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} template packages not yet released`,
  real.map(p=>{const view=typeof bidPackageView==='function'?bidPackageView(p):{subs:(p.subs||[]).map(x=>Object.assign({},x,{_amt:x.amount,_pct:x.pct})),low:p.low,see:true};
   const mx=view.see?Math.max.apply(null,view.subs.map(x=>x._amt||0).concat([1])):1;
@@ -2902,7 +2924,7 @@ function lrow(x,extra){if(btFace(x))return '';const h=hostedRow(x,extra,'lrow');
 function hrow(href,title,sub,right,cls){return `<a class="hrow ${cls||''}" href="${href}"><span class="lb"><span class="lt">${title}</span>${sub?`<span class="ls">${sub}</span>`:''}</span>${right||''}${ico('chev','go')}</a>`}
 function dchip(d,td){if(!d)return '';const c=d<td?'overdue':(d==td?'today':'');return `<span class="dchip ${c}">${d==td?'Today':(d==addD(td,1)?'Tomorrow':dow(d)+' '+md(d))}</span>`}
 function greet(){const h=+new Date(Date.now()-7*3600e3).toISOString().slice(11,13);return h<12?'Good morning':(h<17?'Good afternoon':'Good evening')}
-function homeComparison(){const groups=(H().comparison)||[];if(!groups.length)return '';
+function homeComparison(){if(typeof renderBidHome==='function'){const html=renderBidHome();if(html)return html}const groups=(H().comparison)||[];if(!groups.length)return '';
  const money=(typeof MONEY!=='undefined'&&MONEY&&MONEY.bid_comparison)||[];const byId={};money.forEach(r=>{if(r&&r.id)byId[r.id]=r});
  const see=typeof moneyReady==='function'&&moneyReady();
  const block=groups.map(g=>{const rows=(g.rows||[]).map(x=>{const priv=see?byId[x.id]:null;const n=see&&typeof moneyNum==='function'?moneyNum(x.id,'amount'):null;const amt=n!=null?fmt$(n):(priv&&priv.amount!=null&&priv.amount!==''?fmt$(priv.amount):(x.amount_label||''));
@@ -2921,7 +2943,7 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
  const prelimN=(typeof prelimHomeCount==='function')?prelimHomeCount():0;
  const tiles=[(typeof canSeeMoney==='function'&&canSeeMoney())?tile('#/money','money','Money',prelimN,'Budget vs actual','navy'):'',tile('#/jobs','jobs','Jobs',S.jobs,'Schedules & workspaces','navy'),
   tile('#/trackers/today','cal','Today',S.today.length,S.overdue.length?`<b class="red">${S.overdue.length} overdue</b>`:'Nothing overdue',S.overdue.length?'warn':''),
-  tile('#/trackers/bids','doc','Bids',S.bWeek.length+S.bPast.length,`${S.bPast.length?`<b class="red">${S.bPast.length} past due</b> · `:''}${S.bWeek.length} this week`,S.bPast.length?'warn':''),
+  tile('#/trackers/bids','doc','Bids',(typeof bidAttentionCount==='function'?bidAttentionCount():S.bWeek.length+S.bPast.length),(typeof bidTileSub==='function'?bidTileSub(S):`${S.bPast.length?`<b class="red">${S.bPast.length} past due</b> · `:''}${S.bWeek.length} this week`),(typeof bidAttentionCount==='function'?bidAttentionCount():S.bPast.length)?'warn':''),
   tile('#/files','files','Files',nFold,'Job folders & forms'),
   tile('#/trackers/orders','truck','Orders',S.toPlace,`to place · ${S.dlWeek.length} deliver${S.dlWeek.length==1?'y':'ies'}`,S.toPlace?'amber':''),
   tile('#/trackers/pos','box','POs',(typeof poCounts==='function'?poCounts(poAll()):{all:0}).all,(function(){if(typeof poCounts!='function')return '';const c=poCounts(poAll());return `${c.draft} draft · ${c.approved} approved · ${c.entered_in_adaptive} entered`})()),
@@ -2931,12 +2953,12 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
  const top=(arr,n,f)=>arr.slice(0,n).map(f).join('')||`<div class="none">Nothing here</div>`;
  const dash=`<div class="dgrid desk-only">
   <section class="dcard"><h3>${ico('cal')} Today & this week<a href="#/trackers/today">All</a></h3>${top(S.today.concat(S.week),5,x=>hrow(jobHref(x.slug),esc(x.t.task),esc(x.job),dchip(x.t.start<S.td?S.td:x.t.start,S.td)))}${S.overdue.length?hrow('#/trackers/today',`<span class="red">${S.overdue.length} overdue tasks</span>`,'not complete, past their finish date',''):''}</section>
-  <section class="dcard"><h3>${ico('doc')} Bids due<a href="#/trackers/bids">All</a></h3>${top(S.bPast.concat(S.bWeek),6,b=>hrow('#/trackers/bids',esc(b.vendor),esc(b.trade+' · '+b.job),dchip(b.due,S.td)))}</section>
+  <section class="dcard"><h3>${ico('doc')} Bids due<a href="#/trackers/bids">All</a></h3>${typeof bidDeskHtml==='function'?bidDeskHtml(S):top(S.bPast.concat(S.bWeek),6,b=>hrow('#/trackers/bids',esc(b.vendor),esc(b.trade+' · '+b.job),dchip(b.due,S.td)))}</section>
   <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
  hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
  ${homeComparison()}
- <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidCards==='function')bindBidCards(document);document.title='Sample Builders · Home'}
+ <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidTracker==='function')bindBidTracker(document.getElementById('root'));if(typeof bindBidCards==='function')bindBidCards(document);document.title='Sample Builders · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
 function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
@@ -2944,7 +2966,8 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
  let body='';
  if(sub=='today'){const sec=(t,l,cls)=>l.length?`<h2 class="sh2 ${cls||''}">${t} <span>${l.length}</span></h2><div class="rows">${l.slice(0,80).map(x=>hrow(jobHref(x.slug),esc(x.t.task),esc(x.job)+(x.t.phase?' · '+esc(x.t.phase):''),dchip(x.t.overdue||x.t.finish<S.td?x.t.finish:x.t.start,S.td))).join('')}</div>`:'';
   body=sec('Overdue',S.overdue.sort((a,b)=>a.t.finish<b.t.finish?-1:1),'red')+sec('Today',S.today)+sec('This week',S.week.sort((a,b)=>a.t.start<b.t.start?-1:1))||'<div class="none">Nothing scheduled this week</div>'}
- if(sub=='bids'){const f=st.hbF||'due';const q=(st.bq||'').toLowerCase();
+ if(sub=='bids'&&typeof renderBidTracker==='function'){body=renderBidTracker()}
+ else if(sub=='bids'){const f=st.hbF||'due';const q=(st.bq||'').toLowerCase();
   const L0={due:S.bPast.concat(S.bWeek),open:S.bOpen,in:S.bIn,all:h.bids}[f]||[];const L=L0.filter(b=>!q||[b.vendor,b.trade,b.job,b.owner,jobSearch(b.slug)].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
@@ -2966,6 +2989,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
  if(sub=='conflicts'){body=`<div class="rows">${S.high.map(x=>hrow(jobHref(x.slug,'conflicts'),esc(x.c.title),esc(x.job)+' · '+esc(x.c.kind),'<span class="dchip overdue">high</span>')).join('')||'<div class="none">No high conflicts</div>'}</div>`}
  hubShell('trackers',`<div class="hph"><h1>Trackers</h1><a class="small" href="${esc(safeUrl(((companyLinks()).find(g=>/Trackers/.test(g.title))||{items:[{}]}).items[0].url||''))}" target="_blank" rel="noopener">Open sheets ${ico('ext','sm')}</a></div>${seg}${body}`);
  document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{st.hbF=b.dataset.bf;saveUi();renderTrackers('bids')});
+ if(sub=='bids'&&typeof bindBidTracker==='function')bindBidTracker(document.getElementById('root'));
  if(sub=='pos'&&typeof poBindList==='function') poBindList(document.getElementById('root'),()=>renderTrackers('pos'));
  const poq=$('#poq');if(poq)poq.oninput=e=>{st.poQ=e.target.value;saveUi();const p=poq.selectionStart;renderTrackers('pos');const n=$('#poq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}};
  const bq=$('#bq');if(bq)bq.oninput=e=>{st.bq=e.target.value;saveUi();const p=bq.selectionStart;renderTrackers('bids');const n=$('#bq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
@@ -3374,8 +3398,9 @@ window.HWSPos=(function(E){
     const id=String(op.id||''), status=String(op.status||'').toLowerCase(), hint=op.bid||{};
     if(!id||!status) throw new Error('bid_status needs id and status');
     bid_status[id]={status:status,by:who,at:ts,slug:hint.slug||''};
-    if(ACCEPTED.indexOf(status)>=0){
-     requirePerson('mark a bid accepted');
+    if(status==='awarded'&&!roleOk(who,'award',ctx)) throw new Error("awarding needs the owner's OK");
+    if(status==='award_draft'||ACCEPTED.indexOf(status)>=0){
+     requirePerson(status==='awarded'?'award a bid':(status==='award_draft'?'draft an award':'mark a bid accepted'));
      let po=findBid(pos,id);
      if(po){if(po.status=='draft'&&po.orphaned){po.orphaned=false;po.history.push({at:ts,who:who,from:'draft',to:'draft',note:'source bid accepted again'})}msgs.push('bid '+id+' already has PO '+po.po_id)}
      else{
@@ -3447,7 +3472,7 @@ function poEdit(slug,ops,msg){
  try{const r=STORE.edit(slug,ops);toast(msg||(r.result&&r.result.summary)||'Saved');
   const p=typeof parseHash==='function'?parseHash():{};
   if(p.slug==slug){J=r.J;renderJob()}
-  else if(p.page=='trackers'&&typeof renderTrackers==='function') renderTrackers('pos');
+  else if(p.page=='trackers'&&typeof renderTrackers==='function') renderTrackers(p.sub=='bids'?'bids':'pos');
   else if(p.page=='money') renderMoney();
   else if(typeof route==='function') route()}
  catch(e){toast('Not saved: '+e.message)}}
@@ -3645,7 +3670,7 @@ function jobPos(slug){const by={};(MONEY.pos||[]).filter(p=>p.job===slug).forEac
  (job&&job.pos||[]).forEach(p=>{const id=p.id||p.po;if(id&&!by[id])by[id]=p});return Object.values(by)}
 function blankLine(code){return {cost_code:code,bt_code:'',title:code,budget:0,preliminary:0,committed:0,pending:0,actual:0,remaining:0,projected:0,firm:0,preliminary_items:[],committed_items:[],po_items:[],pending_items:[],actual_items:[],budget_items:[]}}
 function lineMap(lines){const m={};(lines||[]).forEach(l=>{m[l.cost_code]=Object.assign(blankLine(l.cost_code),JSON.parse(JSON.stringify(l)))});return m}
-function jobDirty(slug){return Object.values(overlay().status).some(s=>s.slug===slug)}
+function jobDirty(slug){const o=overlay();return Object.values(o.status).some(s=>s.slug===slug)||Object.values(o.awards||{}).some(a=>a&&a.slug===slug)}
 function recompute(slug, baseLines){const acc=lineMap(baseLines);Object.values(acc).forEach(l=>{l.preliminary=0;l.committed=0;l.pending=0;l.preliminary_items=[];l.committed_items=[];l.po_items=[];l.pending_items=[]});
  const firmIds={};
  jobPos(slug).forEach(p=>{const code=p.cost_code||'';if(!code)return;const r=acc[code]||(acc[code]=blankLine(code));
@@ -3660,6 +3685,12 @@ function recompute(slug, baseLines){const acc=lineMap(baseLines);Object.values(a
   let covered='';ids.forEach(id=>{if(firmIds[id])covered=id});
   if(covered){item.on_po=covered;item.amount=0;r.committed_items.push(item)}
   else{r.committed+=amt;r.committed_items.push(item)}});
+ const awards=overlay().awards||{};
+ Object.keys(awards).forEach(function(id){const a=awards[id];if(!a||a.slug!==slug||a.status!=='awarded')return;const code=a.cost_code||'';if(!code)return;
+  const ids=[id].concat(a.also||[]);
+  const covered=jobPos(slug).some(function(p){if(!poFirm(p.status))return false;if(ids.indexOf(p.source_bid_id)>=0||ids.indexOf(p.id)>=0||ids.indexOf(p.bid_id)>=0)return true;return (p.lines||[]).some(function(l){return ids.indexOf(l.bid_id)>=0})});
+  if(covered)return;let amt=null;ids.forEach(function(i){if(amt==null&&typeof moneyNum==='function')amt=moneyNum(i,'amount')});if(amt==null)return;
+  const line=acc[code]||(acc[code]=blankLine(code));line.committed+=amt;line.committed_items.push({id:id,kind:'bid',label:(a.vendor||'Awarded bid'),amount:amt,vendor:a.vendor||'',status:'awarded'})});
  const lines=Object.values(acc);lines.forEach(r=>{r.firm=r.committed;r.remaining=r.budget-Math.max(r.committed,r.actual||0);r.projected=r.committed+r.preliminary});
  lines.sort((a,b)=>a.cost_code<b.cost_code?-1:1);return lines}
 function linesFor(slug){const base=(MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].lines)||[];
@@ -3782,6 +3813,168 @@ async function loadMoneyFile(){if(!canSeeMoney()||moneyLoaded||moneyLoading)retu
    const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
    const ct=r.headers.get('content-type')||'';if(r.ok&&/json/.test(ct)){const doc=await r.json();if(applyMoneyDoc(doc)){if(typeof route==='function')route()}}}catch(e){}}
  }finally{moneyLoading=false}}
+
+/* Bid tracker: one tile per job, then that job's trade packages. Amounts come from the private money file. */
+function bidSeeMoney(){if(typeof moneyReady==='function')return !!moneyReady();return typeof canSeeMoney==='function'&&canSeeMoney()}
+function bidKey(status){const raw=String(status||'').trim().toLowerCase().replace(/_/g,' ');
+ if(raw==='award draft')return 'award_draft';
+ const known={invited:'invited',received:'received',declined:'declined','no response':'no_response',awarded:'awarded',lost:'lost',award_draft:'award_draft','quote in':'received',submitted:'received',sent:'invited'};
+ if(known[raw])return known[raw];
+ if(raw.indexOf('not selected')>=0||raw==='not awarded')return 'lost';
+ if(raw.indexOf('award')>=0||raw.indexOf('accepted')>=0||raw==='won')return 'awarded';
+ if(raw.indexOf('declin')>=0||raw.indexOf('no bid')>=0||raw.indexOf('will not')>=0||raw.indexOf('closed')>=0)return 'declined';
+ if(raw.indexOf('receiv')>=0||raw.indexOf('submit')>=0||raw.indexOf('quot')>=0)return 'received';
+ if(raw.indexOf('no response')>=0||raw.indexOf('no reply')>=0)return 'no_response';
+ return 'invited'}
+function bidLabel(key){return {invited:'Invited',received:'Received',declined:'Declined',no_response:'No response',awarded:'Awarded',lost:'Lost',award_draft:'Received'}[key]||'Invited'}
+let _bidLive=null;
+function bidLive(){if(_bidLive)return _bidLive;const map={};
+ if(typeof STORE!=='undefined'&&STORE&&STORE.getJob){Object.keys((DATA&&DATA.jobs)||{}).forEach(function(slug){let J2;try{J2=STORE.getJob(slug)}catch(e){return}
+  ((J2&&J2.bids)||[]).forEach(function(p){((p&&p.subs)||[]).forEach(function(s){const st=String(s.status||'').toLowerCase();
+   if(st==='award_draft'||st==='awarded'||st==='lost'||st==='accepted')map[s.id]=st==='accepted'?'awarded':st})})})}
+ _bidLive=map;return map}
+function bidLiveFor(ids){const live=bidLive();let st='';(ids||[]).forEach(function(id){const s=live[id];if(!s)return;
+ if(s==='awarded')st='awarded';else if(s==='award_draft'&&st!=='awarded')st='award_draft';else if(s==='lost'&&st!=='awarded'&&st!=='award_draft')st='lost'});return st}
+function bidDecorate(p){const rows=(p.rows||[]).map(function(r){const ids=[r.id].concat(r.merged_ids||[]);let key=r.status_key||bidKey(r.status);const live=bidLiveFor(ids);if(live)key=live;
+  const shown=key==='award_draft'?'received':key;return Object.assign({},r,{status_key:key,status_label:bidLabel(shown),draft:key==='award_draft'})});
+ if(rows.some(function(r){return r.status_key==='awarded'}))rows.forEach(function(r){if(r.status_key==='received'||r.status_key==='invited'||r.status_key==='no_response'||r.status_key==='award_draft'){r.status_key='lost';r.status_label='Lost';r.draft=false}});
+ const keys=rows.map(function(r){return r.status_key});let status='Open';
+ if(keys.indexOf('awarded')>=0)status='Awarded';else if(keys.indexOf('received')>=0||keys.indexOf('award_draft')>=0)status='Leveling';
+ const due=p.due||'', today=typeof hubToday==='function'?hubToday():'';
+ const needs=status==='Awarded'?false:(status==='Leveling'||keys.indexOf('no_response')>=0||(status==='Open'&&due&&today&&due<today));
+ return Object.assign({},p,{rows:rows,status:status,needs_attention:needs,invited:rows.length,
+  received:keys.filter(function(k){return k==='received'||k==='awarded'||k==='award_draft'}).length,
+  declined:keys.filter(function(k){return k==='declined'}).length})}
+function bidNormName(name){let s=String(name||'').replace(/\s+/g,' ').trim();let prev='';
+ while(s&&s!==prev){prev=s;s=s.replace(/(?:,|\s)\s*(?:inc|l\.?l\.?c|ltd|corp|corporation|company|co)\.?\s*$/i,'').replace(/^[ ,]+|[ ,]+$/g,'')}
+ return s.split(/\s+/).filter(Boolean).map(function(w){const letters=w.replace(/[^A-Za-z]/g,'');if(letters&&letters.toUpperCase()===letters&&letters.length<=4)return w;return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()}).join(' ')}
+function bidFromFlat(rows){const groups={};const order=[];
+ (rows||[]).forEach(function(b){if(!b||String(b.source||'')==='DRAFT'||String(b.source||'')==='BUILDERTREND')return;
+  const slug=b.slug||'', trade=String(b.trade||'').toUpperCase(), vendor=bidNormName(b.vendor||''), key=slug+'|'+trade+'|'+vendor.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const row={id:b.id,vendor:vendor,status_key:bidKey(b.status),scope:b.scope||'',inclusions:b.inclusions||'',exclusions:b.exclusions||'',notes:b.notes||'',links:b.links||[],merged_ids:b.merged_ids||[],due:b.due||''};
+  if(!groups[key]){groups[key]={row:row,job:b.job||'',slug:slug,trade:trade};order.push(key)}
+  else if(row.links&&row.links.length)groups[key].row.links=row.links});
+ const packs={};const porder=[];
+ order.forEach(function(key){const g=groups[key];const id=g.slug+':'+g.trade.toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!packs[id]){packs[id]={id:id,slug:g.slug,job:g.job,trade:g.trade,title:g.trade,due:'',rows:[]};porder.push(id)}
+  packs[id].rows.push(g.row);if(g.row.due&&(!packs[id].due||g.row.due<packs[id].due))packs[id].due=g.row.due});
+ return porder.map(function(id){return packs[id]})}
+function bidSource(){_bidLive=null;const pub=H().packages;const raw=Array.isArray(pub)?pub:bidFromFlat(H().bids||[]);
+ return raw.filter(function(p){return p&&p.source!=='DRAFT'&&p.source!=='BUILDERTREND'}).map(bidDecorate)}
+function bidFilterKey(){let f=(typeof st!=='undefined'&&st.hbF)||'attention';if(f==='due'||f==='in')f='attention';return f}
+function bidQuery(){return String((typeof st!=='undefined'&&st.bq)||'').trim().toLowerCase()}
+function bidMatch(p,q){if(!q)return true;const blob=[p.job,p.trade,p.title,p.slug].concat((p.rows||[]).map(function(r){return r.vendor})).join(' ').toLowerCase();return blob.indexOf(q)>=0}
+function bidSort(list){return list.slice().sort(function(a,b){const d=(a.due||'9999')<(b.due||'9999')?-1:(a.due||'9999')>(b.due||'9999')?1:0;if(d)return d;const j=(a.job||'')<(b.job||'')?-1:1;if(a.job!==b.job)return j;return (a.trade||'')<(b.trade||'')?-1:1})}
+function bidChoose(filter,q){const all=bidSort(bidSource());
+ const f=filter||'all';
+ const rows=all.filter(function(p){if(f==='attention')return p.needs_attention;if(f==='open')return p.status==='Open';if(f==='award')return p.status==='Leveling';if(f==='awarded')return p.status==='Awarded';return true});
+ return rows.filter(function(p){return bidMatch(p,q)})}
+function bidFind(id){return bidSource().filter(function(p){return p.id===id})[0]||null}
+function bidMoney(row){if(!bidSeeMoney()||typeof moneyNum!=='function')return null;const ids=[row.id].concat(row.merged_ids||[]);
+ for(let i=0;i<ids.length;i++){const n=moneyNum(ids[i],'amount');if(n!=null)return n}return null}
+function bidLow(rows){if(!bidSeeMoney())return null;let low=null;(rows||[]).forEach(function(r){if(r.status_key==='declined'||r.status_key==='invited'||r.status_key==='no_response')return;const n=bidMoney(r);if(n==null)return;if(low==null||n<low)low=n});return low}
+function bidCard(p){const low=bidLow(p.rows);const vendors=(p.rows||[]).map(function(r){return r.vendor}).filter(Boolean).join(' · ');
+ const draft=(p.rows||[]).some(function(r){return r.draft});const due=p.due&&typeof mdy==='function'?mdy(p.due):(p.due||'');
+ const late=p.due&&typeof hubToday==='function'&&p.due<hubToday()&&p.status!=='Awarded';
+ const tone=p.status==='Awarded'?'ok':(p.status==='Leveling'?'medium':'low');
+ return '<button type="button" class="bpkg" data-bpkg="'+esc(p.id)+'"><span class="bjob">'+esc(p.job||'')+'</span><span class="btrade">'+esc(p.trade||p.title||'')+' '+chip(p.status||'Open',tone)+(draft?chip('Draft','medium'):'')+'</span><span class="bmeta">Invited '+(p.invited||0)+' · Received '+(p.received||0)+' · Declined '+(p.declined||0)+'</span>'+(due?'<span class="bmeta'+(late?' late':'')+'">Due '+esc(due)+'</span>':'')+(low!=null?'<span class="bmeta">Low '+fmt$(low)+'</span>':'')+(vendors?'<span class="bvend">'+esc(vendors)+'</span>':'')+'</button>'}
+function bidWhen(due){const today=typeof hubToday==='function'?hubToday():'';if(!due)return '';
+ if(today&&due<today)return 'overdue';if(today&&due===today)return 'due today';
+ if(typeof dow==='function')return 'due '+dow(due);return 'due '+due}
+function bidJobRollup(packs){const rows=packs||[];const first=rows[0]||{};
+ let badge=0,received=0,waiting=0,urgentDue='',urgentTrade='',waitDue='',waitTrade='',nextDue='';
+ const today=typeof hubToday==='function'?hubToday():'';
+ rows.forEach(function(p){if(p.due&&(!nextDue||p.due<nextDue))nextDue=p.due;
+  (p.rows||[]).forEach(function(r){const k=r.status_key;
+   if(k==='received'||k==='award_draft')received++;
+   if(k==='invited'||k==='no_response')waiting++;
+   const wd=r.due||'';
+   if((k==='invited'||k==='no_response')&&wd&&(!waitDue||wd<waitDue)){waitDue=wd;waitTrade=p.trade||p.title||''}});
+  if(p.status==='Awarded')return;
+  (p.rows||[]).forEach(function(r){const k=r.status_key;
+   const lateInv=k==='invited'&&((r.due&&today&&r.due<today)||(!r.due&&p.due&&today&&p.due<today));
+   if(!(k==='received'||k==='award_draft'||k==='no_response'||lateInv))return;
+   badge++;const d=r.due||p.due||'';
+   if(d&&(!urgentDue||d<urgentDue)){urgentDue=d;urgentTrade=p.trade||p.title||''}})});
+ if(!urgentTrade&&waitTrade){urgentDue=waitDue;urgentTrade=waitTrade}
+ const allAwarded=rows.length>0&&rows.every(function(p){return p.status==='Awarded'});
+ return {slug:first.slug||'',job:first.job||'',packs:rows,badge:badge,received:received,waiting:waiting,urgentDue:urgentDue,urgentTrade:urgentTrade,nextDue:nextDue,allAwarded:allAwarded}}
+function bidJobLine(j){if(!j)return '';if(j.allAwarded)return 'All awarded';
+ const bits=[];if(j.received)bits.push(j.received+' received');if(j.waiting)bits.push(j.waiting+' waiting');
+ if(j.urgentTrade){const when=bidWhen(j.urgentDue);bits.push(j.urgentTrade+(when?' '+when:''))}
+ return bits.join(' · ')||'No bids yet'}
+function bidJobGroups(q){const by={};const order=[];
+ bidSource().filter(function(p){return bidMatch(p,q)}).forEach(function(p){const k=p.slug||p.job||'';
+  if(!by[k]){by[k]=[];order.push(k)}by[k].push(p)});
+ return order.map(function(k){return bidJobRollup(by[k])})}
+function bidJobKeep(j,f){if(f==='attention')return j.badge>0;if(f==='open')return j.packs.some(function(p){return p.status==='Open'});
+ if(f==='award')return j.packs.some(function(p){return p.status==='Leveling'});if(f==='awarded')return j.allAwarded;return true}
+function bidSortJobs(list){return list.slice().sort(function(a,b){
+ const rank=function(j){return j.badge>0?0:(j.allAwarded?2:1)};
+ const ra=rank(a),rb=rank(b);if(ra!==rb)return ra-rb;
+ if(ra===0){const da=a.urgentDue||'9999',db=b.urgentDue||'9999';if(da!==db)return da<db?-1:1;if(a.badge!==b.badge)return b.badge-a.badge}
+ else if(ra===1){const da=a.nextDue||'9999',db=b.nextDue||'9999';if(da!==db)return da<db?-1:1}
+ return (a.job||'')<(b.job||'')?-1:(a.job||'')>(b.job||'')?1:0})}
+function bidJobs(filter,q){const f=filter||'all';return bidSortJobs(bidJobGroups(q).filter(function(j){return bidJobKeep(j,f)}))}
+function bidJobCard(j){const badge=j.badge?'<span class="bbadge">'+j.badge+'</span>':'';
+ return '<button type="button" class="bjobt" data-bjob="'+esc(j.slug)+'"><span class="bjobtop"><span class="bjobname">'+esc(j.job||'')+'</span>'+badge+'</span><span class="bmeta">'+esc(bidJobLine(j))+'</span></button>'}
+function bidAttentionJobs(){return bidJobs('attention','')}
+function bidAttentionCount(){return bidAttentionJobs().length}
+function bidTileSub(){const n=bidAttentionJobs().reduce(function(s,j){return s+j.badge},0);return n?(n+(n===1?' bid needs attention':' bids need attention')):'Nothing waiting'}
+function bidDeskHtml(){const jobs=bidAttentionJobs().slice(0,6);
+ return jobs.map(function(j){return '<a class="hrow" href="#/trackers/bids" data-bjob="'+esc(j.slug)+'"><span class="lb"><span class="lt">'+esc(j.job||'')+'</span><span class="ls">'+esc(bidJobLine(j))+'</span></span>'+(j.badge?'<span class="bbadge">'+j.badge+'</span>':'')+(typeof ico==='function'?ico('chev','go'):'')+'</a>'}).join('')||'<div class="none">Nothing waiting</div>'}
+function renderBidHome(){if(!Array.isArray(H().packages)&&!(H().bids||[]).length&&!(H().comparison||[]).length)return '';
+ const jobs=bidAttentionJobs();
+ return '<section class="home-cmp"><h2 class="bid-h2">Needs attention</h2><div class="bid-board">'+(jobs.map(bidJobCard).join('')||'<div class="none">Nothing waiting on a bid.</div>')+'</div></section>'}
+function bidChips(){const counts={attention:bidJobs('attention','').length,open:bidJobs('open','').length,award:bidJobs('award','').length,awarded:bidJobs('awarded','').length,all:bidJobs('all','').length};
+ return [['attention','Needs attention',counts.attention],['open','Open',counts.open],['award','Needs award',counts.award],['awarded','Awarded',counts.awarded],['all','All',counts.all]]}
+function renderBidTracker(){const f=bidFilterKey();const slug=(typeof st!=='undefined'&&st.bidJob)||'';
+ if(slug){const job=bidJobs('all','').filter(function(j){return j.slug===slug})[0];
+  const packs=bidSort(job?job.packs:bidSource().filter(function(p){return p.slug===slug}));
+  const name=(job&&job.job)||(packs[0]&&packs[0].job)||'Job';
+  return '<div class="bid-back"><button type="button" class="fchip" data-bback="1">Jobs</button><h2 class="bid-h2">'+esc(name)+'</h2></div><div class="bid-board">'+(packs.map(bidCard).join('')||'<div class="none">No packages on this job</div>')+'</div>'}
+ const q=bidQuery();const list=bidJobs(f,q);const chips=bidChips();
+ return '<div class="fbar"><div class="chips">'+chips.map(function(c){return '<button type="button" class="fchip '+(f===c[0]?'on':'')+'" data-bf="'+c[0]+'">'+c[1]+' <b>'+c[2]+'</b></button>'}).join('')+'</div><label class="sbox">'+ico('search')+'<input type="search" id="bq" placeholder="Job, trade, vendor" value="'+esc(st.bq||'')+'"></label></div><div class="bid-board">'+list.map(bidJobCard).join('')+'</div>'+(list.length?'':'<div class="none">No jobs in this view</div>')}
+function bidGoJob(slug){if(typeof st!=='undefined')st.bidJob=slug||'';if(typeof saveUi==='function')saveUi();
+ const on=(location.hash||'').indexOf('/trackers/bids')>=0;
+ if(on&&typeof renderTrackers==='function')renderTrackers('bids');else location.hash='#/trackers/bids'}
+function bidFileHtml(lk,slug){lk=lk||{};const url=lk.url||'';const kind=lk.kind||lk.type||'';
+ if(typeof fileHosted==='function'&&fileHosted(url,kind)&&typeof fileLinkHtml==='function')return fileLinkHtml({url:url,kind:kind,label:lk.label||'File',slug:slug,cls:'lbtn'});
+ if(!url||/buildertrend\.(net|com)/i.test(url))return '';
+ const name=(url.split('/').pop()||lk.label||'File').split('?')[0];
+ return '<a class="lbtn flink" data-flink="1" href="'+esc(url)+'" data-file-slug="'+esc(slug)+'" data-file-rel="'+esc(url)+'" data-file-name="'+esc(name)+'">'+esc(lk.label||name)+'</a>'}
+function bidAmtBlock(row){if(!bidSeeMoney())return '<p class="bid-amt"><span class="mut">amounts on money page</span></p>';const n=bidMoney(row);if(n==null)return '<p class="bid-amt"><span class="mut">amounts on money page</span></p>';return '<p class="bid-amt"><b>'+fmt$(n)+'</b></p>'}
+function bidCol(p,r){const bits=['<h3>'+esc(r.vendor||'Vendor')+'</h3>',chip(r.status_label||bidLabel(r.status_key),r.status_key==='awarded'?'ok':(r.status_key==='declined'||r.status_key==='lost'?'low':'medium'))+(r.draft?chip('Draft','medium'):'')];
+ if(r.scope)bits.push('<p><b>Scope</b> '+esc(r.scope)+'</p>');
+ bits.push('<p><b>Inclusions</b> '+(r.inclusions?esc(r.inclusions):'<span class="mut">None listed</span>')+'</p>');
+ bits.push('<p><b>Exclusions</b> '+(r.exclusions?esc(r.exclusions):'<span class="mut">None listed</span>')+'</p>');
+ bits.push(bidAmtBlock(r));
+ (r.links||[]).forEach(function(lk){const h=bidFileHtml(lk,p.slug);if(h)bits.push('<p>'+h+'</p>')});
+ const open=r.status_key==='received'&&!r.draft;
+ if(open)bits.push('<button type="button" class="pri" data-bid-award="'+esc(r.id)+'">Award</button>');
+ if(r.draft&&typeof poRole==='function'&&poRole('award'))bits.push('<button type="button" class="pri" data-bid-confirm="'+esc(r.id)+'">Confirm award</button>');
+ if(r.status_key==='awarded'&&p.cost_code)bits.push('<a class="bid-bud" href="'+jobHref(p.slug,'money')+'/'+encodeURIComponent(p.cost_code)+'">Budget line</a>');
+ return '<article class="bid-col">'+bits.join('')+'</article>'}
+function openBidPackage(id){const p=bidFind(id);if(!p){toast('Package not found');return}
+ const cols=(p.rows||[]).slice().sort(function(a,b){const an=bidMoney(a),bn=bidMoney(b);return (an==null?9e12:an)-(bn==null?9e12:bn)}).map(function(r){return bidCol(p,r)}).join('');
+ openModal('<div class="asheet" id="bid-compare"><div class="ahead"><div class="small mut">'+esc(p.job||'')+'</div><h2>'+esc(p.trade||'')+'</h2><div>'+chip(p.status,p.status==='Awarded'?'ok':'medium')+'</div></div><p class="bmeta">Invited '+p.invited+' · Received '+p.received+' · Declined '+p.declined+(p.due?' · due '+(typeof mdy==='function'?mdy(p.due):esc(p.due)):'')+'</p><div class="bid-cols">'+cols+'</div><p><button type="button" data-close>Close</button></p></div>',
+  function(m){m.querySelectorAll('[data-bid-award]').forEach(function(b){b.onclick=function(){const row=(p.rows||[]).filter(function(r){return r.id===b.getAttribute('data-bid-award')})[0];closeModal();bidDraft(p,row)}});
+   m.querySelectorAll('[data-bid-confirm]').forEach(function(b){b.onclick=function(){const row=(p.rows||[]).filter(function(r){return r.id===b.getAttribute('data-bid-confirm')})[0];closeModal();bidConfirm(p,row)}})})}
+function bidOp(pkg,row,status){return {op:'bid_status',id:row.id,status:status,bid:{id:row.id,slug:pkg.slug,job:pkg.job||'',trade:pkg.trade||'',vendor:row.vendor||'',scope:row.scope||pkg.scope||pkg.trade||'',cost_code:pkg.cost_code||'',links:row.links||[]}}}
+function bidDraft(pkg,row){if(!row||typeof poEdit!=='function')return;poEdit(pkg.slug,[bidOp(pkg,row,'award_draft')],'Draft')}
+function bidSaveAward(pkg,row){if(typeof overlay!=='function'||typeof saveOverlay!=='function')return;const o=overlay();o.awards=o.awards||{};o.awards[row.id]={slug:pkg.slug,cost_code:pkg.cost_code||'',vendor:row.vendor||'',status:'awarded',also:row.merged_ids||[]};saveOverlay(o)}
+function bidConfirm(pkg,row){if(!row)return;if(typeof poRole!=='function'||!poRole('award')){toast("awarding needs the owner's OK");return}
+ const ops=[bidOp(pkg,row,'awarded')];(pkg.rows||[]).forEach(function(r){if(r.id!==row.id&&(r.status_key==='received'||r.status_key==='invited'||r.status_key==='no_response'||r.status_key==='award_draft'))ops.push(bidOp(pkg,r,'lost'))});
+ if(typeof poEdit==='function')poEdit(pkg.slug,ops,'Awarded');bidSaveAward(pkg,row)}
+function bindBidTracker(root){if(!root)return;
+ root.querySelectorAll('[data-bpkg]').forEach(function(b){b.onclick=function(){openBidPackage(b.getAttribute('data-bpkg'))}});
+ root.querySelectorAll('[data-bjob]').forEach(function(b){b.onclick=function(ev){if(ev&&ev.preventDefault)ev.preventDefault();bidGoJob(b.getAttribute('data-bjob'))}});
+ root.querySelectorAll('[data-bback]').forEach(function(b){b.onclick=function(){if(typeof st!=='undefined')st.bidJob='';if(typeof saveUi==='function')saveUi();if(typeof renderTrackers==='function')renderTrackers('bids')}});
+ root.querySelectorAll('[data-bf]').forEach(function(b){b.onclick=function(){st.hbF=b.getAttribute('data-bf');st.bidJob='';if(typeof saveUi==='function')saveUi();if(typeof renderTrackers==='function')renderTrackers('bids')}});
+ if(typeof bindBidCards==='function')bindBidCards(root)}
+function renderJobBids(M){if(!J)return;const packs=bidSort(bidSource().filter(function(p){return p.slug===J.slug}));
+ M.innerHTML=panel('Bids',packs.length+(packs.length===1?' package':' packages'),'<div class="bid-board">'+(packs.map(bidCard).join('')||emptyState('No bid packages yet',''))+'</div>');
+ bindBidTracker(M)}
 
 /* Plan Room: list a job's plan PDFs from the signed-in Dropbox, then open one in the
    massing-pdf viewer. The access token stays in localStorage (hws-dbx-auth).
