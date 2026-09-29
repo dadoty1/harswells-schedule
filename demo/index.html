@@ -267,6 +267,7 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .slack-head{display:flex;align-items:center;gap:8px;padding:2px 2px 0}
 .slack-head h2{margin:0;font-size:20px;line-height:1.2}
 .slack-live{margin-left:auto;font-size:12px;font-weight:800;color:#067647}
+.slack-ro{margin-left:auto;font-size:12px;font-weight:800;color:#475467;background:#eef1f5;border-radius:8px;padding:3px 8px}
 .slack-log{display:flex;flex-direction:column;gap:8px}
 .slack-bubble{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px}
 .slack-bubble.me{background:#eef4ff;border-color:#d5e2f7}
@@ -297,7 +298,19 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .soonc h1{font-size:22px}.soonc p{color:#475467;font-size:15px;line-height:1.5;margin:10px 0 18px}
 .pbtn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 18px;border-radius:12px;background:var(--navy);color:#fff;font-weight:700;text-decoration:none!important}
 .gtabs{display:none}
+.backjobs{display:inline-flex;align-items:center;gap:2px;min-height:44px;margin:0 0 2px;font-weight:700;font-size:15px;color:var(--navy2);text-decoration:none!important}
+.backjobs:before{content:"\2039";font-size:22px;line-height:1;margin-right:2px}
+.jtabs{display:none}
 @media(min-width:761px){.hubp .gtabs{display:none}}
+@media(max-width:760px){
+ .jtabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 0 8px;padding:8px 10px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:25}
+ .jtabs::-webkit-scrollbar{display:none}
+ .jtabs a{flex:none;display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:0 12px;border-radius:12px;background:#f4f6f9;border:1px solid #d7dde7;color:#344054;font-weight:700;font-size:14px;text-decoration:none!important;white-space:nowrap}
+ .jtabs a.on{background:var(--navy);border-color:var(--navy);color:#fff}
+ .jtabs .dot{font-style:normal;background:#d92d20;color:#fff;border-radius:8px;font-size:11px;padding:0 5px;line-height:16px}
+ .jtabs a.on .dot{background:#fff;color:var(--navy)}
+ body.has-tabs .gtabs{display:flex}
+}
 @media(max-width:760px){
  .hub{padding:10px 12px 18px}.hello{padding:4px 2px 12px}.hello h1{font-size:24px}
  .tiles{grid-template-columns:1fr 1fr;gap:10px}.tile{min-height:118px;padding:12px;border-radius:16px}.tile .tn{font-size:28px;margin-top:40px}.tile .tl{font-size:15px}
@@ -542,7 +555,7 @@ button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:
 Open the file on a computer in Chrome, Edge or Safari, or use the hosted Sample Builders app on iPhone.</p></div></div>
 <noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
 
-<script>window.HWS_CONFIG={"dropbox":{"appKey":"","syncRoot":"","dataPath":"","pathRoot":"root"},"lockHours":12,"live":false,"demo":true};const BOOT={"mode":"pwa"};</script>
+<script>window.HWS_CONFIG={"dropbox":{"appKey":"","syncRoot":"","dataPath":"","pathRoot":"root"},"lockHours":12,"hubUrl":"","live":false,"demo":true};const BOOT={"mode":"pwa"};</script>
 <script>/* DEMO MODE shim (runs before the app). The demo shows 3 made-up jobs from demo-data.json next to this page.
    It can never reach Dropbox or any other service:
    - every network call that is not this site (fetch, XHR, sendBeacon, WebSocket, EventSource) is refused, and anything
@@ -1866,17 +1879,17 @@ function topHtml(page){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];
 function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value,isPhone()?'schedule':curMod())};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
-const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
+const TABS=[['schedule','Schedule'],['slack','Slack'],['todos','To-Dos'],['files','Files'],['more','More']];
 const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,rfis:(typeof mRfis==='function'?mRfis:mSchedule),specs:(typeof mSpecs==='function'?mSpecs:mSchedule),conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
  return `${other}<button class="pri small" id="co">Check out to edit</button>`}
-function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>';bindTop();return}
+function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>'+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
- const head=`<div class="jh"><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
+ const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
@@ -1884,10 +1897,12 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
  const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
  <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files<span class="cnt">${(typeof HWSFiles!=='undefined'&&HWSFiles.count&&HWSFiles.count(J.slug))||(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
- const tabs=`<nav class="tabbar" aria-label="Modules">${TABS.map(([k,l,ic])=>{const on=k==mod||(k=='more'&&!TABS.some(t=>t[0]==mod));const n=k=='more'?hc:0;
-  return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}"><span class="ic">${ic}</span><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
- $('#root').innerHTML=topHtml()+head+(ph?`<main class="main" id="mod"></main>${tabs}`:`<div class="layout">${side}<main class="main" id="mod"></main></div>`);
- document.body.classList.toggle('has-tabs',ph);document.body.classList.remove('hubp');document.body.dataset.pg='job';
+ const primary=TABS.some(t=>t[0]==mod);
+ const tabs=`<nav class="jtabs" aria-label="Job sections">${TABS.map(([k,l])=>{const on=k==mod||(k=='more'&&!primary&&mod!=='plans');const n=k==='slack'?slackN:(k==='more'?hc:0);
+  return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}" ${on?'aria-current="page"':''}><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
+ const bottom=(typeof gnavHtml==='function')?gnavHtml('jobs'):'';
+ $('#root').innerHTML=topHtml()+head+(ph?tabs:'')+(ph?`<main class="main" id="mod"></main>`:`<div class="layout">${side}<main class="main" id="mod"></main></div>`)+bottom;
+ document.body.classList.add('has-tabs');document.body.classList.remove('hubp');document.body.dataset.pg='job';
  bindTop();const M=$('#mod');
  const co=$('#co');if(co)co.onclick=()=>doCheckout(J.slug);const ci=$('#ci');if(ci)ci.onclick=()=>doCheckin(J.slug);
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
@@ -2246,7 +2261,10 @@ function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recompu
  bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
 
 /* Job Slack tab (phone-first). New rows arrive on the office server over SSE.
-   The static public site has the same tab with the compose box disabled. */
+   The static public site has the same tab with the compose box disabled.
+   Phone sending uses HWS_CONFIG.hubUrl (https://hub.harswells.com once that host is up)
+   and the office /api/session PIN. Until hubUrl is set, the tab stays read-only. */
+const SLACK_PHONE_NOTE='Sending from phone starts when the hub is online at hub.harswells.com';
 'use strict';
 function slackEsc(v){return (typeof esc==='function'?esc:String)(v)}
 function slackHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -2311,8 +2329,42 @@ function slackClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)ret
 function slackDay(t){return String(t||'').slice(0,10)||''}
 function slackFiles(v){if(Array.isArray(v))return v;if(!v)return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
 function slackReplies(v){return slackFiles(v)}
-function slackOfficeOnly(){try{return !!(window.HWSOffline&&typeof HWSOffline.isStatic==='function'&&HWSOffline.isStatic())}catch(e){return false}}
-function slackCanPost(){if(slackOfficeOnly())return false;const mode=slackMode();return (mode==='live'||mode==='pwa')&&!!(J&&J.channel)}
+function slackCfg(){
+  try{
+    const g=typeof globalThis!=='undefined'?globalThis:{};
+    if(g.HWS_CONFIG)return g.HWS_CONFIG;
+    if(typeof window!=='undefined'&&window.HWS_CONFIG)return window.HWS_CONFIG;
+  }catch(e){}
+  return {};
+}
+/* Office server origin. Empty until the hub is hosted. https only, plus loopback http for tests. */
+function slackHubBase(){
+  let u='';
+  try{u=String((slackCfg().hubUrl)||'').trim()}catch(e){return ''}
+  u=u.replace(/\/+$/,'');
+  if(/^https:\/\/[a-z0-9.-]+(?::\d{2,5})?(?:\/[A-Za-z0-9._~/-]*)?$/i.test(u))return u;
+  if(/^http:\/\/(?:127\.0\.0\.1|localhost)(?::\d{2,5})?$/i.test(u))return u;
+  return '';
+}
+function slackOfflineApi(){
+  try{if(typeof window!=='undefined'&&window.HWSOffline)return window.HWSOffline}catch(e){}
+  try{const g=typeof globalThis!=='undefined'?globalThis:null;if(g&&g.HWSOffline)return g.HWSOffline}catch(e){}
+  return null;
+}
+function slackOfficeOnly(){if(slackHubBase())return false;try{const api=slackOfflineApi();return !!(api&&typeof api.isStatic==='function'&&api.isStatic())}catch(e){return false}}
+function slackJobChannel(){
+  try{if(typeof J!=='undefined'&&J&&J.channel)return J.channel}catch(e){}
+  try{const g=typeof globalThis!=='undefined'?globalThis:null;if(g&&g.J&&g.J.channel)return g.J.channel}catch(e){}
+  return '';
+}
+function slackPhoneReadonly(){return !slackHubBase()&&(slackOfficeOnly()||slackMode()==='pwa')}
+function slackCanPost(){if(!slackJobChannel())return false;if(slackHubBase())return true;if(slackOfficeOnly())return false;const mode=slackMode();return mode==='live'||mode==='pwa'}
+function slackEndpoint(path){const base=slackHubBase();return (base||'')+path}
+function slackPost(path, body){
+  const opts={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body==null?{}:body)};
+  if(slackHubBase())opts.credentials='include';
+  return fetch(slackEndpoint(path), opts);
+}
 function slackWho(){
   try{if(typeof STORE!=='undefined'&&STORE&&STORE.who){const w=STORE.who();if(w)return w}}catch(e){}
   try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
@@ -2331,7 +2383,8 @@ function slackComposeBox(opts){
   const live=!!opts.live, channel=opts.channel||'', on=live&&!!channel, thread=opts.thread||'';
   const label=String(opts.label||'').replace(/^#/,'');
   let note='';
-  if(!thread&&!live)note=slackOfficeOnly()?'Sending needs the office hub.':'Posting is off on this copy. Use the office hub to send.';
+  if(!thread&&!live&&!channel)note='This job has no Slack channel yet.';
+  else if(!thread&&!live)note=slackPhoneReadonly()?SLACK_PHONE_NOTE:'Posting is off on this copy. Use the office hub to send.';
   else if(!thread&&live&&!channel)note='This job has no Slack channel yet.';
   const dis=on?'':'disabled';
   const ph=thread?'Reply in thread':(label?('Message #'+label):'Message');
@@ -2339,7 +2392,7 @@ function slackComposeBox(opts){
   return `<form class="slack-compose${on?'':' is-off'}" data-thread="${e(thread)}" ${on?'':'aria-disabled="true"'}>
     <textarea name="text" rows="1" ${dis} placeholder="${e(ph)}" aria-label="${e(ph)}"></textarea>
     <button type="submit" class="pri" ${dis}>${thread?'Reply':'Send'}</button>
-    ${note?`<p class="slack-note">${e(note)}</p>`:''}</form>`;
+    ${note?`<p class="slack-note" role="status">${e(note)}</p>`:''}</form>`;
 }
 function slackTs(i){
   if(i&&i.ts)return String(i.ts);
@@ -2414,12 +2467,20 @@ async function slackCheckPin(who, pin){
     if(window.HWSOffline&&await HWSOffline.sessionOk())return {ok:true};
     return {ok:false,error:'Enter your PIN'};
   }
+  if(slackHubBase()){
+    try{
+      const s=await slackPost('/api/session',{who,pin});
+      let sj={};try{sj=await s.json()}catch(e){}
+      if(!s.ok||!sj.ok)return {ok:false,error:sj.error||'name or PIN does not match',status:s.status};
+      return {ok:true};
+    }catch(e){return {ok:false,error:e.message||'not sent',status:0}}
+  }
   if(!navigator.onLine&&window.HWSOffline)return HWSOffline.verifyLocal(who, pin);
   if(window.HWSOffline){
     const net=await HWSOffline.unlockWith(who, pin);
     return net;
   }
-  const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
+  const s=await slackPost('/api/session',{who,pin});
   let sj={};try{sj=await s.json()}catch(e){}
   if(!s.ok||!sj.ok)return {ok:false,error:sj.error||'name or PIN does not match',status:s.status};
   return {ok:true};
@@ -2449,7 +2510,7 @@ async function slackSend(text, thread, pendingId){
       return row._state==='pending';
     }
     const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
-    const r=await fetch('/api/job/'+encodeURIComponent(J.slug)+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,thread_ts:thread||'',who})});
+    const r=await slackPost('/api/job/'+encodeURIComponent(J.slug)+'/slack',{text,thread_ts:thread||'',who});
     let j={};try{j=await r.json()}catch(e){}
     if(!r.ok||!j.ok){
       if(slackNetFail(null, r.status)){row._state='pending';row._err=''}
@@ -2487,10 +2548,11 @@ function mSlack(M){
   });
   pend.forEach(p=>{blocks+=slackBubble(p,true)});
   if(!blocks)blocks=`<div class="empty"><b>No Slack messages yet</b>${J.channel?'New messages show up here.':'This job has no Slack channel yet.'}</div>`;
+  const ro=!live&&slackPhoneReadonly();
   const name=live?`<label class="slack-name">Your name <input id="slackwho" value="${slackEsc(who)}" placeholder="Your name" autocomplete="name" enterkeyhint="next"></label><label class="slack-name">PIN <input id="slackpin" type="password" placeholder="PIN" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-label="PIN"></label>`:'';
   const prev=M.querySelector('.slack-foot textarea');
   const draft=prev&&prev.value?prev.value:slackDraft();
-  M.innerHTML=`<div class="slack-tab"><div class="slack-head"><h2>${slackEsc(J.name||'')}</h2><span class="chip">${slackEsc(title)}</span>${live?'<span class="slack-live">Live</span>':''}</div>
+  M.innerHTML=`<div class="slack-tab"${ro?' data-slack="readonly"':''}><div class="slack-head"><h2>${slackEsc(J.name||'')}</h2><span class="chip">${slackEsc(title)}</span>${live?'<span class="slack-live">Live</span>':(ro?'<span class="slack-ro">Read only</span>':'')}</div>
     <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:live,channel:J.channel||'',label})}</div></div>`;
   const box=M.querySelector('.slack-foot textarea');
   if(box&&draft)box.value=draft;
@@ -2525,7 +2587,7 @@ if(typeof document!=='undefined'){
   const go=()=>{if(typeof MODE!=='undefined'&&MODE==='live')startSlackStream()};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 }
-if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,slackMarkup};
+if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,slackMarkup,slackHubBase,slackCanPost,SLACK_PHONE_NOTE};
 
 /* Same-origin plan sheets the hub serves itself. The Dropbox Plan Room (planroom.js) stays
    in charge of the plans page. dropbox.com links are not listed here and are not cached.
@@ -3893,7 +3955,7 @@ function injectJobChrome() {
     side.insertBefore(a, side.firstChild);
   }
   if (curMod() === "plans") {
-    document.querySelectorAll("nav.tabbar a.on").forEach((el) => el.classList.remove("on"));
+    document.querySelectorAll("nav.jtabs a.on").forEach((el) => el.classList.remove("on"));
     const s = document.querySelector("nav.side [data-hws-plans]");
     if (s) s.className = "on";
     const M = document.getElementById("mod");
