@@ -2,7 +2,7 @@
    cache so a deploy cannot leave a phone on stuck files. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='14112ad0dd';
+const VERSION='db5b11cba1';
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
 const FILES='hws-files';
