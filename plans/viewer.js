@@ -61,6 +61,15 @@ async function fileBytes(url){
   }
   throw new Error('Not saved on this phone yet');
 }
+function quarter(deg){
+  const n=Math.round(Number(deg)/90)*90;
+  if(!Number.isFinite(n))return 0;
+  return ((n%360)+360)%360;
+}
+/* Default viewport rotation is page.rotate. Passing 0 would drop /Rotate. */
+function viewportFor(page,scale,override){
+  return page.getViewport({scale,rotation:quarter((page.rotate||0)+(override||0))});
+}
 async function render(canvas,url){
   const pdfjs=await loadPdf();
   const data=await fileBytes(url);
@@ -68,14 +77,15 @@ async function render(canvas,url){
   try{doc=await pdfjs.getDocument({data,disableRange:true,disableStream:true,disableAutoFetch:true}).promise}
   catch(e){throw new Error('This is not a PDF.')}
   const page=await doc.getPage(1);
-  const base=page.getViewport({scale:1});
+  const base=viewportFor(page,1,0);
   const width=Math.max(canvas.parentElement?canvas.parentElement.clientWidth:0,320);
   const scale=Math.min(2.5,Math.max(1,width/base.width));
-  const vp=page.getViewport({scale});
+  const vp=viewportFor(page,scale,0);
   const ctx=canvas.getContext('2d',{alpha:false});
   canvas.width=Math.floor(vp.width);canvas.height=Math.floor(vp.height);
+  canvas.dataset.rotate=String(quarter(page.rotate||0));
   await page.render({canvasContext:ctx,viewport:vp}).promise;
-  return {pages:doc.numPages,width:canvas.width,height:canvas.height};
+  return {pages:doc.numPages,width:canvas.width,height:canvas.height,rotate:quarter(page.rotate||0)};
 }
 window.HWSPlan={loadPdf,render,asset};
 const params=new URLSearchParams(location.search);

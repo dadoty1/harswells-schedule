@@ -579,7 +579,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'ac7820a764',built:'9/29/2026 6:59 AM AZ'};
+const HWS_BUILD={version:'b70a66933c',built:'9/29/2026 7:45 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -5068,11 +5068,70 @@ function fileBindZoom(box) {
   }, { passive: false });
   apply();
 }
+function fileExifOrientation(bytes) {
+  const u = fileAsU8(bytes);
+  if (u.length < 4 || u[0] !== 0xff || u[1] !== 0xd8) return 1;
+  const u16 = (at, little) => (little ? u[at] | (u[at + 1] << 8) : (u[at] << 8) | u[at + 1]);
+  const u32 = (at, little) => (little
+    ? (u[at] | (u[at + 1] << 8) | (u[at + 2] << 16) | (u[at + 3] << 24)) >>> 0
+    : ((u[at] << 24) | (u[at + 1] << 16) | (u[at + 2] << 8) | u[at + 3]) >>> 0);
+  let i = 2;
+  while (i + 4 < u.length) {
+    if (u[i] !== 0xff) return 1;
+    const marker = u[i + 1];
+    if (marker === 0xda || marker === 0xd9) return 1;
+    const len = (u[i + 2] << 8) | u[i + 3];
+    if (len < 2 || i + 2 + len > u.length) return 1;
+    if (marker === 0xe1 && len >= 16 && u[i + 4] === 0x45 && u[i + 5] === 0x78 && u[i + 6] === 0x69 && u[i + 7] === 0x66) {
+      const tiff = i + 10;
+      const little = u[tiff] === 0x49 && u[tiff + 1] === 0x49;
+      const big = u[tiff] === 0x4d && u[tiff + 1] === 0x4d;
+      if ((little || big) && u16(tiff + 2, little) === 42) {
+        const ifd = tiff + u32(tiff + 4, little);
+        if (ifd + 2 < u.length) {
+          const count = u16(ifd, little);
+          for (let n = 0; n < count; n++) {
+            const at = ifd + 2 + n * 12;
+            if (at + 12 > u.length) break;
+            if (u16(at, little) === 0x0112 && u16(at + 2, little) === 3) {
+              const value = u16(at + 8, little);
+              if (value >= 1 && value <= 8) return value;
+            }
+          }
+        }
+      }
+    }
+    i += 2 + len;
+  }
+  return 1;
+}
 function fileMountImage(stage, offline, bytes, type) {
   const mag = fileMagicKind(bytes);
   const blobType = mag === "png" ? "image/png" : mag === "gif" ? "image/gif" : mag === "webp" ? "image/webp" : mag === "jpeg" ? "image/jpeg" : (type && String(type).indexOf("image/") === 0 ? String(type).split(";")[0] : "application/octet-stream");
+  const orient = mag === "jpeg" ? fileExifOrientation(bytes) : 1;
+  if (orient > 1 && typeof createImageBitmap === "function") {
+    const blob = new Blob([bytes], { type: blobType });
+    return createImageBitmap(blob, { imageOrientation: "from-image" }).then((bitmap) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      canvas.setAttribute("data-fphoto", "1");
+      canvas.setAttribute("data-orient", String(orient));
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.drawImage(bitmap, 0, 0);
+      if (bitmap.close) bitmap.close();
+      stage.innerHTML = offline + '<div class="fzoom" data-fzoom data-scale="1"><div class="fzoom-in" data-fzoomtarget></div></div>';
+      stage.querySelector("[data-fzoomtarget]").appendChild(canvas);
+      fileMark(stage, "image");
+      fileBindZoom(stage.querySelector("[data-fzoom]"));
+      return canvas.width > 0 && canvas.height > 0;
+    }).catch(() => fileMountImageTag(stage, offline, bytes, blobType));
+  }
+  return fileMountImageTag(stage, offline, bytes, blobType);
+}
+function fileMountImageTag(stage, offline, bytes, blobType) {
   const url = URL.createObjectURL(new Blob([bytes], { type: blobType }));
-  stage.innerHTML = offline + '<div class="fzoom" data-fzoom data-scale="1"><div class="fzoom-in" data-fzoomtarget><img alt="" src="' + url + '"></div></div>';
+  stage.innerHTML = offline + '<div class="fzoom" data-fzoom data-scale="1"><div class="fzoom-in" data-fzoomtarget><img alt="" src="' + url + '" style="image-orientation:from-image"></div></div>';
   fileMark(stage, "image");
   fileBindZoom(stage.querySelector("[data-fzoom]"));
   const img = stage.querySelector("img");
@@ -5475,6 +5534,8 @@ window.HWSFiles = {
   plansPath: filePlansPath,
   label: fileLabel,
   refs: fileRefs,
+  exifOrientation: fileExifOrientation,
+  mountImage: fileMountImage,
 };
 window.HWSFiles.registerPreview = fileRegisterPreview;
 function fileChip(row) { return fileChips(row); }

@@ -1,0 +1,112 @@
+/* Exit bar and a single scrolling tool row. Overrides the bundled phone
+   rules that wrapped tools into a tall block. A Rotate page control in the
+   toolbar, or in #hws-rotate-slot, stays on this row. */
+
+#hws-bar {
+  position: relative;
+  z-index: 40;
+  flex: none;
+  gap: 6px;
+  min-height: calc(44px + env(safe-area-inset-top, 0px));
+  padding-top: calc(4px + env(safe-area-inset-top, 0px));
+  padding-right: calc(8px + env(safe-area-inset-right, 0px));
+  padding-bottom: 4px;
+  padding-left: calc(8px + env(safe-area-inset-left, 0px));
+}
+#hws-back, #hws-tools, #hws-close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+#hws-close {
+  width: 44px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+#hws-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+#hws-status, #hws-sheets, #hws-takeoff {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
+}
+.hws-scale {
+  padding-right: calc(8px + env(safe-area-inset-right, 0px));
+  padding-left: calc(8px + env(safe-area-inset-left, 0px));
+}
+.hws-scale[data-dismissed] {
+  display: none !important;
+}
+.hws-scale-x {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+body {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body.hws-tools-off .mpdf-toolbar {
+  display: none !important;
+}
+#hws-rotate-slot:empty {
+  flex: 0 0 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 0 !important;
+}
+@media (max-width: 800px) {
+  .mpdf-toolbar {
+    flex-wrap: nowrap !important;
+    max-height: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mpdf-tb-group, .mpdf-tb-btn, .mpdf-tb-page {
+    flex: none;
+  }
+  .mpdf-tb-spacer {
+    flex: 0 0 8px !important;
+  }
+}
+/* Rotate page (PR #51) after chrome.js moves it into #hws-rotate-slot. */
+#hws-rotate-slot #hws-rotate {
+  flex: none;
+  min-height: 44px;
+  white-space: nowrap;
+}
