@@ -335,6 +335,23 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .fg .cb input{width:22px;height:22px;min-height:22px;margin:0;flex:none}
 tr[data-sel]{cursor:pointer}
 @media(max-width:760px){.gtabs a span{font-size:10px}.hub-money .hph{margin-bottom:8px}}
+.unlock{max-width:440px;margin:32px auto;padding:0 18px}
+.unlock h1{margin:0 0 8px}
+.unlock label{display:block;margin:14px 0 0;font-weight:650}
+.unlock input{display:block;width:100%;box-sizing:border-box;margin-top:6px;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px}
+.unlock .pri{margin-top:16px;min-height:48px;width:100%}
+.unlock .hint,.offbar .hint{color:#667085;font-size:13px;line-height:1.4}
+#offline-banner{display:inline-block;background:#3b2f1a;color:#fff;font-weight:700;padding:4px 8px;border-radius:8px}
+.offbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
+.offbar button[aria-pressed="true"]{background:#15233b;color:#fff}
+.planlayer{position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.55);display:flex;align-items:flex-end;justify-content:center}
+.planlayer[hidden]{display:none}
+.planview{background:#111;color:#fff;width:min(640px,100%);max-height:100%;overflow:auto;border-radius:14px 14px 0 0;padding-bottom:env(safe-area-inset-bottom)}
+.planbar{display:flex;gap:8px;align-items:center;padding:12px;background:#15233b}
+.planbar #planstat{color:#d0d5dd;font-size:13px;flex:1}
+.planview canvas{display:block;width:100%;height:auto;background:#222}
+.planopen{width:100%;text-align:left;border:0;background:#fff;border-bottom:1px solid var(--line)}
+.slack-state.pending{color:#b54708;font-weight:700}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -480,7 +497,8 @@ window.HWS_DEMO_RESET=function(){keys().forEach(k=>real.removeItem(NS+k));try{in
    files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
    Dev only: on a loopback host (127.0.0.1 / localhost) #setup=same-origin reads data/data.json next to the app, for the local
    preview and tests. It is refused on any other host and is never offered in the UI.
-   The last good copy is kept in IndexedDB for offline use. */
+   The schedule is fetched only after the PIN. The last good copy is encrypted in IndexedDB. The service worker may also
+   hold that response (stale-while-revalidate). A reload with no network reopens the last view. */
 (function(){
 'use strict';
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
@@ -492,13 +510,14 @@ let data=null,syncedAt=null,lastErr=null,syncing=false,dataRev=null;
 function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
-async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
 function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
 function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');
  if(!Object.keys(d.jobs).length)throw new Error('The schedule data file in Dropbox has no jobs yet (placeholder). Ask the office to publish the schedule data, then tap Sync now.');return d}
 const NOACC='Your Dropbox account can\u2019t see the Sample Builders schedule data (Sample Builders Team Folder \u203a Sample Builders Live Schedule). Sign in with your Sample Builders Dropbox account, or ask the office to give you access to the Sample Builders Team Folder.';
 function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
+async function keep(d, rev){data=d;dataRev=rev||null;syncedAt=Date.now();lastErr=null;
+ if(window.HWSOffline){try{await HWSOffline.seal(d, syncedAt)}catch(e){}}}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
   /* 3.6 MB: download only when the Dropbox rev changed (one small get_metadata call otherwise) */
@@ -506,40 +525,75 @@ async function fetchData(){
   try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
   if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){}
    throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}check(d);d.__rev=r.rev||null;return d}
- const url=sourceUrl();if(!url)throw new Error('setup');const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow'});
- if(!r.ok)throw new Error('Local data file returned HTTP '+r.status);
+ const url=sourceUrl();if(!url)throw new Error('setup');
+ const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow',headers:{'X-HWS-Revalidate':'1'}});
+ if(!r.ok)throw new Error(r.status===503?'offline':'Local data file returned HTTP '+r.status);
+ const stale=r.headers.get('X-HWS-Cache')==='stale';
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
- return check(d)}
-async function sync(force){if(W.preview||syncing||(!navigator.onLine&&!force))return false;syncing=true;paint();
- try{const d=await fetchData();if(d.same){syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
-  const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);data=d;dataRev=rev;syncedAt=Date.now();lastErr=null;try{await idbPut('data',{data:d,syncedAt,src:srcKey(),rev})}catch(e){}syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
- catch(e){lastErr=e.message=='setup'?null:e.message;syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
-function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}}
+ return {doc:check(d),stale}}
+async function sync(force){if(W.preview||syncing||(down()&&!force))return false;syncing=true;paint();
+ try{const got=await fetchData();
+  if(got&&got.same){mark(true);syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
+  if(got&&got.stale){mark(false);if(!data&&got.doc){data=got.doc;syncedAt=syncedAt||Date.now()}syncing=false;paint();return !!data}
+  const d=got&&got.doc?got.doc:got;if(!d||!d.jobs){syncing=false;paint();return false}
+  const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);
+  mark(true);await keep(d, rev);syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ catch(e){if(e.message==='offline'||/failed to fetch|network|offline|load failed/i.test(e.message||''))mark(false);lastErr=e.message=='setup'?null:(e.message==='offline'?null:e.message);syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
+function down(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLine}
+function mark(on){if(window.HWSOffline)HWSOffline.markNet(on)}
+function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}
+ const b=document.getElementById('offline-banner');if(down()&&b)b.setAttribute('role','status')}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
  const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
  history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
 const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function watchSw(reg){
+  if(!reg)return;
+  const arm=sw=>{if(!sw)return;sw.addEventListener('statechange',()=>{if(sw.state==='installed'&&navigator.serviceWorker.controller)sw.postMessage('skip-waiting')})};
+  arm(reg.installing);reg.addEventListener('updatefound',()=>arm(reg.installing));
+}
+let swClaimSeen=false;
+function bindSw(){
+  if(!('serviceWorker' in navigator))return;
+  let had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had){had=true;return}if(swClaimSeen)return;swClaimSeen=true;location.reload()});
+  navigator.serviceWorker.addEventListener('message',ev=>{
+    const t=ev.data&&ev.data.type;
+    if(t==='hws-data-updated'&&navigator.onLine)sync();
+    if(t==='hws-shell'&&navigator.serviceWorker.controller){/* activate already claimed; controllerchange reloads if this replaced a worker */}});
+}
 const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=>syncedAt,
  data:()=>data,
  async init(){if(window.__HWS_DEMO){data=await window.__HWS_DEMO();W.preview=true;W.demo=true;return} /* demo page: bundled sample data, no network (demo-shim.js) */
   if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
-  if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
-  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{await navigator.serviceWorker.register('sw.js')}catch(e){}}
-  window.addEventListener('online',()=>{paint();sync()});window.addEventListener('offline',paint);
-  document.addEventListener('visibilitychange',()=>{if(!W.liveMode&&!document.hidden&&Date.now()-(syncedAt||0)>5*60e3)sync()});
-  setInterval(()=>{if(!W.liveMode&&!document.hidden)sync()},10*60e3); /* live mode: the Dropbox cursor/longpoll says when data.json changes */
-  if(data){sync()}else if(sourceUrl()||cfg.source=='dropbox-api'){try{await sync(true)}catch(e){}}},
+  bindSw();
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{const reg=await navigator.serviceWorker.register('sw.js');watchSw(reg)}catch(e){}}
+  window.addEventListener('online',()=>{paint();sync(true).then(ok=>{if(ok&&!down()&&typeof slackFlush==='function')slackFlush()})});
+  window.addEventListener('offline',()=>{mark(false);paint()});
+  window.addEventListener('pageshow',()=>{if(navigator.onLine)sync()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine&&(W.liveMode||Date.now()-(syncedAt||0)>5*60e3))sync()});
+  setInterval(()=>{if(!W.liveMode&&!document.hidden&&navigator.onLine)sync()},10*60e3);
+  if(window.HWSOffline&&!await HWSOffline.sessionOk())await HWSOffline.gate();
+  if(window.HWSOffline){try{const c=await HWSOffline.loadCopy();if(c&&c.data&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt||null;dataRev=c.rev||null}}catch(e){}}
+  else if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
+  if(!down()&&(data||sourceUrl()||cfg.source=='dropbox-api')){try{await sync(true)}catch(e){}}
+  else if(down()&&(data||sourceUrl())){try{await sync(true)}catch(e){}}
+  else if(!data&&down()){lastErr='Offline, no saved copy on this phone yet';paint()}},
  statusHtml(){if(W.demo)return `<b class="demob">DEMO — sample data</b> <span class="small">Made-up jobs, people and numbers. Edits stay in this browser only; nothing is sent or saved anywhere else.</span> <button class="small" id="demoreset">Reset demo</button>`;
   if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
-  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>`;
-  return `<span class="sync ${on?'':'off'}">${on?'Online':'Offline'}</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · syncing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" ${on?'':'disabled'}>Sync now</button> <button class="small" id="dsrc">Data source</button>`},
+  const files=` <button class="small" id="offmgr">Saved files</button>`;
+  const off=down();
+  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))}</span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" disabled>Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`;
+  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>${files}`;
+  return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn">Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`},
  errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
-  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox and keeps a copy on this device for offline use.</p>
+  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.</p>
   <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Sample Builders schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const dr=document.getElementById('demoreset');if(dr)dr.onclick=()=>{if(confirm('Reset the demo? This clears your demo edits, flags and approvals in this browser.'))window.HWS_DEMO_RESET()};
   const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
+  const om=document.getElementById('offmgr');if(om&&window.HWSOffline)om.onclick=()=>HWSOffline.openManager();
   const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();cfg={source:'dropbox-api'};saveCfg();
    {const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
    try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;await syncBoot();openStore();startLive()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
@@ -1175,6 +1229,439 @@ function create(o){const A=o.A,c=A.CFG;const dataPath=c.dataPath;const base=(c.l
 root.HWSLive={create,FORMAT};
 })(typeof window!=='undefined'?window:globalThis);
 
+/* Offline phone support. The PIN is checked against a hash kept on this device (never the PIN itself).
+   The schedule snapshot in IndexedDB is encrypted with a key derived from that PIN. The browser cache may
+   already hold the same file after a load; this module does not keep a second plaintext copy.
+   iOS Home Screen limits are handled here: about 50 MB for saved files, and storage that the system can still evict. */
+(function(){
+'use strict';
+const FILE_CACHE='hws-files', NET_KEY='hws-net';
+const FILE_CAP=48*1024*1024;
+const IOS_CAP=50*1024*1024;
+const PIN_MIN=4, LOCK_LIMIT=5, LOCK_MS=15*60*1000, SESSION_MS=12*3600*1000;
+const VDB='hws-vault', VIEW_KEY='hws-last-view', JOB_KEY='hws-off-jobs', SYNC_KEY='hws-synced-at';
+const IOS_NOTE='iPhone may delete saved files if this Home Screen app is not opened for a while, and it keeps about 50 MB for this app. Unlock it once while online from the Home Screen icon, open it now and then, and clear saved files if a save does not fit.';
+const enc=new TextEncoder(), dec=new TextDecoder();
+let clock=()=>Date.now();
+let key=null;
+const dev=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function norm(name){return String(name||'').trim().toLowerCase().replace(/\s+/g,' ')}
+function b64(bytes){let s='';bytes.forEach(b=>{s+=String.fromCharCode(b)});return btoa(s)}
+function b64d(s){const bin=atob(s), out=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return out}
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(VDB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>{d.close();res(q.result)};q.onerror=()=>rej(q.error)})}
+async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>{d.close();res()};t.onerror=()=>rej(t.error)})}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function offlineNow(){if(!navigator.onLine)return true;return lsGet(NET_KEY)==='0'}
+function markNet(on){lsSet(NET_KEY,on?'1':'0')}
+function pinRec(){return idbGet('pin').catch(()=>null)}
+function lockRec(){return idbGet('lock').catch(()=>null).then(v=>v||{fails:{},until:{}})}
+async function hashPin(salt, name, pin){
+  const msg=enc.encode(norm(name)+'\n'+String(pin||''));
+  const data=new Uint8Array(salt.length+msg.length);
+  data.set(salt,0);data.set(msg,salt.length);
+  return b64(new Uint8Array(await crypto.subtle.digest('SHA-256', data)));
+}
+async function deriveKey(pin, salt){
+  const base=await crypto.subtle.importKey('raw', enc.encode(String(pin||'')), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+function sameHash(a,b){if(!a||!b||a.length!==b.length)return false;let n=0;for(let i=0;i<a.length;i++)n|=a.charCodeAt(i)^b.charCodeAt(i);return n===0}
+async function lockState(name){
+  const keyn=norm(name), now=clock(), rec=await lockRec();
+  const until=(rec.until||{})[keyn]||0;
+  if(until && now>=until){delete rec.until[keyn];delete rec.fails[keyn];await idbPut('lock', rec);return {locked:false,rec}}
+  if(until && now<until)return {locked:true,rec,error:'too many PIN attempts; try again in 15 minutes'}
+  return {locked:false,rec}
+}
+async function addFail(name){
+  const keyn=norm(name), now=clock(), rec=await lockRec();
+  const window=(rec.fails[keyn]||[]).filter(t=>now-t<=LOCK_MS);
+  window.push(now);
+  if(window.length>=LOCK_LIMIT){rec.until[keyn]=now+LOCK_MS;delete rec.fails[keyn];await idbPut('lock', rec);return {locked:true}}
+  rec.fails[keyn]=window;await idbPut('lock', rec);return {locked:false}
+}
+async function clearFail(name){const keyn=norm(name), rec=await lockRec();delete rec.fails[keyn];delete rec.until[keyn];await idbPut('lock', rec)}
+async function sessionOk(){
+  const rec=await pinRec();
+  return !!(rec&&rec.sessionUntil&&clock()<rec.sessionUntil&&rec.hash);
+}
+async function remember(display, pin){
+  const name=String(display||'').trim().slice(0,60);
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const hash=await hashPin(salt, name, pin);
+  const rec={v:1,norm:norm(name),display:name,salt:b64(salt),hash,sessionUntil:clock()+SESSION_MS};
+  await idbPut('pin', rec);
+  key=await deriveKey(pin, salt);
+  await clearFail(name);
+  return rec;
+}
+async function verifyLocal(name, pin){
+  const state=await lockState(name);
+  if(state.locked)return {ok:false,error:state.error};
+  const rec=await pinRec();
+  if(!rec||!rec.hash||!rec.salt)return {ok:false,error:'name or PIN does not match',unknown:true};
+  if(norm(name)!==rec.norm){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  if(String(pin||'').length<PIN_MIN){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  const got=await hashPin(b64d(rec.salt), name, pin);
+  if(!sameHash(got, rec.hash)){const fail=await addFail(name);return {ok:false,error:fail.error||'name or PIN does not match'}}
+  key=await deriveKey(pin, b64d(rec.salt));
+  rec.sessionUntil=clock()+SESSION_MS;
+  await idbPut('pin', rec);
+  await clearFail(name);
+  return {ok:true,display:rec.display||name};
+}
+async function verifyOnline(name, pin){
+  const state=await lockState(name);
+  if(state.locked)return {ok:false,error:state.error};
+  let res, body;
+  try{
+    res=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who:name,pin})});
+    try{body=await res.json()}catch(e){body={}}
+  }catch(e){return {ok:false,offline:true}}
+  if(res.ok&&body&&body.ok){await remember(body.who||name, pin);return {ok:true,display:body.who||name}}
+  if(res.status===404||res.status===405)return {ok:false,missing:true}
+  if(res.status===429){const rec=await lockRec();rec.until[norm(name)]=clock()+LOCK_MS;delete rec.fails[norm(name)];await idbPut('lock', rec);return {ok:false,error:body.error||'too many PIN attempts; try again in 15 minutes'}}
+  const fail=await addFail(name);
+  return {ok:false,error:fail.error||body.error||'name or PIN does not match'}
+}
+async function unlockWith(name, pin){
+  name=String(name||'').trim();
+  if(!name)return {ok:false,error:'name required'}
+  if(String(pin||'').length<PIN_MIN)return {ok:false,error:'name or PIN does not match'}
+  if(navigator.onLine){
+    const net=await verifyOnline(name, pin);
+    if(net.ok||net.error&&!net.offline&&!net.missing)return net;
+    const local=await verifyLocal(name, pin);
+    if(local.ok)return local;
+    if(net.missing&&local.unknown)return {ok:false,error:'This phone has not checked this PIN online yet. Connect once, then it works offline.'}
+    return local.ok?local:{ok:false,error:local.error||net.error||'name or PIN does not match'}
+  }
+  return verifyLocal(name, pin);
+}
+function gateHtml(err){
+  let who='';try{who=localStorage.getItem('hws-who')||''}catch(e){}
+  return `<div class="unlock"><h1>Sample Builders</h1>
+  <p>Enter your name and PIN. The schedule is loaded after that and kept on this phone for offline use.</p>
+  <form id="unlock-form"><label>Name <input id="unlock-name" name="name" autocomplete="name" value="${esc(who)}" required></label>
+  <label>PIN <input id="unlock-pin" name="pin" type="password" autocomplete="off" inputmode="text" spellcheck="false" required aria-label="PIN"></label>
+  <button class="pri" id="unlock-go" type="submit">Unlock</button>
+  <p id="unlock-err" class="red" role="alert">${esc(err||'')}</p></form>
+  <p class="hint">${esc(IOS_NOTE)}</p></div>`
+}
+function gate(){
+  return new Promise(resolve=>{
+    const root=document.getElementById('root');
+    const show=err=>{if(root)root.innerHTML=gateHtml(err);const form=document.getElementById('unlock-form');if(!form)return;
+      const name=document.getElementById('unlock-name'), pin=document.getElementById('unlock-pin');
+      if(name&&!err)name.focus();
+      form.onsubmit=async ev=>{
+        ev.preventDefault();
+        const btn=document.getElementById('unlock-go');if(btn)btn.disabled=true;
+        const result=await unlockWith(name.value, pin.value);
+        if(btn)btn.disabled=false;
+        if(!result.ok){show(result.error||'name or PIN does not match');const again=document.getElementById('unlock-pin');if(again)again.focus();return}
+        try{localStorage.setItem('hws-who', result.display||name.value.trim())}catch(e){}
+        askPersist();
+        resolve(true);
+      }};
+    show('');
+  });
+}
+async function dataCache(){
+  const keys=await caches.keys();
+  const names=keys.filter(k=>k.startsWith('hws-data-')).sort();
+  return caches.open(names.length?names[names.length-1]:'hws-data');
+}
+async function putCache(data){
+  if(!('caches' in window))return;
+  try{
+    const cache=await dataCache();
+    const url=new URL('data/data.json', location.href).href;
+    await cache.put(url, new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json','X-HWS-Cache':'fresh'}}));
+  }catch(e){}
+}
+async function readCache(){
+  if(!('caches' in window))return null;
+  try{
+    const keys=await caches.keys();
+    const names=keys.filter(k=>k.startsWith('hws-data-')||k.startsWith('hws-shell-')||k==='hws-data');
+    for(let i=0;i<names.length;i++){
+      const box=await caches.open(names[i]);
+      const reqs=await box.keys();
+      for(let j=0;j<reqs.length;j++){
+        if(!/\/data\/data\.json$/.test(new URL(reqs[j].url).pathname))continue;
+        const res=await box.match(reqs[j]);
+        if(!res)continue;
+        try{const data=await res.json();const syncedAt=+(lsGet(SYNC_KEY)||0)||null;return {data,syncedAt}}catch(e){}
+      }
+    }
+  }catch(e){}
+  return null;
+}
+async function seal(data, syncedAt){
+  lsSet(SYNC_KEY, String(syncedAt||clock()));
+  await putCache(data);
+  if(!key){await dropLegacy();return false}
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv}, key, enc.encode(JSON.stringify({data,syncedAt}))));
+  await idbPut('blob',{iv:b64(iv),ct:b64(ct)});
+  await dropLegacy();
+  return true;
+}
+async function unseal(){
+  if(!key)return null;
+  const rec=await idbGet('blob').catch(()=>null);
+  if(!rec||!rec.iv||!rec.ct)return null;
+  try{
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(rec.iv)}, key, b64d(rec.ct));
+    return JSON.parse(dec.decode(pt));
+  }catch(e){return null}
+}
+async function dropLegacy(){
+  await new Promise(res=>{
+    let done=false;const fin=()=>{if(!done){done=true;res()}};
+    try{
+      const r=indexedDB.open('hws-pwa');
+      r.onupgradeneeded=()=>fin();
+      r.onerror=()=>fin();
+      r.onsuccess=()=>{
+        const db=r.result;
+        if(!db.objectStoreNames.contains('kv')){db.close();fin();return}
+        try{
+          const t=db.transaction('kv','readwrite');
+          t.objectStore('kv').delete('data');
+          t.oncomplete=()=>{db.close();fin()};
+          t.onerror=()=>{db.close();fin()};
+        }catch(e){db.close();fin()}
+      };
+    }catch(e){fin()}
+  });
+}
+async function loadCopy(){
+  const sealed=await unseal();
+  if(sealed&&sealed.data)return sealed;
+  if(await sessionOk())return readCache();
+  return null;
+}
+function rememberView(){
+  const h=location.hash||'#/';
+  if(h.indexOf('setup=')>=0)return;
+  lsSet(VIEW_KEY, h);
+}
+function restoreView(){
+  const last=lsGet(VIEW_KEY)||'';
+  const h=location.hash||'';
+  if((h===''||h==='#'||h==='#/'||h==='#/home')&&last&&last!=='#/'&&last!=='#'&&last!=='#/home'){
+    location.hash=last;
+    return true;
+  }
+  return false;
+}
+function fmtBytes(n){n=+n||0;if(n<1024)return n+' B';if(n<1024*1024)return (n/1024).toFixed(n<10*1024?1:0)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+async function capBytes(){
+  let cap=FILE_CAP;
+  try{
+    if(navigator.storage&&navigator.storage.estimate){
+      const est=await navigator.storage.estimate();
+      if(est&&est.quota&&est.quota<IOS_CAP)cap=Math.min(cap, Math.max(1024*1024, Math.floor(est.quota*0.8)));
+    }
+  }catch(e){}
+  return cap;
+}
+async function measure(){
+  let bytes=0,count=0;
+  try{
+    const box=await caches.open(FILE_CACHE);
+    const reqs=await box.keys();
+    for(let i=0;i<reqs.length;i++){
+      const res=await box.match(reqs[i]);
+      if(!res)continue;
+      const blob=await res.clone().blob();
+      bytes+=blob.size;count++;
+    }
+  }catch(e){}
+  return {bytes,count,cap:await capBytes()};
+}
+function jobMap(){try{return JSON.parse(lsGet(JOB_KEY)||'{}')}catch(e){return {}}}
+function jobSaved(slug){return !!jobMap()[slug]}
+function setJobFlag(slug, on){const m=jobMap();if(on)m[slug]=1;else delete m[slug];lsSet(JOB_KEY, JSON.stringify(m))}
+function saveable(url){return /\.(pdf|png|jpe?g|gif|webp|heic|csv|txt)(\?|#|$)/i.test(String(url||''))}
+function dropboxHost(hostname){
+  const h=String(hostname||'').toLowerCase();
+  return h==='dropbox.com'||h.endsWith('.dropbox.com')||h==='dropboxusercontent.com'||h.endsWith('.dropboxusercontent.com');
+}
+function servedHere(url){
+  try{
+    const abs=new URL(url, location.href);
+    if(dropboxHost(abs.hostname))return false;
+    return abs.origin===location.origin;
+  }catch(e){return false}
+}
+function itemsFor(slug){
+  const out=[], seen={};
+  const add=(url,name,kind)=>{const u=String(url||'');if(!u||seen[u]||!saveable(u)||!servedHere(u))return;seen[u]=1;out.push({url:u,name:name||'File',kind:kind||'file'})};
+  const job=(typeof DATA!=='undefined'&&DATA&&DATA.jobs&&DATA.jobs[slug])||null;
+  ((job&&job.plans)||[]).forEach(p=>add(p.url,p.name||'Plan sheet','plan'));
+  try{
+    const L=typeof JL==='function'?JL(slug):{items:[],permits:[]};
+    (L.items||[]).forEach(x=>add(x.url,x.label,'file'));
+    (L.permits||[]).forEach(p=>add(p.url,p.number||p.file,'file'));
+  }catch(e){}
+  return out;
+}
+async function cacheFile(url, meta){
+  meta=meta||{};
+  if(!servedHere(url))return {ok:false,error:'This link opens outside the app and cannot be saved on the phone.'};
+  const abs=new URL(url, location.href);
+  const href=abs.href;
+  const box=await caches.open(FILE_CACHE);
+  const hit=await box.match(href);
+  if(hit&&offlineNow())return {ok:true,cached:true};
+  if(offlineNow()&&!hit)return {ok:false,error:'Not saved on this phone yet'};
+  let res;
+  try{res=await fetch(href,{credentials:'omit'})}catch(e){return hit?{ok:true,cached:true}:{ok:false,error:'Could not download'}}
+  if(!res||!res.ok)return hit?{ok:true,cached:true}:{ok:false,error:'Could not download'};
+  const buf=await res.arrayBuffer();
+  const used=await measure();
+  const already=!!hit;
+  if(!already&&used.bytes+buf.byteLength>used.cap){
+    return {ok:false,error:'Saved files use '+fmtBytes(used.bytes)+' of about '+fmtBytes(IOS_CAP)+'. iPhone keeps roughly 50 MB for a Home Screen app. Clear saved files to make room.'};
+  }
+  const headers=new Headers(res.headers);
+  headers.set('Content-Length', String(buf.byteLength));
+  try{await box.put(href, new Response(buf,{status:200,headers}))}
+  catch(e){return {ok:false,error:'Saved files use '+fmtBytes(used.bytes)+' of about '+fmtBytes(IOS_CAP)+'. This phone refused another file. Clear saved files to make room.'}}
+  const list=(await idbGet('files').catch(()=>[]))||[];
+  const row={url:href,slug:meta.slug||'',name:meta.name||'File',bytes:buf.byteLength,kind:meta.kind||'file',at:clock()};
+  const i=list.findIndex(x=>x.url===href);
+  if(i>=0)list[i]=row;else list.push(row);
+  await idbPut('files', list);
+  return {ok:true,bytes:buf.byteLength};
+}
+async function clearFiles(slug){
+  const list=(await idbGet('files').catch(()=>[]))||[];
+  const box=await caches.open(FILE_CACHE);
+  if(!slug){
+    const keys=await box.keys();
+    for(let i=0;i<keys.length;i++)await box.delete(keys[i]);
+    await idbPut('files', []);
+    lsSet(JOB_KEY, '{}');
+    return;
+  }
+  const keep=[];
+  for(let i=0;i<list.length;i++){
+    if(list[i].slug===slug){try{await box.delete(list[i].url)}catch(e){}}
+    else keep.push(list[i]);
+  }
+  await idbPut('files', keep);
+  setJobFlag(slug, false);
+}
+async function toggleJob(slug, on){
+  if(!on){await clearFiles(slug);return {ok:true,on:false}}
+  const items=itemsFor(slug);
+  if(!items.length)return {ok:false,error:'No plan sheets or files to save for this job yet'}
+  let n=0, err='';
+  for(let i=0;i<items.length;i++){
+    const r=await cacheFile(items[i].url,{slug,name:items[i].name,kind:items[i].kind});
+    if(r.ok)n++;else{err=r.error||'Could not save';break}
+  }
+  setJobFlag(slug, n>0&&!err);
+  return {ok:!err,on:jobSaved(slug),saved:n,error:err}
+}
+function budgetNote(){return IOS_NOTE}
+async function askPersist(){
+  if(!navigator.storage||!navigator.storage.persist)return 'unavailable';
+  try{return await navigator.storage.persist()?'granted':'denied'}catch(e){return 'unavailable'}
+}
+async function openFile(url, name, slug){
+  const abs=new URL(url, location.href).href;
+  const shown=showPlan(abs, name||'Plan');
+  const r=await cacheFile(url,{name,slug,kind:'file'});
+  if(!r.ok&&!r.cached){
+    const st=document.getElementById('planstat');
+    if(st)st.textContent=r.error||'Could not open';
+    if(typeof toast==='function')toast(r.error||'Could not open');
+    return r;
+  }
+  await shown;
+  return r;
+}
+async function showPlan(url, name){
+  let host=document.getElementById('planlayer');
+  if(!host){host=document.createElement('div');host.id='planlayer';host.className='planlayer';document.body.appendChild(host)}
+  host.innerHTML=`<div class="planview" role="dialog" aria-modal="true"><div class="planbar"><b id="planname">${esc(name||'Plan')}</b><span id="planstat">Opening…</span><button type="button" id="planclose">Close</button></div><canvas id="plan-canvas"></canvas></div>`;
+  host.hidden=false;
+  document.getElementById('planclose').onclick=()=>{host.hidden=true;host.innerHTML=''};
+  try{
+    if(!window.HWSPlan)await new Promise((res,rej)=>{const s=document.createElement('script');s.src=new URL('plans/viewer.js', location.href).href;s.onload=res;s.onerror=()=>rej(new Error('viewer missing'));document.head.appendChild(s)});
+    const info=await window.HWSPlan.render(document.getElementById('plan-canvas'), url);
+    const st=document.getElementById('planstat');
+    if(st)st.textContent='Showing saved plan'+(navigator.onLine?'':' offline')+' · '+info.pages+' page'+(info.pages===1?'':'s');
+  }catch(e){
+    const st=document.getElementById('planstat');
+    if(st)st.textContent=e.message||'Could not open this plan';
+  }
+}
+function paintBar(root){
+  if(!root)return;
+  root.querySelectorAll('[data-offslug]').forEach(btn=>{
+    const slug=btn.getAttribute('data-offslug');
+    const on=jobSaved(slug);
+    btn.setAttribute('aria-pressed', on?'true':'false');
+    btn.textContent=on?'Saved for offline':'Save for offline';
+    btn.onclick=async ev=>{
+      ev.preventDefault();ev.stopPropagation();
+      btn.disabled=true;
+      const r=await toggleJob(slug, !jobSaved(slug));
+      btn.disabled=false;
+      paintBar(root);
+      const size=root.querySelector('[data-offsize]');
+      if(size)measure().then(m=>{size.textContent='Saved files: '+fmtBytes(m.bytes)+' of about 50 MB'});
+      if(r.error&&typeof toast==='function')toast(r.error);
+    };
+  });
+  const clr=root.querySelector('[data-offclear]');
+  if(clr&&!clr.dataset.bound){clr.dataset.bound='1';clr.onclick=async()=>{
+    if(!confirm('Clear saved files on this phone? Plans you saved for offline are removed. The schedule stays.'))return;
+    await clearFiles();
+    paintBar(document);
+    const size=root.querySelector('[data-offsize]');
+    if(size)size.textContent='Saved files: 0 KB of about 50 MB';
+  }}
+  root.querySelectorAll('[data-offsize]').forEach(el=>{
+    measure().then(m=>{el.textContent='Saved files: '+fmtBytes(m.bytes)+' of about 50 MB · '+m.count+' file'+(m.count===1?'':'s')});
+  });
+}
+function barHtml(slug){
+  const on=slug?jobSaved(slug):false;
+  return `<div class="offbar">${slug?`<button type="button" class="small" data-offslug="${esc(slug)}" aria-pressed="${on?'true':'false'}">${on?'Saved for offline':'Save for offline'}</button>`:''}<span class="small" data-offsize>Saved files: …</span><button type="button" class="small" data-offclear>Clear saved files</button><p class="hint">${esc(IOS_NOTE)}</p></div>`;
+}
+async function openManager(){
+  const m=await measure();
+  const persist=await askPersist();
+  const stay=persist==='granted'?'This phone accepted a request to keep the saved copy.':'iOS can still delete the copy under storage pressure even after that request.';
+  const html=`<h2>Saved for offline</h2><p><b>${esc(fmtBytes(m.bytes))}</b> of about 50 MB · ${m.count} file${m.count===1?'':'s'}.</p><p class="small">${esc(IOS_NOTE)} ${esc(stay)}</p><div class="mbtns"><button type="button" class="danger" id="offclearall">Clear saved files</button><span class="sp"></span><button type="button" data-close>Close</button></div>`;
+  if(typeof openModal==='function'){
+    openModal(html, modal=>{
+      const b=modal.querySelector('#offclearall');
+      if(b)b.onclick=async()=>{await clearFiles();if(typeof closeModal==='function')closeModal();if(typeof toast==='function')toast('Saved files cleared')};
+    });
+  }
+}
+window.addEventListener('hashchange', rememberView);
+window.HWSOffline={
+  gate, sessionOk, unlockWith, verifyLocal, remember, seal, unseal, readCache, loadCopy, dropLegacy,
+  restoreView, rememberView, cacheFile, toggleJob, jobSaved, itemsFor, clearFiles, openFile, showPlan, servedHere,
+  measure, barHtml, paintBar, openManager, budgetNote, offlineNow, markNet,
+  limits(){return {fileCap:FILE_CAP,iosCap:IOS_CAP,lockMs:LOCK_MS,lockLimit:LOCK_LIMIT,sessionMs:SESSION_MS,note:IOS_NOTE}},
+  setClock(fn){if(dev&&typeof fn==='function')clock=fn},
+  _dev:dev
+};
+})();
+
 /* Sample Builders job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
    unchanged). Edits run through HWSEngine (same rules as the live server) and are stored by HWSStore; optional shared
    check-out/check-in through HWSSync (File System Access folder or Dropbox API). */
@@ -1239,7 +1726,7 @@ function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)locat
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
-const MODFN=()=>({schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory});
+const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -1664,13 +2151,20 @@ function slackClock(t){const m=String(t||'').match(/T(\d{2}):(\d{2})/);if(!m)ret
 function slackDay(t){return String(t||'').slice(0,10)||''}
 function slackFiles(v){if(Array.isArray(v))return v;if(!v)return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
 function slackReplies(v){return slackFiles(v)}
-function slackCanPost(){return typeof MODE!=='undefined'&&MODE==='live'&&!!(J&&J.channel)}
+function slackCanPost(){const mode=slackMode();return (mode==='live'||mode==='pwa')&&!!(J&&J.channel)}
 function slackWho(){
   try{if(typeof STORE!=='undefined'&&STORE&&STORE.who){const w=STORE.who();if(w)return w}}catch(e){}
   try{return localStorage.getItem('hws-who')||''}catch(e){return ''}}
 function slackPin(){const el=typeof document!=='undefined'&&document.getElementById('slackpin');return el?String(el.value||''):''}
 function slackSetWho(n){n=String(n||'').trim().slice(0,60);try{if(typeof STORE!=='undefined'&&STORE&&STORE.setWho)STORE.setWho(n);else localStorage.setItem('hws-who',n)}catch(e){}}
-function slackPending(){const k=J&&J.slug||'';window._slackPend=window._slackPend||{};return window._slackPend[k]||(window._slackPend[k]=[])}
+const SLACK_BOX='hws-slack-outbox';
+function slackLoadBox(){try{const o=JSON.parse(localStorage.getItem(SLACK_BOX)||'null');if(o&&Array.isArray(o.rows))return o}catch(e){}return {v:1,rows:[]}}
+function slackSaveBox(box){try{localStorage.setItem(SLACK_BOX,JSON.stringify(box));return true}catch(e){return false}}
+function slackDraftKey(){return 'hws-slack-draft:'+(J&&J.slug||'')}
+function slackDraft(){try{return localStorage.getItem(slackDraftKey())||''}catch(e){return ''}}
+function slackSetDraft(v){try{if(v)localStorage.setItem(slackDraftKey(),v);else localStorage.removeItem(slackDraftKey())}catch(e){}}
+function slackPending(){const k=J&&J.slug||'';const box=slackLoadBox();window._slackPend=window._slackPend||{};window._slackPend[k]=box.rows.filter(p=>p.slug===k);return window._slackPend[k]}
+function slackStoreRow(row){const box=slackLoadBox();const i=box.rows.findIndex(p=>p.id===row.id);if(i>=0)box.rows[i]=row;else box.rows.push(row);return slackSaveBox(box)}
 function slackComposeBox(opts){
   opts=opts||{};
   const live=!!opts.live, channel=opts.channel||'', on=live&&!!channel, thread=opts.thread||'';
@@ -1700,7 +2194,7 @@ function withSlackMod(mods){
 }
 function slackState(i){
   if(!i._state)return '';
-  const word=i._state==='sending'?'Sending…':(i._state==='sent'?'Sent':('Failed'+(i._err?': '+slackEsc(i._err):'')));
+  const word=i._state==='sending'?'Sending…':(i._state==='pending'?'Pending · sends when back online':(i._state==='sent'?'Sent':('Failed'+(i._err?': '+slackEsc(i._err):''))));
   const retry=i._state==='failed'?` <button type="button" class="small" data-retry="${slackEsc(i.id)}">Retry</button>`:'';
   return `<div class="slack-state ${slackEsc(i._state)}">${word}${retry}</div>`;
 }
@@ -1709,7 +2203,7 @@ function slackBubble(i,mine){
   const ts=slackTs(i);
   const pendingRe=ts?slackPending().filter(p=>p.thread_ts===ts):[];
   const label=(J.slack||'').replace(/^#/,'');
-  const replyBox=i._state?'':slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label,thread:ts});
+  const replyBox=i._state?'':slackComposeBox({live:slackCanPost(),channel:J.channel||'',label,thread:ts});
   const n=reps.length+pendingRe.length;
   return `<article class="slack-bubble${mine?' me':''}${i._state?' '+slackEsc(i._state):''}" id="sl-${slackEsc(String(i.id||ts))}">
     <div class="slack-meta"><b>${slackEsc(i.author||'Someone')}</b><time>${slackEsc(slackClock(i.time))}</time></div>
@@ -1732,9 +2226,9 @@ function slackApplyPush(msg){
     else J.messages.push(r);
   });
   const texts=new Set((msg.rows||[]).map(r=>String(r.text||'')+'|'+(r.author||'')));
-  window._slackPend=window._slackPend||{};
-  const pend=window._slackPend[J.slug]||[];
-  window._slackPend[J.slug]=pend.filter(p=>p._state==='failed'||p._state==='sending'||!texts.has(String(p.text||'')+'|'+(p.author||'')));
+  const box=slackLoadBox();
+  box.rows=box.rows.filter(p=>p.slug!==J.slug||p._state==='failed'||p._state==='pending'||p._state==='sending'||!texts.has(String(p.text||'')+'|'+(p.author||'')));
+  slackSaveBox(box);
 }
 function startSlackStream(){
   if(typeof MODE==='undefined'||MODE!=='live'||!window.EventSource||window._slackES)return;
@@ -1747,32 +2241,74 @@ function startSlackStream(){
     if(typeof curMod==='function'&&curMod()==='slack'){const M=document.getElementById('mod');if(M)mSlack(M)}
   };
 }
+function slackOffline(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLine}
+function slackNetFail(e, status){
+  if(slackOffline())return true;
+  if(status===0||status===404||status===405||status===502||status===503||status===504)return true;
+  const msg=e&&e.message||'';
+  return /failed to fetch|network|offline|load failed/i.test(msg);
+}
+async function slackCheckPin(who, pin){
+  if(!pin){
+    if(window.HWSOffline&&await HWSOffline.sessionOk())return {ok:true};
+    return {ok:false,error:'Enter your PIN'};
+  }
+  if(!navigator.onLine&&window.HWSOffline)return HWSOffline.verifyLocal(who, pin);
+  if(window.HWSOffline){
+    const net=await HWSOffline.unlockWith(who, pin);
+    return net;
+  }
+  const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
+  let sj={};try{sj=await s.json()}catch(e){}
+  if(!s.ok||!sj.ok)return {ok:false,error:sj.error||'name or PIN does not match',status:s.status};
+  return {ok:true};
+}
 async function slackSend(text, thread, pendingId){
   const who=slackWho();
-  if(!who){if(typeof toast==='function')toast('Add your name, then send');return}
+  if(!who){if(typeof toast==='function')toast('Add your name, then send');return false}
   const pin=slackPin();
   text=String(text||'').trim();
-  if(!text)return;
+  if(!text)return false;
   const pend=slackPending();
   let row=pendingId?pend.find(p=>p.id===pendingId):null;
   if(!row){
-    row={id:'local:'+Date.now(),author:who,text,time:new Date().toISOString(),thread_ts:thread||'',_state:'sending',source:'Slack',channel:J.slack||'Slack'};
+    row={id:'local:'+Date.now(),slug:J.slug,author:who,text,time:new Date().toISOString(),thread_ts:thread||'',_state:slackOffline()?'pending':'sending',source:'Slack',channel:J.slack||'Slack'};
     pend.push(row);
-  }else row._state='sending';
+  }else row._state=slackOffline()?'pending':'sending';
+  if(!slackStoreRow(row)){if(typeof toast==='function')toast('Could not keep that message on this phone');return false}
+  slackSetDraft('');
   const M=document.getElementById('mod');if(M&&typeof curMod==='function'&&curMod()==='slack')mSlack(M);
+  if(slackOffline())return true;
   try{
-    const read=async r=>{try{return await r.json()}catch(e){return {ok:false,error:'not sent'}}};
-    if(pin){
-      const s=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who,pin})});
-      const sj=await read(s);if(!sj.ok)throw new Error(sj.error||'name or PIN does not match');
-      const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
+    const checked=await slackCheckPin(who, pin);
+    if(!checked.ok){
+      if(slackNetFail(null, checked.status)){row._state='pending';row._err='';slackStoreRow(row)}
+      else {row._state='failed';row._err=checked.error||'name or PIN does not match';slackStoreRow(row)}
+      const M1=document.getElementById('mod');if(M1&&typeof curMod==='function'&&curMod()==='slack')mSlack(M1);
+      return row._state==='pending';
     }
+    const pinEl=document.getElementById('slackpin');if(pinEl)pinEl.value='';
     const r=await fetch('/api/job/'+encodeURIComponent(J.slug)+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,thread_ts:thread||'',who})});
-    const j=await read(r);if(!j.ok)throw new Error(j.error||'not sent');
-    row._state='sent';row.ts=j.ts||'';
-  }catch(e){row._state='failed';row._err=e.message||'not sent'}
+    let j={};try{j=await r.json()}catch(e){}
+    if(!r.ok||!j.ok){
+      if(slackNetFail(null, r.status)){row._state='pending';row._err=''}
+      else {row._state='failed';row._err=j.error||'not sent'}
+    }else{row._state='sent';row.ts=j.ts||''}
+  }catch(e){
+    if(slackNetFail(e)){row._state='pending';row._err=''}
+    else {row._state='failed';row._err=e.message||'not sent'}
+  }
+  slackStoreRow(row);
   const M2=document.getElementById('mod');if(M2&&typeof curMod==='function'&&curMod()==='slack')mSlack(M2);
+  return row._state!=='failed';
 }
+function slackFlush(){
+  if(typeof J==='undefined'||!J||!J.slug)return;
+  const box=slackLoadBox();
+  const waiting=box.rows.filter(p=>p.slug===J.slug&&(p._state==='pending'||p._state==='sending'));
+  waiting.forEach(p=>slackSend(p.text, p.thread_ts||'', p.id));
+}
+if(typeof window!=='undefined')window.addEventListener('online',()=>{if(typeof slackFlush==='function')slackFlush()});
 function mSlack(M){
   if(typeof startSlackStream==='function')startSlackStream();
   const label=(J.slack||'').replace(/^#/,'');
@@ -1792,23 +2328,26 @@ function mSlack(M){
   if(!blocks)blocks=`<div class="empty"><b>No Slack messages yet</b>${J.channel?'New messages show up here.':'This job has no Slack channel yet.'}</div>`;
   const name=live?`<label class="slack-name">Your name <input id="slackwho" value="${slackEsc(who)}" placeholder="Your name" autocomplete="name" enterkeyhint="next"></label><label class="slack-name">PIN <input id="slackpin" type="password" placeholder="PIN" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-label="PIN"></label>`:'';
   const prev=M.querySelector('.slack-foot textarea');
-  const draft=prev?prev.value:'';
+  const draft=prev&&prev.value?prev.value:slackDraft();
   M.innerHTML=`<div class="slack-tab"><div class="slack-head"><h2>${slackEsc(J.name||'')}</h2><span class="chip">${slackEsc(title)}</span>${live?'<span class="slack-live">Live</span>':''}</div>
-    <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:typeof MODE!=='undefined'&&MODE==='live',channel:J.channel||'',label})}</div></div>`;
+    <div class="slack-log">${blocks}</div><div class="slack-foot">${name}${slackComposeBox({live:live,channel:J.channel||'',label})}</div></div>`;
   const box=M.querySelector('.slack-foot textarea');
   if(box&&draft)box.value=draft;
+  if(box)box.addEventListener('input',()=>slackSetDraft(box.value));
   const whoIn=M.querySelector('#slackwho');
   if(whoIn)whoIn.onchange=()=>slackSetWho(whoIn.value);
   M.querySelectorAll('.slack-compose').forEach(form=>{
-    form.onsubmit=ev=>{
+    form.onsubmit=async ev=>{
       ev.preventDefault();
       if(!slackCanPost())return;
       const ta=form.querySelector('textarea');
       const text=ta?ta.value:'';
+      if(!String(text||'').trim())return;
       const thread=form.getAttribute('data-thread')||'';
       if(whoIn)slackSetWho(whoIn.value);
-      if(ta)ta.value='';
-      slackSend(text, thread);
+      slackSetDraft(text);
+      const ok=await slackSend(text, thread);
+      if(!ok&&ta)ta.value=text;
     };
   });
   M.querySelectorAll('[data-open]').forEach(b=>{
@@ -1826,6 +2365,59 @@ if(typeof document!=='undefined'){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={slackComposeBox,slackMarkup};
+
+/* Same-origin plan sheets the hub serves itself. The Dropbox Plan Room (planroom.js) stays
+   in charge of the plans page. dropbox.com links are not listed here and are not cached.
+   pdf.js and plans/viewer.js are part of the app shell. */
+function withPlansMod(mods){
+  mods=(mods||[]).map(x=>x.slice?x.slice():x);
+  if(mods.some(x=>x[0]==='plans'))return mods;
+  const at=mods.findIndex(x=>x[0]==='files');
+  mods.splice(at<0?mods.length:at,0,['plans','Plan Room']);
+  return mods;
+}
+function planItems(){
+  const out=[], seen={};
+  const add=(url,name)=>{
+    const u=String(url||'');
+    if(!u||seen[u])return;
+    if(window.HWSOffline&&typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(u))return;
+    seen[u]=1;out.push({url:u,name:name||'Plan sheet'});
+  };
+  ((J&&J.plans)||[]).forEach(p=>add(p.url,p.name));
+  try{const L=typeof JL==='function'?JL(J.slug):{items:[]};(L.items||[]).forEach(x=>{if(/\.pdf(\?|#|$)/i.test(x.url||''))add(x.url,x.label)})}catch(e){}
+  return out;
+}
+function bindPlanOpens(root){
+  if(!root)return;
+  root.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>{
+    if(window.HWSOffline)HWSOffline.openFile(b.getAttribute('data-plan'), b.getAttribute('data-name'), J&&J.slug);
+  });
+}
+function offlinePlanHtml(){
+  const items=planItems();
+  const slug=J&&J.slug;
+  const bar=window.HWSOffline?HWSOffline.barHtml(slug):'';
+  const rows=items.map(p=>`<button type="button" class="lrow planopen" data-plan="${esc(p.url)}" data-name="${esc(p.name)}"><span class="lb"><span class="lt">${esc(p.name)}</span><span class="ls">Opens here and is kept if you save this job</span></span></button>`).join('');
+  return `<div data-hws-offplans="1">${bar}${rows?`<div class="rows">${rows}</div>`:''}</div>`;
+}
+function paintOfflinePlans(root){
+  if(window.HWSOffline)HWSOffline.paintBar(root);
+  bindPlanOpens(root);
+}
+function mPlans(M){
+  const items=planItems();
+  M.innerHTML=`<div class="planroom"><h2 class="sh2 first">Plan Room</h2>${offlinePlanHtml()}${items.length?'':'<div class="none">No plan sheets on this job yet</div>'}</div>`;
+  paintOfflinePlans(M);
+}
+function attachOfflinePlans(M){
+  if(!M||M.querySelector('[data-hws-offplans]'))return;
+  const box=document.createElement('div');
+  box.innerHTML=offlinePlanHtml();
+  if(box.firstChild)M.appendChild(box.firstChild);
+  paintOfflinePlans(M);
+}
+window.HWSOfflinePlans={attach:attachOfflinePlans};
 
 /* Sample Builders employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
@@ -1961,13 +2553,21 @@ function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().com
   const jobs=((DATA.common||{}).all_jobs||[]).filter(j=>JLs[j.slug]);
   body=`<div class="quick">${quick.map(x=>lbtn(x,true)).join('')}</div>
   <h2 class="sh2">Job folders <span>${jobs.length}</span></h2><div class="jfold">${jobs.map(j=>{const L=JLs[j.slug];const fold=(L.items||[]).find(x=>x.kind=='dropbox'&&x.label=='Job folder');const n=(L.items||[]).length+(L.permits||[]).length;
-   return `<details class="jf" data-slug="${esc(j.slug)}"><summary><span class="lb"><span class="lt">${esc(j.name)}</span><span class="ls">${fold?'Dropbox folder · ':'No Dropbox folder · '}${n} link${n==1?'':'s'}${(L.permits||[]).length?' · permit '+esc(L.permits[0].number):''}</span></span>${fold?`<a class="fold" href="${esc(safeUrl(fold.url))}" target="_blank" rel="noopener" aria-label="Open the Dropbox folder">${ico('files')}</a>`:''}${ico('chev','go')}</summary>
+   return `<details class="jf" data-slug="${esc(j.slug)}"><summary><span class="lb"><span class="lt">${esc(j.name)}</span><span class="ls">${fold?'Dropbox folder · ':'No Dropbox folder · '}${n} link${n==1?'':'s'}${(L.permits||[]).length?' · permit '+esc(L.permits[0].number):''}</span></span>${fold?`<a class="fold" href="${esc(safeUrl(fold.url))}" target="_blank" rel="noopener" aria-label="Open the Dropbox folder">${ico('files')}</a>`:''}<button type="button" class="small offjob" data-offslug="${esc(j.slug)}">Save for offline</button>${ico('chev','go')}</summary>
    <div class="rows">${jobLinkRows(j.slug,true)}</div></details>`}).join('')}</div>
   ${C.filter(g=>g.title!='Apps').map(g=>`<h2 class="sh2">${esc(g.title)} <span>${(g.items||[]).length}</span></h2><div class="rows">${(g.items||[]).map(x=>lrow(x)).join('')}</div>`).join('')}`}
  hubShell('files',`<div class="hph"><h1>Files</h1></div><label class="sbox big">${ico('search')}<input type="search" id="fq" placeholder="Search files, permits, bids, forms" value="${esc(st.fq||'')}" autocomplete="off"></label>${body}
  <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account). Google links follow the sheet's sharing.</div>`);
  const fq=$('#fq');fq.oninput=e=>{st.fq=e.target.value;saveUi();const p=fq.selectionStart;renderFiles();const n=$('#fq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
- document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));document.title='Sample Builders · Files'}
+ document.querySelectorAll('details.jf .fold').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));
+ document.querySelectorAll('details.jf [data-offslug]').forEach(b=>b.addEventListener('click',e=>e.stopPropagation()));
+ if(window.HWSOffline)HWSOffline.paintBar(document.getElementById('root'));
+ document.title='Sample Builders · Files'}
+function bindSavedOpens(root,slug){if(!root||!window.HWSOffline)return;root.querySelectorAll('a[href]').forEach(a=>{
+  const href=a.getAttribute('href')||'';
+  if(!/\.(pdf|png|jpe?g|gif|webp)(\?|#|$)/i.test(href))return;
+  if(typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(href))return;
+  a.addEventListener('click',ev=>{ev.preventDefault();HWSOffline.openFile(href, a.textContent.trim(), slug)})})}
 function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!compact||!/\(all jobs\)/.test(x.label));
  const permits=(L.permits||[]).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
  return permits.join('')+it.map(x=>lrow(x)).join('')||'<div class="none">No links on file for this job yet</div>'}
@@ -1975,10 +2575,12 @@ function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filte
 function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp[x.group||'Links']=grp[x.group||'Links']||[]).push(x));
  const bids=H().bids.filter(b=>b.slug==J.slug&&(b.links||[]).some(x=>x.kind=='dropbox-file'));
  const permits=(L.permits||[]).length?`<div class="permits">${L.permits.map(p=>`<a class="permit" href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">${ico('badge')}<span class="lb"><span class="lt">${esc(p.number)}</span><span class="ls">${esc(p.what||'Permit')}</span></span>${ico('ext','go')}</a>`).join('')}</div>`:'';
- M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
+ const bar=window.HWSOffline?HWSOffline.barHtml(J.slug):'';
+ M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${bar}${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
  ${Object.entries(grp).map(([g,l])=>`<h3 class="sh3">${esc(g)}</h3><div class="rows">${l.map(x=>lrow(x)).join('')}</div>`).join('')||'<div class="none">No links on file for this job yet</div>'}
  ${bids.length?`<h3 class="sh3">Bid files <span class="mut">${bids.length}</span></h3><div class="rows">${bids.map(b=>b.links.filter(x=>x.kind=='dropbox-file').map(x=>lrow(x,b.vendor+' · '+b.trade)).join('')).join('')}</div>`:''}
- <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account).</div></div>`}
+ <div class="hint foot">Dropbox links open in your own Dropbox (sign in with your Sample Builders account). A PDF or photo you open is kept on this phone.</div></div>`;
+ if(window.HWSOffline){HWSOffline.paintBar(M);bindSavedOpens(M,J.slug)}}
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Sample Builders · Chat'}
@@ -2905,6 +3507,11 @@ function bindSignIn(root) {
   };
 }
 
+function paintSavedPlans(el) {
+  if (!el) return;
+  const hook = typeof HWSOfflinePlans !== "undefined" ? HWSOfflinePlans : (typeof window !== "undefined" ? window.HWSOfflinePlans : null);
+  if (hook && typeof hook.attach === "function") hook.attach(el);
+}
 let prGen = 0;
 async function mPlanRoom(M) {
   const gen = ++prGen;
@@ -2917,11 +3524,13 @@ async function mPlanRoom(M) {
     if (gen !== prGen || !J || J.slug !== slug) return;
     M.innerHTML = planSignIn(e.code === "auth" ? e.message : ("Could not read Dropbox. " + (e.message || "")));
     bindSignIn(M);
+    paintSavedPlans(M);
     return;
   }
   if (gen !== prGen || !J || J.slug !== slug) return;
   if (got.error) {
     M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(got.error)}</b></div><div class="rows">${sampleBlock()}</div></div>`;
+    paintSavedPlans(M);
     return;
   }
   const rows = got.pdfs.map((f) => {
@@ -2935,6 +3544,7 @@ async function mPlanRoom(M) {
     <div class="rows">${sampleBlock()}</div>
     <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer.</div></div>`;
   bindAuto(M, slug, got.plansPath);
+  paintSavedPlans(M);
 }
 
 function renderPlanIndex() {
@@ -3184,7 +3794,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
+  await syncBoot();openStore();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>
