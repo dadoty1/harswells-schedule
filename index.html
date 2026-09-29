@@ -206,6 +206,8 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .sbox:focus-within{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(44,79,124,.15)}.sbox.big{margin-bottom:12px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
 .bcard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px}.bcard.late{border-left:4px solid var(--red)}
+.cmpbar{height:8px;background:#e4e9f1;border-radius:6px;margin-top:8px;overflow:hidden}.cmpbar b{display:block;height:100%;background:#98a2b3;border-radius:6px}.cmpbar b.low{background:#12a150}
+.home-cmp{margin:8px 0 4px}
 .bt{display:flex;align-items:center;gap:8px}.bv{font-weight:700;font-size:16px;flex:1;min-width:0}.bs{color:#475467;font-size:13px;margin-top:4px;line-height:1.6}.bs .dchip{padding:1px 6px}
 .lbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.none2{margin-top:8px;font-style:italic}
 .orow .olinks{padding:0 14px 12px;margin-top:-4px}
@@ -347,7 +349,10 @@ tr[data-sel]{cursor:pointer}
 .planlayer[hidden]{display:none}
 .planview{background:#111;color:#fff;width:min(640px,100%);max-height:100%;overflow:auto;border-radius:14px 14px 0 0;padding-bottom:env(safe-area-inset-bottom)}
 .planbar{display:flex;gap:8px;align-items:center;padding:12px;background:#15233b}
+.planbar #planname{min-width:0;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .planbar #planstat{color:#d0d5dd;font-size:13px;flex:1}
+.planbar #plansrc{color:#fff;font-size:13px;font-weight:650;text-decoration:none;border:1px solid #3a465c;border-radius:8px;padding:6px 10px;white-space:nowrap}
+.planbar #plansrc[hidden]{display:none}
 .planview canvas{display:block;width:100%;height:auto;background:#222}
 .planopen{width:100%;text-align:left;border:0;background:#fff;border-bottom:1px solid var(--line)}
 .slack-state.pending{color:#b54708;font-weight:700}
@@ -747,7 +752,7 @@ function applyEdit(state,ops,ctx){
  const v1=violations(c1.rows);const flBefore=state.flags||[];
  const newflags=Object.entries(v1).filter(([k])=>!(k in v0)).map(([k,val])=>{const [t,p]=k.split('\u0001');return {task:t,pred:p,type:val[0],created:ctx.stamp}});
  const fl=flBefore.filter(f=>(f.task+'\u0001'+f.pred) in v1&&f.task in by).concat(newflags.filter(f=>!flBefore.some(g=>g.task==f.task&&g.pred==f.pred)));
- let summary=msgs.join('; ');if(shifted.length)summary+=`; ${shifted.length} downstream task(s) shifted`;if(pushed.length)summary+=`; ${pushed.length} Buildertrend task(s) pushed`;if(newflags.length)summary+=`; ${newflags.length} locked task(s) flagged (not moved)`;
+ let summary=msgs.join('; ');if(shifted.length)summary+=`; ${shifted.length} downstream task(s) shifted`;if(pushed.length)summary+=`; ${pushed.length} imported schedule task(s) moved`;if(newflags.length)summary+=`; ${newflags.length} locked task(s) flagged (not moved)`;
  if(poSummary)summary=summary?poSummary+'; '+summary:poSummary;
  return {state:{rows,flags:fl,pos:state.pos||[],bid_status:state.bid_status||{}},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
 /* ---------- derived job (modules.load_schedules + build_conflicts + build_todos + jobs.job_slice) ---------- */
@@ -783,7 +788,7 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
   next:realish.filter(r=>r.start>=today).slice(0,3).map(r=>({task:r.task,date:r.start,type:r.milestone_type,src:r.source}))};
  // selections: DRAFT template deadlines follow the "Finalize ..." schedule task
  const fin={};tasks.forEach(r=>{const c=r.consumes||'';if(c.startsWith('selection:')){const k=c.split(':')[1];if(!(k in fin))fin[k]=r}});
- const selections=(base.selections||[]).map(s=>{if(s.source!='DRAFT')return s;const f=fin[s.key];return Object.assign({},s,{deadline:f?f.start:'',deadline_task:f?f.task:'',source_ref:"Buildertrend '**Future Template' Selection Print"+(f?`; due = schedule '${f.task}'`:'')})});
+ const selections=(base.selections||[]).map(s=>{if(s.source!='DRAFT')return s;const f=fin[s.key];return Object.assign({},s,{deadline:f?f.start:'',deadline_task:f?f.task:'',source_ref:"Selection template"+(f?`; due = schedule '${f.task}'`:'')})});
  // to-dos: BT template due dates follow their schedule item
  const byT={};tasks.forEach(t=>{if(!(t.id in byT))byT[t.id]=t});
  const todos=[];(base.todos||[]).forEach(t=>{const m=/^(\d+) days? (after|before) /.exec(t.due_rule||'');if(!m||!['DRAFT','REAL'].includes(t.source)){todos.push(t);return}
@@ -802,19 +807,19 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
  else (base.conflicts||[]).filter(c=>STATIC_KINDS.slice(0,3).includes(c.kind)).forEach(c=>{const t=byT[c.task];out.push(Object.assign({},c,t?{task_start:t.start}:{}))});
  selections.forEach(s=>{const selApproved=(s.budget_status||'').toLowerCase()==='approved'||String(s.approval||'').toLowerCase().startsWith('approved')||s.status==='Client Approved';if(s.source=='TRACKER'&&!selApproved&&!s.order_date&&['Draft','Issue'].includes(poStatus(s.order_status))){const t=consumerTask(tasks,s.key);
    if(t&&t.start<=horizon)add('phase before selection approved',t.start<=addDays(today,45)?'high':'medium',`'${t.task}' starts ${t.start} (${t.source}); selection not approved: ${String(s.choice||'').slice(0,60)}`,`Selection: ${s.approval||'unknown'}; order status: ${s.order_status}.`,t,s.order_link)}
-  else if(s.source=='DRAFT'&&s.deadline&&s.deadline<=addDays(today,14)){const t=consumerTask(tasks,s.key);add('selection due (template)','low',`${s.title}: due ${s.deadline} per DRAFT schedule ('${s.deadline_task}')`,'Buildertrend selection template; confirm with the designer/client.',t,s.id)}});
+  else if(s.source=='DRAFT'&&s.deadline&&s.deadline<=addDays(today,14)){const t=consumerTask(tasks,s.key);add('selection due (template)','low',`${s.title}: due ${s.deadline} per DRAFT schedule ('${s.deadline_task}')`,'Selection template; confirm with the designer/client.',t,s.id)}});
  (base.gates||[]).forEach(g=>{if(['done','complete','closed'].includes(lo(g.status||'open')))return;const t=tasks.find(x=>x.id==g.gated_task);
   if(t&&t.start<=horizon)add('prerequisite open',t.start<=addDays(today,30)?'high':'medium',`'${t.task}' (${t.start}, ${t.source}) needs: ${g.item}`,`Source: ${g.source||''}`,t)});
  const btl=tasks.filter(t=>t.source=='BUILDERTREND'&&t.late);if(btl.length){const first=btl.reduce((a,b)=>b.start<a.start?b:a);const old=btl.every(t=>t.finish<addDays(today,-180));
-  add('BT schedule not updated',old?'low':(btl.length>=3?'high':'medium'),`Buildertrend: ${btl.length} item(s) past their end date but not marked complete (earliest '${first.task}' ${first.start})`,
-   old?'Whole schedule is dated 2025 - stale/unused BT schedule.':'Update % complete in Buildertrend or re-baseline; downstream BT dates (and everything this dashboard derives) assume these happened.',first)}
- tasks.forEach(t=>{if(t.future_complete)add('BT marked complete in the future','medium',`Buildertrend marks '${t.task}' (${t.start}-${t.finish}) complete, but it is dated after today`,
-   'Either the work happened earlier (fix the BT dates) or it was checked off by mistake.'+noteFor('BT marked complete in the future'),t)});
+  add('BT schedule not updated',old?'low':(btl.length>=3?'high':'medium'),`${btl.length} item(s) past their end date but not marked complete (earliest '${first.task}' ${first.start})`,
+   old?'Whole schedule is dated 2025 and was never kept up to date.':'Update percent complete or re-baseline; downstream dates assume these happened.',first)}
+ tasks.forEach(t=>{if(t.future_complete)add('BT marked complete in the future','medium',`'${t.task}' (${t.start}-${t.finish}) is marked complete, but it is dated after today`,
+   'Either the work happened earlier (fix the dates) or it was checked off by mistake.'+noteFor('BT marked complete in the future'),t)});
  if(ex&&ex.btve)ex.btve.forEach(d=>{const n=+d.days;if(n==0)return;const t=tasks.find(x=>x.id==d.bt_id);const bad=/^(failed|not done|missed)/.test(lo(d.email_status));
-   const sev=(bad&&t&&!t.done)||Math.abs(n)>=14?'high':(Math.abs(n)>=2?'medium':'low');add('BT vs email date',sev,`BT '${d.bt_task}' ${d.field} ${d.bt_date} vs email/calendar ${d.email_date} (${d.email_status})`+(n?`: ${Math.abs(n)} day(s) apart`:''),d.source,t,d.email_id)});
+   const sev=(bad&&t&&!t.done)||Math.abs(n)>=14?'high':(Math.abs(n)>=2?'medium':'low');add('BT vs email date',sev,`'${d.bt_task}' ${d.field} ${d.bt_date} vs email/calendar ${d.email_date} (${d.email_status})`+(n?`: ${Math.abs(n)} day(s) apart`:''),d.source,t,d.email_id)});
  else (base.conflicts||[]).filter(c=>c.kind=='BT vs email date').forEach(c=>out.push(c));
  eflags.forEach(f=>{const tt=tasks.find(x=>x.id==f.task);add('locked task not moved (edit)',tt&&tt.start<=addDays(today,30)?'high':'medium',`'${f.task_name}' (${f.task_source}, locked) starts ${f.task_start} but predecessor '${f.pred_name}' now finishes ${f.pred_finish}: ${f.short} workday(s) short`,
-   `A workspace edit on ${f.created} moved the predecessor. Locked/REAL/Buildertrend dates never auto-move: move this task, adjust the link lag, or unlock it.`,tt)});
+   `A workspace edit on ${f.created} moved the predecessor. Locked dates never auto-move: move this task, adjust the link lag, or unlock it.`,tt)});
  warn.forEach(w=>add('dependency','medium',w,'A locked REAL date conflicts with its predecessor logic.'));
  tasks.forEach(t=>{if(t.late&&t.source=='REAL')add('late / failed REAL item','high',`'${t.task}' ${t.start}: ${t.status}`,t.source_ref||'',t)});
  const rank={high:0,medium:1,low:2};const conflicts=out.map((c,i)=>[c,i]).sort((a,b)=>{const x=rank[a[0].severity]-rank[b[0].severity];if(x)return x;const p=a[0].task_start||'9999',q=b[0].task_start||'9999';return p<q?-1:p>q?1:a[1]-b[1]}).map(x=>x[0]);
@@ -963,9 +968,9 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
     how_to_apply:'Each api_ops item is one POST /api/job/<slug>/edit body {"ops": [...]} on the live server, in order (add ops carry new_id; map it to the id the server returns). Or run: python3 share/apply_changes.py <this file> (dry run by default).',jobs}},
   exportFiles(){const obj=S.exportObj();const files=[{name:'changes.json',data:JSON.stringify(obj,null,1)}];
    Object.keys(obj.jobs).forEach(slug=>{const J=S.getJob(slug);const cols=(J.mod_cols||{}).schedule;if(cols)files.push({name:`${slug}-schedule.csv`,data:E.csvText(J.tasks,cols)});
-    files.push({name:`${slug}-buildertrend-schedule.csv`,data:E.btCsv(J)});const d=obj.jobs[slug].diff;
+    files.push({name:`${slug}-schedule-import.csv`,data:E.btCsv(J)});const d=obj.jobs[slug].diff;
     files.push({name:`${slug}-changed-tasks.csv`,data:E.csvText(d.changed.concat(d.added.map(r=>({id:r.id,task:r.task,field:'(added)',before:'',after:`${r.start} → ${r.finish}`})),d.deleted.map(r=>({id:r.id,task:r.task,field:'(deleted)',before:'',after:''}))),['id','task','field','before','after'])})});
-   files.push({name:'README.txt',data:`Harswells schedule changes exported ${obj.exported_at} by ${obj.exported_by||'(name not set)'}\r\nSnapshot: ${obj.snapshot_built}\r\n\r\nchanges.json  = every edit (same format as the live app's edit API) - Import it back into the file, or apply it on the office box.\r\n<job>-schedule.csv = the whole schedule after the edits\r\n<job>-changed-tasks.csv = only what changed vs the snapshot\r\n<job>-buildertrend-schedule.csv = Buildertrend import shape\r\n`});
+   files.push({name:'README.txt',data:`Harswells schedule changes exported ${obj.exported_at} by ${obj.exported_by||'(name not set)'}\r\nSnapshot: ${obj.snapshot_built}\r\n\r\nchanges.json  = every edit (same format as the live app's edit API) - Import it back into the file, or apply it on the office box.\r\n<job>-schedule.csv = the whole schedule after the edits\r\n<job>-changed-tasks.csv = only what changed vs the snapshot\r\n<job>-schedule-import.csv = schedule import shape\r\n`});
    return {obj,files,zip:zip(files)}},
   importObj(obj){if(!obj||obj.format!=='harswells-schedule-changes'||!obj.jobs)throw new Error('not a Harswells changes file');let added=0;const jobsTouched=[];
    Object.entries(obj.jobs).forEach(([slug,j])=>{if(!data.jobs[slug])return;const r=jr(slug);const have=new Set(r.log.map(e=>e.id).concat(...r.remote.map(cs=>cs.entries.map(e=>e.id))));
@@ -1527,6 +1532,15 @@ function jobMap(){try{return JSON.parse(lsGet(JOB_KEY)||'{}')}catch(e){return {}
 function jobSaved(slug){return !!jobMap()[slug]}
 function setJobFlag(slug, on){const m=jobMap();if(on)m[slug]=1;else delete m[slug];lsSet(JOB_KEY, JSON.stringify(m))}
 function saveable(url){return /\.(pdf|png|jpe?g|gif|webp|heic|csv|txt)(\?|#|$)/i.test(String(url||''))}
+/* A hash route such as #/jobs is this app, not a file. Only a same-origin path with a
+   saved-file extension may open in the plan viewer. */
+function isSavedFile(url){
+  try{
+    const abs=new URL(String(url||''), location.href);
+    if(!servedHere(abs.href))return false;
+    return saveable(abs.pathname);
+  }catch(e){return false}
+}
 function dropboxHost(hostname){
   const h=String(hostname||'').toLowerCase();
   return h==='dropbox.com'||h.endsWith('.dropbox.com')||h==='dropboxusercontent.com'||h.endsWith('.dropboxusercontent.com');
@@ -1615,22 +1629,24 @@ async function askPersist(){
   try{return await navigator.storage.persist()?'granted':'denied'}catch(e){return 'unavailable'}
 }
 async function openFile(url, name, slug){
+  if(!isSavedFile(url))return {ok:false,skipped:true};
   const abs=new URL(url, location.href).href;
   const shown=showPlan(abs, name||'Plan');
   const r=await cacheFile(url,{name,slug,kind:'file'});
-  if(!r.ok&&!r.cached){
-    const st=document.getElementById('planstat');
+  await shown;
+  const st=document.getElementById('planstat');
+  const cur=st?st.textContent:'';
+  if(!r.ok&&!r.cached&&!/not a PDF/i.test(cur)){
     if(st)st.textContent=r.error||'Could not open';
     if(typeof toast==='function')toast(r.error||'Could not open');
     return r;
   }
-  await shown;
   return r;
 }
 async function showPlan(url, name){
   let host=document.getElementById('planlayer');
   if(!host){host=document.createElement('div');host.id='planlayer';host.className='planlayer';document.body.appendChild(host)}
-  host.innerHTML=`<div class="planview" role="dialog" aria-modal="true"><div class="planbar"><b id="planname">${esc(name||'Plan')}</b><span id="planstat">Opening…</span><button type="button" id="planclose">Close</button></div><canvas id="plan-canvas"></canvas></div>`;
+  host.innerHTML=`<div class="planview" role="dialog" aria-modal="true"><div class="planbar"><b id="planname">${esc(name||'Plan')}</b><span id="planstat">Opening…</span><a id="plansrc" hidden target="_blank" rel="noopener">View source</a><button type="button" id="planclose">Close</button></div><canvas id="plan-canvas"></canvas></div>`;
   host.hidden=false;
   document.getElementById('planclose').onclick=()=>{host.hidden=true;host.innerHTML=''};
   try{
@@ -1640,7 +1656,11 @@ async function showPlan(url, name){
     if(st)st.textContent='Showing saved plan'+(navigator.onLine?'':' offline')+' · '+info.pages+' page'+(info.pages===1?'':'s');
   }catch(e){
     const st=document.getElementById('planstat');
-    if(st)st.textContent=e.message||'Could not open this plan';
+    const raw=String(e&&e.message||'');
+    const notPdf=/not a PDF/i.test(raw)||/invalid pdf/i.test(raw);
+    if(st)st.textContent=notPdf?'This is not a PDF.':(raw||'Could not open this plan');
+    const src=document.getElementById('plansrc');
+    if(notPdf&&src&&url&&!/buildertrend\.(net|com)/i.test(url)){src.href=url;src.hidden=false}
   }
 }
 function paintBar(root){
@@ -1692,7 +1712,7 @@ async function openManager(){
 window.addEventListener('hashchange', rememberView);
 window.HWSOffline={
   gate, sessionOk, unlockWith, verifyLocal, remember, seal, unseal, readCache, loadCopy, dropLegacy, isStatic,
-  restoreView, rememberView, cacheFile, toggleJob, jobSaved, itemsFor, clearFiles, openFile, showPlan, servedHere,
+  restoreView, rememberView, cacheFile, toggleJob, jobSaved, itemsFor, clearFiles, openFile, showPlan, servedHere, isSavedFile,
   measure, barHtml, paintBar, openManager, budgetNote, offlineNow, markNet,
   limits(){return {fileCap:FILE_CAP,iosCap:IOS_CAP,lockMs:LOCK_MS,lockLimit:LOCK_LIMIT,sessionMs:SESSION_MS,note:IOS_NOTE}},
   setClock(fn){if(dev&&typeof fn==='function')clock=fn},
@@ -1708,7 +1728,8 @@ const B=(typeof BOOT!=='undefined'&&BOOT)||{};const MODE=B.mode||'share';
 let DATA=null,STORE=null,J=null,L=null,EDIT=false;
 const E=window.HWSEngine;
 const $=s=>document.querySelector(s);
-const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function visibleCopy(v){let s=String(v==null?'':v);s=s.replace(/https?:\/\/[^\s"'<>]*buildertrend\.(?:net|com)[^\s"'<>]*/gi,'');s=s.replace(/\b(?:not\s+)?in\s+buildertrend\b/gi,'');s=s.replace(/\bbuildertrend\b/gi,'');s=s.replace(/[ \t]{2,}/g,' ').replace(/\s+([,.;:])/g,function(_m,ch){return ch}).replace(/\(\s+/g,'(').replace(/\s+\)/g,')');return s.replace(/^[ \t]+|[ \t]+$/g,'')}
+const esc=v=>visibleCopy(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt$=v=>(v==null||v===''||isNaN(+v))?'':'$'+Math.round(+v).toLocaleString();
 const DAY=864e5;const dP=s=>{if(!s)return null;const [y,m,d]=String(s).slice(0,10).split('-').map(Number);return Date.UTC(y,m-1,d)};
 const iso=ms=>new Date(ms).toISOString().slice(0,10);const addD=(s,n)=>iso(dP(s)+n*DAY);
@@ -1717,7 +1738,7 @@ const mdy=s=>{if(!s)return '';const t=new Date(dP(s));return (t.getUTCMonth()+1)
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const dow=s=>DOWS[new Date(dP(s)).getUTCDay()];
 const chip=(t,c)=>`<span class="chip ${esc(c||t)}">${esc(t)}</span>`;
-const SRC_LABEL={BUILDERTREND:'BT',REAL:'REAL',DRAFT:'DRAFT',TRACKER:'TRACKER'};
+const SRC_LABEL={BUILDERTREND:'Imported',REAL:'REAL',DRAFT:'DRAFT',TRACKER:'TRACKER',IMPORT:'Imported'};
 const srcChip=s=>chip(SRC_LABEL[s]||s,s);
 function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}
 const UIKEY='hws-share-ui-v1';let st={view:'gantt',pview:'list',zpx:6,colorBy:'source',phase:'',who:'',src:'',overdue:false,critOnly:false,critHl:true,showDone:true,q:'',collapsed:{},calMonth:'',sort:'start',sortDir:1,selAll:false,todoAll:false,lq:''};
@@ -1764,7 +1785,7 @@ function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)locat
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule','📅'],['slack','Slack','💬'],['todos','To-Dos','☑️'],['files','Files','📁'],['more','More','☰']];
-const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
+const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,rfis:(typeof mRfis==='function'?mRfis:mSchedule),specs:(typeof mSpecs==='function'?mSpecs:mSchedule),conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -1773,7 +1794,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
- const head=`<div class="jh"><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>${chip(J.bt_status,J.bt_status=='in Buildertrend'?'inbt':'notbt')}
+ const head=`<div class="jh"><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}</div>`;
@@ -1790,7 +1811,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
  document.title=J.name+' · Harswells';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
-function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget']].concat((typeof canSeeMoney==='function'&&canSeeMoney())?[['money','Budget vs actual']]:[]).concat([['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]);
+function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['rfis','RFIs'],['specs','Specs']].concat((typeof canSeeMoney==='function'&&canSeeMoney())?[['money','Budget vs actual']]:[]).concat([['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]).filter(([,l])=>!/buildertrend/i.test(l));
  openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${k==='slack'?(typeof slackRows==='function'?slackRows().length||'':''):(c[k]||(k=='history'?(J.history||[]).length||'':''))}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
  m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
@@ -1814,12 +1835,12 @@ function mSchedule(M){const tasks=J.tasks||[];const phases=[...new Set(tasks.map
  const nOver=tasks.filter(t=>t.overdue||t.late).length;const ph=isPhone();const view=curView();
  const filt=`<select id="fp" aria-label="Phase"><option value="">All phases</option>${phases.map(p=>`<option ${st.phase==p?'selected':''}>${esc(p)}</option>`).join('')}</select>
  <select id="fw" aria-label="Assignee"><option value="">All assignees</option><option ${st.who=='(unassigned)'?'selected':''}>(unassigned)</option>${who.map(p=>`<option ${st.who==p?'selected':''}>${esc(p)}</option>`).join('')}</select>
- <select id="fs" aria-label="Source"><option value="">All sources</option>${['BUILDERTREND','REAL','DRAFT','TRACKER'].map(s=>`<option value="${s}" ${st.src==s?'selected':''}>${s=='BUILDERTREND'?'BT (Buildertrend)':s}</option>`).join('')}</select>
+ <select id="fs" aria-label="Source"><option value="">All sources</option>${['BUILDERTREND','REAL','DRAFT','TRACKER'].map(s=>`<option value="${s}" ${st.src==s?'selected':''}>${s=='BUILDERTREND'?'Imported':s}</option>`).join('')}</select>
  <label><input type="checkbox" id="fo" ${st.overdue?'checked':''}> Overdue</label><label><input type="checkbox" id="fc" ${st.critOnly?'checked':''}> Critical path only</label>
  <label><input type="checkbox" id="fh" ${st.critHl?'checked':''}> Highlight critical</label><label><input type="checkbox" id="fd" ${st.showDone?'checked':''}> Completed</label>
  <input type="search" id="fq" placeholder="Search tasks" value="${esc(st.q)}" style="width:150px">`;
  const hint=EDIT?(coarse||ph?' · long-press a bar to drag, tap to edit':' · drag bars to move, drag the right edge to resize, click to edit'):(syncOn()?' · check out to edit':'');
- M.innerHTML=`<div class="panel"><h3>Schedule <span class="mut small">${tasks.length} items · ${J.summary.bt||0} BT · ${J.summary.real||0} REAL · ${J.summary.draft||0} DRAFT · ${nOver} overdue${hint}</span></h3>
+ M.innerHTML=`<div class="panel"><h3>Schedule <span class="mut small">${tasks.length} items · ${J.summary.bt||0} imported · ${J.summary.real||0} REAL · ${J.summary.draft||0} DRAFT · ${nOver} overdue${hint}</span></h3>
  <div class="tools"><span class="seg" id="vw">${[['list','List'],['gantt','Gantt'],['calendar','Calendar']].map(([k,l])=>`<button data-v="${k}" class="${view==k?'on':''}">${l}</button>`).join('')}</span>
  ${view=='gantt'?(ph?`<span class="seg" id="zb"><button data-zs="-1" aria-label="Zoom out">−</button><button data-zs="1" aria-label="Zoom in">+</button></span>`:`<span class="seg" id="zm">${['day','week','month'].map(z=>`<button data-z="${z}" class="${zmode(st.zpx)==z?'on':''}">${z[0].toUpperCase()+z.slice(1)}</button>`).join('')}</span><span class="seg" id="zb"><button data-zs="-1" title="Zoom out">−</button><button data-zs="1" title="Zoom in">+</button></span>
  <label>Color <select id="cb"><option value="source" ${st.colorBy=='source'?'selected':''}>by source</option><option value="phase" ${st.colorBy=='phase'?'selected':''}>by phase / task color</option></select></label>`):''}
@@ -1849,7 +1870,7 @@ function mSchedule(M){const tasks=J.tasks||[];const phases=[...new Set(tasks.map
  drawView()}
 function setBaseline(){if(confirm('Set the baseline to the current schedule for every task? (Undo reverts it.)'))edit([{op:'baseline'}])}
 function zoomStep(d){let i=ZL.findIndex(x=>x>=st.zpx-1e-9);if(i<0)i=ZL.length-1;i=Math.max(0,Math.min(ZL.length-1,i+d));st.zpx=ZL[i]}
-function legend(){return `<div class="legend"><span><i style="background:#2563eb"></i>REAL</span><span><i style="background:repeating-linear-gradient(45deg,#dbe6fb,#dbe6fb 2px,#7aa2e8 2px,#7aa2e8 4px)"></i>DRAFT (hatched)</span><span><i style="background:#4f46e5"></i>Buildertrend</span><span><i style="background:#0e9384"></i>tracker</span><span><i style="background:#fff;border:2px solid #d92d20"></i>critical path</span><span><i style="background:#fff;border:2px dashed #d92d20"></i>overdue</span><span><i style="background:#c4cad3;height:4px"></i>baseline</span><span>🔒 locked date</span><span style="color:#d92d20">┆ today</span></div>`}
+function legend(){return `<div class="legend"><span><i style="background:#2563eb"></i>REAL</span><span><i style="background:repeating-linear-gradient(45deg,#dbe6fb,#dbe6fb 2px,#7aa2e8 2px,#7aa2e8 4px)"></i>DRAFT (hatched)</span><span><i style="background:#4f46e5"></i>Imported</span><span><i style="background:#0e9384"></i>tracker</span><span><i style="background:#fff;border:2px solid #d92d20"></i>critical path</span><span><i style="background:#fff;border:2px dashed #d92d20"></i>overdue</span><span><i style="background:#c4cad3;height:4px"></i>baseline</span><span>🔒 locked date</span><span style="color:#d92d20">┆ today</span></div>`}
 function parseDeps(s){return (s||'').split(/[;,]/).filter(x=>x.trim()).map(x=>{const m=x.trim().match(/^([A-Za-z0-9_\-]+?)(FS|SS|FF|SF)?([+-]\d+)?$/);return m?{id:m[1],type:m[2]||'FS',lag:+(m[3]||0)}:null}).filter(Boolean)}
 function toggleLock(t){if(!editable(t))return;const on=String(t.lock).toUpperCase()!='Y';edit([{op:'update',id:t.id,fields:{lock:on?'Y':''}}],`${t.id} ${on?'locked 🔒 (it will not auto-move)':'unlocked (it follows its predecessors)'}`)}
 function ganttView(el,ts){const ph=isPhone();const px=st.zpx,zoom=zmode(px);const RH=ph?34:24,HH=40,BY=ph?8:5,BH=ph?17:13;const byId={};(J.tasks||[]).forEach(t=>byId[t.id]=t);const today=J.today;
@@ -1984,8 +2005,10 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
  const info=t?`<table class="kv small" style="margin-bottom:8px"><tr><td class="mut">Status</td><td>${srcChip(t.source)} ${t.done?chip('complete','ok'):''} ${(t.overdue||t.late)&&!t.done?chip('overdue','overdue'):''} ${t.critical&&!t.done?chip('critical path','high'):''} ${t.locked?chip('🔒 locked','low'):''} ${esc(t.status)}</td></tr>
  <tr><td class="mut">Dates</td><td>${mdy(t.start)} → ${mdy(t.finish)} (${esc(t.duration)} workdays)${t.float!=null?` · float ${esc(t.float)}`:''}</td></tr>${t.baseline_start?`<tr><td class="mut">Baseline</td><td>${mdy(t.baseline_start)} → ${mdy(t.baseline_finish)}${t.slip!==''&&t.slip!=null?` · slip <b class="${+t.slip>0?'red':''}">${(+t.slip>0?'+':'')+t.slip}</b> workdays`:''}</td></tr>`:''}
  ${t.actual_start?`<tr><td class="mut">Actual</td><td>${mdy(t.actual_start)} → ${mdy(t.actual_finish)||'…'}</td></tr>`:''}<tr><td class="mut">Successors</td><td>${succOf(t.id).map(s=>esc(s.id)).join(', ')||'—'}</td></tr><tr><td class="mut">Source</td><td>${esc(t.source_ref)}</td></tr></table>`:'';
+ const related=(t&&window.HWSRelated)?HWSRelated.html(t.links||[],{slug:J.slug}):'';
  if(!ed){openModal(`<h2>${esc(t.id)} · ${esc(t.task)}</h2>${info}<table class="kv small"><tr><td class="mut">Phase</td><td>${esc(t.phase)}</td></tr><tr><td class="mut">Assigned</td><td>${esc(t.owner||'—')}</td></tr><tr><td class="mut">Predecessors</td><td>${esc(t.depends_on||'—')}</td></tr>${t.notes?`<tr><td class="mut">Notes</td><td>${esc(t.notes)}</td></tr>`:''}</table>
-  ${t.source=='TRACKER'?'<div class="note small" style="margin-top:8px">Tracker milestones are rebuilt from the tracker CSVs on every refresh; edit the tracker to change them.</div>':(syncOn()&&!EDIT?'<div class="note small" style="margin-top:8px">Check out this job to edit it.</div>':'')}<div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`);return}
+  ${related}
+  ${t.source=='TRACKER'?'<div class="note small" style="margin-top:8px">Tracker milestones are rebuilt from the tracker CSVs on every refresh; edit the tracker to change them.</div>':(syncOn()&&!EDIT?'<div class="note small" style="margin-top:8px">Check out this job to edit it.</div>':'')}<div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,m=>{if(window.HWSRelated)HWSRelated.bind(m,{slug:J.slug})});return}
  const v=t||Object.assign({task:'',phase:st.phase||'General',owner:'',start:J.today,duration:1,depends_on:'',pct_complete:0,source:'DRAFT',lock:'',notes:'',color:'',milestone_type:''},preset||{});
  const pc=t&&t.done?100:(+v.pct_complete||0);
  openModal(`<h2>${t?esc(t.id)+' · Edit task':'Add task'}</h2>${t?`<details class="small"${isPhone()?'':' open'}><summary>Details</summary>${info}</details>`:''}<form id="tf"><div class="fg">
@@ -1995,12 +2018,13 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
  <label class="cb w lockrow"><input type="checkbox" name="lock" ${String(v.lock).toUpperCase()=='Y'?'checked':''}> 🔒 Locked date (confirmed/REAL): it never auto-moves; if a predecessor pushes into it, it's flagged as a conflict instead</label>
  <label class="w">Predecessors <span class="mut">(finish-to-start with lag: <code>B002</code>, <code>T010+2</code>, <code>B004SS</code>; separate with ;)</span><input name="depends_on" value="${esc(v.depends_on||'')}" placeholder="e.g. B002+1; T010" autocapitalize="characters" autocomplete="off"></label>
  <label>Phase<input name="phase" list="dlp" value="${esc(v.phase)}"></label><label>Assigned to (sub / vendor / crew)<input name="owner" list="dlw" value="${esc(v.owner)}"></label>
- <label>Source<select name="source">${['DRAFT','REAL','BUILDERTREND'].map(s=>`<option ${v.source==s?'selected':''}>${s}</option>`).join('')}</select></label>
+ <label>Source<select name="source">${['DRAFT','REAL','BUILDERTREND','IMPORT'].map(s=>`<option value="${s}" ${v.source==s?'selected':''}>${s=='BUILDERTREND'||s=='IMPORT'?'Imported':s}</option>`).join('')}</select></label>
  <label>Milestone type<select name="milestone_type">${['','permit','inspection','delivery','meeting','draw','milestone','selection'].map(s=>`<option value="${s}" ${v.milestone_type==s?'selected':''}>${s||'(task)'}</option>`).join('')}</select></label>
  <label>Color<span style="display:flex;gap:6px;align-items:center"><input type="color" name="color" value="${esc(v.color||(J.phase_colors||{})[v.phase]||'#2563eb')}" style="width:52px;padding:1px"><label class="cb" style="font-size:11.5px"><input type="checkbox" name="usephase" ${v.color?'':'checked'}> use phase color</label></span></label>
  <label class="w">Notes<textarea name="notes" rows="3">${esc(v.notes||'')}</textarea></label></div>
  <datalist id="dlp">${phases.map(p=>`<option value="${esc(p)}">`).join('')}</datalist><datalist id="dlw">${who.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
- <div class="mbtns sticky"><button class="pri" type="submit">${t?'Save':'Add task'}</button>${t?`<button type="button" id="tc">${t.done?'Reopen':'Mark complete'}</button><button type="button" class="danger" id="tdl">Delete</button>`:''}<span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,m=>{
+ ${related}<div class="mbtns sticky"><button class="pri" type="submit">${t?'Save':'Add task'}</button>${t?`<button type="button" id="tc">${t.done?'Reopen':'Mark complete'}</button><button type="button" class="danger" id="tdl">Delete</button>`:''}<span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,m=>{
+  if(window.HWSRelated)HWSRelated.bind(m,{slug:J.slug});
   const f=m.querySelector('#tf');const rng=f.querySelector('[name=pct_complete]');const pcv=m.querySelector('#pcv');rng.oninput=()=>pcv.textContent=rng.value+'%';m.querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>{rng.value=b.dataset.pc;pcv.textContent=b.dataset.pc+'%'});
   f.onsubmit=e=>{e.preventDefault();const fd=new FormData(f);const o={};['task','phase','owner','start','duration','depends_on','pct_complete','source','milestone_type','notes'].forEach(k=>o[k]=(fd.get(k)||'').toString().trim());
    o.lock=fd.get('lock')?'Y':'';o.color=fd.get('usephase')?'':fd.get('color');
@@ -2011,22 +2035,31 @@ function taskModal(t,preset){if(!t&&!EDIT){needCheckout();return}const ed=!t||ed
 
 /* ---------- other modules ---------- */
 function mSel(M){if(typeof isPhone==='function'&&isPhone()&&typeof renderSelPhone==='function'){renderSelPhone(M);return}const all=J.selections||[];const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;const cats={};show.forEach(x=>{(cats[x.category||'Other']=cats[x.category||'Other']||[]).push(x)});
- M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} Buildertrend template selections (DRAFT, due = “Finalize …” schedule task)`,
+ M.innerHTML=panel('Selections',`${real.length} real (order/selection trackers) · ${all.length-real.length} template selections (DRAFT, due = “Finalize …” schedule task)`,
  all.length?`<div class="tw"><table><tr><th>Title / Room-Location</th><th>Fixture / Choice</th><th>Brand</th><th>Model</th><th>Finish</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th><th class="num">Allowance</th><th>Deadline</th><th>Client approval</th><th>Status</th><th>Order status</th><th>Order date</th><th>ETA</th><th>Link / PO</th><th>Src</th></tr>
- ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${isNaN(+x.price)?esc(x.price):fmt$(x.price)}</td><td class="num">${isNaN(+x.total)?esc(x.total):fmt$(x.total)}</td><td class="num">${fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${(typeof fileMaybeLink==='function'&&fileMaybeLink(x.link,'link','dropbox-file','lbtn'))||(x.link&&/^https?:/.test(x.link)&&!(typeof fileHosted==='function'&&fileHosted(x.link,''))?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:'')}${esc(x.order_link)}${typeof fileChip==='function'?fileChip(x):''}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the Buildertrend selection template.'),
+ ${Object.entries(cats).map(([c,l])=>`<tr class="tot"><td colspan=17>${esc(c)} <span class="mut small">(${l.length})</span></td></tr>`+l.map(x=>{const late=x.deadline&&x.deadline<J.today&&x.status=='Unreleased';const ext=x.link&&/^https?:/.test(x.link)&&!/buildertrend\.(net|com)/i.test(x.link);return `<tr data-sel="${esc(x.id)}"><td>${esc(x.location||x.title)}<div class="mut small">${esc(x.title)}</div></td><td>${esc(x.choice||'')}${x.choices?`<div class="mut small">${esc(x.choices)}</div>`:''}</td><td class="small">${esc(x.brand)}</td><td class="small">${esc(x.model)}</td><td class="small">${esc(x.finish)}</td><td class="num">${esc(x.qty)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'price',x.price):(isNaN(+x.price)?esc(x.price):fmt$(x.price))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'total',x.total):(isNaN(+x.total)?esc(x.total):fmt$(x.total))}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'allowance',x.allowance):fmt$(x.allowance)}</td><td class="nowrap">${late?chip(md(x.deadline),'overdue'):mdy(x.deadline)}${x.deadline_task?`<div class="mut small">${esc(x.deadline_task)}</div>`:''}</td><td class="small">${esc(x.approval)}</td><td>${chip(x.status||'—','low')}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</td><td class="small">${esc(x.order_status)}</td><td class="nowrap small">${esc(x.order_date)}</td><td class="small">${esc(x.eta)}</td><td class="small">${ext&&typeof fileMaybeLink==='function'?fileMaybeLink(x.link,'link','dropbox-file','lbtn'):''}${ext&&!(typeof fileHosted==='function'&&fileHosted(x.link,''))?`<a href="${esc(x.link)}" target="_blank" rel="noopener">link</a> `:''}${esc(x.order_link)}${typeof fileChip==='function'?fileChip(x):''}</td><td>${srcChip(x.source)}</td></tr>`}).join('')).join('')}</table></div>`:emptyState('No selections yet','Selections come from the order tracker and the selection template.'),
  (real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:'')+csvBtn('selections'));
  const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};bindCsv(M);if(typeof bindSelRows==='function')bindSelRows(M);const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl&&typeof openSelection==='function')openSelection(J.slug,focus)}
 function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bids||[]).filter(b=>b.source=='DRAFT');
- M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} Buildertrend template packages not yet released`,
- real.map(p=>{const mx=Math.max(...p.subs.map(x=>x.amount||0),1);return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${typeof fileChip==='function'?fileChip(p):''}${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${p.low?` · low ${fmt$(p.low)}`:''} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
- <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${p.subs.map(x=>`<div class="ps"><b>${esc(x.vendor)}</b> · ${esc(x.status)} ${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
- ${p.subs.slice().sort((a,b)=>(a.amount||9e12)-(b.amount||9e12)).map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${fmt$(x.amount)}</td><td>${x.amount?`<div class="bar2"><b class="${x.amount==p.low?'low':''}" style="width:${x.amount/mx*100}%"></b></div>`:''}</td><td class="num">${x.pct!=null?(x.pct?'+'+x.pct+'%':'<b style="color:#12a150">low</b>'):''}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${typeof fileChip==='function'?fileChip(x):''}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
- (tpl.length?panel('Template packages (not released)','Buildertrend “**Future Template” bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
-function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv + Buildertrend PO exports',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and Buildertrend PO exports.'),csvBtn('pos'));bindCsv(M)}
-function mCos(M){const l=J.cos||[];const tot=l.reduce((a,c)=>a+(+c.amount||0),0);M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${fmt$(c.amount)||'<span class="mut">TBD</span>'}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${fmt$(tot)}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
+ M.innerHTML=panel('Bid packages',`${real.length} active (bid-tracker.csv) · ${tpl.length} template packages not yet released`,
+ real.map(p=>{const view=typeof bidPackageView==='function'?bidPackageView(p):{subs:(p.subs||[]).map(x=>Object.assign({},x,{_amt:x.amount,_pct:x.pct})),low:p.low,see:true};
+  const mx=view.see?Math.max.apply(null,view.subs.map(x=>x._amt||0).concat([1])):1;
+  const lowBit=view.see&&view.low!=null?` · low ${fmt$(view.low)}`:'';
+  return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${typeof fileChip==='function'?fileChip(p):''}${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${lowBit} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
+ <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${view.subs.map(x=>`<div class="ps"><b>${esc(x.vendor)}</b> · ${esc(x.status)} ${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
+ ${view.subs.map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'amount',view.see?x._amt:x.amount):fmt$(x.amount)}</td><td>${view.see&&x._amt!=null?`<div class="bar2"><b class="${x._amt==view.low?'low':''}" style="width:${x._amt/mx*100}%"></b></div>`:''}</td><td class="num">${view.see&&x._pct!=null?(x._pct?'+'+x._pct+'%':'<b style="color:#12a150">low</b>'):'<span class="mut">(amounts on money page)</span>'}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${typeof fileChip==='function'?fileChip(x):''}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
+ (tpl.length?panel('Template packages (not released)','Template bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
+function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv and imported PO rows',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(p.id,'amount',p.amount):fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${typeof moneyCellHtml==='function'?moneyCellHtml(p.id,'deposit',p.deposit):esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and imported PO rows.'),csvBtn('pos'));bindCsv(M)}
+function mCos(M){const l=J.cos||[];const see=typeof canSeeMoney==='function'&&canSeeMoney();const tot=see?l.reduce((a,c)=>a+(+(typeof moneyNum==='function'?moneyNum(c.co_number,'amount'):c.amount)||0),0):null;M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(c.co_number,'amount',c.amount):(fmt$(c.amount)||'<span class="mut">TBD</span>')}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${see?fmt$(tot):'<span class="mut">(amounts on money page)</span>'}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
+function mRfis(M){const rows=J.rfis||[];
+ M.innerHTML=panel('RFIs',rows.length+' question'+(rows.length==1?'':'s'),rows.length?rows.map(r=>`<div class="it"><div class="bd"><div class="t">${esc(r.title||'')}</div><div class="s">${esc(r.status||'')}${r.due?' · due '+esc(mdy(r.due)):''}</div>${r.question?`<div class="small">${esc(r.question)}</div>`:''}${window.HWSRelated?HWSRelated.html(r.links||[],{slug:J.slug}):''}</div></div>`).join(''):emptyState('No RFIs yet',''));
+ if(window.HWSRelated)HWSRelated.bind(M,{slug:J.slug})}
+function mSpecs(M){const rows=J.specs||[];
+ M.innerHTML=panel('Specs','Spec sheets for this job',rows.length?rows.map(r=>`<div class="it"><div class="bd"><div class="t">${esc(r.title||'')}</div><div class="s">${esc([r.section,r.cost_code].filter(Boolean).join(' · '))}</div>${window.HWSRelated?HWSRelated.html(r.links||[],{slug:J.slug}):''}</div></div>`).join(''):emptyState('No specs yet',''));
+ if(window.HWSRelated)HWSRelated.bind(M,{slug:J.slug})}
 function mBudget(M){const l=J.budget_index||J.budget||[];
  M.innerHTML=panel('Budget','Counts only. Dollar amounts are on the money page.',
-  l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Preliminary</th><th class="num">Committed</th><th class="num">Pending</th><th class="num">POs</th><th class="num">Actual</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title||'')}</td><td class="num">${b.preliminary_count||0}</td><td class="num">${b.committed_count||0}</td><td class="num">${b.pending_count||0}</td><td class="num">${b.po_count||0}</td><td class="num">${b.actual_count||0}</td></tr>`).join('')}</table></div>`:emptyState('No budget lines yet','The running budget is imported into the private money file.'),
+  l.length?`<div class="tw"><table><tr><th>Cost code</th><th>Title</th><th class="num">Preliminary</th><th class="num">Committed</th><th class="num">Pending</th><th class="num">POs</th><th class="num">Actual</th></tr>${l.map(b=>`<tr><td class="nowrap">${esc(b.cost_code)}</td><td>${esc(b.title||'')}${b.conflict_count?`<div class="mut small">${b.conflict_count} conflict${b.conflict_count==1?'':'s'} on the money page</div>`:''}</td><td class="num">${b.preliminary_count||0}</td><td class="num">${b.committed_count||0}</td><td class="num">${b.pending_count||0}</td><td class="num">${b.po_count||0}</td><td class="num">${b.actual_count||0}</td></tr>`).join('')}</table></div>`:emptyState('No budget lines yet','The running budget is imported into the private money file.'),
   (typeof mMoney==='function'?`<button type="button" class="pri" id="openmoney">Open money</button>`:''));
  const b=$('#openmoney');if(b)b.onclick=()=>{location.hash='#/job/'+(J&&J.slug||'')+'/money'};
  bindCsv(M)}
@@ -2125,9 +2158,9 @@ function mMsgs(M){const l=J.messages||[];
   return}
  M.innerHTML=panel('Messages','Slack + email intake tied to this job',`<div class="list">${l.map(i=>`<div class="it"><div class="dt">${mdy(i.time)}</div><div class="bd"><div>${chip(i.class||'—','low')} <span class="small mut">${esc(i.source)} · ${esc(i.channel)} · ${esc(i.author)}</span></div><div class="s" style="color:#1d2330;margin:3px 0">${esc(String(i.text||'').slice(0,400))}</div>${i.link&&/^https?:/.test(i.link)?`<a class="small" href="${esc(i.link)}" target="_blank" rel="noopener">open</a>`:''}</div></div>`).join('')||emptyState('No messages yet','')}</div>`,csvBtn('messages'));bindCsv(M)}
 function mTodos(M){const items=J.todos||[];const lim=addD(J.today,30);const show=st.todoAll?items:items.filter(t=>t.status!='done'&&(!t.due||t.due<=lim));
- M.innerHTML=panel('To-dos','BT To-Do template (due dates tied to schedule items) + follow-ups.csv + proposed items',items.length?`<div class="tw"><table><tr><th>Due</th><th>To-do</th><th>Assigned</th><th>Tied to</th><th>Priority</th><th>Tags</th><th>Source</th></tr>${show.map(t=>`<tr><td class="nowrap">${t.due&&t.due<J.today&&t.status!='done'?chip(md(t.due),'overdue'):esc(mdy(t.due))}</td><td>${esc(t.title)}${t.next?`<div class="mut small">${esc(t.next)}</div>`:''}</td><td class="small">${esc(t.assigned)}</td><td class="small">${esc(t.due_rule||t.related)}</td><td class="small">${esc(t.priority)}</td><td class="small">${esc(t.tags)}</td><td>${srcChip(t.source)}</td></tr>`).join('')||'<tr><td colspan=7 class="empty">No to-dos in the next 30 days</td></tr>'}</table></div>`:emptyState('No to-dos yet',''),
+ M.innerHTML=panel('To-dos','To-do template (due dates tied to schedule items) + follow-ups.csv + proposed items',items.length?`<div class="tw"><table><tr><th>Due</th><th>To-do</th><th>Assigned</th><th>Tied to</th><th>Priority</th><th>Tags</th><th>Source</th></tr>${show.map(t=>`<tr><td class="nowrap">${t.due&&t.due<J.today&&t.status!='done'?chip(md(t.due),'overdue'):esc(mdy(t.due))}</td><td>${esc(t.title)}${t.next?`<div class="mut small">${esc(t.next)}</div>`:''}</td><td class="small">${esc(t.assigned)}</td><td class="small">${esc(t.due_rule||t.related)}</td><td class="small">${esc(t.priority)}</td><td class="small">${esc(t.tags)}</td><td>${srcChip(t.source)}</td></tr>`).join('')||'<tr><td colspan=7 class="empty">No to-dos in the next 30 days</td></tr>'}</table></div>`:emptyState('No to-dos yet',''),
  `<label class="small"><input type="checkbox" id="ta" ${st.todoAll?'checked':''}> show all (${items.length})</label>`+csvBtn('todos'));const ta=$('#ta');if(ta)ta.onchange=e=>{st.todoAll=e.target.checked;saveUi();mTodos(M)};bindCsv(M)}
-function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, BT vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
+function mConf(M){const l=J.conflicts||[];M.innerHTML=panel('Conflicts','recomputed after every schedule edit: deliveries vs phase start, order-by dates, unapproved selections, open prerequisites, locked tasks pushed out of logic, imported schedule vs email dates',`<div class="list">${l.map(c=>`<div class="it"><div class="dt">${chip(c.severity,c.severity)}</div><div class="bd"><div class="t">${esc(c.title)}</div><div class="s">${esc(c.kind)} · ${esc(c.detail)}${c.task?` · <a href="#" data-t="${esc(c.task)}">${esc(c.task)}</a>`:''}</div></div></div>`).join('')||emptyState('No conflicts','')}</div>`,csvBtn('conflicts'));
  bindCsv(M);const by={};(J.tasks||[]).forEach(t=>by[t.id]=t);M.querySelectorAll('[data-t]').forEach(a=>a.onclick=e=>{e.preventDefault();if(by[a.dataset.t])taskModal(by[a.dataset.t])})}
 
 /* Job Slack tab (phone-first). New rows arrive on the office server over SSE.
@@ -2492,7 +2525,9 @@ const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyl
 const ico=(k,c)=>`<svg class="ico ${c||''}" viewBox="0 0 24 24" aria-hidden="true">${IC[k]||IC.doc}</svg>`;
 const KIND_IC={dropbox:'files','dropbox-file':'doc',drive:'sheet',gmail:'mail',slack:'chat',app:'grid'};
 function linkIcon(x){if(x.kind=='app'&&/companycam/i.test(x.url))return 'cam';return KIND_IC[x.kind]||'ext'}
-function safeUrl(u){return /^https:\/\//.test(u||'')?u:''}
+function safeUrl(u){u=String(u||'');if(/buildertrend\.(net|com)/i.test(u))return '';return /^https:\/\//.test(u)?u:''}
+function btFace(x){if(!x||typeof x!=='object')return false;return /buildertrend/i.test([x.label,x.sub,x.url,x.group,x.title,x.kind,x.file].join(' '))}
+function companyLinks(){return (HL().company||[]).filter(g=>g&&!/buildertrend/i.test(g.title||'')).map(g=>Object.assign({},g,{items:(g.items||[]).filter(x=>!btFace(x))})).filter(g=>(g.items||[]).length)}
 function H(){return (DATA&&DATA.common&&DATA.common.hub)||{bids:[],orders:[],orderby:[],deliveries:[],fups:[]}}
 function HL(){return (DATA&&DATA.common&&DATA.common.links)||{company:[]}}
 function JL(slug){return ((DATA&&DATA.common&&DATA.common.job_links)||{})[slug]||{items:[],permits:[]}}
@@ -2526,12 +2561,24 @@ function dnavHtml(page){const it=hubNav();
  return `<nav class="dnav hide-sm" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" class="${k==page?'on':''}">${l}</a>`).join('')}</nav>`}
 function hubShell(page,body){document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg=page;
  $('#root').innerHTML=topHtml(page)+`<main class="hub hub-${page}${page=='home'?' hub-home':''}">${body}</main>`+gnavHtml(page);bindTop()}
-function hostedRow(x,extra,cls){if(typeof fileHosted!=='function'||!x||!fileHosted(x.url,x.kind))return '';return fileLinkHtml(Object.assign({},x,{cls:cls}),extra)}
-function lbtn(x,big){const h=hostedRow(x,'','lbtn'+(big?' big':''));if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lbtn${big?' big':''}" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(x.sub||x.label)}">${ico(linkIcon(x))}<span class="lt">${esc(x.label)}</span>${big&&x.sub?`<span class="ls">${esc(x.sub)}</span>`:''}</a>`}
-function lrow(x,extra){const h=hostedRow(x,extra,'lrow');if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(linkIcon(x),'k-'+(x.kind||''))}<span class="lb"><span class="lt">${esc(x.label)}</span>${x.sub||extra?`<span class="ls">${esc(extra||x.sub)}</span>`:''}</span>${ico('ext','go')}</a>`}
+function hostedRow(x,extra,cls){if(btFace(x)||typeof fileHosted!=='function'||!x||!fileHosted(x.url,x.kind))return '';return fileLinkHtml(Object.assign({},x,{cls:cls}),extra)}
+function lbtn(x,big){if(btFace(x))return '';const h=hostedRow(x,'','lbtn'+(big?' big':''));if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lbtn${big?' big':''}" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(x.sub||x.label)}">${ico(linkIcon(x))}<span class="lt">${esc(x.label)}</span>${big&&x.sub?`<span class="ls">${esc(x.sub)}</span>`:''}</a>`}
+function lrow(x,extra){if(btFace(x))return '';const h=hostedRow(x,extra,'lrow');if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(linkIcon(x),'k-'+(x.kind||''))}<span class="lb"><span class="lt">${esc(x.label)}</span>${x.sub||extra?`<span class="ls">${esc(extra||x.sub)}</span>`:''}</span>${ico('ext','go')}</a>`}
 function hrow(href,title,sub,right,cls){return `<a class="hrow ${cls||''}" href="${href}"><span class="lb"><span class="lt">${title}</span>${sub?`<span class="ls">${sub}</span>`:''}</span>${right||''}${ico('chev','go')}</a>`}
 function dchip(d,td){if(!d)return '';const c=d<td?'overdue':(d==td?'today':'');return `<span class="dchip ${c}">${d==td?'Today':(d==addD(td,1)?'Tomorrow':dow(d)+' '+md(d))}</span>`}
 function greet(){const h=+new Date(Date.now()-7*3600e3).toISOString().slice(11,13);return h<12?'Good morning':(h<17?'Good afternoon':'Good evening')}
+function homeComparison(){const groups=(H().comparison)||[];if(!groups.length)return '';
+ const money=(typeof MONEY!=='undefined'&&MONEY&&MONEY.bid_comparison)||[];const byId={};money.forEach(r=>{if(r&&r.id)byId[r.id]=r});
+ const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ const block=groups.map(g=>{const rows=(g.rows||[]).map(x=>{const priv=see?byId[x.id]:null;const amt=priv&&priv.amount!=null&&priv.amount!==''?fmt$(priv.amount):(x.amount_label||'');
+  const pct=priv&&priv.amount!=null&&priv.amount!==''&&priv.low?Math.round((+priv.amount-+priv.low)/+priv.low*1000)/10:(x.pct!=null?+x.pct:null);
+  const vs=pct!=null?(pct?('+'+pct+'%'):'low'):'';const w=x.bar!=null?+x.bar:0;
+  return `<div class="bcard"><div class="bt"><span class="bv">${esc(x.vendor||x.id||'')}</span>${x.awarded?chip('Awarded','ok'):chip(x.status||'—','low')}</div>
+   <div class="bs">${esc(x.id||'')} · ${esc(x.trade||g.trade||'')}${amt?' · <b>'+esc(amt)+'</b>':''}${vs?(' · '+(vs==='low'?'<b style="color:#12a150">low</b>':esc(vs))):''}</div>
+   ${w?`<div class="cmpbar"><b class="${pct===0?'low':''}" style="width:${w}%"></b></div>`:''}</div>`}).join('');
+  const title=esc(g.job||g.title||'')+' · '+esc(g.title||g.trade||'');
+  return `<h2 class="sh2">${g.slug?`<a href="${jobHref(g.slug,'bids')}">${title}</a>`:title} <span>${(g.rows||[]).length}</span></h2><div class="cards">${rows}</div>`}).join('');
+ return `<section class="home-cmp"><h2 class="sh2 first">Bid comparison</h2><div class="hint">Amounts stay on the money page.</div>${block}</section>`}
 function longDate(s){const t=new Date(dP(s));return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][t.getUTCDay()]+', '+MON[t.getUTCMonth()]+' '+t.getUTCDate()}
 /* ---- Home ---- */
 function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" href="${href}"><span class="ti">${ico(icon)}</span><span class="tn">${num}</span><span class="tl">${label}</span>${sub?`<span class="ts">${sub}</span>`:''}</a>`}
@@ -2553,6 +2600,7 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
   <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
  hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
+ ${homeComparison()}
  <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);document.title='Harswells · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
@@ -2566,7 +2614,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
   <div class="cards">${L.map(b=>`<div class="bcard${b.pastDue?' late':''}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
-   <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''}${b.amount?' · <b>'+esc(b.amount)+'</b>':''}</div>
+   <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''} · <b>${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',b.amount):(b.amount?esc(b.amount):'(amounts on money page)')}</b></div>
    <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
    ${(b.links||[]).length?`<div class="lbtns">${b.links.map(x=>lbtn(x)).join('')}</div>`:'<div class="ls none2">No file or email on file yet</div>'}</div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
  if(sub=='orders'){const extra=h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id));
@@ -2581,18 +2629,18 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   body=Object.entries(by).sort((a,b)=>b[1].length-a[1].length).map(([o,l])=>`<h2 class="sh2">${esc(o)} <span>${l.length}</span></h2><div class="rows">${l.sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1).map(f=>hrow(f.slug?jobHref(f.slug,'todos'):'#/trackers/fups',esc(f.item),`${esc(f.job||'')}${f.waiting?' · waiting on '+esc(f.waiting):''}${f.next?' · next: '+esc(f.next):''}`,`${f.pri?`<span class="pri ${esc(f.pri)}">${esc(f.pri)}</span>`:''}${dchip(f.due,S.td)}`)).join('')}</div>`).join('')||'<div class="none">No follow-ups owed</div>'}
  if(sub=='pos'){body=typeof renderPosTrackers==='function'?renderPosTrackers():'<div class="none">Purchase orders are not in this copy yet</div>'}
  if(sub=='conflicts'){body=`<div class="rows">${S.high.map(x=>hrow(jobHref(x.slug,'conflicts'),esc(x.c.title),esc(x.job)+' · '+esc(x.c.kind),'<span class="dchip overdue">high</span>')).join('')||'<div class="none">No high conflicts</div>'}</div>`}
- hubShell('trackers',`<div class="hph"><h1>Trackers</h1><a class="small" href="${esc(safeUrl(((HL().company||[]).find(g=>/Trackers/.test(g.title))||{items:[{}]}).items[0].url||''))}" target="_blank" rel="noopener">Open sheets ${ico('ext','sm')}</a></div>${seg}${body}`);
+ hubShell('trackers',`<div class="hph"><h1>Trackers</h1><a class="small" href="${esc(safeUrl(((companyLinks()).find(g=>/Trackers/.test(g.title))||{items:[{}]}).items[0].url||''))}" target="_blank" rel="noopener">Open sheets ${ico('ext','sm')}</a></div>${seg}${body}`);
  document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{st.hbF=b.dataset.bf;saveUi();renderTrackers('bids')});
  if(sub=='pos'&&typeof poBindList==='function') poBindList(document.getElementById('root'),()=>renderTrackers('pos'));
  const poq=$('#poq');if(poq)poq.oninput=e=>{st.poQ=e.target.value;saveUi();const p=poq.selectionStart;renderTrackers('pos');const n=$('#poq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}};
  const bq=$('#bq');if(bq)bq.oninput=e=>{st.bq=e.target.value;saveUi();const p=bq.selectionStart;renderTrackers('bids');const n=$('#bq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
  document.title='Harswells · Trackers'}
 /* ---- Files ---- */
-function fileIndex(){const idx=[];(HL().company||[]).forEach(g=>(g.items||[]).forEach(x=>idx.push(Object.assign({job:'Company',grp:g.title},x))));
- const JLs=(DATA.common||{}).job_links||{};Object.keys(JLs).forEach(slug=>{const nm=jobName(slug)||slug;(JLs[slug].items||[]).forEach(x=>{if(!/\(all jobs\)/.test(x.label))idx.push(Object.assign({job:nm,slug},x))});
-  (JLs[slug].permits||[]).forEach(p=>idx.push({job:nm,slug,label:'Permit '+p.number,sub:p.what||p.file,url:p.url,kind:'dropbox-file'}))});
+function fileIndex(){const idx=[];companyLinks().forEach(g=>(g.items||[]).forEach(x=>idx.push(Object.assign({job:'Company',grp:g.title},x))));
+ const JLs=(DATA.common||{}).job_links||{};Object.keys(JLs).forEach(slug=>{const nm=jobName(slug)||slug;(JLs[slug].items||[]).filter(x=>!btFace(x)).forEach(x=>{if(!/\(all jobs\)/.test(x.label))idx.push(Object.assign({job:nm,slug},x))});
+  (JLs[slug].permits||[]).filter(p=>!btFace(p)).forEach(p=>idx.push({job:nm,slug,label:'Permit '+p.number,sub:p.what||p.file,url:p.url,kind:'dropbox-file'}))});
  H().bids.forEach(b=>(b.links||[]).filter(x=>x.kind=='dropbox-file').forEach(x=>idx.push(Object.assign({job:b.job,slug:b.slug},x,{sub:'Bid · '+b.vendor+' · '+b.trade}))));return idx}
-function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=HL().company||[];const JLs=(DATA.common||{}).job_links||{};
+function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=companyLinks();const JLs=(DATA.common||{}).job_links||{};
  let body='';
  if(q){const words=q.split(/\s+/);const hits=fileIndex().filter(x=>{const s=[x.label,x.sub,x.job,x.grp,jobSearch(x.slug)].join(' ').toLowerCase();return words.every(w=>s.includes(w))});const by={};hits.forEach(x=>(by[x.job]=by[x.job]||[]).push(x));
   body=`<div class="hint">${hits.length} match${hits.length==1?'':'es'}</div>`+Object.entries(by).map(([j,l])=>`<h2 class="sh2">${esc(j)} <span>${l.length}</span></h2><div class="rows">${l.slice(0,60).map(x=>lrow(x)).join('')}</div>`).join('')}
@@ -2615,13 +2663,14 @@ function bindSavedOpens(root,slug){if(!root||!window.HWSOffline)return;root.quer
   if(!/\.(pdf|png|jpe?g|gif|webp)(\?|#|$)/i.test(href))return;
   if(typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(href))return;
   a.addEventListener('click',ev=>{ev.preventDefault();HWSOffline.openFile(href, a.textContent.trim(), slug)})})}
-function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!compact||!/\(all jobs\)/.test(x.label));
- const permits=(L.permits||[]).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
+function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!btFace(x)&&(!compact||!/\(all jobs\)/.test(x.label)));
+ const permits=(L.permits||[]).filter(p=>!btFace(p)).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
  return permits.join('')+it.map(x=>lrow(x)).join('')||'<div class="none">No links on file for this job yet</div>'}
 /* ---- Job module: Files and links ---- */
-function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp[x.group||'Links']=grp[x.group||'Links']||[]).push(x));
+function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>{if(btFace(x)||/buildertrend/i.test(x.group||''))return;(grp[x.group||'Links']=grp[x.group||'Links']||[]).push(x)});
  const bids=H().bids.filter(b=>b.slug==J.slug&&(b.links||[]).some(x=>x.kind=='dropbox-file'));
- const permits=(L.permits||[]).length?`<div class="permits">${L.permits.map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file',slug:J.slug})).join('')}</div>`:'';
+ const permitRows=(L.permits||[]).filter(p=>!btFace(p)&&safeUrl(p.url));
+ const permits=permitRows.length?`<div class="permits">${permitRows.map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file',slug:J.slug})).join('')}</div>`:'';
  const bar=window.HWSOffline?HWSOffline.barHtml(J.slug):'';
  M.innerHTML=`<div class="filesmod"><h2 class="sh2 first">Files and links</h2>${bar}${permits?`<h3 class="sh3">Permits</h3>${permits}`:''}
  ${Object.entries(grp).map(([g,l])=>`<h3 class="sh3">${esc(g)}</h3><div class="rows">${l.map(x=>lrow(x)).join('')}</div>`).join('')||'<div class="none">No links on file for this job yet</div>'}
@@ -2629,7 +2678,7 @@ function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>(grp
  <div class="hint foot">Files and folders open in this hub. A PDF or photo you open is kept on this phone.</div></div>`;
  if(window.HWSOffline){HWSOffline.paintBar(M);bindSavedOpens(M,J.slug)}}
 /* ---- Chat (placeholder) ---- */
-function renderChat(){const sl=((HL().company||[]).flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
+function renderChat(){const sl=(companyLinks().flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
 function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
@@ -2702,7 +2751,7 @@ function attItems(){const td=attToday(),we=addD(td,7),A=AT();const items=[];cons
  attFlags().filter(x=>x.id=='job').forEach(x=>{const J=attJ(x.slug)||{};items.push({kind:'jobflag',when:'today',sev:1,date:td,slug:x.slug,job:J.name||x.slug,title:`${J.name||x.slug}: flagged job`,id:'job',why:'Flagged'+(x.f.note?': '+x.f.note:''),flag:x.f})});
  /* stale schedules: one info row per job */
  attSlugs().filter(s=>attActive(s)&&attStale(s)).forEach(slug=>{const J=attJ(slug);const n=(J.tasks||[]).filter(t=>attReal(t)&&!attDone(t)&&(t.finish||t.start)<td).length;
-  if(n)items.push({kind:'stale',when:'info',sev:5,date:td,slug,job:J.name,title:`${J.name}: ${n} Buildertrend items past due, never updated`,id:'stale',why:(attBase(slug)||{}).note||'Buildertrend schedule not updated',info:true,n})});
+  if(n)items.push({kind:'stale',when:'info',sev:5,date:td,slug,job:J.name,title:`${J.name}: ${n} schedule items past due, never updated`,id:'stale',why:(attBase(slug)||{}).note||'Schedule not updated',info:true,n})});
  items.sort((a,b)=>a.sev-b.sev||(a.date<b.date?-1:(a.date>b.date?1:0))||(a.job<b.job?-1:1));return items}
 function attDrift(slug){const B=attBase(slug);const J=attJ(slug);if(!J||!B||!B.tasks||!Object.keys(B.tasks).length)return {slug,job:(J||{}).name||slug,none:true,B};
  const info=J.info||{};const reset=/^hub-reset/.test(info.baseline_src||'');const rows=[];let projCur='',projBase=B.finish||'';
@@ -2730,9 +2779,9 @@ const SEVC={1:'s1',2:'s2',3:'s3',4:'s4',5:'s5'};
 function attRow(i){const who=i.t&&i.t.owner?` · ${esc(i.t.owner)}`:'';const tag=i.info?'<span class="atag info">info</span>':(i.flag?'<span class="atag flag">⚑</span>':(i.critical?'<span class="atag crit">critical</span>':''));
  return `<button class="arow ${SEVC[i.sev]}" data-ai="${esc(i.slug)}|${esc(i.kind)}|${esc(i.id)}"><span class="abar"></span><span class="lb"><span class="lt">${esc(i.title)}</span><span class="ls">${esc(i.job)} · ${esc(i.why)}${who}</span></span>${tag}${ico('chev','go')}</button>`}
 function attJobRow(d,kind){let right='',sub='';
- if(kind=='drift'){right=`<span class="dpill ${d.none?'none':d.color}">${d.none?'—':(d.slip>0?'+':'')+d.slip+'d'}</span>`;sub=d.none?((d.B&&d.B.note)||'No dated schedule yet'):(d.stale?'Stale Buildertrend schedule':`${d.rows.length} task${d.rows.length==1?'':'s'} off baseline · finish ${md(d.projCur)}${d.proj?` (${d.proj>0?'+':''}${d.proj}d)`:''} · ${d.approved?'baseline approved':'baseline proposed'}`)}
+ if(kind=='drift'){right=`<span class="dpill ${d.none?'none':d.color}">${d.none?'—':(d.slip>0?'+':'')+d.slip+'d'}</span>`;sub=d.none?((d.B&&d.B.note)||'No dated schedule yet'):(d.stale?'Stale schedule':`${d.rows.length} task${d.rows.length==1?'':'s'} off baseline · finish ${md(d.projCur)}${d.proj?` (${d.proj>0?'+':''}${d.proj}d)`:''} · ${d.approved?'baseline approved':'baseline proposed'}`)}
  if(kind=='quiet'){right=`<span class="dpill ${d.days==null?'red':(d.days>=14?'red':'amber')}">${d.days==null?'none':d.days+'d'}</span>`;sub=d.last?`Last: ${(d.sources[0]||{}).kind} ${md(d.last.slice(0,10))}`:'No activity found in any source'}
- if(kind=='assigned'){const n=(d.crew||[]).length+(d.vendors||[]).length+Object.keys(d.trades||{}).length;right='';sub=`PM: ${d.pm?esc(d.pm):'<b class="red">not set</b>'} · ${(d.crew||[]).concat(d.bt_assigned||[]).filter((v,i,a)=>a.indexOf(v)==i).join(', ')||'no crew in BT'} · ${Object.keys(d.trades||{}).length} trades bidding · ${(d.vendors||[]).length} orders`;return `<button class="arow s5" data-aj="${esc(d.slug)}|assigned"><span class="lb"><span class="lt">${esc(d.job)}</span><span class="ls">${sub}</span></span>${ico('chev','go')}</button>`}
+ if(kind=='assigned'){const n=(d.crew||[]).length+(d.vendors||[]).length+Object.keys(d.trades||{}).length;right='';sub=`PM: ${d.pm?esc(d.pm):'<b class="red">not set</b>'} · ${(d.crew||[]).concat(d.bt_assigned||[]).filter((v,i,a)=>a.indexOf(v)==i).join(', ')||'no crew on the schedule'} · ${Object.keys(d.trades||{}).length} trades bidding · ${(d.vendors||[]).length} orders`;return `<button class="arow s5" data-aj="${esc(d.slug)}|assigned"><span class="lb"><span class="lt">${esc(d.job)}</span><span class="ls">${sub}</span></span>${ico('chev','go')}</button>`}
  return `<button class="arow ${kind=='drift'?({red:'s1',amber:'s2',green:'s4',none:'s5'}[d.none?'none':d.color]):(d.days==null||d.days>=14?'s2':'s3')}" data-aj="${esc(d.slug)}|${kind}"><span class="lb"><span class="lt">${esc(d.job)}</span><span class="ls">${esc(sub)}</span></span>${right}${ico('chev','go')}</button>`}
 function attCount(key,n,label,cls){return `<a class="acount ${cls||''}" href="#/attention/${key}"><b>${n}</b><span>${label}</span></a>`}
 function attSummaryCard(){if(!AT())return '';const M=attModel();
@@ -2752,19 +2801,19 @@ function renderAttention(sub){if(!AT()){hubShell('attention',`<div class="hph"><
  if(!key){const sec=(k,title,L,f,n)=>`<h2 class="sh2"><a href="#/attention/${k}">${title} <span>${n==null?L.length:n}</span>${ico('chev','sm')}</a></h2><div class="rows">${L.slice(0,5).map(f).join('')||'<div class="none">Nothing here</div>'}${L.length>5?`<a class="more" href="#/attention/${k}">All ${L.length} ${ico('chev','sm')}</a>`:''}</div>`;
   body=`<div class="acounts big">${attCount('today',M.today.length,'Today',M.today.some(i=>i.sev<=2)?'red':'')}${attCount('week',M.week.length,'This week')}${attCount('overdue',M.overdue.length,'Overdue',M.overdue.length?'red':'')}${attCount('critical',M.critical.length,'Critical','amber')}</div>
   <div class="acounts">${attCount('red',M.red.length,'Red','red')}${attCount('amber',M.amber.length,'Amber','amber')}${attCount('green',M.green.length,'Green','green')}${attCount('quiet',M.quiet.length,'Quiet','amber')}${attCount('flagged',M.flagged.length,'Flagged','red')}</div>
-  <div class="acounts">${attCount('inspections',M.inspections.length,'Inspections')}${attCount('deliveries',M.deliveries.length,'Deliveries (info)')}${attCount('stale',M.stale.length,'BT not updated')}${attCount('nobase',M.nobase.length,'No baseline, no schedule')}</div>
+  <div class="acounts">${attCount('inspections',M.inspections.length,'Inspections')}${attCount('deliveries',M.deliveries.length,'Deliveries (info)')}${attCount('stale',M.stale.length,'Schedules not updated')}${attCount('nobase',M.nobase.length,'No baseline, no schedule')}</div>
   ${M.flagged.length?sec('flagged','Flagged',M.flagged,attRow):''}
   ${sec('today','Today',M.today,attRow)}${sec('week','This week',M.week,attRow)}
   ${sec('drift','Drifting jobs',M.red.concat(M.amber),d=>attJobRow(d,'drift'),M.red.length+M.amber.length)}
   ${sec('quiet','Quiet 7+ days',M.quiet,d=>attJobRow(d,'quiet'))}
-  ${M.stale.length?sec('stale','Schedules not updated in Buildertrend',M.stale,attRow):''}
+  ${M.stale.length?sec('stale','Schedules not updated',M.stale,attRow):''}
   <h2 class="sh2"><a href="#/attention/assigned">Assigned <span>${M.assigned.length} jobs</span>${ico('chev','sm')}</a></h2>
   <div class="hint foot">Baseline: ${esc((AT().baseline||{}).status||'')} · set ${esc(md((AT().baseline||{}).set||''))} from ${esc(((AT().baseline||{}).source||'').split(';')[0])}. Draft template rows are left out of every count. Today = ${esc(longDate(td))} (Arizona).</div>`}
  else{let {rows,n}=attList(key,M);if(jf){const L=(M[key]||[]).filter(i=>i.slug==jf);rows=L.map(attRow).join('');n=L.length}
   const note={today:'Starting, due or overdue today, inspections, bids and follow-ups due. Deliveries are info only (not conflicts).',week:'The next 7 days.',
    drift:'Current finish minus baseline finish, per job: the bigger of the worst incomplete task and the projected finish. Green 0–2 days, amber 3–7, red more than 7.',
-   quiet:'Active jobs with no hub edit, Dropbox file change, message or daily-log mention in 7+ days.',assigned:'PM from job settings (not in the Buildertrend export). Crew and subs from Buildertrend, bids and orders.',
-   stale:'Buildertrend schedules where most items are past due and never marked complete. Left out of the counts until the schedule is rebuilt.',flagged:'Items you flagged (tap to see the note or clear it).'}[key]||'';
+   quiet:'Active jobs with no hub edit, Dropbox file change, message or daily-log mention in 7+ days.',assigned:'PM from job settings. Crew and subs come from the schedule, bids and orders.',
+   stale:'Schedules where most items are past due and never marked complete. Left out of the counts until the schedule is rebuilt.',flagged:'Items you flagged (tap to see the note or clear it).'}[key]||'';
   body=`<h2 class="sh2 first">${esc(ATT_KEYS[key])}${jf?' · '+esc((attJ(jf)||{}).name||jf):''} <span>${n}</span></h2>${note?`<div class="hint">${note}</div>`:''}<div class="rows">${rows||'<div class="none">Nothing here</div>'}</div>`}
  hubShell('attention',`<div class="hph"><h1>Attention</h1><span class="small mut">${esc(longDate(td))}</span></div>${seg}${body}`);
  attBind(document);document.title='Harswells · Attention'}
@@ -2806,7 +2855,7 @@ function attUndoToast(slug,msg){document.querySelectorAll('.toast').forEach(x=>x
 function attReschedule(slug,id){const J=attJ(slug);const t=(J.tasks||[]).find(x=>x.id==id);if(!t)return;if(!attCanEdit()){toast('Editing is not available here (check out the job first).');return}
  openModal(`<div class="asheet"><h2>Reschedule</h2><div class="small mut">${esc(J.name)} · ${esc(t.id)} ${esc(t.task)}</div>
   <form id="arf" class="fg"><label>Start<input type="date" name="start" value="${esc(t.start)}" required></label><label>Finish<input type="date" name="finish" value="${esc(t.finish||t.start)}"></label>
-  <div class="hint">Moves this task the same way as dragging it on the schedule: successors follow their links${J.settings&&J.settings.cascade_bt?' (Buildertrend rows too)':'; locked Buildertrend/REAL rows are flagged, not moved'}. Saved to the shared schedule and History; Undo is right after.</div>
+  <div class="hint">Moves this task the same way as dragging it on the schedule: successors follow their links${J.settings&&J.settings.cascade_bt?' (imported rows too)':'; locked imported and REAL rows are flagged, not moved'}. Saved to the shared schedule and History; Undo is right after.</div>
   <div class="aacts"><button class="abtn pri" type="submit">Save new dates</button><button class="abtn" type="button" data-close>Cancel</button></div></form></div>`,m=>{
   const f=m.querySelector('#arf');const si=f.start,fi=f.finish;const dur=Math.max(0,attDays(t.start,t.finish||t.start));si.onchange=()=>{if(si.value)fi.value=addD(si.value,dur)};
   f.onsubmit=ev=>{ev.preventDefault();const s=si.value,fn=fi.value||null;if(!s)return;const op=fn&&fn!=addD(s,dur)?{op:'move',id,start:s,finish:fn}:{op:'move',id,start:s};
@@ -2822,10 +2871,10 @@ function attFlagSheet(slug,id,title){if(!attCanEdit()){toast('Editing is not ava
 function attPeople(slug){const a=(AT().assigned||{})[slug]||{};const pm=attInfo(slug).pm||a.pm||'';const subsSeen=new Set();
  const row=(label,sub,role)=>{const s=sub?attSub(sub):null;const nm=s?s.name:label;if(sub){if(subsSeen.has(sub))return '';subsSeen.add(sub)}
   return `<div class="aperson"><div class="lb"><span class="lt">${esc(nm)}</span><span class="ls">${esc(role)}</span></div><div class="aacts sm">${s?attMsg(s,`${(attJ(slug)||{}).name}: quick check-in${attSig()?' from '+attSig():''}${attOwn().company?' at '+attOwn().company:''}.`):'<span class="nocontact">no contact on file</span>'}${s?`<button class="abtn" data-rel="sub|${esc(sub)}">${ico('chev')}</button>`:''}</div></div>`};
- let h=`<h3 class="sh3">People</h3><div class="aperson"><div class="lb"><span class="lt">PM: ${pm?esc(pm):'<b class="red">not set</b>'}</span><span class="ls">${esc(a.pm_src||'Set it in the job’s Settings; Buildertrend exports have no PM')}</span></div>${pm?'':`<a class="abtn" href="${jobHref(slug,'settings')}">Set PM</a>`}</div>`;
+ let h=`<h3 class="sh3">People</h3><div class="aperson"><div class="lb"><span class="lt">PM: ${pm?esc(pm):'<b class="red">not set</b>'}</span><span class="ls">${esc(a.pm_src||'Set it in the job’s Settings')}</span></div>${pm?'':`<a class="abtn" href="${jobHref(slug,'settings')}">Set PM</a>`}</div>`;
  (a.crew||[]).concat(a.bt_assigned||[]).filter((v,i,x)=>x.indexOf(v)==i).forEach(c=>h+=row(c,attSubKey(c),'crew / assigned in schedule'));
  if((a.staff||[]).length)h+=`<div class="small mut" style="margin:6px 0">Harswells team on this job: ${esc(a.staff.join(', '))}</div>`;
- Object.entries(a.trades||{}).forEach(([tr,l])=>{h+=`<h3 class="sh3">${esc(tr)} <span class="mut">${l.length}</span></h3>`;l.forEach(x=>h+=row(x.name,x.sub,x.role+(x.amount?' · $'+Math.round(+x.amount).toLocaleString():'')))});
+ Object.entries(a.trades||{}).forEach(([tr,l])=>{h+=`<h3 class="sh3">${esc(tr)} <span class="mut">${l.length}</span></h3>`;l.forEach(x=>h+=row(x.name,x.sub,x.role+' · '+(typeof moneyPlain==='function'?moneyPlain(x.bid,'amount',x.amount):(x.amount?'$'+Math.round(+x.amount).toLocaleString():'(amounts on money page)'))))});
  if((a.vendors||[]).length){h+=`<h3 class="sh3">Suppliers (orders)</h3>`;a.vendors.forEach(v=>h+=row(v.name,v.sub,`${v.trade} · ${v.item}`))}
  return h}
 function attOpenJob(slug,kind){const J=attJ(slug);if(!J)return;const D=attDrift(slug);const L=attLast(slug);const own=attIsOwner();const jfl=attFlag(slug,'job');
@@ -2839,7 +2888,7 @@ function attOpenJob(slug,kind){const J=attJ(slug);if(!J)return;const D=attDrift(
    <div class="small mut">Baseline: <b>${esc(D.status||'')}</b> · ${esc((D.B||{}).source||'')}${(D.B||{}).note?' · '+esc(D.B.note):''}</div>
    ${own?`<div class="aacts"><button class="abtn ${D.approved?'on':'pri'}" id="aAppr">${D.approved?'✓ Approved':'Approve baseline'}</button><button class="abtn" id="aReset">Reset to current schedule</button></div>`:'<div class="small mut">Only '+esc(attSig()||'the owner')+' can approve or reset the baseline.</div>'}
    <div class="rows">${D.rows.slice(0,12).map(r=>`<button class="arow ${SEVC[r.slip>7?1:(r.slip>2?2:4)]}" data-at="${esc(r.t.id)}"><span class="abar"></span><span class="lb"><span class="lt">${esc(r.t.task)}</span><span class="ls">finish ${esc(md(r.t.finish))} vs ${esc(md(r.bf))}${r.t.critical?' · critical':''}</span></span><span class="dpill ${attColor(Math.abs(r.slip))}">${r.slip>0?'+':''}${r.slip}d</span>${ico('chev','go')}</button>`).join('')||'<div class="none">Every task is on its baseline</div>'}</div>`}
-  h+=`<h3 class="sh3">Last activity</h3>${L.sources.length?`<div class="rows">${L.sources.slice(0,6).map(s=>`<div class="asrc"><b>${esc(md(s.ts.slice(0,10)))}</b> ${esc(s.kind)}${s.what?' · '+esc(String(s.what).slice(0,90)):''}${s.url&&typeof fileHosted==='function'&&fileHosted(s.url,'')?fileLinkHtml({url:s.url,label:s.what||'File',slug:slug,cls:'flink'}):(s.url&&/^https:\/\//.test(s.url)?` <a href="${esc(s.url)}" target="_blank" rel="noopener">${ico('ext','sm')}</a>`:'')}</div>`).join('')}</div>`:'<div class="none">No activity found in any source</div>'}`;
+  h+=`<h3 class="sh3">Last activity</h3>${L.sources.length?`<div class="rows">${L.sources.slice(0,6).map(s=>`<div class="asrc"><b>${esc(md(s.ts.slice(0,10)))}</b> ${esc(s.kind)}${s.what?' · '+esc(String(s.what).slice(0,90)):''}${s.url&&typeof fileHosted==='function'&&fileHosted(s.url,'')&&!/buildertrend\.(net|com)/i.test(s.url)?fileLinkHtml({url:s.url,label:s.what||'File',slug:slug,cls:'flink'}):(s.url&&/^https:\/\//.test(s.url)&&!/buildertrend\.(net|com)/i.test(s.url)?` <a href="${esc(s.url)}" target="_blank" rel="noopener">${ico('ext','sm')}</a>`:'')}</div>`).join('')}</div>`:'<div class="none">No activity found in any source</div>'}`;
   h+=attPeople(slug)}
  h+=HWSRelated.html(attJobLinks(slug),{slug})+`<p><button class="small" data-close>Close</button></p></div>`;
  openModal(h,m=>{HWSRelated.bind(m,{slug});m.querySelectorAll('[data-at]').forEach(b=>b.onclick=()=>{const t=(attJ(slug).tasks||[]).find(x=>x.id==b.dataset.at);if(t)attOpenTask(slug,t)});
@@ -2857,7 +2906,8 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
  const LBL={job:'Job',task:'Task',sub:'Sub / vendor',bid:'Bid / quote',order:'Order / PO',selection:'Selection',dropbox:'Dropbox',url:'Link',spec:'Spec sheet',designbook:'Design book',po:'Purchase order',takeoff:'Takeoff',adaptive:'Adaptive PO',file:'File',budget:'Budget line'};
  function html(links,o){const L=(links||[]).filter(Boolean);if(!L.length)return '';const g={};L.forEach(x=>(g[x.type]=g[x.type]||[]).push(x));
   return `<div class="related"><h3 class="sh3">Related <span class="mut">${L.length}</span></h3>${Object.keys(g).map(k=>`<div class="rgrp"><div class="rg">${esc(LBL[k]||k)}</div>${g[k].map(x=>{
-   const u=x.url&&/^https:\/\//.test(x.url)?x.url:'';const hostedKind=k==='file'?'file':(k==='dropbox'?(x.kind||'dropbox'):'');if(u&&typeof fileHosted==='function'&&fileHosted(u,hostedKind||k))return fileLinkHtml({url:u,label:x.label||'File',slug:(o&&o.slug)||'',kind:hostedKind,name:x.name||'',cls:'rrow'});if(u)return `<a class="rrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||u)}</span>${ico('ext','go')}</a>`;
+   if(/buildertrend/i.test(String(x.label||'')+' '+String(x.url||'')))return '';
+   const u=x.url&&/^https:\/\//.test(x.url)&&!/buildertrend\.(net|com)/i.test(x.url)?x.url:'';const hostedKind=k==='file'?'file':(k==='dropbox'?(x.kind||'dropbox'):'');if(u&&typeof fileHosted==='function'&&fileHosted(u,hostedKind||k))return fileLinkHtml({url:u,label:x.label||'File',slug:(o&&o.slug)||'',kind:hostedKind,name:x.name||'',cls:'rrow'});if(u)return `<a class="rrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||u)}</span>${ico('ext','go')}</a>`;
    const s=k=='sub'?attSub(x.id):null;const extra=s?(s.phone||s.email?' · '+[s.phone?'phone':'',s.email?'email':''].filter(Boolean).join(' + '):' · no contact on file'):(x.role?' · '+x.role:'');
    return `<button class="rrow" data-rel="${esc(k)}|${esc(x.id)}">${ico(ICO[k]||'ext')}<span class="lt">${esc(x.label||x.id)}<span class="ls">${esc(extra)}</span></span>${ico('chev','go')}</button>`}).join('')}</div>`).join('')}</div>`}
  function open(type,id,o){const slug=o&&o.slug;
@@ -2865,14 +2915,14 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
   if(type=='task'){const [s,tid]=String(id).includes(':')?id.split(':'):[slug,id];const t=((attJ(s)||{}).tasks||[]).find(x=>x.id==tid);if(t)attOpenTask(s,t);return}
   if(type=='sub'){const s=attSub(id);if(!s){toast('No record for this sub yet');return}const h=H();const bids=(h.bids||[]).filter(b=>s.bids.includes(b.id));const ords=(h.orders||[]).filter(x=>s.orders.includes(x.id));
    const tl=[];(s.tasks||[]).forEach(k=>{const [js,tid]=k.split(':');const t=((attJ(js)||{}).tasks||[]).find(x=>x.id==tid);if(t&&!attDone(t))tl.push({type:'task',id:js+':'+tid,label:`${(attJ(js)||{}).name} · ${t.task} (${md(t.start)})`})});
-   const links=s.jobs.map(j=>({type:'job',id:j,label:(attJ(j)||{}).name||j})).concat(tl,bids.map(b=>({type:'bid',id:b.id,label:`${b.job} · ${b.trade} (${b.status}${b.amount?' · '+b.amount:''})`})),ords.map(x=>({type:'order',id:x.id,label:`${x.job} · ${x.item} (${x.status})`})),(typeof poLinksFor==='function'?poLinksFor('sub',id):[]));
+   const links=s.jobs.map(j=>({type:'job',id:j,label:(attJ(j)||{}).name||j})).concat(tl,bids.map(b=>({type:'bid',id:b.id,label:`${b.job} · ${b.trade} (${b.status}${typeof canSeeMoney==='function'&&canSeeMoney()&&typeof moneyNum==='function'&&moneyNum(b.id,'amount')!=null?' · '+moneyNum(b.id,'amount'):''})`})),ords.map(x=>({type:'order',id:x.id,label:`${x.job} · ${x.item} (${x.status})`})),(typeof poLinksFor==='function'?poLinksFor('sub',id):[]));
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(s.trades.join(', ')||'Sub / vendor')}</div><h2>${esc(s.name)}</h2></div>
     <div class="aacts">${attMsg(s,'Hi, this is '+(attSig()||'the office')+(attOwn().company?' with '+attOwn().company:'')+'. ')}</div><div class="small mut">${s.phone||s.email?'Contact from '+esc(s.contact_src||'trackers'):'No phone or email on file for this sub yet.'}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
-  if(type=='bid'){const b=(H().bids||[]).find(x=>x.id==id);if(!b){toast('Bid not found');return}
-   const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).filter(x=>x.type!='po').map(x=>({type:x.kind&&x.kind.startsWith('dropbox')?'dropbox':(x.type=='po'?'po':'url'),id:x.id,url:x.url,label:x.label+(x.sub?' · '+x.sub:'')}))).concat(typeof poLinksFor==='function'?poLinksFor('bid',b.id):[]).concat(typeof moneyLinksForBid==='function'?moneyLinksForBid(id):[]);
+  if(type=='bid'){let b=(H().bids||[]).find(x=>x.id==id);if(!b){Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{if(b)return;((DATA.jobs[js]||{}).bids||[]).forEach(p=>{if(b)return;const sub=(p.subs||[]).find(x=>x.id==id);if(p.id==id||sub)b={id:id,slug:js,job:(DATA.jobs[js]||{}).name||js,trade:p.title||'',vendor:(sub||(p.subs||[])[0]||{}).vendor||'',status:(sub||p).status||p.status||'',sent:'',due:p.deadline||'',owner:p.owner||'',amount:'',links:p.links||[],pastDue:false}})});if(!b){toast('Bid not found');return}}
+   const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).filter(x=>x.type!='po').map(x=>{const keep=['selection','file','spec','rfi','task','designbook','budget','job'].indexOf(x.type)>=0;return {type:x.kind&&String(x.kind).startsWith('dropbox')?'dropbox':(keep?x.type:'url'),id:x.id,url:x.url,label:(x.label||'')+(x.sub?' · '+x.sub:'')}})).concat(typeof poLinksFor==='function'?poLinksFor('bid',b.id):[]).concat(typeof moneyLinksForBid==='function'?moneyLinksForBid(id):[]);
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(b.job)} · ${esc(b.trade)} · bid ${esc(b.id)}</div><h2>${esc(b.vendor)}</h2></div>
     <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
-    <table class="kv small"><tr><td class="mut">Status</td><td>${esc(b.status)}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr><tr><td class="mut">Sent / due</td><td>${esc(md(b.sent))} / ${esc(md(b.due))}</td></tr><tr><td class="mut">Owner</td><td>${esc(b.owner||'')}</td></tr>${b.amount?`<tr><td class="mut">Amount</td><td>${esc(b.amount)}</td></tr>`:''}</table>
+    <table class="kv small"><tr><td class="mut">Status</td><td>${esc(b.status)}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr><tr><td class="mut">Sent / due</td><td>${esc(md(b.sent))} / ${esc(md(b.due))}</td></tr><tr><td class="mut">Owner</td><td>${esc(b.owner||'')}</td></tr><tr><td class="mut">Amount</td><td>${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',b.amount):esc(b.amount||'(amounts on money page)')}</td></tr></table>
     <div class="aacts">${attMsg(attSub(attSubKey(b.vendor)),`Harswells bid request, ${b.job} ${b.trade}: checking on your quote${b.due?' (due '+md(b.due)+')':''}. Thanks${attSig()?', '+attSig():''}`)}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
   if(type=='order'){const x=(H().orders||[]).find(y=>y.id==id);if(!x){toast('Order not found');return}
    const links=[{type:'job',id:x.slug,label:x.job},{type:'sub',id:attSubKey(x.vendor),label:x.vendor}].concat(attJobLinks(x.slug).filter(l=>l.type=='dropbox'&&/Orders/.test(l.label))).concat(typeof poLinksFor==='function'?poLinksFor('order',x.id):[]).concat(typeof moneyLinksForOrder==='function'?moneyLinksForOrder(id):[]);
@@ -2882,6 +2932,8 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
   if(type=='selection'){const parts=String(id).split(':');const s=parts.length>1?parts[0]:slug;const sid=parts.length>1?parts.slice(1).join(':'):id;if(typeof openSelection==='function'){openSelection(s,sid);return}toast('Selection not found');return}
   if(type=='budget'){const i=String(id).indexOf(':');const s=i>=0?id.slice(0,i):(slug||'');const code=i>=0?id.slice(i+1):String(id);closeModal();if(s)location.hash='#/job/'+encodeURIComponent(s)+'/money/'+encodeURIComponent(code);return}
   if(type=='takeoff'||type=='designbook'){let hit=null;Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{if(hit)return;const list=typeof jobSelections==='function'?jobSelections(js):(((DATA.jobs[js]||{}).selections)||[]);list.forEach(sel=>{if(hit)return;const ok=(sel.links||[]).some(l=>l.type==type&&String(l.id)===String(id))||(type=='takeoff'&&String(js+':'+sel.takeoff_id)===String(id))||(type=='designbook'&&(sel.designbook_id==id||js+':'+(sel.category||'')===String(id)));if(ok)hit={slug:js,id:sel.id}});});if(hit&&typeof openSelection==='function'){openSelection(hit.slug,hit.id);return}toast(type=='takeoff'?'Takeoff':'Design book');return}
+  if(type=='file'){const rel=String(id||'');closeModal();if(typeof fileOpen==='function'){fileOpen(slug||'',rel,(typeof fileOfficeEntries==='function'?fileOfficeEntries(slug||''):[]),{name:rel.split('/').pop()||'File'});return}if(slug)location.hash='#/job/'+encodeURIComponent(slug)+'/files';return}
+  if(type=='spec'||type=='rfi'){let hit=null;const key=type=='spec'?'specs':'rfis';Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{if(hit)return;((DATA.jobs[js]||{})[key]||[]).forEach(row=>{if(!hit&&(row.id==id||row.source_id==id))hit={row:row,slug:js,name:(DATA.jobs[js]||{}).name||js}})});if(!hit){toast(type=='spec'?'Spec not found':'RFI not found');return}const r=hit.row;openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(hit.name)} · ${type=='spec'?'Spec':'RFI'}</div><h2>${esc(r.title||id)}</h2></div><table class="kv small">${r.section?`<tr><td class="mut">Section</td><td>${esc(r.section)}</td></tr>`:''}${r.status?`<tr><td class="mut">Status</td><td>${esc(r.status)}</td></tr>`:''}${r.due?`<tr><td class="mut">Due</td><td>${esc(r.due)}</td></tr>`:''}${r.question?`<tr><td class="mut">Question</td><td>${esc(r.question)}</td></tr>`:''}${r.cost_code?`<tr><td class="mut">Cost code</td><td>${esc(r.cost_code)}</td></tr>`:''}</table>${html(r.links||[],{slug:hit.slug})}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,{slug:hit.slug}));return}
   toast('Nothing linked yet')}
  function bind(root,o){root.querySelectorAll('[data-rel]').forEach(b=>b.onclick=e=>{e.preventDefault();const [k,...rest]=b.dataset.rel.split('|');open(k,rest.join('|'),o)})}
  return {html,open,bind}})();
@@ -3139,7 +3191,7 @@ function wdBtns(J,t){const body=encodeURIComponent(wdMsg(J,t));const P=wdPhones(
 function wdWarranty(t){const w=t.warranty||{};const ex=String(w.expiry||'').trim();const known=ex&&!/^not (on file|calculable)/i.test(ex);
  return `<div class="wdw"><span class="mut">Warranty:</span> ${known?`<b>${esc(ex)}</b>`:'<span class="mut">expiry not on file</span>'}${w.terms&&!/^not on file$/i.test(w.terms)?`<details><summary>terms</summary><div class="small">${esc(w.terms)}</div></details>`:''}${(w.product_warranties||[]).length?`<details><summary>${w.product_warranties.length} product warrant${w.product_warranties.length==1?'y':'ies'}</summary>${w.product_warranties.map(x=>typeof x=='string'?`<div class="small">${esc(x)}</div>`:`<div class="small"><b>${esc(x.maker||x.item||x.name||x.profile||'')}</b>: ${esc(x.length||x.expiry||x.terms||'not on file')}${(x.items||[]).length?` <span class="mut">· ${x.items.length} item${x.items.length==1?'':'s'}</span>`:''}</div>`).join('')}</details>`:''}</div>`}
 function wdLinks(t){const L=(t.links||[]).filter(l=>l&&(l.url||l.id));if(!L.length)return '';
- return `<details class="wdl"><summary>${L.length} link${L.length==1?'':'s'} (bids, POs, specs)</summary>${L.map(l=>{const u=String(l.url||'');if(typeof fileHosted==='function'&&fileHosted(u,l.type==='dropbox'?'dropbox-file':''))return fileLinkHtml({url:u,label:l.label||l.type||'File',kind:l.type==='dropbox'?'dropbox-file':'',cls:'lbtn'});return /^https:\/\//.test(u)?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||l.type)}</a>`:`<span>${esc((l.type||'')+': '+(l.label||l.id))}</span>`}).join('')}</details>`}
+ return `<details class="wdl"><summary>${L.length} link${L.length==1?'':'s'} (bids, POs, specs)</summary>${L.map(l=>{const u=String(l.url||'');if(/buildertrend/i.test(u+' '+(l.label||'')))return '';if(typeof fileHosted==='function'&&fileHosted(u,l.type==='dropbox'?'dropbox-file':''))return fileLinkHtml({url:u,label:l.label||l.type||'File',kind:l.type==='dropbox'?'dropbox-file':'',cls:'lbtn'});return /^https:\/\//.test(u)?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||l.type)}</a>`:`<span>${esc((l.type||'')+': '+(l.label||l.id))}</span>`}).join('')}</details>`}
 function wdCard(J,t,open){const items=t.items||[];const rooms=(t.rooms||[]).filter(Boolean);
  const itemsHtml=items.length?`<details class="wdi"${open?' open':''}><summary>${items.length} item${items.length==1?'':'s'}${rooms.length?' · '+rooms.length+' room'+(rooms.length==1?'':'s'):''}</summary><ul>${items.map(i=>`<li>${esc(i.name||i.id||'')}${i.room?` <span class="mut">· ${esc(i.room)}</span>`:''}${i.did?` <span class="mut">· ${esc(i.did)}</span>`:''}</li>`).join('')}</ul></details>`:'';
  return `<div class="wdc" data-trade="${esc(t.trade||'')}"><div class="wdh"><span class="wdt">${esc(t.trade_label||t.trade||'Trade')}</span><span class="sp"></span><span class="wdb">${esc(t.basis||'')}</span></div>
@@ -3150,8 +3202,12 @@ function mWhoDid(M){const W=wdJob(J.slug);const q=(st.wdq||'');const T=wdTrades(
   <label class="sbox">${ico('search')}<input type="search" id="wdq" placeholder="Trade, company, room or item (e.g. plumb)" value="${esc(q)}" autocomplete="off"></label>
   <div class="small mut" style="margin:6px 0 10px">${W?esc(W.source):'No trades data for this job yet.'}${W&&W.final_completion?' · final completion '+esc(mdy(W.final_completion)):''}</div>
   ${W&&W.notes?`<div class="note small">${esc(W.notes)}</div>`:''}
-  <div id="wdlist">${shown.map(t=>wdCard(J,t,ql.length>=2)).join('')||emptyState(T.length?'No trade matches "'+q+'"':'No subs on file for this job yet',T.length?'Try another word, or clear the search.':'Add a '+J.slug+'-trades.json in the Live Schedule data folder, assign subs in Buildertrend, or mark the awarded bid under Bids.')}</div></div></div>`;
- const i=$('#wdq');if(i)i.oninput=e=>{st.wdq=e.target.value;saveUi();const p=i.selectionStart;mWhoDid(M);const n=$('#wdq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}
+  <div id="wdlist">${shown.map(t=>wdCard(J,t,ql.length>=2)).join('')||emptyState(T.length?'No trade matches "'+q+'"':'No subs on file for this job yet',T.length?'Try another word, or clear the search.':'Add a '+J.slug+'-trades.json in the Live Schedule data folder, or mark the awarded bid under Bids.')}</div>
+  ${wdImported()}</div></div>`;
+ const i=$('#wdq');if(i)i.oninput=e=>{st.wdq=e.target.value;saveUi();const p=i.selectionStart;mWhoDid(M);const n=$('#wdq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}}
+ if(window.HWSRelated)HWSRelated.bind(M,{slug:J.slug})}
+function wdImported(){const rows=(J&&J.warranty)||[];if(!rows.length)return '';
+ return `<div class="panel" style="margin-top:12px"><h3>Warranty items <span class="mut small">${rows.length}</span></h3><div class="pb">${rows.map(w=>`<div class="it"><div class="bd"><div class="t">${esc(w.title||'')}</div><div class="s">${esc([w.trade,w.vendor,w.expiry,w.status].filter(Boolean).join(' · '))}</div>${w.terms?`<div class="small">${esc(w.terms)}</div>`:''}${window.HWSRelated?HWSRelated.html(w.links||[],{slug:J.slug}):''}</div></div>`).join('')}</div></div>`}
 /* Jobs tab: trade matches shown on the job card */
 function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
  return `<div class="wdm">${m.slice(0,4).map(t=>`<div><b>${esc(t.trade_label||t.trade)}</b>: ${esc(t.company||'')}${t.contact_name?' · '+esc(t.contact_name):''}${wdPhones(t).length?' · '+esc(wdPhones(t)[0].number):''}</div>`).join('')}${m.length>4?`<div class="mut">+${m.length-4} more</div>`:''}</div>`}
@@ -3161,7 +3217,37 @@ function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
    on the office box) and from this phone's overlay. They are not taken from the team schedule
    payload. The money page is limited to common.money_viewers.
    Committed POs may also arrive later in money.pos (data/money-pos.json). A missing list changes nothing. */
-let MONEY=window.__HWS_MONEY||{version:1,selections:{},jobs:{},pos:[],actuals:[]};
+let MONEY=window.__HWS_MONEY||{version:1,selections:{},jobs:{},pos:[],actuals:[],records:{},amounts:{}};
+const MONEY_NOTE='(amounts on money page)';
+function moneyNum(id, key){if(id==null||id==='')return null;const rec=(MONEY.records||{})[String(id)];if(!rec)return null;
+ const v=rec[key||'amount'];if(v==null||v==='')return null;const n=+String(v).replace(/[$,]/g,'');return isNaN(n)?null:n}
+function moneyPlain(id, key, raw){const text=raw==null?'':String(raw).trim();
+ const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
+ const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ if(text&&!numeric)return text;
+ if(!see)return MONEY_NOTE;
+ let n=moneyNum(id, key||'amount');
+ if(n==null&&numeric)n=+text.replace(/[$,]/g,'');
+ if(n==null)return MONEY_NOTE;
+ return fmt$(n)}
+function moneyCellHtml(id, key, raw){const text=raw==null?'':String(raw).trim();
+ const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
+ const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ if(text&&!numeric)return esc(text);
+ if(!see)return '<span class="mut">'+MONEY_NOTE+'</span>';
+ let n=moneyNum(id, key||'amount');
+ if(n==null&&numeric)n=+text.replace(/[$,]/g,'');
+ if(n==null)return '<span class="mut">'+MONEY_NOTE+'</span>';
+ return fmt$(n)}
+function bidPackageView(p){const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ const subs=(p.subs||[]).map(function(x){let amount=null;
+  if(see){amount=moneyNum(x.id,'amount');if(amount==null&&x.amount!=null&&x.amount!==''&&!isNaN(+x.amount))amount=+x.amount}
+  return Object.assign({},x,{_amt:amount})});
+ let low=null;
+ if(see){const nums=subs.map(function(s){return s._amt}).filter(function(n){return n!=null});if(nums.length)low=Math.min.apply(null,nums)}
+ subs.forEach(function(s){s._pct=(see&&s._amt!=null&&low)?Math.round((s._amt-low)/low*1000)/10:null});
+ if(see)subs.sort(function(a,b){return (a._amt==null?9e12:a._amt)-(b._amt==null?9e12:b._amt)});
+ return {subs:subs,low:low,see:see}}
 const MONEY_KEY='hws-money-overlay-v1';
 function moneyViewers(){return ((DATA&&DATA.common&&DATA.common.money_viewers)||[])}
 function cogsName(raw){raw=String(raw||'').trim();if(!raw)return '';const map=(DATA&&DATA.common&&DATA.common.adaptive_map)||{};
@@ -3290,8 +3376,12 @@ function moneySection(slug){const show$=canSeeMoney();const lines=linesFor(slug)
  if(!show$)return `<div class="note">Dollar amounts are on the money page, limited to ${esc(moneyViewers().join(' and '))}.</div>`+src.map(l=>`<article class="bvacard"><h3>${esc(l.title||l.cost_code)}</h3><div class="small mut">${esc(l.cost_code)}</div><div class="small">Preliminary ${l.preliminary_count||0} · Committed ${l.committed_count||0} · Pending ${l.pending_count||0} · POs ${l.po_count||0} · Actual ${l.actual_count||0}</div></article>`).join('');
  const grab=k=>lines.reduce((a,l)=>a.concat(l[k]||[]),[]);
  const total=Object.assign({cost_code:'',title:'Job total',bt_code:''},totalsOf(lines),{budget_items:grab('budget_items'),preliminary_items:grab('preliminary_items'),committed_items:grab('committed_items'),pending_items:grab('pending_items'),po_items:grab('po_items'),actual_items:grab('actual_items')});
- return `<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
+ return `<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+moneyExtras(slug)+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
 }
+function moneyExtras(slug){if(typeof canSeeMoney==='function'&&!canSeeMoney())return '';
+ const drafts=((MONEY.imports&&MONEY.imports.po_amounts)||[]).filter(p=>p.job===slug&&String(p.status||'draft')==='draft');
+ if(!drafts.length)return '';
+ return `<div class="note"><b>Draft purchase orders</b> <span class="mut">need approval</span><div class="small">${drafts.map(p=>esc(p.title||p.id||'PO')+' · '+fmt$(p.amount)).join('<br>')}</div></div>`}
 function mMoney(M){if(!J)return;M.innerHTML=panel('Budget vs actual',esc(J.name),moneySection(J.slug));bindDrill(M);
  const focus=parseHash().focus;if(focus&&canSeeMoney()&&!modalEl)openDrill(J.slug,focus,'budget')}
 function prelimHomeCount(){let n=0;Object.keys(DATA.jobs||{}).forEach(slug=>{const idx=((DATA.jobs[slug]||{}).budget_index)||[];if(idx.length)idx.forEach(l=>{n+=+l.preliminary_count||0});else jobSelections(slug).forEach(s=>{if(budgetBucket(s)==='preliminary')n++})});return n}
@@ -3769,7 +3859,56 @@ function fileLabel(name) {
       return pre + map[old];
     });
   });
+  s = s.replace(/\bbuildertrend\b/gi, "").replace(/[ \t]{2,}/g, " ").replace(/^[\s.\-]+|[\s.\-]+$/g, "");
   return s;
+}
+function fileBtName(name) {
+  return /^buildertrend$/i.test(String(name || "").trim());
+}
+function fileAttr(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fileShownNodes(nodes) {
+  const out = [];
+  (nodes || []).forEach((n) => {
+    if (!n) return;
+    const folder = n.tag === "folder" || !!n.children;
+    if (folder && fileBtName(n.name || n.label)) {
+      (n.children || []).forEach((c) => out.push(c));
+      return;
+    }
+    out.push(n);
+  });
+  return out;
+}
+function filePdfMagic(bytes) {
+  let u;
+  try {
+    if (bytes instanceof Uint8Array) u = bytes;
+    else if (bytes instanceof ArrayBuffer) u = new Uint8Array(bytes);
+    else if (bytes && bytes.buffer) u = new Uint8Array(bytes.buffer, bytes.byteOffset || 0, bytes.byteLength);
+    else return false;
+  } catch (e) { return false; }
+  const n = Math.min(u.length, 1024);
+  for (let i = 0; i <= n - 5; i++) {
+    if (u[i] === 0x25 && u[i + 1] === 0x50 && u[i + 2] === 0x44 && u[i + 3] === 0x46 && u[i + 4] === 0x2d) return true;
+  }
+  return false;
+}
+function fileIsPdf(type, bytes) {
+  const ct = String(type || "").toLowerCase();
+  if (/text\/html|application\/json|text\/plain|image\/|text\/css|javascript/.test(ct)) return false;
+  return filePdfMagic(bytes);
+}
+function fileNotPdfHtml(offline) {
+  return (offline || "") + '<div class="fempty" data-not-pdf="1"><b>This is not a PDF.</b><p>What came back could not be opened as a PDF.</p></div>';
+}
+function fileShowSource(stage) {
+  if (!stage || typeof stage.closest !== "function") return;
+  const view = stage.closest(".fview");
+  const a = view && view.querySelector("[data-fsrc]");
+  const href = a && a.getAttribute("href") || "";
+  if (a && href && !/buildertrend\.(net|com)/i.test(href)) a.hidden = false;
 }
 function fileKind(name) {
   const ext = (String(name || "").split(".").pop() || "").toLowerCase();
@@ -3781,6 +3920,7 @@ function fileKind(name) {
   if (ext === "csv") return "csv";
   if (/^(txt|md|json|xml|log)$/.test(ext)) return "text";
   if (/^(zip|rar|7z)$/.test(ext)) return "zip";
+  if (/^(mp4|mov|m4v|webm)$/.test(ext)) return "video";
   return "file";
 }
 function fileIcon(kind) {
@@ -3794,6 +3934,7 @@ function fileIcon(kind) {
     csv: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
     text: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
     zip: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6M10 14h4"/>',
+    video: '<rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-2v8l-4-2z"/>',
     file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (p[kind] || p.file) + "</svg>";
@@ -4066,10 +4207,10 @@ function fileLinkHtml(x, extra) {
   const icon = typeof ico === "function" ? ico(folder ? "files" : (typeof linkIcon === "function" ? linkIcon({ kind: folder ? "dropbox" : "dropbox-file" }) : "doc")) : "";
   return '<button type="button" class="' + cls + ' flink" data-flink="1"'
     + (folder ? ' data-ffolder="1"' : "")
-    + ' data-file-slug="' + esc(slug) + '"'
-    + ' data-file-path="' + esc(path) + '"'
-    + ' data-file-name="' + esc(name) + '"'
-    + ' data-file-rel="' + esc(x.rel || "") + '">'
+    + ' data-file-slug="' + fileAttr(slug) + '"'
+    + ' data-file-path="' + fileAttr(path) + '"'
+    + ' data-file-name="' + fileAttr(name) + '"'
+    + ' data-file-rel="' + fileAttr(x.rel || "") + '">'
     + icon + '<span class="lb"><span class="lt">' + esc(fileLabel(label)) + "</span>"
     + (sub && sub !== label ? '<span class="ls">' + esc(sub) + "</span>" : "")
     + "</span></button>";
@@ -4079,7 +4220,7 @@ function fileMaybeLink(url, label, kind, cls) {
   return fileLinkHtml({ url: url, kind: kind || "", label: label || "File", cls: cls || "lbtn" });
 }
 function fileChips(row) {
-  return fileRefs(row).map((r) => '<button type="button" class="filechip" data-file-rel="' + esc(r.rel) + '" data-file-name="' + esc(r.name) + '" data-file-path="' + esc(r.path) + '">' + esc(fileLabel(r.name)) + "</button>").join("");
+  return fileRefs(row).map((r) => '<button type="button" class="filechip" data-file-rel="' + fileAttr(r.rel) + '" data-file-name="' + fileAttr(r.name) + '" data-file-path="' + fileAttr(r.path) + '">' + esc(fileLabel(r.name)) + "</button>").join("");
 }
 
 function fileRowsHtml(nodes, depth) {
@@ -4089,9 +4230,9 @@ function fileRowsHtml(nodes, depth) {
     const open = !!fileUI.open[n.rel];
     const label = fileLabel(n.label || n.name);
     const chev = folder ? '<button type="button" class="fchev" data-fchev aria-expanded="' + (open ? "true" : "false") + '" aria-label="' + (open ? "Collapse folder" : "Expand folder") + '">›</button>' : '<span class="fchev" aria-hidden="true"></span>';
-    const sub = folder ? ((n.children || []).length + " items") : (n.bt ? "Buildertrend" : "");
-    const kids = folder && open ? '<div class="fkids" style="padding-left:12px">' + fileRowsHtml(n.children || [], depth + 1) + "</div>" : "";
-    return '<div class="fnode">' + chev + '<button type="button" class="frow" data-frel="' + esc(n.rel) + '" data-ftag="' + (folder ? "folder" : "file") + '"><span class="fic">' + fileIcon(kind) + '</span><span class="fmeta"><span class="fn">' + esc(label) + '</span>' + (sub ? '<span class="fs">' + esc(sub) + "</span>" : "") + '</span><span class="fwhen">' + esc(fileWhen(n.modified)) + "</span></button></div>" + kids;
+    const sub = folder ? ((n.children || []).length + " items") : "";
+    const kids = folder && open ? '<div class="fkids" style="padding-left:12px">' + fileRowsHtml(fileShownNodes(n.children || []), depth + 1) + "</div>" : "";
+    return '<div class="fnode">' + chev + '<button type="button" class="frow" data-frel="' + fileAttr(n.rel) + '" data-ftag="' + (folder ? "folder" : "file") + '"><span class="fic">' + fileIcon(kind) + '</span><span class="fmeta"><span class="fn">' + esc(label) + '</span>' + (sub ? '<span class="fs">' + esc(sub) + "</span>" : "") + '</span><span class="fwhen">' + esc(fileWhen(n.modified)) + "</span></button></div>" + kids;
   }).join("");
 }
 
@@ -4147,12 +4288,12 @@ function drawFiles(M, slug, entries, source) {
   let body;
   if (q.trim()) {
     const hits = fileSortNodes(fileSearch(entries, q).map((e) => Object.assign({}, e, { children: null })), fileUI.sort);
-    body = hits.length ? fileRowsHtml(hits, 0) : '<div class="fempty">No files match that search.</div>';
+    body = hits.length ? fileRowsHtml(fileShownNodes(hits), 0) : '<div class="fempty">No files match that search.</div>';
   } else {
     const node = fileNode(tree, fileUI.path);
     if (fileUI.path && !node) body = fileMissingFolderHtml(fileUI.path, entries);
     else {
-      const kids = (node || tree).children || [];
+      const kids = fileShownNodes((node || tree).children || []);
       body = kids.length ? fileRowsHtml(kids, 0) : '<div class="fempty">' + (fileFolder(slug) ? "This folder is empty." : "This job has no Dropbox folder yet.") + "</div>";
     }
   }
@@ -4184,9 +4325,10 @@ function fileCrumbs(slug) {
   let html = '<button type="button" data-fcrumb=""' + (parts.length && !fileUI.q ? "" : ' aria-current="page"') + ">" + esc(home) + "</button>";
   if (fileUI.q) return html + '<span class="sep">/</span><button type="button" aria-current="page">Search</button>';
   parts.forEach((p, i) => {
+    if (fileBtName(p)) return;
     const rel = parts.slice(0, i + 1).join("/");
-    const last = i === parts.length - 1;
-    html += '<span class="sep">/</span><button type="button" data-fcrumb="' + esc(rel) + '"' + (last ? ' aria-current="page"' : "") + ">" + esc(fileLabel(p)) + "</button>";
+    const last = parts.slice(i + 1).every((x) => fileBtName(x));
+    html += '<span class="sep">/</span><button type="button" data-fcrumb="' + fileAttr(rel) + '"' + (last ? ' aria-current="page"' : "") + ">" + esc(fileLabel(p)) + "</button>";
   });
   return html;
 }
@@ -4297,9 +4439,9 @@ async function fileLoadBytes(slug, entry) {
   throw err;
 }
 function fileSourceUrl(entry) {
-  const direct = (entry && (entry.source || (entry.bt && entry.bt.url))) || "";
-  if (direct && /^https:\/\//.test(direct) && !/dropbox\.com\/home/i.test(direct)) return direct;
-  return fileDropboxUrl(entry);
+  const drop = fileDropboxUrl(entry);
+  if (drop && !/buildertrend\.(net|com)/i.test(drop)) return drop;
+  return "";
 }
 function fileSameName(entries, name, tag) {
   const want = String(name || "").toLowerCase();
@@ -4364,13 +4506,12 @@ function renderStage(stage, entry, got) {
   const kind = fileKind(entry.name);
   const type = (got.type || "").toLowerCase();
   const offline = got.offline ? '<div class="fnote">Saved on this phone</div>' : "";
-  if (type.indexOf("text/html") === 0 || (type.indexOf("pdf") < 0 && /^(doc|sheet|slides)$/.test(kind) && type.indexOf("html") >= 0)) {
-    const text = new TextDecoder().decode(got.bytes);
-    stage.innerHTML = offline + '<iframe sandbox="" style="width:100%;height:70vh;border:0;background:#fff"></iframe>';
-    stage.querySelector("iframe").srcdoc = text;
-    return;
-  }
   if (kind === "pdf" || type.indexOf("pdf") >= 0) {
+    if (!fileIsPdf(type, got.bytes)) {
+      stage.innerHTML = fileNotPdfHtml(offline);
+      fileShowSource(stage);
+      return;
+    }
     stage.innerHTML = offline + '<iframe data-fpdf title="PDF" style="width:100%;height:100%;min-height:280px;background:#1b1f27"></iframe>';
     const frame = stage.querySelector("iframe");
     const src = new URL("plan-room/preview/index.html", location.href).href;
@@ -4379,10 +4520,24 @@ function renderStage(stage, entry, got) {
       const bytes = got.bytes.slice ? got.bytes.slice(0) : got.bytes;
       frame.contentWindow.postMessage({ type: "hws-pdf", bytes: bytes }, location.origin);
     };
-    const onMsg = (ev) => { if (ev.origin === location.origin && ev.data && ev.data.type === "hws-pdf-listening") send(); };
+    const onMsg = (ev) => {
+      if (ev.origin !== location.origin || !ev.data) return;
+      if (ev.data.type === "hws-pdf-listening") send();
+      if (ev.data.type === "hws-pdf-error") {
+        window.removeEventListener("message", onMsg);
+        stage.innerHTML = fileNotPdfHtml(offline);
+        fileShowSource(stage);
+      }
+    };
     window.addEventListener("message", onMsg);
     frame.onload = send;
     frame.src = src;
+    return;
+  }
+  if (type.indexOf("text/html") === 0 || (type.indexOf("pdf") < 0 && /^(doc|sheet|slides)$/.test(kind) && type.indexOf("html") >= 0)) {
+    const text = new TextDecoder().decode(got.bytes);
+    stage.innerHTML = offline + '<iframe sandbox="" style="width:100%;height:70vh;border:0;background:#fff"></iframe>';
+    stage.querySelector("iframe").srcdoc = text;
     return;
   }
   if (kind === "image" || type.indexOf("image/") === 0) {
@@ -4449,7 +4604,8 @@ if (typeof document !== "undefined") {
     const a = ev.target.closest("a[href]");
     if (!a || a.hasAttribute("data-fsrc")) return;
     const href = a.getAttribute("href") || "";
-    if (window.HWSOffline && typeof HWSOffline.servedHere === "function" && HWSOffline.servedHere(href)) {
+    /* #/jobs and the other hash routes are the app. Only a same-origin file opens here. */
+    if (window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) {
       ev.preventDefault();
       ev.stopPropagation();
       HWSOffline.openFile(href, (a.textContent || "").trim(), (J && J.slug) || "");
@@ -4478,6 +4634,7 @@ window.HWSFiles = {
   canSeeMoney: fileCanSeeMoney,
   isMoney: fileIsMoney,
   kind: fileKind,
+  isPdf: fileIsPdf,
   label: fileLabel,
   refs: fileRefs,
 };
@@ -4485,31 +4642,39 @@ function fileChip(row) { return fileChips(row); }
 
 function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
+ const seeMoney=typeof canSeeMoney==='function'&&canSeeMoney();
+ const contractRaw=i.contract==null?'':String(i.contract);
+ const contractNum=typeof moneyNum==='function'?moneyNum(J.slug,'contract'):null;
+ const contractShow=seeMoney?(contractNum!=null?contractNum:(typeof moneyPlain==='function'?moneyPlain(J.slug,'contract',contractRaw):contractRaw)):(typeof moneyPlain==='function'?moneyPlain(J.slug,'contract',contractRaw):'(amounts on money page)');
  M.innerHTML=panel('Job settings',EDIT?(STORE.live?'saved to the shared Dropbox automatically':'saved with your edits (export / check in to send them)'):(syncOn()?'check out to change':'view-only'),`<form id="sf" class="pb"><div class="fg">
  <label>Work week<select name="saturday" ${dis}><option value="0" ${s.saturday?'':'selected'}>Mon–Fri</option><option value="1" ${s.saturday?'selected':''}>Mon–Sat</option></select></label>
  <label>Holidays<select name="holidays" ${dis}>${[['construction','Major US holidays (New Year, Memorial, July 4, Labor, Thanksgiving + Fri, Christmas)'],['federal','All 11 US federal holidays'],['none','No holidays']].map(([k,l])=>`<option value="${k}" ${s.holidays==k?'selected':''}>${l}</option>`).join('')}</select></label>
- <label class="cb w"><input type="checkbox" name="cascade_bt" ${s.cascade_bt?'checked':''} ${dis}> Buildertrend tasks follow their links when a predecessor is moved here (off = BT rows are locked facts and get flagged instead)</label>
+ <label class="cb w"><input type="checkbox" name="cascade_bt" ${s.cascade_bt?'checked':''} ${dis}> Imported schedule rows follow their links when a predecessor is moved here (off = those rows stay locked and get flagged instead)</label>
  <label>Project manager<input name="pm" value="${esc(i.pm)}" ${dis}></label><label>Client / owner<input name="client" value="${esc(i.client)}" ${dis}></label>
- <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${dis}></label><label>Contract<input name="contract" value="${esc(i.contract)}" ${dis}></label>
+ <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${dis}></label><label>Contract<input name="contract" value="${esc(contractShow)}" ${seeMoney?dis:'disabled'}></label>
  <label class="w">Notes<textarea name="notes" rows="2" ${dis}>${esc(i.notes)}</textarea></label>
  <div class="w"><div class="small mut" style="margin:6px 0 4px">Phase colors</div><div style="display:flex;flex-wrap:wrap;gap:8px">${pcs.map(([p,c])=>`<label class="cb small" style="border:1px solid var(--line);border-radius:6px;padding:3px 6px"><input type="color" data-pc="${esc(p)}" value="${esc(c)}" ${dis} style="width:34px;padding:0;border:0"> ${esc(p)}</label>`).join('')||'<span class="mut small">No phases yet</span>'}</div></div></div>
  ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>`);
  if(!EDIT)return;$('#sf').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const pc={};M.querySelectorAll('[data-pc]').forEach(x=>{if(x.value!=(J.phase_colors||{})[x.dataset.pc])pc[x.dataset.pc]=x.value});
-  const body={saturday:f.get('saturday')=='1',holidays:f.get('holidays'),cascade_bt:!!f.get('cascade_bt'),info:{pm:f.get('pm'),client:f.get('client'),status:f.get('status'),contract:f.get('contract'),notes:f.get('notes')},phase_colors:pc};
+  const info={pm:f.get('pm'),client:f.get('client'),status:f.get('status'),notes:f.get('notes')};
+  const entered=String(f.get('contract')==null?'':f.get('contract'));
+  if(seeMoney&&entered!=='(amounts on money page)'&&(contractNum!=null||contractRaw||entered!==''))info.contract=entered;
+  else if(!seeMoney&&contractRaw&&contractRaw===contractShow)info.contract=contractRaw;
+  const body={saturday:f.get('saturday')=='1',holidays:f.get('holidays'),cascade_bt:!!f.get('cascade_bt'),info,phase_colors:pc};
   try{J=STORE.setSettings(J.slug,body);renderJob();toast('Settings saved; schedule recomputed');liveSaved(J.slug)}catch(err){toast('Not saved: '+err.message)}}}
 /* ---------- exports ---------- */
 function csvText(rows,cols){return E.csvText(rows,cols)}
 function download(name,data,mime){try{const b=data instanceof Blob?data:new Blob([data],{type:mime||'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Downloaded '+name)}catch(e){toast('Download failed: '+e.message)}}
-function modRows(mod){if(mod=='bids'){const o=[];(J.bids||[]).forEach(p=>{const b={title:p.title,cost_codes:p.cost_codes,status:p.status,deadline:p.deadline,invited:p.invited,received:p.received,low:p.low,owner:p.owner,source:p.source};if(!p.subs.length)o.push(b);p.subs.forEach(s=>o.push(Object.assign({},b,{vendor:s.vendor,sub_status:s.status,sent:s.sent,reply:s.reply,amount:s.amount})))});return o}
+function modRows(mod){if(mod=='bids'){const o=[];(J.bids||[]).forEach(p=>{const view=typeof bidPackageView==='function'?bidPackageView(p):{subs:p.subs||[],low:p.low,see:false};const b={title:p.title,cost_codes:p.cost_codes,status:p.status,deadline:p.deadline,invited:p.invited,received:p.received,low:view.see?view.low:'',owner:p.owner,source:p.source};const subs=view.subs.length?view.subs:(p.subs||[]);if(!subs.length)o.push(b);subs.forEach(s=>o.push(Object.assign({},b,{vendor:s.vendor,sub_status:s.status,sent:s.sent,reply:s.reply,amount:view.see?(s._amt!=null?s._amt:s.amount):''})))});return o}
  if(mod=='pos')return (J.pos||[]).map(p=>Object.assign({},p,{flags:(p.flags||[]).join(', ')}));if(mod=='schedule')return J.tasks||[];return J[mod]||[]}
 function exportModule(mod){const cols=(J.mod_cols||{})[mod];if(!cols)return;download(J.slug+'-'+((J.mod_files||{})[mod]||mod+'.csv'),csvText(modRows(mod),cols))}
 function mExports(M){const mods=J.modules||[];
- M.innerHTML=panel('Exports','built from this job as it is now (snapshot + your edits)',`<div class="pb"><div class="small mut" style="margin-bottom:6px">Schedule for Buildertrend / MS Project</div>
- <p><button id="xb">Buildertrend schedule CSV</button> <span class="small mut">ID #, Title, Complete, Phase, Duration, Start, End, Assigned To, Pred 1–3 Id/Type/Lag</span></p>
+ M.innerHTML=panel('Exports','built from this job as it is now (snapshot + your edits)',`<div class="pb"><div class="small mut" style="margin-bottom:6px">Schedule for MS Project</div>
+ <p><button id="xb">Schedule CSV</button> <span class="small mut">ID #, Title, Complete, Phase, Duration, Start, End, Assigned To, Pred 1–3 Id/Type/Lag</span></p>
  <p><button id="xm">MS Project XML</button> <span class="small mut">MSPDI with predecessor links; opens in MS Project / ProjectLibre</span></p>
  <div class="small mut" style="margin:12px 0 6px">Module CSVs</div><p>${mods.map(([k,l])=>`<button data-csv="${k}" style="margin:0 6px 6px 0">${l}</button>`).join('')}</p>
  <div class="small mut" style="margin:12px 0 6px">Send your edits back to the office</div><p><button class="pri" id="xc">Export my changes</button> <span class="small mut">one .zip: changes.json + CSVs (all jobs you edited)</span></p></div>`);
- bindCsv(M);$('#xb').onclick=()=>download(J.slug+'-buildertrend-schedule.csv',E.btCsv(J));$('#xm').onclick=()=>download(J.slug+'-msproject.xml',E.mspXml(J),'application/xml');$('#xc').onclick=exportChanges}
+ bindCsv(M);$('#xb').onclick=()=>download(J.slug+'-schedule-import.csv',E.btCsv(J));$('#xm').onclick=()=>download(J.slug+'-msproject.xml',E.mspXml(J),'application/xml');$('#xc').onclick=exportChanges}
 /* ---------- my changes: export / import / reset + shared check-out ---------- */
 function stampName(){return new Date(Date.now()-7*3600e3).toISOString().slice(0,16).replace('T','-').replace(':','')}
 function whoSlug(){const w=(STORE.who()||'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'');return w?w+'-':''}
@@ -4585,9 +4750,9 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  const hi=L.jobs.reduce((a,j)=>a+j.high,0),od=L.jobs.reduce((a,j)=>a+j.overdue,0);document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
  $('#root').innerHTML=topHtml('jobs')+`<main class="main hub-jobs" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div><div class="lcards"><div class="lcard"><div class="n">${L.jobs.length}</div><div class="b">Jobs</div><div class="small mut">each has its own schedule workspace</div></div>
  <div class="lcard red"><div class="n">${od}</div><div class="b">Overdue tasks</div><div class="small mut">not complete, past finish</div></div><div class="lcard red"><div class="n">${hi}</div><div class="b">High conflicts</div><div class="small mut">across all jobs</div></div>
- <div class="lcard"><div class="n">${L.jobs.filter(j=>j.tasks).length}</div><div class="b">Jobs with a schedule</div><div class="small mut">${L.jobs.filter(j=>j.bt).length} from Buildertrend</div></div></div>
+ <div class="lcard"><div class="n">${L.jobs.filter(j=>j.tasks).length}</div><div class="b">Jobs with a schedule</div><div class="small mut">dated work on the hub</div></div></div>
  <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
- ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span><span>${chip(j.bt_status=='in Buildertrend'?'BT':'not in BT',j.bt_status=='in Buildertrend'?'inbt':'notbt')}</span></div>
+ ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
  <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');

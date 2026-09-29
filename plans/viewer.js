@@ -23,23 +23,50 @@ function loadPdf(){
     document.head.appendChild(s);
   });
 }
+function pdfMagic(buf){
+  const u=buf instanceof Uint8Array?buf:new Uint8Array(buf||new ArrayBuffer(0));
+  const n=Math.min(u.length,1024);
+  for(let i=0;i<=n-5;i++){
+    if(u[i]===0x25&&u[i+1]===0x50&&u[i+2]===0x44&&u[i+3]===0x46&&u[i+4]===0x2d)return true;
+  }
+  return false;
+}
+function isPdfBody(type,buf){
+  const ct=String(type||'').toLowerCase();
+  if(/text\/html|application\/json|text\/plain|image\/|text\/css|javascript/.test(ct))return false;
+  return pdfMagic(buf);
+}
 async function fileBytes(url){
   const abs=new URL(url,location.href).href;
   try{
     const res=await fetch(abs,{credentials:'omit'});
-    if(res&&res.ok)return await res.arrayBuffer();
-  }catch(e){}
+    if(res){
+      const type=res.headers.get('content-type')||'';
+      const buf=await res.arrayBuffer();
+      if(res.ok&&isPdfBody(type,buf))return buf;
+      if(res.ok||/text\/html|application\/json|text\/plain/.test(type.toLowerCase()))throw new Error('This is not a PDF.');
+    }
+  }catch(e){
+    if(e&&e.message==='This is not a PDF.')throw e;
+  }
   if(window.caches){
     const box=await caches.open('hws-files');
     const hit=await box.match(abs,{ignoreSearch:true});
-    if(hit)return await hit.arrayBuffer();
+    if(hit){
+      const type=hit.headers.get('content-type')||'';
+      const buf=await hit.arrayBuffer();
+      if(!isPdfBody(type,buf))throw new Error('This is not a PDF.');
+      return buf;
+    }
   }
   throw new Error('Not saved on this phone yet');
 }
 async function render(canvas,url){
   const pdfjs=await loadPdf();
   const data=await fileBytes(url);
-  const doc=await pdfjs.getDocument({data,disableRange:true,disableStream:true,disableAutoFetch:true}).promise;
+  let doc;
+  try{doc=await pdfjs.getDocument({data,disableRange:true,disableStream:true,disableAutoFetch:true}).promise}
+  catch(e){throw new Error('This is not a PDF.')}
   const page=await doc.getPage(1);
   const base=page.getViewport({scale:1});
   const width=Math.max(canvas.parentElement?canvas.parentElement.clientWidth:0,320);

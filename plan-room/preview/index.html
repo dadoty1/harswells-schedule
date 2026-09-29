@@ -22,7 +22,21 @@ function say(text) {
   if (msg) msg.textContent = text;
 }
 
+function pdfMagic(bytes) {
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes instanceof ArrayBuffer ? bytes : (bytes && bytes.buffer) || new ArrayBuffer(0));
+  const n = Math.min(data.length, 1024);
+  for (let i = 0; i <= n - 5; i++) {
+    if (data[i] === 0x25 && data[i + 1] === 0x50 && data[i + 2] === 0x44 && data[i + 3] === 0x46 && data[i + 4] === 0x2d) return true;
+  }
+  return false;
+}
+
 async function show(bytes) {
+  if (!pdfMagic(bytes)) {
+    say("This is not a PDF.");
+    parent.postMessage({ type: "hws-pdf-error", message: "This is not a PDF.", notPdf: true }, location.origin);
+    return;
+  }
   const data = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
   const doc = await pdfjs.getDocument({ data: data }).promise;
   const c = document.getElementById("c");
@@ -46,9 +60,9 @@ window.addEventListener("message", (ev) => {
   if (ev.origin !== location.origin) return;
   const d = ev.data || {};
   if (d.type !== "hws-pdf" || !d.bytes) return;
-  show(d.bytes).catch((e) => {
-    say("This PDF could not be opened.");
-    parent.postMessage({ type: "hws-pdf-error", message: String(e && e.message || e) }, location.origin);
+  show(d.bytes).catch(() => {
+    say("This is not a PDF.");
+    parent.postMessage({ type: "hws-pdf-error", message: "This is not a PDF.", notPdf: true }, location.origin);
   });
 });
 parent.postMessage({ type: "hws-pdf-listening" }, location.origin);

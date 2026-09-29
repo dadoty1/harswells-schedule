@@ -2,7 +2,7 @@
    cache so a deploy cannot leave a phone on stuck files. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='f11ecb0f00';
+const VERSION='ea057f047c';
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
 const FILES='hws-files';
@@ -75,14 +75,27 @@ async function staleWhileRevalidate(req){
   }
   return new Response('offline',{status:503,headers:{'Content-Type':'text/plain','X-HWS-Cache':'miss'}});
 }
+function pdfRequest(req){try{return /\.pdf$/i.test(new URL(req.url).pathname)}catch(e){return false}}
+function pdfHtml(req,res){
+  if(!pdfRequest(req)||!res)return false;
+  const ct=(res.headers.get('content-type')||'').toLowerCase();
+  return ct.indexOf('text/html')>=0||ct.indexOf('application/json')>=0;
+}
+function pdfMiss(){return new Response('Not a PDF',{status:415,headers:{'Content-Type':'text/plain','X-HWS-Cache':'not-pdf'}})}
+/* A PDF request never receives the app shell. An HTML or JSON body (a Pages fallback, a
+   sign-in page, a 404 document) is replaced before the viewer can hand it to pdf.js. */
+function pdfOrPass(req,res){return pdfHtml(req,res)?pdfMiss():res}
 async function cacheFirst(req){
   const hit=await caches.match(req,{ignoreSearch:true});
-  if(hit)return hit;
+  if(hit&&!pdfHtml(req,hit))return hit;
+  if(pdfRequest(req)&&!self.navigator.onLine)return pdfMiss();
   try{
     const res=await fetch(req);
-    if(res&&res.ok){const copy=res.clone();caches.open(SHELL).then(c=>c.put(req,copy)).catch(()=>{})}
-    return res;
+    const safe=pdfOrPass(req,res);
+    if(safe===res&&res&&res.ok){const copy=res.clone();caches.open(SHELL).then(c=>c.put(req,copy)).catch(()=>{})}
+    return safe;
   }catch(e){
+    if(pdfRequest(req))return pdfMiss();
     if(req.mode==='navigate'){const shell=await caches.match('index.html');if(shell)return shell}
     throw e;
   }
@@ -90,9 +103,11 @@ async function cacheFirst(req){
 async function filesThenNet(req){
   const box=await caches.open(FILES);
   const hit=await box.match(req,{ignoreSearch:true});
-  if(hit)return hit;
-  try{return await fetch(req)}
+  if(hit&&!pdfHtml(req,hit))return hit;
+  if(pdfRequest(req)&&!self.navigator.onLine)return pdfMiss();
+  try{return pdfOrPass(req,await fetch(req))}
   catch(e){
+    if(pdfRequest(req))return pdfMiss();
     if(req.mode==='navigate'){const shell=await caches.match('index.html');if(shell)return shell}
     throw e;
   }
