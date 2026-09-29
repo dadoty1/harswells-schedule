@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../icons/icon-180.png"><link rel="icon" sizes="192x192" href="../icons/icon-192.png">
 <style>.demob,#syncbar .demob{background:#b54708;color:#fff!important;border-radius:6px;padding:2px 8px;letter-spacing:.02em}#demoreset{margin-left:6px}</style>
 <style>:root{--bg:#f4f5f7;--card:#fff;--ink:#1d2330;--mut:#667085;--line:#e3e6ea;--blue:#2563eb;--red:#d92d20;--amber:#dc8a00;--green:#12a150;--hdr:#15233b}
-*{box-sizing:border-box}html,body{margin:0;overflow-x:hidden}body{font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+*{box-sizing:border-box}html,body{margin:0;overflow-x:clip}body{font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
 a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
 button,.btn{font:inherit;border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--ink);display:inline-block}
 button:hover,.btn:hover{border-color:#b8c0cc;text-decoration:none}button.pri{background:var(--blue);color:#fff;border-color:var(--blue)}button.danger{color:var(--red);border-color:#f3b8b2}button:disabled{opacity:.45;cursor:not-allowed}
@@ -428,7 +428,7 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 @media(max-width:760px){
  #hws-ver{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:61;margin:0;padding:1px 8px 2px;background:rgba(255,255,255,.94);pointer-events:none}
  #hws-update{bottom:calc(86px + env(safe-area-inset-bottom))}
- body.has-tabs{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+ body.has-tabs{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 }
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
@@ -633,20 +633,37 @@ button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:
  .fn{font-size:16px}
 }
 
-.selloc{font-size:13px;margin:12px 0 6px;color:#344054}
+.selloc{font-size:13px;font-weight:700;margin:0;padding:12px 16px 6px;color:#344054}
+.selsec{margin:0;padding:12px 16px 6px;font-size:13px;font-weight:700;color:#344054}
 .selroll{margin:0 0 10px}
 .selprice{font-weight:650;margin:6px 0}
 .selpic{display:block;width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin:0 0 6px}
 .selfile{margin:0 0 8px}
 .selnote{padding:8px 0;border-bottom:1px solid #eaecf0}
-.selalerts{margin:0 0 12px}
 .selblock{margin:0 0 12px}
+.seldeadhome{margin:0 0 14px}
+.seltogs{display:flex;flex-wrap:wrap;gap:4px 16px;padding:4px 16px 0}
+.seltog{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px;font-weight:650;color:#344054}
+.seldead{padding-bottom:calc(48px + env(safe-area-inset-bottom, 0px))}
+.selbucket{margin:0;padding:0}
+.selgrp{position:sticky;top:61px;z-index:4;display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;background:#f3f5f8;border-bottom:1px solid #eaecf0;font-size:13px;font-weight:750;color:#344054}
+.seln{margin-left:auto;min-width:22px;padding:0 8px;border-radius:9px;background:#e4e9f1;color:#1f3a5f;font-size:12px;line-height:22px;text-align:center}
+.selbucket[data-bucket="overdue"] .selgrp{color:#b42318}
+.selbucket[data-bucket="overdue"] .seln{background:#fde4e2;color:#b42318}
+.selrow{display:flex;align-items:center;gap:8px;width:100%;max-width:100%;box-sizing:border-box;min-height:44px;padding:10px 16px;border:0;border-bottom:1px solid #edf0f4;background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;overflow:hidden}
+.selmain{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650;font-size:15px;line-height:1.2}
+.selwhen{flex:none;font-size:13px;font-weight:700;color:#344054;white-space:nowrap}
+.sellate{flex:none;font-size:13px;font-weight:750;color:#b42318;white-space:nowrap}
+.selrow .chip{flex:none}
+a.seljobt{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px 16px;font:inherit;color:inherit;cursor:pointer;text-decoration:none!important;min-height:44px}
+a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
+.jh .seljobt{margin-top:10px}
 @media (max-width:760px){
- .main .selphone.panel{margin-left:-8px;margin-right:-8px;width:calc(100% + 16px);border-radius:0;border-left:0;border-right:0}
- .hub-home .selalerts,.hub-home .selclient{margin-left:-12px;margin-right:-12px;width:calc(100% + 24px)}
- .selphone .selcard,.selalerts .selcard,.selclient .selcard,.seldetail .selcard{width:100%;border-radius:0;box-sizing:border-box;min-height:72px}
- .jh .selalerts{margin:10px -16px 0}
- .jh .selcard{border-radius:0}
+ .panel.selphone{overflow:visible}
+ .main .selphone.panel{margin-left:0;margin-right:0;width:100%;border-radius:12px}
+ .selphone .selcard,.selclient .selcard,.seldetail .selcard{width:100%;box-sizing:border-box;min-height:44px}
+ .seldead .selsug{width:calc(100% - 32px);margin:0 16px 8px;border-radius:12px}
+ .hub-home .selclient{margin-left:0;margin-right:0;width:100%}
 }
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
@@ -3222,6 +3239,7 @@ function renderAttention(sub){if(!AT()){hubShell('attention',`<div class="hph"><
   body=`<div class="acounts big">${attCount('today',M.today.length,'Today',M.today.some(i=>i.sev<=2)?'red':'')}${attCount('week',M.week.length,'This week')}${attCount('overdue',M.overdue.length,'Overdue',M.overdue.length?'red':'')}${attCount('critical',M.critical.length,'Critical','amber')}</div>
   <div class="acounts">${attCount('red',M.red.length,'Red','red')}${attCount('amber',M.amber.length,'Amber','amber')}${attCount('green',M.green.length,'Green','green')}${attCount('quiet',M.quiet.length,'Quiet','amber')}${attCount('flagged',M.flagged.length,'Flagged','red')}</div>
   <div class="acounts">${attCount('inspections',M.inspections.length,'Inspections')}${attCount('deliveries',M.deliveries.length,'Deliveries (info)')}${attCount('stale',M.stale.length,'Schedules not updated')}${attCount('nobase',M.nobase.length,'No baseline, no schedule')}</div>
+  ${typeof selectionHomeCard==='function'?selectionHomeCard():''}
   ${M.flagged.length?sec('flagged','Flagged',M.flagged,attRow):''}
   ${sec('today','Today',M.today,attRow)}${sec('week','This week',M.week,attRow)}
   ${sec('drift','Drifting jobs',M.red.concat(M.amber),d=>attJobRow(d,'drift'),M.red.length+M.amber.length)}
@@ -6933,25 +6951,59 @@ function selSourceUrl(att){if(!att)return '';const blob=[att.url||'',att.path||'
 function selCardHtml(x){const today=selToday(J);const late=x.deadline&&today&&String(x.deadline).slice(0,10)<today&&SEL_OPEN.indexOf(x.stage)>=0;
  const sub=[x.location&&x.title?x.location:'',x.category||'',x.deadline?('due '+md(x.deadline)):'',x.cost_code||''].filter(Boolean).join(' · ');
  return `<button type="button" class="selcard" data-sel="${esc(x.id)}"><span class="pbody"><span class="pt">${esc(x.title||x.choice||x.location||'Selection')}</span><span class="ps">${esc(sub)}</span></span><span class="psrc">${chip(x.stage||'Pending','low')}${late?chip('Overdue','overdue'):''}${typeof selBudgetChip==='function'?selBudgetChip(x):''}</span></button>`}
+function selPhoenixToday(job){const pub=String((job&&job.today)||(DATA&&DATA.today)||'');
+ if(/^\d{4}-\d{2}-\d{2}/.test(pub))return pub.slice(0,10);
+ try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Phoenix'}).format(new Date())}catch(e){return iso(Date.now()-7*3600e3)}}
+function selWeekEnd(today){const day=new Date(dP(today)).getUTCDay();const toSun=day===0?0:(7-day);return addD(today,toSun)}
+function selBucket(due,today){due=String(due||'').slice(0,10);if(!due)return 'none';if(!today)return 'later';
+ if(due<today)return 'overdue';if(due<=selWeekEnd(today))return 'week';if(due<=addD(today,30))return 'month';return 'later'}
+function selPretty(day){day=String(day||'').slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(day))return '';
+ const [y,m,d]=day.split('-').map(Number);const dt=new Date(Date.UTC(y,m-1,d,19,0,0));
+ try{return new Intl.DateTimeFormat('en-US',{timeZone:'America/Phoenix',month:'short',day:'numeric'}).format(dt)}catch(e){return (MON[m-1]||'')+' '+d}}
+function selLate(due,today){due=String(due||'').slice(0,10);if(!due||!today||due>=today)return '';
+ const n=Math.round((dP(today)-dP(due))/DAY);if(n<=1)return '1 day late';return n+' days late'}
+function selIsDone(s){const stage=(s&&(s.stage||selStage(s)))||'';return stage==='Client selected'||stage==='Approved'||stage==='Ordered'||stage==='Installed'}
+function selChipInfo(s){const stage=(s&&(s.stage||selStage(s)))||'Pending';
+ if(stage==='Ordered'||stage==='Installed')return {label:'Ordered',tone:'ok'};
+ if(stage==='Client selected'||stage==='Approved')return {label:'Selected',tone:'ok'};
+ const status=String(s.status||'').toLowerCase();
+ const released=s.client_visible!==false&&status!=='unreleased'&&String(s.source||'').toUpperCase()!=='DRAFT';
+ return released?{label:'Pending client',tone:'medium'}:{label:'Needed',tone:'low'}}
+const SEL_BUCKETS=[['overdue','Overdue'],['week','Due this week'],['month','Next 30 days'],['later','Later'],['none','No date']];
+function selSortRows(rows){return rows.slice().sort(function(a,b){const da=String(a.deadline||'').slice(0,10),db=String(b.deadline||'').slice(0,10);
+ if(da&&db&&da!==db)return da<db?-1:1;if(da!==db)return da?-1:1;const ta=String(a.title||a.choice||'').toLowerCase(),tb=String(b.title||b.choice||'').toLowerCase();
+ return ta<tb?-1:(ta>tb?1:0)})}
+function selRowHtml(s,today){const name=s.title||s.choice||s.location||'Selection';const room=String(s.location||'').trim();
+ const label=room&&room!==name?(name+' · '+room):name;const due=String(s.deadline||'').slice(0,10);const when=selPretty(due);const late=selLate(due,today);const info=selChipInfo(s);
+ return `<button type="button" class="selrow" data-sel="${esc(s.id)}"><span class="selmain">${esc(label)}</span>${when?`<span class="selwhen">${esc(when)}</span>`:''}${late?`<span class="sellate">${esc(late)}</span>`:''}${chip(info.label,info.tone)}</button>`}
 function selSuggestHtml(){const rows=(J&&J.selection_suggestions)||[];if(!rows.length)return '';
- return `<h2 class="selloc">Suggestions to review</h2>`+rows.map(s=>`<button type="button" class="selcard selsug" data-sug="${esc(s.selection_id||'')}"><span class="pbody"><span class="pt">${esc(s.title||'Suggestion')}</span><span class="ps">${esc([s.location,s.category,s.snippet].filter(Boolean).join(' · '))}</span></span><span class="psrc">${chip('Review','medium')}</span></button>`).join('')}
-function renderSelPhone(M){const all=(J.selections||[]).map(withOverlay).map(selView);const real=all.filter(x=>x.source!='DRAFT');const show=st.selAll||!real.length?all:real;
- const groups=selGroup(show);const body=show.length?groups.map(([loc,cats])=>`<h2 class="selloc">${esc(loc)}</h2>`+cats.map(([cat,rows])=>`<div class="pgh">${esc(cat)} <span class="mut">(${rows.length})</span></div>`+rows.map(selCardHtml).join('')).join('')).join('')+selSuggestHtml():emptyState('No selections yet','');
- M.innerHTML=panel('Selections',`${real.length} real · ${all.length-real.length} template`,body,(real.length?`<label class="small"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:''));
+ return `<h2 class="selsec">Suggestions to review</h2>`+rows.map(s=>`<button type="button" class="selcard selsug" data-sug="${esc(s.selection_id||'')}"><span class="pbody"><span class="pt">${esc(s.title||'Suggestion')}</span><span class="ps">${esc([s.location,s.category,s.snippet].filter(Boolean).join(' · '))}</span></span><span class="psrc">${chip('Review','medium')}</span></button>`).join('')}
+function renderSelPhone(M){const all=(J.selections||[]).map(withOverlay).map(selView);const real=all.filter(x=>x.source!='DRAFT');const pool=st.selAll||!real.length?all:real;
+ const today=selPhoenixToday(J);const doneN=pool.filter(selIsDone).length;const openN=pool.length-doneN;const show=st.selDone?pool:pool.filter(s=>!selIsDone(s));
+ const groups=SEL_BUCKETS.map(function(pair){const rows=selSortRows(show.filter(s=>selBucket(s.deadline,today)===pair[0]));
+  if(!rows.length)return '';return `<section class="selbucket" data-bucket="${pair[0]}"><div class="selgrp"><span class="selgl">${esc(pair[1])}</span><span class="seln">${rows.length}</span></div>${rows.map(s=>selRowHtml(s,today)).join('')}</section>`}).join('');
+ const toggles=`<div class="seltogs">${doneN?`<label class="seltog"><input type="checkbox" id="seldone" ${st.selDone?'checked':''}> Show done (${doneN})</label>`:''}${real.length?`<label class="seltog"><input type="checkbox" id="sa" ${st.selAll?'checked':''}> include template</label>`:''}</div>`;
+ const body=toggles+`<div class="seldead">${groups||emptyState(doneN&&!st.selDone?'Nothing open':'No selections yet',doneN&&!st.selDone?'Done selections stay hidden until you show them.':'')}${selSuggestHtml()}</div>`;
+ M.innerHTML=panel('Selection deadlines',openN+' open',body);
  const box=M.querySelector('.panel');if(box)box.classList.add('selphone');
  const sa=$('#sa');if(sa)sa.onchange=e=>{st.selAll=e.target.checked;saveUi();mSel(M)};
+ const sd=$('#seldone');if(sd)sd.onchange=e=>{st.selDone=!!e.target.checked;saveUi();mSel(M)};
  bindSelRows(M);M.querySelectorAll('[data-sug]').forEach(el=>{el.onclick=()=>{const id=el.getAttribute('data-sug');if(id)openSelection(J.slug,id);else toast('Review this note, then add the selection.')}});
  const focus=parseHash().focus;if(focus&&typeof modalEl!=='undefined'&&!modalEl)openSelection(J.slug,focus)}
-function selAlertLink(slug,s,kind){const due=s.deadline?md(s.deadline):'';
- return `<a class="selcard" href="#/job/${esc(slug)}/selections/${encodeURIComponent(s.id)}"><span class="pbody"><span class="pt">${esc(s.title||s.choice||'Selection')}</span><span class="ps">${esc([s.location,s.category,kind,due].filter(Boolean).join(' · '))}</span></span>${chip(kind,kind==='Overdue'?'overdue':'medium')}</a>`}
-function selectionHomeCard(){if(!DATA||!DATA.jobs)return '';const today=(DATA.today)||'';const bits=[];
- Object.keys(DATA.jobs).forEach(slug=>{const job=DATA.jobs[slug]||{};const found=selAlerts(job.selections||[],job.today||today);
-  found.overdue.forEach(s=>bits.push(selAlertLink(slug,s,'Overdue')));found.upcoming.forEach(s=>bits.push(selAlertLink(slug,s,'Due soon')))});
- if(!bits.length)return '';
- return `<section class="selalerts"><h2 class="selloc">Selection deadlines</h2>${bits.join('')}</section>`}
-function selectionJobAlert(){if(!J)return '';const found=selAlerts(J.selections||[],selToday(J));
- const bits=found.overdue.map(s=>selAlertLink(J.slug,s,'Overdue')).concat(found.upcoming.map(s=>selAlertLink(J.slug,s,'Due soon')));
- if(!bits.length)return '';return `<div class="selalerts">${bits.join('')}</div>`}
+function selJobRollup(job){job=job||{};const today=selPhoenixToday(job);let overdue=0,week=0;
+ (job.selections||[]).forEach(function(raw){if(!raw||String(raw.source||'').toUpperCase()==='DRAFT')return;const s=selView(typeof withOverlay==='function'?withOverlay(raw):raw);
+  if(selIsDone(s))return;const b=selBucket(s.deadline,today);if(b==='overdue')overdue++;else if(b==='week')week++});
+ return {slug:job.slug||'',name:job.name||job.slug||'Job',overdue:overdue,week:week}}
+function selRollupLine(r){const bits=[];if(r.overdue)bits.push(r.overdue+' overdue');if(r.week)bits.push(r.week+' this week');return bits.join(' · ')}
+function selDeadlineJobs(){if(!DATA||!DATA.jobs)return [];const out=[];
+ Object.keys(DATA.jobs).forEach(function(slug){const job=Object.assign({slug:slug},DATA.jobs[slug]||{});const r=selJobRollup(job);if(r.overdue||r.week)out.push(r)});
+ out.sort(function(a,b){return b.overdue-a.overdue||b.week-a.week||(a.name<b.name?-1:(a.name>b.name?1:0))});return out}
+function selJobTile(r,label){const badge=r.overdue?'<span class="bbadge">'+r.overdue+'</span>':'';
+ return `<a class="bjobt seljobt" href="${jobHref(r.slug,'selections')}"><span class="bjobtop"><span class="bjobname">${esc(label||r.name||'Job')}</span>${badge}</span><span class="bmeta">${esc(selRollupLine(r))}</span></a>`}
+function selectionHomeCard(){const jobs=selDeadlineJobs();if(!jobs.length)return '';
+ return `<section class="seldeadhome" aria-label="Selection deadlines"><h2 class="bid-h2">Selection deadlines</h2><div class="bid-board">${jobs.map(r=>selJobTile(r)).join('')}</div></section>`}
+function selectionJobAlert(){if(!J)return '';if(typeof curMod==='function'&&curMod()==='selections')return '';
+ const r=selJobRollup(J);const line=selRollupLine(r);if(!line)return '';return selJobTile(r,'Selection deadlines')}
 function selectionRollupHtml(slug){const job=(DATA.jobs||{})[slug]||{};const sum=job.selection_summary||{};
  const see=typeof moneyReady==='function'?moneyReady():(typeof canSeeMoney==='function'&&canSeeMoney());
  let roll=null;if(see&&typeof MONEY!=='undefined'&&MONEY){roll=(MONEY.selection_rollups||{})[slug]||((MONEY.jobs||{})[slug]||{}).selection_rollup||null}
@@ -6988,9 +7040,10 @@ function selDetailHtml(s,slug){const opts=(s.options||[]).map(o=>{const photo=se
  const approved=s.stage==='Approved'||s.stage==='Ordered'||s.stage==='Installed';
  const diff=selAmt(s.id,'difference');const co=approved&&!(diff!=null&&diff<=0);
  const drafts=approved?`<p class="small">Draft only. The owner approves before it is sent.</p><div class="mbtns"><button type="button" id="selpo">Draft purchase order</button>${co?'<button type="button" id="selco">Draft change order</button>':''}</div>`:'';
- return `<p>${chip(s.stage||'Pending','low')} ${s.location?esc(s.location):''} ${s.category?'· '+esc(s.category):''}</p>
+ const due=String(s.deadline||'').slice(0,10);const late=selLate(due,selPhoenixToday(selJob(slug)));const info=selChipInfo(s);
+ return `<p>${chip(info.label,info.tone)} ${s.location?esc(s.location):''} ${s.category?'· '+esc(s.category):''}</p>
   ${s.description?`<p>${esc(s.description)}</p>`:''}
-  <p class="small">${s.deadline?('Due '+esc(mdy(s.deadline))):'No deadline'}${s.deadline_task?' · '+esc(s.deadline_task):''}</p>
+  <p class="small">${due?('Due '+esc(selPretty(due))+(late?' · <span class="sellate">'+esc(late)+'</span>':'')):'No deadline'}${s.deadline_task?' · '+esc(s.deadline_task):''}</p>
   ${s.picked_by||s.picked_at?`<p class="small">Picked ${esc(s.picked_by||'')} ${s.picked_at?esc(s.picked_at):''}</p>`:''}
   ${selMoneyLine(s.id)}
   <h3 class="sh">Choices</h3>${opts}
@@ -7037,7 +7090,7 @@ function renderClientSelections(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug
  const items=itemsForClient(slug);const priced=selClientOn(slug);
  const cards=items.map(it=>{const opts=(it.options||[]).map(o=>`<button type="button" class="selcard" data-cpick="${esc(it.id)}" data-opt="${esc(o.id)}"><span class="pbody"><span class="pt">${esc(o.title)}</span><span class="ps">Choose this</span></span></button>`).join('');
   const price=priced&&window.HWSSelections?HWSSelections.pricesFor(it.id):'';
-  return `<section class="selblock"><button type="button" class="selcard" data-sel="${esc(it.id)}"><span class="pbody"><span class="pt">${esc(it.title)}</span><span class="ps">${esc([it.location,it.category,it.stage,it.deadline?('due '+md(it.deadline)):'',it.detail].filter(Boolean).join(' · '))}</span></span>${chip(it.stage||'Pending','low')}</button>${price?`<p class="selprice">${esc(price)}</p>`:''}${opts}</section>`}).join('')||'<div class="none">No selections to review.</div>';
+  return `<section class="selblock"><button type="button" class="selcard" data-sel="${esc(it.id)}"><span class="pbody"><span class="pt">${esc(it.title)}</span><span class="ps">${esc([it.location,it.category,it.stage,it.deadline?('due '+selPretty(it.deadline)):'',it.detail].filter(Boolean).join(' · '))}</span></span>${chip(it.stage||'Pending','low')}</button>${price?`<p class="selprice">${esc(price)}</p>`:''}${opts}</section>`}).join('')||'<div class="none">No selections to review.</div>';
  const html=`<div class="hello"><h1>${esc(job.name||'Selections')}</h1><div class="date">Selections to review</div></div><div class="selphone selclient">${cards}</div>`;
  if(typeof hubShell==='function')hubShell('home',html);else{$('#root').innerHTML=html}
  document.querySelectorAll('[data-sel]').forEach(el=>{el.onclick=()=>openSelection(slug,el.getAttribute('data-sel'))});
@@ -7055,6 +7108,11 @@ window.HWSSelections={
   if(d!=null)bits.push((d>0?'Over ':d<0?'Under ':'Even ')+fmt$(Math.abs(d)));if(noAllow&&p!=null)bits.push('no allowance set yet');return bits.join(' · ')},
  pick:selRecordPick,
  open:openSelection,
+ bucket:selBucket,
+ pretty:selPretty,
+ late:selLate,
+ weekEnd:selWeekEnd,
+ phoenixToday:selPhoenixToday,
  alerts(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};return selAlerts(job.selections||[],selToday(job))}
 };
 
