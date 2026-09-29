@@ -206,6 +206,12 @@ header.top select{-webkit-appearance:none;appearance:none;background:#23344f url
 .sbox:focus-within{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(44,79,124,.15)}.sbox.big{margin-bottom:12px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
 .bcard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px}.bcard.late{border-left:4px solid var(--red)}
+a.bidcard,button.bidcard{display:block;width:100%;box-sizing:border-box;text-align:left;font:inherit;color:inherit;text-decoration:none!important;cursor:pointer}
+a.ps.bidcard{background:#fff;border:1px solid #dde3ec;border-radius:12px;padding:12px 14px;margin:0}
+.bidline{display:flex;flex-direction:column;gap:6px;width:100%}
+tr.bidcard{cursor:pointer}
+a.bidcard .bt{display:block}
+a.bidcard .bv{display:block;width:100%;flex:none;white-space:normal}
 .cmpbar{height:8px;background:#e4e9f1;border-radius:6px;margin-top:8px;overflow:hidden}.cmpbar b{display:block;height:100%;background:#98a2b3;border-radius:6px}.cmpbar b.low{background:#12a150}
 .home-cmp{margin:8px 0 4px}
 .bt{display:flex;align-items:center;gap:8px}.bv{font-weight:700;font-size:16px;flex:1;min-width:0}.bs{color:#475467;font-size:13px;margin-top:4px;line-height:1.6}.bs .dchip{padding:1px 6px}
@@ -338,6 +344,11 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .selcard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px;margin:0 0 8px;min-height:64px;cursor:pointer;color:inherit;font:inherit}
 .selcard .pbody{flex:1;min-width:0}.selcard .pt{display:block;font-weight:650}.selcard .ps{display:block;color:#667085;font-size:13px;margin-top:2px}
 .selcard .psrc{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.money-list{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%}
+.money-job{display:block;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px;min-height:72px;color:inherit;text-decoration:none!important}
+.money-job .mj-name,.money-job .mj-amt{display:block;width:100%;max-width:100%;white-space:normal;overflow:visible;text-overflow:clip}
+.money-job .mj-name{font-weight:650;font-size:16px;line-height:1.3;color:var(--ink)}
+.money-job .mj-amt{margin-top:4px;color:#667085;font-size:13.5px;line-height:1.4}
 .bvacard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px 8px;margin:0 0 10px}
 .bvacard h3{margin:0 0 2px;font-size:16px}
 .bvanum{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid #edf0f4;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -566,7 +577,7 @@ button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:
 Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswells app on iPhone.</p></div></div>
 <noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
 
-<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Team Folder/Harswells Live Schedule/sync","dataPath":"/Harswells Team Folder/Harswells Live Schedule/data/data.json","pathRoot":"root"},"lockHours":12,"hubUrl":""};const BOOT={"mode":"pwa"};</script>
+<script>window.HWS_CONFIG={"dropbox":{"appKey":"es8tve1nkr74xgt","syncRoot":"/Harswells Team Folder/Harswells Live Schedule/sync","dataPath":"/Harswells Team Folder/Harswells Live Schedule/data/data.json","moneyPath":"id:ZrGzURS6iZsAAAAAAAAAIw","moneyPaths":[],"pathRoot":"root"},"lockHours":12,"hubUrl":""};const BOOT={"mode":"pwa"};</script>
 <script>window.HWS_PIN_CHECK=[];</script><script>/* Harswells Schedule PWA data layer (editable edition). The app shell holds NO job data.
    Data source: "Sign in with Dropbox" ONLY (OAuth PKCE, see HWSSync.DropboxBackend), reading HWS_CONFIG.dropbox.dataPath with
    files/download. Only people whose Dropbox can see that file can load the schedule (9/27 decision: no share links).
@@ -579,7 +590,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'b70a66933c',built:'9/29/2026 7:45 AM AZ'};
+const HWS_BUILD={version:'5e7894d8bd',built:'9/29/2026 9:35 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -1216,7 +1227,7 @@ class ConflictError extends Error{constructor(m){super(m);this.name='ConflictErr
 class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
 class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
-const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
+const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',moneyPath:'id:ZrGzURS6iZsAAAAAAAAAIw',moneyPaths:[],pathRoot:'root'}},root.HWS_CONFIG||{});
 try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours;if('live' in ov)CFG.live=!!ov.live}}catch(e){}
 /* iOS Home Screen can drop localStorage when the service worker replaces its shell cache
    (the cache name includes the build version). The worker itself never clears localStorage
@@ -2277,9 +2288,9 @@ function mBids(M){const real=(J.bids||[]).filter(b=>b.source!='DRAFT'),tpl=(J.bi
   const mx=view.see?Math.max.apply(null,view.subs.map(x=>x._amt||0).concat([1])):1;
   const lowBit=view.see&&view.low!=null?` · low ${fmt$(view.low)}`:'';
   return `<div class="pkg"><div class="ph"><span class="t">${esc(p.title)}</span>${typeof fileChip==='function'?fileChip(p):''}${chip(p.status,p.status=='Open'?'medium':'low')}${p.past_due?chip('past due','high'):''}<span class="small mut">${esc(p.cost_codes)}</span><span class="small">Invited ${p.invited} · received ${p.received}${lowBit} · due ${mdy(p.deadline)||'—'} · ${esc(p.owner)}</span></div>
- <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${view.subs.map(x=>`<div class="ps"><b>${esc(x.vendor)}</b> · ${esc(x.status)} ${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
- ${view.subs.map(x=>`<tr><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'amount',view.see?x._amt:x.amount):fmt$(x.amount)}</td><td>${view.see&&x._amt!=null?`<div class="bar2"><b class="${x._amt==view.low?'low':''}" style="width:${x._amt/mx*100}%"></b></div>`:''}</td><td class="num">${view.see&&x._pct!=null?(x._pct?'+'+x._pct+'%':'<b style="color:#12a150">low</b>'):'<span class="mut">(amounts on money page)</span>'}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${typeof fileChip==='function'?fileChip(x):''}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
- (tpl.length?panel('Template packages (not released)','Template bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
+ <div class="body">${p.scope?`<div class="small mut" style="margin-bottom:6px"><b>Scope:</b> ${esc(p.scope)}</div>`:''}${(typeof isPhone==='function'&&isPhone())?`<div class="pocards" style="margin-bottom:8px">${view.subs.map(x=>`<div class="bidline"><a class="ps bidcard bidamt" data-bid="${esc(x.id)}" href="${jobHref(J.slug,'bids')}"><b>${esc(x.vendor)}</b> · ${esc(x.status)} · ${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'amount',''):''}</a>${typeof poBidExtras==='function'?poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</div>`).join('')}</div>`:''}<div class="tw"><table><tr><th>Sub/Vendor</th><th>Status</th><th>Released</th><th>Submitted</th><th class="num">Amount</th><th style="min-width:120px">Comparison</th><th class="num">vs low</th><th>Awarded</th><th>Ref / notes</th></tr>
+ ${view.subs.map(x=>`<tr class="bidcard" data-bid="${esc(x.id)}"><td>${esc(x.vendor)}<div class="mut small">${esc(x.id)}</div></td><td>${esc(x.status)}</td><td class="nowrap">${md(x.sent)}</td><td class="nowrap">${x.status=='received'?md(x.reply):''}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(x.id,'amount',view.see?x._amt:x.amount):fmt$(x.amount)}</td><td>${view.see&&x._amt!=null?`<div class="bar2"><b class="${x._amt==view.low?'low':''}" style="width:${x._amt/mx*100}%"></b></div>`:''}</td><td class="num">${view.see&&x._pct!=null?(x._pct?'+'+x._pct+'%':'<b style="color:#12a150">low</b>'):'<span class="mut">(amounts on money page)</span>'}</td><td>${x.status=='awarded'?chip('Awarded','ok'):'<span class="mut">—</span>'}${typeof poBidExtras==='function'?' '+poBidExtras(Object.assign({slug:J.slug,job:J.name,scope:p.scope,cost_code:p.cost_codes},x)):''}</td><td class="small">${esc(x.ref)}${typeof fileChip==='function'?fileChip(x):''}${x.notes?`<div class="mut">${esc(x.notes)}</div>`:''}</td></tr>`).join('')}</table></div></div></div>`}).join('')||emptyState('No bid requests yet','Bid requests come from bid-tracker.csv.'),csvBtn('bids'))+
+ (tpl.length?panel('Template packages (not released)','Template bid package print',`<div class="tw"><table><tr><th>Package</th><th>Cost codes</th><th>Items</th><th>Scope</th></tr>${tpl.map(p=>`<tr><td class="b">${esc(p.title)}</td><td class="small">${esc(p.cost_codes)}</td><td class="small">${esc(p.items)}</td><td class="small mut">${esc(p.scope)}</td></tr>`).join('')}</table></div>`):'');bindCsv(M);if(typeof bindBidCards==='function')bindBidCards(M);if(typeof poBindList==='function')poBindList(M,function(){mBids(M)})}
 function mPos(M){const pl=J.pos||[];M.innerHTML=panel('Purchase orders','order-po-tracker.csv and imported PO rows',pl.length?`<div class="tw"><table><tr><th>PO #</th><th>Title</th><th>Issued to</th><th>Cost code</th><th class="num">Amount</th><th>Status</th><th>Ordered</th><th>ETA</th><th>Deposit</th><th>Flags</th><th>Next</th></tr>${pl.map(p=>`<tr><td class="nowrap">${esc(p.po)}<div class="mut small">${esc(p.id)}</div></td><td>${esc(String(p.title||'').split(' | ').slice(2).join(' | ')||p.title)}</td><td>${esc(p.trade)} - ${esc(p.vendor)}</td><td class="small">${esc(p.cost_code)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(p.id,'amount',p.amount):fmt$(p.amount)}</td><td>${chip(p.status||'—','low')}<div class="mut small">${esc(p.tracker_status)}</div></td><td class="nowrap">${mdy(p.ordered)}</td><td class="small">${esc(p.eta)}</td><td class="small">${typeof moneyCellHtml==='function'?moneyCellHtml(p.id,'deposit',p.deposit):esc(p.deposit)}</td><td class="small red">${esc((p.flags||[]).join(', '))}</td><td class="small mut">${esc(p.next)}</td></tr>`).join('')}</table></div>`:emptyState('No purchase orders yet','POs come from order-po-tracker.csv and imported PO rows.'),csvBtn('pos'));bindCsv(M)}
 function mCos(M){const l=J.cos||[];const see=typeof canSeeMoney==='function'&&canSeeMoney();const tot=see?l.reduce((a,c)=>a+(+(typeof moneyNum==='function'?moneyNum(c.co_number,'amount'):c.amount)||0),0):null;M.innerHTML=panel('Change orders','editable seed: live/modules/change-orders.csv',l.length?`<div class="tw"><table><tr><th>#</th><th>Title</th><th>Description</th><th class="num">Amount</th><th>Status</th><th>Builder</th><th>Client approval</th><th>Date</th><th>Source</th></tr>${l.map(c=>`<tr><td class="nowrap">${esc(c.co_number)}</td><td class="b">${esc(c.title)}</td><td class="small">${esc(c.description)}</td><td class="num">${typeof moneyCellHtml==='function'?moneyCellHtml(c.co_number,'amount',c.amount):(fmt$(c.amount)||'<span class="mut">TBD</span>')}</td><td>${chip(c.status||'—',/Await|Pending/.test(c.status)?'medium':'low')}</td><td class="small">${esc(c.builder_approval)}</td><td class="small">${esc(c.owner_approval)}</td><td class="nowrap">${mdy(c.date)}</td><td class="small mut">${esc(c.source)}</td></tr>`).join('')}<tr class="tot"><td colspan=3>Total (priced)</td><td class="num">${see?fmt$(tot):'<span class="mut">(amounts on money page)</span>'}</td><td colspan=5></td></tr></table></div>`:emptyState('No change orders','Add rows to live/modules/change-orders.csv.'),csvBtn('cos'));bindCsv(M)}
 function mRfis(M){const rows=J.rfis||[];
@@ -2847,16 +2858,16 @@ function dchip(d,td){if(!d)return '';const c=d<td?'overdue':(d==td?'today':'');r
 function greet(){const h=+new Date(Date.now()-7*3600e3).toISOString().slice(11,13);return h<12?'Good morning':(h<17?'Good afternoon':'Good evening')}
 function homeComparison(){const groups=(H().comparison)||[];if(!groups.length)return '';
  const money=(typeof MONEY!=='undefined'&&MONEY&&MONEY.bid_comparison)||[];const byId={};money.forEach(r=>{if(r&&r.id)byId[r.id]=r});
- const see=typeof canSeeMoney==='function'&&canSeeMoney();
- const block=groups.map(g=>{const rows=(g.rows||[]).map(x=>{const priv=see?byId[x.id]:null;const amt=priv&&priv.amount!=null&&priv.amount!==''?fmt$(priv.amount):(x.amount_label||'');
+ const see=typeof moneyReady==='function'&&moneyReady();
+ const block=groups.map(g=>{const rows=(g.rows||[]).map(x=>{const priv=see?byId[x.id]:null;const n=see&&typeof moneyNum==='function'?moneyNum(x.id,'amount'):null;const amt=n!=null?fmt$(n):(priv&&priv.amount!=null&&priv.amount!==''?fmt$(priv.amount):(x.amount_label||''));
   const pct=priv&&priv.amount!=null&&priv.amount!==''&&priv.low?Math.round((+priv.amount-+priv.low)/+priv.low*1000)/10:(x.pct!=null?+x.pct:null);
   const vs=pct!=null?(pct?('+'+pct+'%'):'low'):'';const w=x.bar!=null?+x.bar:0;
-  return `<div class="bcard"><div class="bt"><span class="bv">${esc(x.vendor||x.id||'')}</span>${x.awarded?chip('Awarded','ok'):chip(x.status||'—','low')}</div>
+  return `<a class="bcard bidcard" data-bid="${esc(x.id||'')}" href="${g.slug?jobHref(g.slug,'bids'):'#/trackers/bids'}"><div class="bt"><span class="bv">${esc(x.vendor||x.id||'')}</span>${x.awarded?chip('Awarded','ok'):chip(x.status||'—','low')}</div>
    <div class="bs">${esc(x.id||'')} · ${esc(x.trade||g.trade||'')}${amt?' · <b>'+esc(amt)+'</b>':''}${vs?(' · '+(vs==='low'?'<b style="color:#12a150">low</b>':esc(vs))):''}</div>
-   ${w?`<div class="cmpbar"><b class="${pct===0?'low':''}" style="width:${w}%"></b></div>`:''}</div>`}).join('');
+   ${w?`<div class="cmpbar"><b class="${pct===0?'low':''}" style="width:${w}%"></b></div>`:''}</a>`}).join('');
   const title=esc(g.job||g.title||'')+' · '+esc(g.title||g.trade||'');
   return `<h2 class="sh2">${g.slug?`<a href="${jobHref(g.slug,'bids')}">${title}</a>`:title} <span>${(g.rows||[]).length}</span></h2><div class="cards">${rows}</div>`}).join('');
- return `<section class="home-cmp"><h2 class="sh2 first">Bid comparison</h2><div class="hint">Amounts stay on the money page.</div>${block}</section>`}
+ return `<section class="home-cmp"><h2 class="sh2 first">Bid comparison</h2>${see?'':'<div class="hint">Amounts stay on the money page.</div>'}${block}</section>`}
 function longDate(s){const t=new Date(dP(s));return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][t.getUTCDay()]+', '+MON[t.getUTCMonth()]+' '+t.getUTCDate()}
 /* ---- Home ---- */
 function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" href="${href}"><span class="ti">${ico(icon)}</span><span class="tn">${num}</span><span class="tl">${label}</span>${sub?`<span class="ts">${sub}</span>`:''}</a>`}
@@ -2879,7 +2890,7 @@ function renderHome(){const S=hubStats();const who=STORE&&STORE.who?STORE.who():
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
  hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}<div class="tiles">${tiles}</div>${dash}
  ${homeComparison()}
- <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);document.title='Harswells · Home'}
+ <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidCards==='function')bindBidCards(document);document.title='Harswells · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
 function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
@@ -2891,10 +2902,10 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
   const L0={due:S.bPast.concat(S.bWeek),open:S.bOpen,in:S.bIn,all:h.bids}[f]||[];const L=L0.filter(b=>!q||[b.vendor,b.trade,b.job,b.owner,jobSearch(b.slug)].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
   <label class="sbox">${ico('search')}<input type="search" id="bq" placeholder="Vendor, trade, job" value="${esc(st.bq||'')}"></label></div>
-  <div class="cards">${L.map(b=>`<div class="bcard${b.pastDue?' late':''}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
-   <div class="bs"><a href="${b.slug?jobHref(b.slug,'bids'):'#/jobs'}">${esc(b.job)}</a> · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''} · <b>${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',b.amount):(b.amount?esc(b.amount):'(amounts on money page)')}</b></div>
-   <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
-   ${(b.links||[]).length?`<div class="lbtns">${b.links.map(x=>lbtn(x)).join('')}</div>`:'<div class="ls none2">No file or email on file yet</div>'}</div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
+  <div class="cards">${L.map(b=>`<div class="bidrow"><a class="bcard bidcard${b.pastDue?' late':''}" data-bid="${esc(b.id)}" href="${b.slug?jobHref(b.slug,'bids'):'#/trackers/bids'}"><div class="bt"><span class="bv">${esc(b.vendor)}</span>${chip(b.status=='received'?'quote in':(b.pastDue?'past due':b.status),b.status=='received'?'ok':(b.pastDue?'high':'low'))}</div>
+   <div class="bs">${esc(b.job)} · ${esc(b.trade)}${b.status=='received'?(b.replyDate?' · quote in '+md(b.replyDate):''):(b.due?' · due '+dchip(b.due,S.td):'')}${b.owner?' · '+esc(b.owner):''} · <b class="bidamt">${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',''):( '(amounts on money page)')}</b></div>
+   ${(b.links||[]).length?'<div class="ls">Source file on the bid</div>':'<div class="ls none2">No file or email on file yet</div>'}</a>
+   <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div></div>`).join('')||'<div class="none">No bids match</div>'}</div>`}
  if(sub=='orders'){const extra=h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id));
   const openO=h.orders.filter(o=>(o.flags||[]).length&&!/not ordered/i.test(o.status||''));
   const olinks=o=>(o.links||[]).length?`<div class="lbtns olinks">${o.links.map(x=>lbtn(x)).join('')}</div>`:'';
@@ -2912,6 +2923,7 @@ function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hub
  if(sub=='pos'&&typeof poBindList==='function') poBindList(document.getElementById('root'),()=>renderTrackers('pos'));
  const poq=$('#poq');if(poq)poq.oninput=e=>{st.poQ=e.target.value;saveUi();const p=poq.selectionStart;renderTrackers('pos');const n=$('#poq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}};
  const bq=$('#bq');if(bq)bq.oninput=e=>{st.bq=e.target.value;saveUi();const p=bq.selectionStart;renderTrackers('bids');const n=$('#bq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};
+ if(typeof bindBidCards==='function')bindBidCards(document);
  document.title='Harswells · Trackers'}
 /* ---- Files ---- */
 function fileIndex(){const idx=[];companyLinks().forEach(g=>(g.items||[]).forEach(x=>idx.push(Object.assign({job:'Company',grp:g.title},x))));
@@ -3183,6 +3195,28 @@ function attOpenTask(slug,t){const i=attFind(slug,t.milestone_type=='inspection'
 const _attFind0=attFind;attFind=function(slug,kind,id){const x=_attFind0(slug,kind,id);if(x)return x;const e=window.__attExtra;if(e&&e.slug==slug&&String(e.id)==id){const J=attJ(slug);const t=(J.tasks||[]).find(y=>y.id==id);if(t)return Object.assign({},e,{t,title:t.task,flag:attFlag(slug,t.id)})}return null};
 /* ---- shared Related panel: one item = one thread (standing rule 8). Types: job, task, sub, bid, order, selection, dropbox, url.
    Future modules add links of these (or new) types to their items and get the same panel. */
+function bidText(){const parts=[];for(let i=0;i<arguments.length;i++){const v=arguments[i];if(v==null||v==='')continue;if(Array.isArray(v))v.forEach(x=>{if(x)parts.push(String(x))});else parts.push(String(v))}
+ return parts.map(s=>s.trim()).filter(Boolean).join('\n')}
+function bidWhen(b){const reply=b.reply||b.replyDate||'';const sent=b.sent||'';const due=b.due||b.deadline||'';
+ if(String(b.status||'').toLowerCase()==='received'&&reply)return 'Quote in '+md(reply);
+ const bits=[];if(sent)bits.push('Sent '+md(sent));if(reply)bits.push('Reply '+md(reply));if(due)bits.push('Due '+md(due));return bits.join(' · ')||'—'}
+function bidFileHtml(b){const links=(b.links||[]).filter(x=>x&&(String(x.kind||'').indexOf('dropbox')===0||x.type==='file'||x.type==='dropbox'||x.url));
+ const rows=links.map(x=>{if(typeof fileLinkHtml==='function'&&typeof fileHosted==='function'&&fileHosted(x.url,x.kind||x.type))return fileLinkHtml(Object.assign({slug:b.slug,cls:'lrow'},x));
+  const u=x.url&&/^https:\/\//.test(x.url)&&!/buildertrend\.(net|com)/i.test(x.url)?x.url:'';if(!u)return '';
+  return '<a class="lrow" href="'+esc(u)+'" target="_blank" rel="noopener"><span class="lb"><span class="lt">'+esc(x.label||'Source file')+'</span></span></a>'}).filter(Boolean);
+ return rows.join('')||'<div class="mut small">No source file on file yet</div>'}
+function findBid(id){id=String(id||'');if(!id)return null;let hit=null;
+ (H().bids||[]).forEach(b=>{if(b&&String(b.id)===id)hit=Object.assign({},b)});
+ ((H().comparison)||[]).forEach(g=>{(g.rows||[]).forEach(r=>{if(!r||String(r.id)!==id)return;
+  hit=Object.assign({slug:g.slug||'',job:g.job||'',trade:r.trade||g.trade||g.title||'',packageTitle:g.title||g.trade||''},hit||{},r,{slug:(hit&&hit.slug)||g.slug||'',job:(hit&&hit.job)||g.job||''})})});
+ Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{((DATA.jobs[js]||{}).bids||[]).forEach(p=>{const sub=(p.subs||[]).find(x=>x&&String(x.id)===id);if(String(p.id)!==id&&!sub)return;
+  const src=sub||{};const job=(DATA.jobs[js]||{});
+  hit=Object.assign({},hit||{},{id:id,slug:js,job:(hit&&hit.job)||job.name||js,trade:(hit&&hit.trade)||src.trade||p.title||'',packageTitle:p.title||(hit&&hit.packageTitle)||'',vendor:src.vendor||(hit&&hit.vendor)||'',status:src.status||(hit&&hit.status)||p.status||'',sent:src.sent||(hit&&hit.sent)||'',due:src.due||(hit&&hit.due)||p.deadline||'',reply:src.reply||src.replyDate||(hit&&(hit.reply||hit.replyDate))||'',replyDate:src.replyDate||src.reply||(hit&&hit.replyDate)||'',owner:(hit&&hit.owner)||p.owner||src.owner||'',scope:src.scope||(hit&&hit.scope)||p.scope||'',notes:src.notes||(hit&&hit.notes)||p.notes||'',inclusions:src.inclusions||src.include||(hit&&hit.inclusions)||p.inclusions||'',exclusions:src.exclusions||src.exclude||(hit&&hit.exclusions)||p.exclusions||'',links:(src.links&&src.links.length?src.links:null)||(hit&&hit.links)||p.links||[],pastDue:!!(hit&&hit.pastDue),ref:src.ref||(hit&&hit.ref)||''})})});
+ return hit}
+function bindBidCards(root){if(!root)return;root.querySelectorAll('[data-bid]').forEach(el=>{if(el.dataset.bidBound)return;el.dataset.bidBound='1';
+ el.addEventListener('click',ev=>{if(ev.target.closest('a,button,[data-accept],[data-po],[data-flink],[data-file],[data-file-path]'))return;if(window.HWSRelated)HWSRelated.open('bid',el.getAttribute('data-bid'))})});
+ root.querySelectorAll('a.bidcard[data-bid],button.bidcard[data-bid]').forEach(el=>{if(el.dataset.bidLink)return;el.dataset.bidLink='1';
+  el.addEventListener('click',ev=>{if(ev.target.closest('[data-accept],[data-po],[data-flink]'))return;ev.preventDefault();if(window.HWSRelated)HWSRelated.open('bid',el.getAttribute('data-bid'))})})}
 window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'doc',order:'truck',selection:'grid',dropbox:'files',url:'ext',spec:'doc',designbook:'doc',po:'box',takeoff:'grid',adaptive:'doc',file:'files',budget:'sheet'};
  const LBL={job:'Job',task:'Task',sub:'Sub / vendor',bid:'Bid / quote',order:'Order / PO',selection:'Selection',dropbox:'Dropbox',url:'Link',spec:'Spec sheet',designbook:'Design book',po:'Purchase order',takeoff:'Takeoff',adaptive:'Adaptive PO',file:'File',budget:'Budget line'};
  function html(links,o){const L=(links||[]).filter(Boolean);if(!L.length)return '';const g={};L.forEach(x=>(g[x.type]=g[x.type]||[]).push(x));
@@ -3199,11 +3233,20 @@ window.HWSRelated=(function(){const ICO={job:'jobs',task:'cal',sub:'user',bid:'d
    const links=s.jobs.map(j=>({type:'job',id:j,label:(attJ(j)||{}).name||j})).concat(tl,bids.map(b=>({type:'bid',id:b.id,label:`${b.job} · ${b.trade} (${b.status}${typeof canSeeMoney==='function'&&canSeeMoney()&&typeof moneyNum==='function'&&moneyNum(b.id,'amount')!=null?' · '+moneyNum(b.id,'amount'):''})`})),ords.map(x=>({type:'order',id:x.id,label:`${x.job} · ${x.item} (${x.status})`})),(typeof poLinksFor==='function'?poLinksFor('sub',id):[]));
    openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(s.trades.join(', ')||'Sub / vendor')}</div><h2>${esc(s.name)}</h2></div>
     <div class="aacts">${attMsg(s,'Hi, this is '+(attSig()||'the office')+(attOwn().company?' with '+attOwn().company:'')+'. ')}</div><div class="small mut">${s.phone||s.email?'Contact from '+esc(s.contact_src||'trackers'):'No phone or email on file for this sub yet.'}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
-  if(type=='bid'){let b=(H().bids||[]).find(x=>x.id==id);if(!b){Object.keys((DATA&&DATA.jobs)||{}).forEach(js=>{if(b)return;((DATA.jobs[js]||{}).bids||[]).forEach(p=>{if(b)return;const sub=(p.subs||[]).find(x=>x.id==id);if(p.id==id||sub)b={id:id,slug:js,job:(DATA.jobs[js]||{}).name||js,trade:p.title||'',vendor:(sub||(p.subs||[])[0]||{}).vendor||'',status:(sub||p).status||p.status||'',sent:'',due:p.deadline||'',owner:p.owner||'',amount:'',links:p.links||[],pastDue:false}})});if(!b){toast('Bid not found');return}}
+  if(type=='bid'){const b=findBid(id);if(!b){toast('Bid not found');return}
    const links=[{type:'job',id:b.slug,label:b.job},{type:'sub',id:attSubKey(b.vendor),label:b.vendor}].concat((b.links||[]).filter(x=>x.type!='po').map(x=>{const keep=['selection','file','spec','rfi','task','designbook','budget','job'].indexOf(x.type)>=0;return {type:x.kind&&String(x.kind).startsWith('dropbox')?'dropbox':(keep?x.type:'url'),id:x.id,url:x.url,label:(x.label||'')+(x.sub?' · '+x.sub:'')}})).concat(typeof poLinksFor==='function'?poLinksFor('bid',b.id):[]).concat(typeof moneyLinksForBid==='function'?moneyLinksForBid(id):[]);
-   openModal(`<div class="asheet"><div class="ahead"><div class="small mut">${esc(b.job)} · ${esc(b.trade)} · bid ${esc(b.id)}</div><h2>${esc(b.vendor)}</h2></div>
+   const cmp=b.slug?jobHref(b.slug,'bids'):'#/trackers/bids';
+   openModal(`<div class="asheet" id="bid-detail"><div class="ahead"><div class="small mut">${esc(b.job)} · ${esc(b.trade||b.packageTitle||'')} · bid ${esc(b.id)}</div><h2>${esc(b.vendor||b.id)}</h2></div>
     <div class="pacts">${typeof poBidExtras==='function'?poBidExtras(b):''}</div>
-    <table class="kv small"><tr><td class="mut">Status</td><td>${esc(b.status)}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr><tr><td class="mut">Sent / due</td><td>${esc(md(b.sent))} / ${esc(md(b.due))}</td></tr><tr><td class="mut">Owner</td><td>${esc(b.owner||'')}</td></tr><tr><td class="mut">Amount</td><td>${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',b.amount):esc(b.amount||'(amounts on money page)')}</td></tr></table>
+    <table class="kv small"><tr><td class="mut">Status</td><td id="bid-status">${esc(b.status||'—')}${b.pastDue?' · <b class="red">past due</b>':''}</td></tr>
+    <tr><td class="mut">Date</td><td id="bid-date">${esc(bidWhen(b))}</td></tr>
+    <tr><td class="mut">Amount</td><td id="bid-amount">${typeof moneyCellHtml==='function'?moneyCellHtml(b.id,'amount',''):'(amounts on money page)'}</td></tr>
+    <tr><td class="mut">Scope notes</td><td id="bid-scope">${esc(bidText(b.scope,b.notes)||'Not on file')}</td></tr>
+    <tr><td class="mut">Inclusions</td><td id="bid-inclusions">${esc(bidText(b.inclusions)||'Not on file')}</td></tr>
+    <tr><td class="mut">Exclusions</td><td id="bid-exclusions">${esc(bidText(b.exclusions)||'Not on file')}</td></tr>
+    ${b.owner?`<tr><td class="mut">Owner</td><td>${esc(b.owner)}</td></tr>`:''}</table>
+    <h3 class="sh3">Source file</h3><div id="bid-file">${bidFileHtml(b)}</div>
+    <a class="hrow" id="bid-compare" href="${esc(cmp)}"><span class="lb"><span class="lt">Bid comparison</span><span class="ls">${esc(b.packageTitle||b.trade||'This trade')}</span></span></a>
     <div class="aacts">${attMsg(attSub(attSubKey(b.vendor)),`Harswells bid request, ${b.job} ${b.trade}: checking on your quote${b.due?' (due '+md(b.due)+')':''}. Thanks${attSig()?', '+attSig():''}`)}</div>${html(links,o)}<p><button class="small" data-close>Close</button></p></div>`,m=>bind(m,o));return}
   if(type=='order'){const x=(H().orders||[]).find(y=>y.id==id);if(!x){toast('Order not found');return}
    const links=[{type:'job',id:x.slug,label:x.job},{type:'sub',id:attSubKey(x.vendor),label:x.vendor}].concat(attJobLinks(x.slug).filter(l=>l.type=='dropbox'&&/Orders/.test(l.label))).concat(typeof poLinksFor==='function'?poLinksFor('order',x.id):[]).concat(typeof moneyLinksForOrder==='function'?moneyLinksForOrder(id):[]);
@@ -3494,35 +3537,36 @@ function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
  return `<div class="wdm">${m.slice(0,4).map(t=>`<div><b>${esc(t.trade_label||t.trade)}</b>: ${esc(t.company||'')}${t.contact_name?' · '+esc(t.contact_name):''}${wdPhones(t).length?' · '+esc(wdPhones(t)[0].number):''}</div>`).join('')}${m.length>4?`<div class="mut">+${m.length-4} more</div>`:''}</div>`}
 
 /* Budget vs actual and the Preliminary selection status.
-   Dollar amounts are read from the private money file (window.__HWS_MONEY, or GET /api/money.json
-   on the office box) and from this phone's overlay. They are not taken from the team schedule
-   payload. The money page is limited to common.money_viewers.
+   Dollar amounts are read from the private money file only: window.__HWS_MONEY, a Dropbox
+   download of dropbox.moneyPath / moneyPaths after sign-in (the private money folder, not the public Pages
+   build), or GET /api/money.json on the office box. They are not taken from the team
+   schedule payload. The money page is limited to common.money_viewers (every hub member since 9/29).
    Committed POs may also arrive later in money.pos (data/money-pos.json). A missing list changes nothing. */
 let MONEY=window.__HWS_MONEY||{version:1,selections:{},jobs:{},pos:[],actuals:[],records:{},amounts:{}};
+let moneyLoaded=!!(window.__HWS_MONEY&&window.__HWS_MONEY.jobs);
+let moneyLoading=false;
 const MONEY_NOTE='(amounts on money page)';
+function moneyReady(){return !!(moneyLoaded&&typeof canSeeMoney==='function'&&canSeeMoney())}
 function moneyNum(id, key){if(id==null||id==='')return null;const rec=(MONEY.records||{})[String(id)];if(!rec)return null;
  const v=rec[key||'amount'];if(v==null||v==='')return null;const n=+String(v).replace(/[$,]/g,'');return isNaN(n)?null:n}
 function moneyPlain(id, key, raw){const text=raw==null?'':String(raw).trim();
  const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
- const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ const see=moneyReady();
  if(text&&!numeric)return text;
  if(!see)return MONEY_NOTE;
- let n=moneyNum(id, key||'amount');
- if(n==null&&numeric)n=+text.replace(/[$,]/g,'');
+ const n=moneyNum(id, key||'amount');
  if(n==null)return MONEY_NOTE;
  return fmt$(n)}
 function moneyCellHtml(id, key, raw){const text=raw==null?'':String(raw).trim();
  const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
- const see=typeof canSeeMoney==='function'&&canSeeMoney();
+ const see=moneyReady();
  if(text&&!numeric)return esc(text);
  if(!see)return '<span class="mut">'+MONEY_NOTE+'</span>';
- let n=moneyNum(id, key||'amount');
- if(n==null&&numeric)n=+text.replace(/[$,]/g,'');
+ const n=moneyNum(id, key||'amount');
  if(n==null)return '<span class="mut">'+MONEY_NOTE+'</span>';
  return fmt$(n)}
-function bidPackageView(p){const see=typeof canSeeMoney==='function'&&canSeeMoney();
- const subs=(p.subs||[]).map(function(x){let amount=null;
-  if(see){amount=moneyNum(x.id,'amount');if(amount==null&&x.amount!=null&&x.amount!==''&&!isNaN(+x.amount))amount=+x.amount}
+function bidPackageView(p){const see=moneyReady();
+ const subs=(p.subs||[]).map(function(x){const amount=see?moneyNum(x.id,'amount'):null;
   return Object.assign({},x,{_amt:amount})});
  let low=null;
  if(see){const nums=subs.map(function(s){return s._amt}).filter(function(n){return n!=null});if(nums.length)low=Math.min.apply(null,nums)}
@@ -3531,6 +3575,7 @@ function bidPackageView(p){const see=typeof canSeeMoney==='function'&&canSeeMone
  return {subs:subs,low:low,see:see}}
 const MONEY_KEY='hws-money-overlay-v1';
 function moneyViewers(){return ((DATA&&DATA.common&&DATA.common.money_viewers)||[])}
+function moneyHiddenNote(){return 'Amounts hidden, sign in as a hub member'}
 function cogsName(raw){raw=String(raw||'').trim();if(!raw)return '';const map=(DATA&&DATA.common&&DATA.common.adaptive_map)||{};
  if(map[raw])return map[raw];const hit=Object.keys(map).find(k=>String(map[k]).toLowerCase()===raw.toLowerCase());return hit?map[hit]:raw}
 function canSeeMoney(){const blob=[(STORE&&STORE.who)?STORE.who():'',(SY&&SY.A&&SY.A.describe)?SY.A.describe():''].join(' ');
@@ -3572,8 +3617,8 @@ function recompute(slug, baseLines){const acc=lineMap(baseLines);Object.values(a
  const lines=Object.values(acc);lines.forEach(r=>{r.firm=r.committed;r.remaining=r.budget-Math.max(r.committed,r.actual||0);r.projected=r.committed+r.preliminary});
  lines.sort((a,b)=>a.cost_code<b.cost_code?-1:1);return lines}
 function linesFor(slug){const base=(MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].lines)||[];
- if(!canSeeMoney())return base.map(l=>({cost_code:l.cost_code,title:l.title,bt_code:l.bt_code,preliminary_count:(l.preliminary_items||[]).length,committed_count:(l.committed_items||[]).length,po_count:(l.po_items||[]).length,pending_count:(l.pending_items||[]).length,actual_count:(l.actual_items||[]).length}));
- if(!jobDirty(slug)&&base.length)return base;return recompute(slug,base)}
+ if(!moneyReady())return [];
+ if(!jobDirty(slug))return base;return recompute(slug,base)}
 function totalsOf(lines){const t={budget:0,preliminary:0,committed:0,pending:0,actual:0,remaining:0,projected:0,firm:0};
  lines.forEach(l=>Object.keys(t).forEach(k=>{t[k]+=+l[k]||0}));return t}
 function moneyJobName(slug){const j=((DATA.common||{}).all_jobs||[]).find(x=>x.slug===slug);return (j&&j.name)||(DATA.jobs[slug]&&DATA.jobs[slug].name)||slug}
@@ -3651,10 +3696,9 @@ function openMoneyItem(slug,kind,id){if(kind==='selection'){openSelection(slug,i
   ${back}<p><button type="button" class="hrow" id="backbud"><span class="lb"><span class="lt">Budget line</span><span class="ls">${esc(it.cost_code||'')}</span></span></button></p>
   <p><button type="button" data-close>Close</button></p></div>`,
   m=>{const s=m.querySelector('#backsel');if(s)s.onclick=()=>openSelection(slug,it.selection_id);m.querySelector('#backbud').onclick=()=>{closeModal();location.hash='#/job/'+slug+'/money/'+encodeURIComponent(it.cost_code)}})}
-function moneySection(slug){const show$=canSeeMoney();const lines=linesFor(slug);const idx=((DATA.jobs||{})[slug]||{}).budget_index||[];
- const src=show$?lines:(idx.length?idx.map(l=>({cost_code:l.cost_code,title:l.title,bt_code:l.bt_code,preliminary_count:l.preliminary_count,committed_count:l.committed_count,po_count:l.po_count,pending_count:l.pending_count,actual_count:l.actual_count})):lines);
- if(!src.length)return '<div class="none">No budget lines for this job yet.</div>';
- if(!show$)return `<div class="note">Dollar amounts are on the money page, limited to ${esc(moneyViewers().join(' and '))}.</div>`+src.map(l=>`<article class="bvacard"><h3>${esc(l.title||l.cost_code)}</h3><div class="small mut">${esc(l.cost_code)}</div><div class="small">Preliminary ${l.preliminary_count||0} · Committed ${l.committed_count||0} · Pending ${l.pending_count||0} · POs ${l.po_count||0} · Actual ${l.actual_count||0}</div></article>`).join('');
+function moneySection(slug){if(!moneyReady())return `<div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`;
+ const lines=linesFor(slug);
+ if(!lines.length)return '<div class="none">No budget lines for this job yet.</div>';
  const grab=k=>lines.reduce((a,l)=>a.concat(l[k]||[]),[]);
  const total=Object.assign({cost_code:'',title:'Job total',bt_code:''},totalsOf(lines),{budget_items:grab('budget_items'),preliminary_items:grab('preliminary_items'),committed_items:grab('committed_items'),pending_items:grab('pending_items'),po_items:grab('po_items'),actual_items:grab('actual_items')});
  return `<p class="small mut">Remaining is budget minus the larger of committed and actual. Preliminary is not firm; it rolls into projected.</p>`+moneyExtras(slug)+lines.map(l=>bvaCard(slug,l,true)).join('')+bvaCard(slug,total,true);
@@ -3666,17 +3710,32 @@ function moneyExtras(slug){if(typeof canSeeMoney==='function'&&!canSeeMoney())re
 function mMoney(M){if(!J)return;M.innerHTML=panel('Budget vs actual',esc(J.name),moneySection(J.slug));bindDrill(M);
  const focus=parseHash().focus;if(focus&&canSeeMoney()&&!modalEl)openDrill(J.slug,focus,'budget')}
 function prelimHomeCount(){let n=0;Object.keys(DATA.jobs||{}).forEach(slug=>{const idx=((DATA.jobs[slug]||{}).budget_index)||[];if(idx.length)idx.forEach(l=>{n+=+l.preliminary_count||0});else jobSelections(slug).forEach(s=>{if(budgetBucket(s)==='preliminary')n++})});return n}
-function renderMoney(){if(!canSeeMoney()){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="none">Budget vs actual is limited to ${esc(moneyViewers().join(' and '))}.</div>`);return}
- const slugs=Object.keys(DATA.jobs||{});
- const cards=slugs.map(slug=>{const lines=linesFor(slug);if(!lines.length)return '';const t=totalsOf(lines);const n=lines.reduce((a,l)=>a+(l.preliminary_items||[]).length,0);
-  return `<button type="button" class="hrow" data-jobmoney="${esc(slug)}"><span class="lb"><span class="lt">${esc(moneyJobName(slug))}</span><span class="ls">Budget ${fmt$(t.budget)} · Committed ${fmt$(t.committed)}${n?' · '+n+' preliminary':''}</span></span>${n?chip(n+' preliminary','prelim'):''}</button>`}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
- hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut">Budget vs actual · private amounts</div></div><div class="rows">${cards}</div>`);bindDrill(document)}
+function moneyHiddenHtml(){return `<div class="hph"><h1>Money</h1></div><div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`}
+function jobHasFigures(lines){return (lines||[]).some(function(l){return ['budget','committed','preliminary','actual','pending','remaining','projected'].some(function(k){return l[k]!=null&&l[k]!==''&&!isNaN(+l[k])})})}
+function moneyJobCard(slug){const lines=linesFor(slug);if(!jobHasFigures(lines))return '';const t=totalsOf(lines);const n=lines.reduce(function(a,l){return a+(l.preliminary_items||[]).length},0);
+ return `<a class="money-job" data-jobmoney="${esc(slug)}" href="#/job/${esc(slug)}/money"><span class="mj-name">${esc(moneyJobName(slug))}</span><span class="mj-amt">Budget ${fmt$(t.budget)} · Committed ${fmt$(t.committed)}${n?' · '+n+' preliminary':''}</span></a>`}
+function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
+ if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
+  loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
+ const cards=Object.keys(DATA.jobs||{}).map(moneyJobCard).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
+ hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut">Budget vs actual</div></div><div class="money-list">${cards}</div>`);bindDrill(document)}
 function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
 function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
-async function loadMoneyFile(){if(!canSeeMoney())return;if(window.__HWS_MONEY)return;if(!/^(127\.0\.0\.1|localhost)$/.test(location.hostname))return;
- try{const who=STORE&&STORE.who?STORE.who():'';const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
-  const ct=r.headers.get('content-type')||'';if(!r.ok||!/json/.test(ct))return;const doc=await r.json();if(doc&&doc.jobs){MONEY=doc;if(typeof route==='function')route()}}catch(e){}}
+function applyMoneyDoc(doc){if(!canSeeMoney()||!doc||!doc.jobs||typeof doc.jobs!=='object')return false;MONEY=doc;moneyLoaded=true;return true}
+function moneyDropboxPath(){return moneyDropboxPaths()[0]||''}
+/* moneyPath is the Dropbox file id of money.json in the private money folder (outside the team folder). An id reads the same
+   for every person the folder is shared with, and the public shell carries no folder or staff names. moneyPaths are optional fallbacks. */
+function moneyDropboxPaths(){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};const out=[];
+ [d.moneyPath].concat(Array.isArray(d.moneyPaths)?d.moneyPaths:[]).forEach(function(p){p=String(p||'').trim();if(p&&out.indexOf(p)<0)out.push(p)});return out}
+async function loadMoneyFile(){if(!canSeeMoney()||moneyLoaded||moneyLoading)return;moneyLoading=true;
+ try{if(window.__HWS_MONEY&&window.__HWS_MONEY.jobs&&applyMoneyDoc(window.__HWS_MONEY)){if(typeof route==='function')route();return}
+  const paths=moneyDropboxPaths();const A=window.HWSSync&&HWSSync.DropboxBackend?HWSSync.DropboxBackend():null;
+  if(A&&A.ready()){for(const path of paths){try{const got=await A.readAbs(path);if(got&&got.text){const doc=JSON.parse(got.text);if(applyMoneyDoc(doc)){if(typeof route==='function')route();return}}}catch(e){}}}
+  if(/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname)){try{const who=STORE&&STORE.who?STORE.who():'';
+   const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
+   const ct=r.headers.get('content-type')||'';if(r.ok&&/json/.test(ct)){const doc=await r.json();if(applyMoneyDoc(doc)){if(typeof route==='function')route()}}}catch(e){}}
+ }finally{moneyLoading=false}}
 
 /* Plan Room: list a job's plan PDFs from the signed-in Dropbox, then open one in the
    massing-pdf viewer. The access token stays in localStorage (hws-dbx-auth).
@@ -5742,7 +5801,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
+  await syncBoot();openStore();if(STORE&&!STORE.who()&&SY.A&&SY.A.who)STORE.setWho(SY.A.who());if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>
