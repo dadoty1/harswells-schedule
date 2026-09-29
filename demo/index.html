@@ -476,15 +476,32 @@ nav.gtabs a[data-hws-plans] span{font-size:10px;line-height:1.15;text-align:cent
 .fview .fbar h2{flex:1;min-width:0;margin:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fview .fbar button{min-height:44px;min-width:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff}
 .fstage{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;background:#1b1f27}
-.fstage iframe,.fstage img{display:block;width:100%;border:0;background:#fff}
-.fstage img{height:auto;max-height:none}
+.fstage iframe,.fstage > img{display:block;width:100%;border:0;background:#fff}
+.fstage > img{height:auto;max-height:none}
+.fzoom{height:100%;min-height:240px;overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;background:#111}
+.fzoom-in{transform-origin:center center}
+.fzoom img{display:block;max-width:100%;max-height:70vh;width:auto;height:auto;background:#111}
+.fvid{position:relative;background:#000;min-height:220px}
+.fstage video{display:block;width:100%;min-height:220px;max-height:70vh;background:#000}
+.fvid [data-fplay]{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);min-height:44px;min-width:88px;border:0;border-radius:999px;background:#1f4b99;color:#fff;font-weight:700}
+.fcard{padding:28px 16px 12px;text-align:center}
+.fcard .fic{margin:0 auto 12px;width:64px;height:64px}
+.fcard .fic svg{width:32px;height:32px}
+.fcard b{display:block;font-size:18px;margin-bottom:6px}
+.fcard p{color:#c5d0e0;font-size:14px;margin:0}
+.fzip{list-style:none;margin:0;padding:8px 12px;color:#e8edf5}
+.fzip li{min-height:44px;display:flex;align-items:center;border-bottom:1px solid #2a3344;word-break:break-all}
+.fmail{padding:16px;color:#e8edf5}
+.fmail b{display:block;font-size:18px;margin-bottom:6px}
+.fmail p{color:#c5d0e0;margin:0 0 8px}
 .fstage pre{margin:0;padding:12px;white-space:pre-wrap;word-break:break-word;color:#e8edf5;font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
 .fstage table{border-collapse:collapse;background:#fff;color:#1d2330;font-size:13px;width:100%}
 .fstage td,.fstage th{border:1px solid #e4e7ec;padding:6px 8px;text-align:left}
 .fswipe{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px}
 .fswipe button{min-height:44px;min-width:44px}
-.facts{display:flex;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
-.facts a,.facts button{flex:1;min-height:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-align:center;text-decoration:none;font-weight:650}
+.facts{display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
+.facts a,.facts button{flex:1 1 40%;min-height:44px;border-radius:10px;border:1px solid #3a465c;background:#1c2636;color:#fff;text-align:center;text-decoration:none;font-weight:650;display:inline-flex;align-items:center;justify-content:center}
+.facts a[data-fplan]{background:#1f4b99;color:#fff;font-weight:700}
 .facts a[data-fsrc]{flex:0 1 auto;background:transparent;color:#c5d0e0;font-weight:600}
 .filechip{display:inline-flex;align-items:center;min-height:36px;margin:2px 4px 2px 0;padding:4px 10px;border-radius:999px;border:1px solid #c7d2e2;background:#f4f7fb;color:#1f3a5f;font-weight:650;font-size:13px}
 button.lrow,button.rrow,button.permit{width:100%;border:0;background:transparent;font:inherit;text-align:left;cursor:pointer}
@@ -1578,13 +1595,18 @@ function jobMap(){try{return JSON.parse(lsGet(JOB_KEY)||'{}')}catch(e){return {}
 function jobSaved(slug){return !!jobMap()[slug]}
 function setJobFlag(slug, on){const m=jobMap();if(on)m[slug]=1;else delete m[slug];lsSet(JOB_KEY, JSON.stringify(m))}
 function saveable(url){return /\.(pdf|png|jpe?g|gif|webp|heic|csv|txt)(\?|#|$)/i.test(String(url||''))}
-/* A hash route such as #/jobs is this app, not a file. Only a same-origin path with a
-   saved-file extension may open in the plan viewer. */
+/* A hash route such as #/jobs is this app, not a file. Only the href's own path counts:
+   #/jobs must not inherit a .pdf from the page that is open. */
 function isSavedFile(url){
   try{
-    const abs=new URL(String(url||''), location.href);
+    const raw=String(url||'').trim();
+    if(!raw||raw.charAt(0)==='#')return false;
+    const own=new URL(raw, 'https://hws.local/');
+    /* #/plans on a page whose path is a PDF is still this app. */
+    if(own.hash==='#'||own.hash==='#/'||/^#\/[A-Za-z0-9]/.test(own.hash))return false;
+    const abs=new URL(raw, location.href);
     if(!servedHere(abs.href))return false;
-    return saveable(abs.pathname);
+    return saveable(own.pathname);
   }catch(e){return false}
 }
 function dropboxHost(hostname){
@@ -2704,11 +2726,14 @@ function renderFiles(){const q=(st.fq||'').trim().toLowerCase();const C=companyL
  document.querySelectorAll('details.jf [data-offslug]').forEach(b=>b.addEventListener('click',e=>e.stopPropagation()));
  if(window.HWSOffline)HWSOffline.paintBar(document.getElementById('root'));
  document.title='Sample Builders · Files'}
-function bindSavedOpens(root,slug){if(!root||!window.HWSOffline)return;root.querySelectorAll('a[href]').forEach(a=>{
+function bindSavedOpens(root,slug){if(!root||!window.HWSOffline)return;root.querySelectorAll('a[data-file],a[data-file-path],a[data-flink],a[data-file-rel]').forEach(a=>{
   const href=a.getAttribute('href')||'';
-  if(!/\.(pdf|png|jpe?g|gif|webp)(\?|#|$)/i.test(href))return;
+  if(!href||href.charAt(0)==='#')return;
+  const path=href.split('#')[0];
+  if(!/\.(pdf|png|jpe?g|gif|webp)(\?|$)/i.test(path))return;
   if(typeof HWSOffline.servedHere==='function'&&!HWSOffline.servedHere(href))return;
-  a.addEventListener('click',ev=>{ev.preventDefault();HWSOffline.openFile(href, a.textContent.trim(), slug)})})}
+  const name=(a.getAttribute('data-name')||a.getAttribute('data-file-name')||path.split('?')[0].split('/').pop()||'File');
+  a.addEventListener('click',ev=>{ev.preventDefault();HWSOffline.openFile(href, name, slug)})})}
 function jobLinkRows(slug,compact){const L=JL(slug);const it=(L.items||[]).filter(x=>!btFace(x)&&(!compact||!/\(all jobs\)/.test(x.label)));
  const permits=(L.permits||[]).filter(p=>!btFace(p)).map(p=>lrow({label:'Permit '+p.number,sub:p.what||'Permit',url:p.url,kind:'dropbox-file'}));
  return permits.join('')+it.map(x=>lrow(x)).join('')||'<div class="none">No links on file for this job yet</div>'}
@@ -3699,6 +3724,36 @@ function bindSignIn(root) {
   };
 }
 
+function paintJobFiles(M, slug) {
+  if (!M || !slug || typeof fileOfficeEntries !== "function" || typeof fileKind !== "function") return;
+  const host = M.querySelector(".planroom");
+  if (!host || host.querySelector("[data-jobfiles]")) return;
+  const rows = fileOfficeEntries(slug).filter((e) => {
+    if (!e || e.tag === "folder") return false;
+    const k = fileKind(e.name);
+    return k === "pdf" || k === "image" || k === "svg";
+  });
+  if (!rows.length) return;
+  const seen = {};
+  host.querySelectorAll(".pr-file .lt").forEach((el) => { seen[(el.textContent || "").trim()] = 1; });
+  const items = rows.filter((e) => {
+    const label = typeof fileLabel === "function" ? fileLabel(e.label || e.name) : e.name;
+    return !seen[e.name] && !seen[label];
+  });
+  if (!items.length) return;
+  const html = items.map((e) => {
+    const k = fileKind(e.name);
+    const where = String(e.rel || "").indexOf("/") >= 0 ? e.rel.slice(0, e.rel.lastIndexOf("/")) : "";
+    const meta = [where, azWhen(e.modified), fmtSize(e.size)].filter(Boolean).join(" · ");
+    const open = `<button type="button" class="pr-open" data-file-path="${esc(e.path || "")}" data-file-name="${esc(e.name || "")}" data-file-rel="${esc(e.rel || "")}"><span class="lb"><span class="lt">${esc(typeof fileLabel === "function" ? fileLabel(e.label || e.name) : e.name)}</span><span class="ls">${esc(meta || (k === "pdf" ? "PDF" : "Photo"))}</span></span></button>`;
+    if (k === "pdf" && typeof filePlanHref === "function") {
+      const href = filePlanHref(slug, e);
+      return `<div class="hrow pr-file">${open}<a class="pr-measure" href="${esc(href)}">Open in Plan Room</a></div>`;
+    }
+    return `<div class="hrow pr-file">${open}</div>`;
+  }).join("");
+  host.insertAdjacentHTML("beforeend", `<div data-jobfiles="1"><h2 class="sh2">From this job's files</h2><div class="hint">PDFs and photos from this job open here. A PDF can also open in the Plan Room, and a takeoff is saved next to the plans.</div><div class="rows">${html}</div></div>`);
+}
 function paintSavedPlans(el) {
   if (!el) return;
   const hook = typeof HWSOfflinePlans !== "undefined" ? HWSOfflinePlans : (typeof window !== "undefined" ? window.HWSOfflinePlans : null);
@@ -3717,12 +3772,14 @@ async function mPlanRoom(M) {
     M.innerHTML = planSignIn(e.code === "auth" ? e.message : ("Could not read Dropbox. " + (e.message || "")));
     bindSignIn(M);
     paintSavedPlans(M);
+    paintJobFiles(M, slug);
     return;
   }
   if (gen !== prGen || !J || J.slug !== slug) return;
   if (got.error) {
     M.innerHTML = `<div class="planroom"><h2 class="sh2 first">Plan Room</h2><div class="empty"><b>${esc(got.error)}</b></div><div class="rows">${sampleBlock()}</div></div>`;
     paintSavedPlans(M);
+    paintJobFiles(M, slug);
     return;
   }
   const rows = got.pdfs.map((f) => {
@@ -3737,6 +3794,7 @@ async function mPlanRoom(M) {
     <div class="hint foot">A saved takeoff is stored in Dropbox next to these plans, in <b>_takeoffs</b>, and opens again with the same PDF. Auto takeoff writes a request there and measures tile floors and walls on the office computer.</div></div>`;
   bindAuto(M, slug, got.plansPath);
   paintSavedPlans(M);
+  paintJobFiles(M, slug);
 }
 
 function renderPlanIndex() {
@@ -3754,7 +3812,7 @@ function injectMainNav() {
   const dnav = document.querySelector("nav.dnav");
   if (dnav && !dnav.querySelector("[data-hws-plans]")) {
     const a = document.createElement("a");
-    a.href = "#/plans";
+    a.setAttribute("href", "#/plans");
     a.setAttribute("data-hws-plans", "");
     a.textContent = "Plan Room";
     if (on) a.className = "on";
@@ -3766,7 +3824,7 @@ function injectMainNav() {
   const gt = document.querySelector("nav.gtabs");
   if (gt && !gt.querySelector("[data-hws-plans]")) {
     const a = document.createElement("a");
-    a.href = "#/plans";
+    a.setAttribute("href", "#/plans");
     a.setAttribute("data-hws-plans", "");
     a.setAttribute("data-g", "plans");
     a.innerHTML = ico("doc") + "<span>Plan Room</span>";
@@ -3782,14 +3840,14 @@ function injectJobChrome() {
   if (row && !row.querySelector(".hws-planbtn")) {
     const a = document.createElement("a");
     a.className = "btn hws-planbtn";
-    a.href = modHref("plans");
+    a.setAttribute("href", modHref("plans"));
     a.textContent = "Plan Room";
     row.appendChild(a);
   }
   const side = document.querySelector("nav.side");
   if (side && !side.querySelector("[data-hws-plans]")) {
     const a = document.createElement("a");
-    a.href = modHref("plans");
+    a.setAttribute("href", modHref("plans"));
     a.setAttribute("data-hws-plans", "");
     a.textContent = "Plan Room";
     side.insertBefore(a, side.firstChild);
@@ -3834,7 +3892,7 @@ openMore = function () {
   const list = document.querySelector(".modal .mlist");
   if (!list || list.querySelector("[data-hws-plans]") || !J) return;
   const a = document.createElement("a");
-  a.href = modHref("plans");
+  a.setAttribute("href", modHref("plans"));
   a.setAttribute("data-close", "");
   a.setAttribute("data-hws-plans", "");
   a.textContent = "Plan Room";
@@ -3941,9 +3999,108 @@ function filePdfMagic(bytes) {
   }
   return false;
 }
+function fileAsU8(bytes) {
+  try {
+    if (bytes instanceof Uint8Array) return bytes;
+    if (bytes instanceof ArrayBuffer) return new Uint8Array(bytes);
+    if (bytes && bytes.buffer) return new Uint8Array(bytes.buffer, bytes.byteOffset || 0, bytes.byteLength);
+  } catch (e) {}
+  return new Uint8Array(0);
+}
+function fileAscii(u, i, n) {
+  let s = "";
+  const end = Math.min(u.length, i + n);
+  for (let k = i; k < end; k++) s += String.fromCharCode(u[k]);
+  return s;
+}
+function fileFtypBrand(u) {
+  if (!u || u.length < 12) return "";
+  if (fileAscii(u, 4, 4) !== "ftyp") return "";
+  return fileAscii(u, 8, 4);
+}
+function fileMagicKind(bytes) {
+  const u = fileAsU8(bytes);
+  if (u.length < 4) return "";
+  if (u[0] === 0x89 && u[1] === 0x50 && u[2] === 0x4e && u[3] === 0x47) return "png";
+  if (u[0] === 0xff && u[1] === 0xd8 && u[2] === 0xff) return "jpeg";
+  if (u[0] === 0x47 && u[1] === 0x49 && u[2] === 0x46 && u[3] === 0x38) return "gif";
+  if (u.length >= 12 && fileAscii(u, 0, 4) === "RIFF" && fileAscii(u, 8, 4) === "WEBP") return "webp";
+  if (u[0] === 0x50 && u[1] === 0x4b && (u[2] === 0x03 || u[2] === 0x05 || u[2] === 0x07)) return "zip";
+  if (u[0] === 0xd0 && u[1] === 0xcf && u[2] === 0x11 && u[3] === 0xe0) return "ole";
+  const brand = fileFtypBrand(u);
+  if (brand) {
+    const b = brand.toLowerCase();
+    if (/^(heic|heix|hevc|hevx|heim|heis|mif1|msf1|heif)$/.test(b)) return "heic";
+    if (brand === "qt  ") return "mov";
+    if (/^(isom|iso2|iso5|iso6|mp41|mp42|avc1|m4v |dash|msnv|ndsc)$/.test(b)) return "mp4";
+  }
+  if (fileAscii(u, 0, 4) === "AC10") return "dwg";
+  if (filePdfMagic(u)) return "pdf";
+  const head = fileAscii(u, 0, Math.min(u.length, 1200)).replace(/^\u0000+/, "");
+  const trim = head.replace(/^\s+/, "");
+  if ((/^<\?xml/i.test(trim) || /^<svg/i.test(trim)) && /<svg[\s>]/i.test(head)) return "svg";
+  if (/^\{\\rtf/i.test(trim)) return "rtf";
+  if (/^(from |return-path:|received:|mime-version:|date:)/i.test(trim) && /^(from |to:|subject:|mime-version:|received:|date:)/im.test(head)) return "eml";
+  if (/^<!doctype html|^<html[\s>]/i.test(trim)) return "html";
+  return "";
+}
+function fileZipOffice(bytes) {
+  const u = fileAsU8(bytes);
+  const s = fileAscii(u, 0, Math.min(u.length, 8000));
+  if (s.indexOf("word/") >= 0) return "doc";
+  if (s.indexOf("xl/") >= 0) return "sheet";
+  if (s.indexOf("ppt/") >= 0) return "slides";
+  return "";
+}
+function fileSniff(name, type, bytes) {
+  const ext = (String(name || "").split(".").pop() || "").toLowerCase();
+  const ct = String(type || "").split(";")[0].trim().toLowerCase();
+  const claimedPdf = ext === "pdf" || ct === "application/pdf";
+  const blocked = /^(text\/html|application\/json|text\/plain|text\/css)$/.test(ct) || ct.indexOf("javascript") >= 0;
+  const mag = fileMagicKind(bytes);
+  if (blocked && claimedPdf) return "not-pdf";
+  if (mag === "pdf") return blocked ? "not-pdf" : "pdf";
+  if (mag === "png" || mag === "jpeg" || mag === "gif" || mag === "webp" || mag === "heic") return "image";
+  if (mag === "mp4" || mag === "mov") return "video";
+  if (mag === "svg") return "svg";
+  if (mag === "dwg") return "cad";
+  if (mag === "rtf") return "rtf";
+  if (mag === "eml") return "email";
+  if (mag === "html") return claimedPdf ? "not-pdf" : "html";
+  if (mag === "zip") {
+    const office = fileZipOffice(bytes);
+    if (office) return office;
+    if (ext === "docx" || ext === "doc" || ext === "odt" || ct.indexOf("word") >= 0) return "doc";
+    if (ext === "xlsx" || ext === "xls" || ext === "ods" || ct.indexOf("sheet") >= 0 || ct.indexOf("excel") >= 0) return "sheet";
+    if (ext === "pptx" || ext === "ppt" || ext === "odp" || ct.indexOf("presentation") >= 0) return "slides";
+    return "zip";
+  }
+  if (mag === "ole") {
+    if (ext === "msg" || ct.indexOf("outlook") >= 0) return "email";
+    if (ext === "xls" || ext === "xlsx") return "sheet";
+    if (ext === "ppt" || ext === "pptx") return "slides";
+    return "doc";
+  }
+  if (claimedPdf) return "not-pdf";
+  if (ext === "csv" || ct === "text/csv" || ct === "application/csv") return "csv";
+  if (ext === "rtf" || ct === "text/rtf" || ct === "application/rtf") return "rtf";
+  if (ext === "svg" || ct === "image/svg+xml") return "svg";
+  if (ext === "eml" || ct === "message/rfc822") return "email";
+  if (ext === "msg") return "email";
+  if (ext === "dwg" || ext === "dxf" || ext === "dwf") return "cad";
+  if (/^(png|jpe?g|gif|webp|heic|tiff?|bmp)$/.test(ext) || ct.indexOf("image/") === 0) return "image";
+  if (/^(mp4|mov|m4v|webm)$/.test(ext) || ct.indexOf("video/") === 0) return "video";
+  if (/^(txt|md|json|xml|log)$/.test(ext) || ct.indexOf("text/") === 0 || ct.indexOf("json") >= 0) return "text";
+  if (/^(doc|docx|odt)$/.test(ext)) return "doc";
+  if (/^(xls|xlsx|ods)$/.test(ext)) return "sheet";
+  if (/^(ppt|pptx|odp)$/.test(ext)) return "slides";
+  if (/^(zip|rar|7z)$/.test(ext) || ct.indexOf("zip") >= 0) return "zip";
+  return "file";
+}
 function fileIsPdf(type, bytes) {
   const ct = String(type || "").toLowerCase();
-  if (/text\/html|application\/json|text\/plain|image\/|text\/css|javascript/.test(ct)) return false;
+  if (/text\/html|application\/json|text\/plain|text\/css|javascript/.test(ct)) return false;
+  if (fileMagicKind(bytes) !== "pdf") return false;
   return filePdfMagic(bytes);
 }
 function fileNotPdfHtml(offline) {
@@ -3960,11 +4117,15 @@ function fileKind(name) {
   const ext = (String(name || "").split(".").pop() || "").toLowerCase();
   if (ext === "pdf") return "pdf";
   if (/^(png|jpe?g|gif|webp|heic|tiff?|bmp)$/.test(ext)) return "image";
+  if (ext === "svg") return "svg";
+  if (/^(dwg|dxf|dwf)$/.test(ext)) return "cad";
   if (/^(doc|docx|odt)$/.test(ext)) return "doc";
   if (/^(xls|xlsx|ods)$/.test(ext)) return "sheet";
   if (/^(ppt|pptx|odp)$/.test(ext)) return "slides";
   if (ext === "csv") return "csv";
+  if (ext === "rtf") return "rtf";
   if (/^(txt|md|json|xml|log)$/.test(ext)) return "text";
+  if (/^(eml|msg)$/.test(ext)) return "email";
   if (/^(zip|rar|7z)$/.test(ext)) return "zip";
   if (/^(mp4|mov|m4v|webm)$/.test(ext)) return "video";
   return "file";
@@ -4129,10 +4290,51 @@ function fileDropboxUrl(entry) {
   const parent = parts.slice(0, -1).join("/");
   return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(entry.name || "") + "&role=work";
 }
-function filePlanHref(slug, entry) {
-  if (typeof sheetHref !== "function" || fileKind(entry.name) !== "pdf") return "";
-  const plans = String(entry.path || "").replace(/\/[^/]+$/, "");
-  return sheetHref(slug, plans, { path: entry.path, name: entry.name, rel: entry.rel });
+function filePlansPath(slug) {
+  const entries = fileOfficeEntries(slug);
+  const root = (typeof projectsRoot === "function" ? projectsRoot() : filesRoot()).replace(/\/$/, "");
+  const folder = String(typeof jobFolder === "function" ? jobFolder(slug) : fileFolder(slug) || "").replace(/^\/+|\/+$/g, "");
+  const jobPath = root && folder ? root + "/" + folder : root;
+  const rels = (entries || []).map((e) => String((e && e.rel) || ""));
+  const candidates = typeof PLAN_CANDIDATES !== "undefined" ? PLAN_CANDIDATES : ["Plans", "Blueprints"];
+  let plansRel = "";
+  for (let i = 0; i < candidates.length; i++) {
+    const c = candidates[i];
+    if (rels.some((r) => r === c || r.indexOf(c + "/") === 0)) { plansRel = c; break; }
+  }
+  if (!plansRel) {
+    for (let i = 0; i < rels.length && !plansRel; i++) {
+      const parts = rels[i].split("/");
+      for (let p = 0; p < parts.length - 1; p++) {
+        if (/plans|permits|blueprints/i.test(parts[p])) { plansRel = parts.slice(0, p + 1).join("/"); break; }
+      }
+    }
+  }
+  if (!plansRel) return jobPath;
+  return jobPath ? jobPath + "/" + plansRel : plansRel;
+}
+function filePlanRel(slug, entry) {
+  const rel = String((entry && entry.rel) || "");
+  const plans = filePlansPath(slug);
+  const root = (typeof projectsRoot === "function" ? projectsRoot() : filesRoot()).replace(/\/$/, "");
+  const folder = String(typeof jobFolder === "function" ? jobFolder(slug) : fileFolder(slug) || "").replace(/^\/+|\/+$/g, "");
+  const jobPath = root && folder ? root + "/" + folder + "/" : "";
+  let plansRel = "";
+  if (jobPath && plans.indexOf(jobPath) === 0) plansRel = plans.slice(jobPath.length).replace(/\/$/, "");
+  if (plansRel && (rel === plansRel || rel.indexOf(plansRel + "/") === 0)) {
+    const rest = rel.slice(plansRel.length).replace(/^\//, "");
+    return rest || (entry && entry.name) || "plan.pdf";
+  }
+  return rel || (entry && entry.name) || "plan.pdf";
+}
+function filePlanHref(slug, entry, plansPath) {
+  if (typeof sheetHref !== "function" || !entry) return "";
+  const plans = plansPath || filePlansPath(slug);
+  return sheetHref(slug, plans, {
+    path: entry.path || "",
+    name: entry.name || "plan.pdf",
+    rel: filePlanRel(slug, entry),
+  });
 }
 
 async function fileAuthHeaders() {
@@ -4385,7 +4587,11 @@ function fileFind(entries, rel, path) {
 async function fileOpen(slug, rel, entries, extra) {
   entries = entries || fileBytes.get(slug) || fileOfficeEntries(slug);
   let entry = fileFind(entries, rel, extra && extra.path);
-  if (!entry) entry = { tag: "file", name: (extra && extra.name) || rel.split("/").pop(), rel: rel, path: (extra && extra.path) || "", modified: "", size: 0, source: (extra && extra.url) || "" };
+  if (!entry) entry = { tag: "file", name: (extra && extra.name) || rel.split("/").pop(), rel: rel, path: (extra && extra.path) || "", modified: (extra && extra.modified) || "", size: +((extra && extra.size) || 0), source: (extra && extra.url) || "" };
+  else {
+    if (extra && extra.size && !entry.size) entry.size = +extra.size;
+    if (extra && extra.modified && !entry.modified) entry.modified = extra.modified;
+  }
   const sibs = entries.filter((e) => e.tag === "file" && fileKind(e.name) === "image" && e.rel.split("/").slice(0, -1).join("/") === entry.rel.split("/").slice(0, -1).join("/"));
   const images = sibs.length ? sibs : (fileKind(entry.name) === "image" ? [entry] : []);
   const index = Math.max(0, images.findIndex((e) => e.rel === entry.rel));
@@ -4395,7 +4601,7 @@ function openSheet(slug, entry, images, index) {
   document.querySelectorAll(".fview").forEach((n) => n.remove());
   const view = document.createElement("div");
   view.className = "fview";
-  view.innerHTML = '<div class="fshell"><div class="fbar"><button type="button" data-fclose aria-label="Close">Close</button><h2>' + esc(fileLabel(entry.label || entry.name)) + '</h2></div><div class="fswipe"' + (images.length > 1 ? "" : ' hidden') + '><button type="button" data-fprev aria-label="Previous">Prev</button><span class="mut" data-fcount></span><button type="button" data-fnext aria-label="Next">Next</button></div><div class="fstage" data-fstage><div class="fnote">Opening…</div></div><div class="facts"><button type="button" data-fdl>Download</button><a data-fsrc target="_blank" rel="noopener" hidden>View source</a></div></div>';
+  view.innerHTML = '<div class="fshell"><div class="fbar"><button type="button" data-fclose aria-label="Close">Close</button><h2>' + esc(fileLabel(entry.label || entry.name)) + '</h2></div><div class="fswipe"' + (images.length > 1 ? "" : ' hidden') + '><button type="button" data-fprev aria-label="Previous">Prev</button><span class="mut" data-fcount></span><button type="button" data-fnext aria-label="Next">Next</button></div><div class="fstage" data-fstage><div class="fnote">Opening…</div></div><div class="facts"><a data-fplan hidden>Open in Plan Room</a><button type="button" data-fdl>Download</button><a data-fsrc target="_blank" rel="noopener" hidden>View source</a></div></div>';
   document.body.appendChild(view);
   const state = { slug: slug, entry: entry, images: images, index: index, bytes: null, type: "", found: false, entries: fileBytes.get(slug) || fileOfficeEntries(slug) };
   function showNav() {
@@ -4408,6 +4614,16 @@ function openSheet(slug, entry, images, index) {
     const a = view.querySelector("[data-fsrc]");
     if (src) { a.href = src; a.hidden = false; } else { a.removeAttribute("href"); a.hidden = true; }
   }
+  function showPlanLink() {
+    const plan = view.querySelector("[data-fplan]");
+    if (!plan) return;
+    if (state.kind === "pdf" && filePdfMagic(state.bytes)) {
+      const href = filePlanHref(state.slug, state.entry);
+      if (href && !/buildertrend\.(net|com)/i.test(href)) { plan.href = href; plan.hidden = false; return; }
+    }
+    plan.hidden = true;
+    plan.removeAttribute("href");
+  }
   async function load() {
     showNav();
     const stage = view.querySelector("[data-fstage]");
@@ -4418,8 +4634,10 @@ function openSheet(slug, entry, images, index) {
       state.found = true;
       state.bytes = got.bytes;
       state.type = got.type;
+      state.kind = fileSniff(state.entry.name, got.type, got.bytes);
       showNav();
-      renderStage(stage, state.entry, got);
+      await renderStage(stage, state.entry, got, state.slug);
+      showPlanLink();
     } catch (e) {
       if (!view.isConnected) return;
       state.found = false;
@@ -4472,6 +4690,18 @@ async function fileLoadBytes(slug, entry) {
       return { bytes: got.bytes, type: got.type, offline: false };
     }
   } catch (e) {}
+  if (entry.source) {
+    try {
+      const r = await fetch(entry.source, { credentials: "same-origin" });
+      if (r.ok) {
+        const bytes = await r.arrayBuffer();
+        const type = r.headers.get("Content-Type") || "";
+        await fileRemember(entry.source, bytes, type);
+        if (!entry.size) entry.size = bytes.byteLength;
+        return { bytes: bytes, type: type, offline: false };
+      }
+    } catch (e) {}
+  }
   const saved = await fileRecall(key);
   if (saved && saved.bytes) return { bytes: saved.bytes, type: saved.type || "", offline: true };
   const listed = fileFind(fileBytes.get(slug) || fileOfficeEntries(slug), entry.rel, entry.path);
@@ -4548,58 +4778,288 @@ function fileOpenFolder(slug, path) {
   }
   location.hash = dest;
 }
-function renderStage(stage, entry, got) {
-  const kind = fileKind(entry.name);
-  const type = (got.type || "").toLowerCase();
-  const offline = got.offline ? '<div class="fnote">Saved on this phone</div>' : "";
-  if (kind === "pdf" || type.indexOf("pdf") >= 0) {
-    if (!fileIsPdf(type, got.bytes)) {
+function fileMark(stage, kind) {
+  if (stage) stage.setAttribute("data-preview", kind || "file");
+}
+function fileFmtSize(n) {
+  n = +n || 0;
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + " KB";
+  return (n / 1048576).toFixed(n < 10485760 ? 1 : 0) + " MB";
+}
+function fileCardHtml(entry) {
+  const name = fileLabel((entry && (entry.label || entry.name)) || "File");
+  const when = fileWhen(entry && entry.modified);
+  const meta = [fileFmtSize(entry && entry.size), when].filter(Boolean).join(" · ");
+  const kind = fileKind(entry && entry.name);
+  return '<div class="fcard" data-fcard="1"><div class="fic">' + fileIcon(kind) + "</div><b>" + esc(name) + "</b><p>" + esc(meta || "File") + "</p></div>";
+}
+function fileBindZoom(box) {
+  if (!box) return;
+  const target = box.querySelector("[data-fzoomtarget]");
+  if (!target) return;
+  let scale = 1, x = 0, y = 0, pinch = null, pan = null;
+  const dist = (e) => Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  function apply() {
+    target.style.transform = "translate(" + x + "px," + y + "px) scale(" + scale + ")";
+    box.setAttribute("data-scale", String(Math.round(scale * 100) / 100));
+  }
+  box.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) pinch = { d: dist(e), scale: scale };
+    else if (e.touches.length === 1 && scale > 1) pan = { x: e.touches[0].clientX, y: e.touches[0].clientY, ox: x, oy: y };
+  }, { passive: true });
+  box.addEventListener("touchmove", (e) => {
+    if (pinch && e.touches.length === 2) {
+      if (e.cancelable) e.preventDefault();
+      scale = Math.min(6, Math.max(1, pinch.scale * (dist(e) / (pinch.d || 1))));
+      apply();
+    } else if (pan && e.touches.length === 1) {
+      if (e.cancelable) e.preventDefault();
+      x = pan.ox + (e.touches[0].clientX - pan.x);
+      y = pan.oy + (e.touches[0].clientY - pan.y);
+      apply();
+    }
+  }, { passive: false });
+  box.addEventListener("touchend", () => { pinch = null; pan = null; }, { passive: true });
+  box.addEventListener("wheel", (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    scale = Math.min(6, Math.max(1, scale * (e.deltaY < 0 ? 1.15 : 0.87)));
+    if (scale === 1) { x = 0; y = 0; }
+    apply();
+  }, { passive: false });
+  apply();
+}
+function fileMountImage(stage, offline, bytes, type) {
+  const mag = fileMagicKind(bytes);
+  const blobType = mag === "png" ? "image/png" : mag === "gif" ? "image/gif" : mag === "webp" ? "image/webp" : mag === "jpeg" ? "image/jpeg" : (type && String(type).indexOf("image/") === 0 ? String(type).split(";")[0] : "application/octet-stream");
+  const url = URL.createObjectURL(new Blob([bytes], { type: blobType }));
+  stage.innerHTML = offline + '<div class="fzoom" data-fzoom data-scale="1"><div class="fzoom-in" data-fzoomtarget><img alt="" src="' + url + '"></div></div>';
+  fileMark(stage, "image");
+  fileBindZoom(stage.querySelector("[data-fzoom]"));
+  const img = stage.querySelector("img");
+  return new Promise((resolve) => {
+    if (img.complete && img.naturalWidth) { resolve(true); return; }
+    img.onload = () => resolve(!!img.naturalWidth);
+    img.onerror = () => resolve(false);
+  });
+}
+async function fileFetchThumb(slug, entry) {
+  try {
+    if (fileOnBox() && entry && entry.rel) {
+      const r = await fetch("/api/files/" + encodeURIComponent(slug) + "/thumb?rel=" + encodeURIComponent(entry.rel), { credentials: "same-origin" });
+      if (r.ok) {
+        const bytes = await r.arrayBuffer();
+        const mag = fileMagicKind(bytes);
+        if (mag === "png" || mag === "jpeg" || mag === "gif" || mag === "webp") return { bytes: bytes, type: r.headers.get("Content-Type") || "image/jpeg" };
+      }
+    }
+  } catch (e) {}
+  try {
+    const headers = await fileAuthHeaders();
+    if (!headers || !entry || !entry.path) return null;
+    const r = await fetch("https://content.dropboxapi.com/2/files/get_thumbnail_v2", {
+      method: "POST", credentials: "omit",
+      headers: Object.assign({}, headers, {
+        "Dropbox-API-Arg": JSON.stringify({ resource: { ".tag": "path", path: entry.path }, format: "jpeg", size: "w1024h768", mode: "strict" }),
+      }),
+    });
+    if (!r.ok) return null;
+    const bytes = await r.arrayBuffer();
+    if (fileMagicKind(bytes) !== "jpeg" && fileMagicKind(bytes) !== "png") return null;
+    return { bytes: bytes, type: "image/jpeg" };
+  } catch (e) { return null; }
+}
+function fileShowCard(stage, offline, entry) {
+  stage.innerHTML = offline + fileCardHtml(entry);
+  fileMark(stage, "card");
+  fileShowSource(stage);
+}
+function fileZipNames(bytes) {
+  const u = fileAsU8(bytes);
+  const names = [];
+  let i = 0;
+  while (i + 30 <= u.length && names.length < 200) {
+    if (u[i] !== 0x50 || u[i + 1] !== 0x4b || u[i + 2] !== 0x03 || u[i + 3] !== 0x04) break;
+    const flags = u[i + 6] | (u[i + 7] << 8);
+    const comp = (u[i + 18] | (u[i + 19] << 8) | (u[i + 20] << 16) | (u[i + 21] << 24)) >>> 0;
+    const nameLen = u[i + 26] | (u[i + 27] << 8);
+    const extra = u[i + 28] | (u[i + 29] << 8);
+    const name = new TextDecoder().decode(u.subarray(i + 30, i + 30 + nameLen));
+    if (name) names.push(name);
+    let next = i + 30 + nameLen + extra;
+    if ((flags & 8) === 0) next += comp;
+    if (next <= i) break;
+    i = next;
+  }
+  return names;
+}
+function fileUtf16Strings(bytes) {
+  const u = fileAsU8(bytes);
+  const out = [];
+  let cur = "";
+  for (let i = 0; i + 1 < u.length; i += 2) {
+    const c = u[i] | (u[i + 1] << 8);
+    if (c >= 32 && c < 127) cur += String.fromCharCode(c);
+    else {
+      if (cur.length >= 8 && cur.indexOf("__") !== 0) out.push(cur);
+      cur = "";
+    }
+  }
+  if (cur.length >= 8 && cur.indexOf("__") !== 0) out.push(cur);
+  return out;
+}
+function fileEmailSummary(bytes, name) {
+  const mag = fileMagicKind(bytes);
+  if (mag === "ole" || /\.msg$/i.test(name || "")) {
+    const strings = fileUtf16Strings(bytes).filter((s) => s.indexOf("Root Entry") < 0 && s.indexOf("substg") < 0);
+    return { subject: strings[0] || "", from: "", date: "", body: strings.slice(1, 6).join("\n") };
+  }
+  const text = new TextDecoder("utf-8", { fatal: false }).decode(fileAsU8(bytes));
+  const parts = text.split(/\r?\n\r?\n/);
+  const header = parts[0] || "";
+  const body = parts.slice(1).join("\n\n").replace(/<[^>]+>/g, " ").slice(0, 4000);
+  const hdr = (key) => {
+    const m = header.match(new RegExp("^" + key + ":\\s*(.*)$", "im"));
+    return m ? m[1].trim() : "";
+  };
+  return { subject: hdr("Subject"), from: hdr("From"), date: hdr("Date"), body: body.trim() };
+}
+function fileEmailHtml(bytes, name) {
+  const info = fileEmailSummary(bytes, name);
+  const who = [info.from, info.date].filter(Boolean).join(" · ");
+  return '<div class="fmail" data-fmail="1"><b>' + esc(info.subject || fileLabel(name || "Email")) + "</b>" + (who ? "<p>" + esc(who) + "</p>" : "") + "<pre>" + esc(info.body || "") + "</pre></div>";
+}
+function fileRtfText(bytes) {
+  let s = new TextDecoder("latin1").decode(fileAsU8(bytes));
+  s = s.replace(/\\par[d]?/g, "\n").replace(/\\tab/g, "\t");
+  s = s.replace(/\\'([0-9a-fA-F]{2})/g, (m, hex) => {
+    const n = parseInt(hex, 16);
+    return n ? String.fromCharCode(n) : "";
+  });
+  s = s.replace(/\{\\\*[^{}]*\}/g, "");
+  s = s.replace(/\\[a-zA-Z]+-?\d* ?/g, "");
+  s = s.replace(/[{}]/g, "");
+  return s.replace(/\n{3,}/g, "\n\n").trim();
+}
+function fileSvgBytes(bytes) {
+  let text = new TextDecoder().decode(fileAsU8(bytes));
+  text = text.replace(/<script[\s\S]*?<\/script>/gi, "");
+  text = text.replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+  return new TextEncoder().encode(text);
+}
+function fileShowPdf(stage, offline, got) {
+  if (!fileIsPdf(got.type, got.bytes) || fileMagicKind(got.bytes) !== "pdf") {
+    stage.innerHTML = fileNotPdfHtml(offline);
+    fileMark(stage, "not-pdf");
+    fileShowSource(stage);
+    return;
+  }
+  stage.innerHTML = offline + '<iframe data-fpdf title="PDF" style="width:100%;height:100%;min-height:280px;background:#1b1f27"></iframe>';
+  fileMark(stage, "pdf");
+  const frame = stage.querySelector("iframe");
+  const src = new URL("plan-room/preview/index.html", location.href).href;
+  const send = () => {
+    if (!frame.contentWindow) return;
+    if (fileMagicKind(got.bytes) !== "pdf") return;
+    const bytes = got.bytes.slice ? got.bytes.slice(0) : got.bytes;
+    frame.contentWindow.postMessage({ type: "hws-pdf", bytes: bytes }, location.origin);
+  };
+  const onMsg = (ev) => {
+    if (ev.origin !== location.origin || !ev.data) return;
+    if (ev.data.type === "hws-pdf-listening") send();
+    if (ev.data.type === "hws-pdf-error") {
+      window.removeEventListener("message", onMsg);
       stage.innerHTML = fileNotPdfHtml(offline);
+      fileMark(stage, "not-pdf");
       fileShowSource(stage);
+    }
+  };
+  window.addEventListener("message", onMsg);
+  frame.onload = send;
+  frame.src = src;
+}
+async function renderStage(stage, entry, got, slug) {
+  const type = (got.type || "").toLowerCase();
+  const sniff = fileSniff(entry.name, got.type, got.bytes);
+  const offline = got.offline ? '<div class="fnote">Saved on this phone</div>' : "";
+  if (sniff === "pdf" || sniff === "not-pdf") {
+    fileShowPdf(stage, offline, got);
+    return;
+  }
+  if (sniff === "html") {
+    const text = new TextDecoder().decode(fileAsU8(got.bytes));
+    stage.innerHTML = offline + '<iframe sandbox="" title="Preview" style="width:100%;height:70vh;border:0;background:#fff"></iframe>';
+    stage.querySelector("iframe").srcdoc = text;
+    fileMark(stage, "html");
+    return;
+  }
+  if (sniff === "image") {
+    const ok = await fileMountImage(stage, offline, got.bytes, type);
+    if (ok) return;
+    const thumb = await fileFetchThumb(slug, entry);
+    if (thumb && await fileMountImage(stage, offline, thumb.bytes, thumb.type)) return;
+    fileShowCard(stage, offline, entry);
+    return;
+  }
+  if (sniff === "svg") {
+    const url = URL.createObjectURL(new Blob([fileSvgBytes(got.bytes)], { type: "image/svg+xml" }));
+    stage.innerHTML = offline + '<div class="fzoom" data-fzoom data-scale="1"><div class="fzoom-in" data-fzoomtarget><img alt="" src="' + url + '"></div></div>';
+    fileMark(stage, "svg");
+    fileBindZoom(stage.querySelector("[data-fzoom]"));
+    return;
+  }
+  if (sniff === "video") {
+    const vtype = fileMagicKind(got.bytes) === "mov" ? "video/quicktime" : "video/mp4";
+    const url = URL.createObjectURL(new Blob([got.bytes], { type: vtype }));
+    stage.innerHTML = offline + '<div class="fvid"><video data-fvideo controls playsinline preload="none"></video><button type="button" data-fplay>Play</button></div>';
+    fileMark(stage, "video");
+    const video = stage.querySelector("video");
+    const play = () => {
+      if (!video.getAttribute("src")) video.src = url;
+      const pending = video.play();
+      if (pending && pending.catch) pending.catch(() => {});
+    };
+    stage.querySelector("[data-fplay]").onclick = (ev) => { ev.preventDefault(); ev.stopPropagation(); play(); };
+    return;
+  }
+  if (sniff === "csv") {
+    stage.innerHTML = offline + '<div data-fcsv="1">' + fileCsvTable(new TextDecoder().decode(fileAsU8(got.bytes))) + "</div>";
+    fileMark(stage, "csv");
+    return;
+  }
+  if (sniff === "rtf") {
+    stage.innerHTML = offline + '<pre data-frtf="1">' + esc(fileRtfText(got.bytes).slice(0, 200000)) + "</pre>";
+    fileMark(stage, "rtf");
+    return;
+  }
+  if (sniff === "text") {
+    stage.innerHTML = offline + '<pre data-ftext="1">' + esc(new TextDecoder().decode(fileAsU8(got.bytes)).slice(0, 200000)) + "</pre>";
+    fileMark(stage, "text");
+    return;
+  }
+  if (sniff === "email") {
+    stage.innerHTML = offline + fileEmailHtml(got.bytes, entry.name);
+    fileMark(stage, "email");
+    return;
+  }
+  if (sniff === "zip") {
+    const names = fileZipNames(got.bytes);
+    if (names.length) {
+      stage.innerHTML = offline + '<ul class="fzip" data-fzip="1">' + names.map((n) => "<li>" + esc(n) + "</li>").join("") + "</ul>";
+      fileMark(stage, "zip");
       return;
     }
-    stage.innerHTML = offline + '<iframe data-fpdf title="PDF" style="width:100%;height:100%;min-height:280px;background:#1b1f27"></iframe>';
-    const frame = stage.querySelector("iframe");
-    const src = new URL("plan-room/preview/index.html", location.href).href;
-    const send = () => {
-      if (!frame.contentWindow) return;
-      const bytes = got.bytes.slice ? got.bytes.slice(0) : got.bytes;
-      frame.contentWindow.postMessage({ type: "hws-pdf", bytes: bytes }, location.origin);
-    };
-    const onMsg = (ev) => {
-      if (ev.origin !== location.origin || !ev.data) return;
-      if (ev.data.type === "hws-pdf-listening") send();
-      if (ev.data.type === "hws-pdf-error") {
-        window.removeEventListener("message", onMsg);
-        stage.innerHTML = fileNotPdfHtml(offline);
-        fileShowSource(stage);
-      }
-    };
-    window.addEventListener("message", onMsg);
-    frame.onload = send;
-    frame.src = src;
+    fileShowCard(stage, offline, entry);
     return;
   }
-  if (type.indexOf("text/html") === 0 || (type.indexOf("pdf") < 0 && /^(doc|sheet|slides)$/.test(kind) && type.indexOf("html") >= 0)) {
-    const text = new TextDecoder().decode(got.bytes);
-    stage.innerHTML = offline + '<iframe sandbox="" style="width:100%;height:70vh;border:0;background:#fff"></iframe>';
-    stage.querySelector("iframe").srcdoc = text;
+  if (sniff === "doc" || sniff === "sheet" || sniff === "slides") {
+    const thumb = await fileFetchThumb(slug, entry);
+    if (thumb && await fileMountImage(stage, offline, thumb.bytes, thumb.type)) return;
+    fileShowCard(stage, offline, entry);
     return;
   }
-  if (kind === "image" || type.indexOf("image/") === 0) {
-    const url = URL.createObjectURL(new Blob([got.bytes], { type: type || "image/jpeg" }));
-    stage.innerHTML = offline + '<img alt="" src="' + url + '">';
-    return;
-  }
-  if (kind === "csv" || type.indexOf("csv") >= 0) {
-    stage.innerHTML = offline + fileCsvTable(new TextDecoder().decode(got.bytes));
-    return;
-  }
-  if (kind === "text" || type.indexOf("text/") === 0 || type.indexOf("json") >= 0) {
-    stage.innerHTML = offline + "<pre>" + esc(new TextDecoder().decode(got.bytes).slice(0, 200000)) + "</pre>";
-    return;
-  }
-  stage.innerHTML = offline + '<div class="fempty">No preview for this file type. Download it below.</div>';
+  fileShowCard(stage, offline, entry);
 }
 function fileCsvTable(text) {
   const rows = [];
@@ -4619,6 +5079,12 @@ function fileCsvTable(text) {
   if (!rows.length) return "<pre></pre>";
   return "<table>" + rows.slice(0, 200).map((r, i) => "<tr>" + r.map((c) => (i ? "<td>" : "<th>") + esc(c) + (i ? "</td>" : "</th>")).join("") + "</tr>").join("") + "</table>";
 }
+function fileOpenUrl(url, name, slug) {
+  let abs = String(url || "");
+  try { abs = new URL(url, location.href).href; } catch (e) {}
+  const entry = { tag: "file", name: name || abs.split("/").pop() || "File", rel: "", path: "", modified: "", size: 0, source: abs };
+  openSheet(slug || "", entry, [], 0);
+}
 function fileSave(name, bytes, type) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([bytes], { type: type || "application/octet-stream" }));
@@ -4628,42 +5094,76 @@ function fileSave(name, bytes, type) {
   a.remove();
 }
 
+function knownFileName(name) {
+  const base = String(name || "").split("?")[0].split("#")[0].split("/").pop();
+  return /\.(pdf|png|jpe?g|gif|webp|heic|tiff?|bmp|svg|csv|txt|rtf|docx?|xlsx?|pptx?|odt|ods|odp|dwg|dxf|dwf|eml|msg|zip|rar|7z|mp4|mov|m4v|webm)$/i.test(base) ? base : "";
+}
+function appHash(hash) {
+  return hash === "#" || hash === "#/" || /^#\/[A-Za-z0-9]/.test(hash || "");
+}
+/* A click opens the preview only when the element itself is marked as a file
+   (data-flink, data-file, data-file-path, or data-file-rel). Href text never qualifies. */
+function isAppLink(href) {
+  const raw = String(href || "").trim();
+  if (!raw || raw === "#" || raw.charAt(0) === "#") return appHash(raw || "#");
+  try {
+    const own = new URL(raw, "https://hws.local/");
+    if (!appHash(own.hash)) return false;
+    return new URL(raw, location.href).origin === location.origin;
+  } catch (e) { return false; }
+}
+function fileLinkName(href) {
+  const raw = String(href || "").trim();
+  if (!raw || isAppLink(raw) || /buildertrend\.(net|com)/i.test(raw)) return "";
+  const prev = raw.match(/[?&]preview=([^&#]+)/i);
+  if (prev && /dropbox\.com\/home/i.test(raw)) {
+    let name = prev[1];
+    try { name = decodeURIComponent(name.replace(/\+/g, " ")); } catch (e) {}
+    const hit = knownFileName(name);
+    if (hit) return hit;
+  }
+  let path = "";
+  try { path = decodeURIComponent(new URL(raw, "https://hws.local/").pathname); } catch (e) { return ""; }
+  const name = knownFileName(path.split("/").pop() || "");
+  if (!name) return "";
+  if (/dropbox\.com\/home/i.test(raw)) return name;
+  if (window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) return name;
+  try {
+    if (new URL(raw, location.href).origin === location.origin) return name;
+  } catch (e) {}
+  return "";
+}
+function markedFileEl(el) {
+  if (!el) return null;
+  const chip = el.closest("[data-flink], [data-file], [data-file-path], [data-file-rel]");
+  if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure") || chip.hasAttribute("data-fsrc") || chip.hasAttribute("data-fplan")) return null;
+  return chip;
+}
+
 if (typeof document !== "undefined") {
   document.addEventListener("click", (ev) => {
-    const chip = ev.target.closest(".flink, .filechip, .pr-open");
-    if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure")) return;
-    if (chip.hasAttribute("data-fsrc")) return;
+    const chip = markedFileEl(ev.target);
+    if (!chip) return;
     const rel = chip.getAttribute("data-file-rel") || "";
     const path = chip.getAttribute("data-file-path") || chip.getAttribute("data-path") || "";
     const name = chip.getAttribute("data-file-name") || chip.getAttribute("data-name") || "";
+    const href = chip.getAttribute("href") || "";
     const slug = chip.getAttribute("data-file-slug") || (J && J.slug) || "";
     if (chip.getAttribute("data-ffolder") === "1") {
       ev.preventDefault();
+      ev.stopPropagation();
       fileOpenFolder(slug, path || rel);
       return;
     }
-    if (!rel && !path && !name) return;
-    ev.preventDefault();
-    fileOpen(slug, rel, fileBytes.get(slug), { path: path, name: name });
-  }, true);
-  document.addEventListener("click", (ev) => {
-    const a = ev.target.closest("a[href]");
-    if (!a || a.hasAttribute("data-fsrc")) return;
-    const href = a.getAttribute("href") || "";
-    /* #/jobs and the other hash routes are the app. Only a same-origin file opens here. */
-    if (window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      HWSOffline.openFile(href, (a.textContent || "").trim(), (J && J.slug) || "");
-      return;
-    }
-    if (!fileHosted(href, "")) return;
+    if (!rel && !path && !name && !knownFileName(href)) return;
     ev.preventDefault();
     ev.stopPropagation();
-    const path = filePathFromUrl(href);
-    const slug = (J && J.slug) || "";
-    if (fileIsFolderLink(href, "")) fileOpenFolder(slug, path);
-    else fileOpen(slug, "", fileBytes.get(slug), { path: path, name: (path.split("/").pop() || "File"), url: href });
+    const fileName = name || knownFileName(path) || knownFileName(href) || "File";
+    if (href && window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) {
+      fileOpenUrl(href, fileName, slug);
+      return;
+    }
+    fileOpen(slug, rel, fileBytes.get(slug), { path: path || filePathFromUrl(href), name: fileName, url: href });
   }, true);
 }
 
@@ -4671,6 +5171,7 @@ window.HWSFiles = {
   count(slug) { return fileOfficeEntries(slug).length; },
   chips: fileChips,
   open: fileOpen,
+  openUrl: fileOpenUrl,
   openFolder: fileOpenFolder,
   hosted: fileHosted,
   linkHtml: fileLinkHtml,
@@ -4681,6 +5182,13 @@ window.HWSFiles = {
   isMoney: fileIsMoney,
   kind: fileKind,
   isPdf: fileIsPdf,
+  linkName: fileLinkName,
+  sniff: fileSniff,
+  magicKind: fileMagicKind,
+  zipNames: fileZipNames,
+  emailSummary: fileEmailSummary,
+  planHref: filePlanHref,
+  plansPath: filePlansPath,
   label: fileLabel,
   refs: fileRefs,
 };
