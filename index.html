@@ -355,7 +355,12 @@ tr[data-sel]{cursor:pointer}
 .unlock input{display:block;width:100%;box-sizing:border-box;margin-top:6px;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px}
 .unlock .pri{margin-top:16px;min-height:48px;width:100%}
 .unlock .hint,.offbar .hint{color:#667085;font-size:13px;line-height:1.4}
-#offline-banner{display:inline-block;background:#3b2f1a;color:#fff;font-weight:700;padding:4px 8px;border-radius:8px}
+#offline-banner{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px;background:#3b2f1a;color:#fff;font-weight:700;padding:4px 8px;border-radius:8px}
+#offline-banner #retry{background:#fff;color:#3b2f1a;border:0;border-radius:8px;font-weight:700}
+#auth-banner{display:inline-block;max-width:100%;background:#15233b;color:#fff;font-weight:700;padding:8px 10px;border:0;border-radius:8px;text-align:left;cursor:pointer}
+#signin-prompt{display:inline-flex;align-items:center;background:#15233b;color:#fff;font-weight:700;padding:6px 10px;border-radius:8px}
+button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700}
+#srcf button.load-dbx{display:block;width:100%;max-width:420px;min-height:48px;padding:10px 18px;font-size:17px}
 .offbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
 .offbar button[aria-pressed="true"]{background:#15233b;color:#fff}
 .planlayer{position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.55);display:flex;align-items:flex-end;justify-content:center}
@@ -369,6 +374,13 @@ tr[data-sel]{cursor:pointer}
 .planview canvas{display:block;width:100%;height:auto;background:#222}
 .planopen{width:100%;text-align:left;border:0;background:#fff;border-bottom:1px solid var(--line)}
 .slack-state.pending{color:#b54708;font-weight:700}
+#hws-ver,.hws-ver{margin:8px 12px 16px;font-size:12px;line-height:1.3;color:#667085;text-align:center}
+#hws-update{position:fixed;left:12px;right:12px;bottom:16px;z-index:70;min-height:44px;border:0;border-radius:12px;background:#15233b;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+@media(max-width:760px){
+ #hws-ver{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:61;margin:0;padding:1px 8px 2px;background:rgba(255,255,255,.94);pointer-events:none}
+ #hws-update{bottom:calc(86px + env(safe-area-inset-bottom))}
+ body.has-tabs{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -564,13 +576,27 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
    hold that response (stale-while-revalidate). A reload with no network reopens the last view. */
 (function(){
 'use strict';
+/* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
+   leave that address before Safari treats the app as a PDF. */
+try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
+const HWS_BUILD={version:'ac7820a764',built:'9/29/2026 6:59 AM AZ'};
+try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
 const okSource=c=>!!c&&(c.source=='dropbox-api'||(DEV&&c.source=='same-origin'));
-let cfg={};try{cfg=JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){}
-if(!okSource(cfg))cfg={};
+let cfg={};
+function readCfg(){let c={};try{c=JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){}cfg=okSource(c)?c:{}}
+readCfg();
 let data=null,syncedAt=null,lastErr=null,syncing=false,dataRev=null;
-function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}}
+function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}catch(e){}
+ if(window.HWSSync&&HWSSync.LS.mirror)HWSSync.LS.mirror(CFG_KEY,cfg)}
+function signedIn(){try{return !!(window.HWSSync&&HWSSync.DropboxBackend().ready())}catch(e){return false}}
+/* A saved token with no hws-cfg-v1 still means this phone is signed in. A shell update can
+   drop one key and leave the other; don't make that look like a first-time setup. */
+function adoptSignedIn(){if(okSource(cfg)||!signedIn())return;cfg={source:'dropbox-api'};saveCfg();
+ try{HWSSync.LS.set('hws-sync-kind','dropbox')}catch(e){}}
+function canLoad(){if(DEV&&cfg.source=='same-origin')return true;return cfg.source=='dropbox-api'&&signedIn()}
+function needsSignIn(){return !data&&!W.preview&&!W.demo&&!canLoad()}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
@@ -581,86 +607,204 @@ const NOACC='Your Dropbox account can\u2019t see the Harswells schedule data (Ha
 function srcKey(){if(cfg.source=='dropbox-api'){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};return 'dbx:'+(d.pathRoot||'')+':'+(d.dataPath||'')}return cfg.source||''}
 async function keep(d, rev){data=d;dataRev=rev||null;syncedAt=Date.now();lastErr=null;
  if(window.HWSOffline){try{await HWSOffline.seal(d, syncedAt)}catch(e){}}}
+const SIGNIN='Dropbox sign-in expired, tap to sign in';
+const NEED='Sign in to Dropbox to load jobs';
+let authNeeded=false, booted=false;
+function isAuthErr(e){if(!e)return false;if(e.name==='AuthError')return true;
+ return /expired_access_token|invalid_access_token|invalid_grant|insufficient_scope|missing_scope|no_permission|insufficient_permissions|\bHTTP 401\b|\bHTTP 403\b|sign-in expired/i.test(String(e.message||''))}
+function isNetErr(e){if(!e||isAuthErr(e))return false;const m=String(e.message||'');
+ return m==='offline'||/failed to fetch|network|offline|load failed/i.test(m)}
 async function fetchData(){
  if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
   /* 3.6 MB: download only when the Dropbox rev changed (one small get_metadata call otherwise) */
-  if(data&&dataRev){try{const m=await A.metaAbs(HWSSync.CFG.dropbox.dataPath);if(m&&m.rev===dataRev)return {same:true}}catch(e){}}
-  try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
-  if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){}
+  if(data&&dataRev){try{const m=await A.metaAbs(HWSSync.CFG.dropbox.dataPath);if(m&&m.rev===dataRev)return {same:true}}catch(e){if(isAuthErr(e))throw e}}
+  try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(isAuthErr(e))throw e;if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
+  if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){if(isAuthErr(e))throw e}
    throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}check(d);d.__rev=r.rev||null;return d}
  const url=sourceUrl();if(!url)throw new Error('setup');
  const r=await fetch(url,{cache:'no-store',credentials:'omit',redirect:'follow',headers:{'X-HWS-Revalidate':'1'}});
- if(!r.ok)throw new Error(r.status===503?'offline':'Local data file returned HTTP '+r.status);
+ if(!r.ok)throw new Error(r.status===503||r.status===0?'offline':'Local data file returned HTTP '+r.status);
  const stale=r.headers.get('X-HWS-Cache')==='stale';
+ const netFail=r.headers.get('X-HWS-Net')==='0';
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
- return {doc:check(d),stale}}
-async function sync(force){if(W.preview||syncing||(down()&&!force))return false;syncing=true;paint();
+ return {doc:check(d),stale,netFail}}
+/* force skips the browser-offline short circuit (Retry now, resume, the 60s poll).
+   A stored hws-net value never skips a call: that flag used to freeze the hub after one blip. */
+async function sync(force){if(W.preview||syncing)return false;if(!force&&!navigator.onLine)return false;syncing=true;paint();
  try{const got=await fetchData();
-  if(got&&got.same){mark(true);syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
-  if(got&&got.stale){mark(false);if(!data&&got.doc){data=got.doc;syncedAt=syncedAt||Date.now()}syncing=false;paint();return !!data}
+  if(got&&got.same){authNeeded=false;mark(true);syncedAt=Date.now();lastErr=null;syncing=false;paint();return true}
+  if(got&&got.stale){authNeeded=false;if(got.netFail)mark(false);else{mark(true);lastErr=null}if(!data&&got.doc){data=got.doc;syncedAt=syncedAt||Date.now()}syncing=false;paint();return !!data}
   const d=got&&got.doc?got.doc:got;if(!d||!d.jobs){syncing=false;paint();return false}
   const rev=d.__rev||null;delete d.__rev;const changed=!data||d.built!==data.built||JSON.stringify(d.common&&d.common.live_applied||[])!==JSON.stringify(data.common&&data.common.live_applied||[]);
-  mark(true);await keep(d, rev);syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
- catch(e){if(e.message==='offline'||/failed to fetch|network|offline|load failed/i.test(e.message||''))mark(false);lastErr=e.message=='setup'?null:(e.message==='offline'?null:e.message);syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
+  authNeeded=false;mark(true);await keep(d, rev);syncing=false;paint();if(changed&&W.onUpdate)W.onUpdate();return true}
+ catch(e){if(isAuthErr(e)){authNeeded=true;lastErr=SIGNIN;mark(true);syncing=false;paint();return false}
+  if(isNetErr(e)){authNeeded=false;mark(false);lastErr=null}else{authNeeded=false;lastErr=e.message=='setup'?null:(e.message==='offline'?null:e.message)}
+  syncing=false;paint();if(e.message=='setup'&&!data)throw e;return false}}
 function down(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLine}
 function mark(on){if(window.HWSOffline)HWSOffline.markNet(on)}
 function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}
- const b=document.getElementById('offline-banner');if(down()&&b)b.setAttribute('role','status')}
+ const b=document.getElementById('offline-banner');if(down()&&b)b.setAttribute('role','status');paintVersion()}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
  const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
  history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
 const esc2=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function versionText(){
+  if(!/^[0-9a-f]{10}$/.test(String(HWS_BUILD.version||'')))return '';
+  return 'Version '+HWS_BUILD.version+' · built '+(HWS_BUILD.built||'');
+}
+function paintVersion(){
+  const text=versionText();
+  if(!text||!document.body)return;
+  let el=document.getElementById('hws-ver');
+  if(!el){el=document.createElement('p');el.id='hws-ver';el.className='hws-ver';document.body.appendChild(el)}
+  el.textContent=text;
+}
+function showUpdate(){
+  if(document.getElementById('hws-update')||!document.body)return;
+  const b=document.createElement('button');
+  b.id='hws-update';b.type='button';
+  b.textContent='Update available, tap to reload';
+  b.onclick=ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const reg=swReg;
+    if(reg){postSkip(reg.waiting);postSkip(reg.installing)}
+    try{if(navigator.serviceWorker&&navigator.serviceWorker.controller)postSkip(navigator.serviceWorker.controller)}catch(e){}
+    location.reload();
+  };
+  document.body.appendChild(b);
+}
+function hideUpdate(){const b=document.getElementById('hws-update');if(b)b.remove()}
+function postSkip(sw){
+  if(!sw)return;
+  try{sw.postMessage('SKIP_WAITING')}catch(e){}
+  try{sw.postMessage({type:'SKIP_WAITING'})}catch(e){}
+  try{sw.postMessage('skip-waiting')}catch(e){}
+  try{sw.postMessage({type:'skip-waiting'})}catch(e){}
+}
+async function remoteVersion(){
+  try{
+    const r=await fetch('version.json',{cache:'no-store',credentials:'omit'});
+    if(r.ok){const j=await r.json();if(j&&/^[0-9a-f]{10}$/.test(String(j.version||'')))return j.version}
+  }catch(e){}
+  try{
+    const r=await fetch('sw.js',{cache:'no-store',credentials:'omit'});
+    if(!r.ok)return '';
+    const m=(await r.text()).match(/const VERSION='([0-9a-f]{10})'/);
+    return m?m[1]:'';
+  }catch(e){return ''}
+}
+let swReg=null,pendingRemote='',swClaimSeen=false,checkChain=Promise.resolve();
+function checkUpdate(){checkChain=checkChain.then(checkUpdateNow).catch(()=>{})}
+async function checkUpdateNow(){
+  paintVersion();
+  if(!/^[0-9a-f]{10}$/.test(String(HWS_BUILD.version||'')))return;
+  if(!navigator.onLine)return;
+  const remote=await remoteVersion();
+  if(!remote)return;
+  if(remote===HWS_BUILD.version){
+    hideUpdate();pendingRemote='';
+    try{sessionStorage.removeItem('hws-sw-reload')}catch(e){}
+    return;
+  }
+  pendingRemote=remote;
+  let already='';
+  try{already=sessionStorage.getItem('hws-sw-reload')||''}catch(e){}
+  if(already===remote){showUpdate();return}
+  let reg=swReg;
+  try{if(!reg&&navigator.serviceWorker)reg=await navigator.serviceWorker.getRegistration()}catch(e){}
+  if(reg){
+    try{await reg.update()}catch(e){}
+    postSkip(reg.waiting);postSkip(reg.installing);
+    watchSw(reg);
+  }
+  showUpdate();
+}
 function watchSw(reg){
   if(!reg)return;
-  const arm=sw=>{if(!sw)return;sw.addEventListener('statechange',()=>{if(sw.state==='installed'&&navigator.serviceWorker.controller)sw.postMessage('skip-waiting')})};
-  arm(reg.installing);reg.addEventListener('updatefound',()=>arm(reg.installing));
+  const arm=sw=>{if(!sw)return;sw.addEventListener('statechange',()=>{if(sw.state==='installed'&&navigator.serviceWorker.controller)postSkip(sw)})};
+  arm(reg.installing);arm(reg.waiting);
+  reg.addEventListener('updatefound',()=>arm(reg.installing));
 }
-let swClaimSeen=false;
+function reloadForUpdate(){
+  const remote=pendingRemote;
+  if(!remote||remote===HWS_BUILD.version)return false;
+  let already='';
+  try{already=sessionStorage.getItem('hws-sw-reload')||''}catch(e){}
+  if(already===remote){showUpdate();return false}
+  if(swClaimSeen)return false;
+  swClaimSeen=true;
+  try{sessionStorage.setItem('hws-sw-reload', remote)}catch(e){}
+  location.reload();
+  return true;
+}
 function bindSw(){
   if(!('serviceWorker' in navigator))return;
   let had=!!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had){had=true;return}if(swClaimSeen)return;swClaimSeen=true;location.reload()});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!had){had=true;return}
+    if(pendingRemote){reloadForUpdate();return}
+    if(swClaimSeen)return;
+    swClaimSeen=true;
+    location.reload();
+  });
   navigator.serviceWorker.addEventListener('message',ev=>{
     const t=ev.data&&ev.data.type;
-    if(t==='hws-data-updated'&&navigator.onLine)sync();
-    if(t==='hws-shell'&&navigator.serviceWorker.controller){/* activate already claimed; controllerchange reloads if this replaced a worker */}});
+    if(t==='hws-data-updated'){if(!authNeeded)mark(true);if(navigator.onLine&&!needsSignIn())sync()}
+    if(t==='hws-shell'&&navigator.serviceWorker.controller)reloadForUpdate()});
 }
+async function loadDropbox(){cfg={source:'dropbox-api'};saveCfg();const A=HWSSync.DropboxBackend();
+ if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}
+ try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;await syncBoot();openStore();startLive()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}
 const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=>syncedAt,
  data:()=>data,
  async init(){if(window.__HWS_DEMO){data=await window.__HWS_DEMO();W.preview=true;W.demo=true;return} /* demo page: bundled sample data, no network (demo-shim.js) */
   if(window.__HWS_PREVIEW){data=window.__HWS_PREVIEW;W.preview=true;return}
+  if(window.HWSSync&&HWSSync.LS.restore)await HWSSync.LS.restore();
+  readCfg();adoptSignedIn();
   applySetup();window.addEventListener('hashchange',()=>{if(applySetup())location.reload()});
   bindSw();
-  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{const reg=await navigator.serviceWorker.register('sw.js');watchSw(reg)}catch(e){}}
-  window.addEventListener('online',()=>{paint();sync(true).then(ok=>{if(ok&&!down()&&typeof slackFlush==='function')slackFlush()})});
-  window.addEventListener('offline',()=>{mark(false);paint()});
-  window.addEventListener('pageshow',()=>{if(navigator.onLine)sync()});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine&&(W.liveMode||Date.now()-(syncedAt||0)>5*60e3))sync()});
-  setInterval(()=>{if(!W.liveMode&&!document.hidden&&navigator.onLine)sync()},10*60e3);
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){try{swReg=await navigator.serviceWorker.register('sw.js',{updateViaCache:'none'});watchSw(swReg)}catch(e){}}
+  checkUpdate();
+  window.addEventListener('online',()=>{paint();if(needsSignIn())return;sync(true).then(ok=>{if(ok&&!down()&&typeof slackFlush==='function')slackFlush()})});
+  window.addEventListener('offline',()=>{paint()});
+  function resumeSync(){if(!booted||document.hidden||needsSignIn())return;if(!navigator.onLine){sync(true);return}if(authNeeded||down()||W.liveMode||Date.now()-(syncedAt||0)>5*60e3)sync()}
+  window.addEventListener('pageshow',()=>{checkUpdate();if(!booted||needsSignIn())return;if(!navigator.onLine)sync(true);else sync()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();resumeSync()});
+  setInterval(()=>{if(!booted||document.hidden||authNeeded||needsSignIn()||!down())return;sync(true)},60*1000);
+  setInterval(()=>{if(!booted||W.liveMode||document.hidden||!navigator.onLine||down())return;sync()},10*60e3);
   if(window.HWSOffline&&!await HWSOffline.sessionOk())await HWSOffline.gate();
   if(window.HWSOffline){try{const c=await HWSOffline.loadCopy();if(c&&c.data&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt||null;dataRev=c.rev||null}}catch(e){}}
   else if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
-  if(!down()&&(data||sourceUrl()||cfg.source=='dropbox-api')){try{await sync(true)}catch(e){}}
-  else if(down()&&(data||sourceUrl())){try{await sync(true)}catch(e){}}
-  else if(!data&&down()){lastErr='Offline, no saved copy on this phone yet';paint()}},
+  if(data||sourceUrl()||(cfg.source=='dropbox-api'&&signedIn())){try{await sync(true)}catch(e){}}
+  else if(needsSignIn()){lastErr=null;paint()}
+  else if(!data&&(!navigator.onLine||down())){lastErr='Offline, no saved copy on this phone yet';paint()}
+  booted=true},
  statusHtml(){if(W.demo)return `<b class="demob">DEMO — sample data</b> <span class="small">Made-up jobs, people and numbers. Edits stay in this browser only; nothing is sent or saved anywhere else.</span> <button class="small" id="demoreset">Reset demo</button>`;
-  if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;const on=navigator.onLine;
-  const files=` <button class="small" id="offmgr">Saved files</button>`;
+  if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;
+  const files=` <button type="button" class="small" id="offmgr">Saved files</button>`;
+  if(authNeeded)return `<button type="button" class="sync" id="auth-banner">${esc2(SIGNIN)}</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`;
+  /* No source or no Dropbox sign-in is not an offline phone. Sync now stays hidden; Load from Dropbox is the action. */
+  if(needsSignIn())return `<span class="sync" id="signin-prompt">${esc2(NEED)}</span> <button type="button" class="pri load-dbx" id="load-dbx">Load from Dropbox</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`;
+  const on=navigator.onLine;
   const off=down();
-  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))}</span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn" disabled>Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`;
-  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="dsrc">Data source</button>${files}`;
-  return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button class="small" id="syn">Sync now</button> <button class="small" id="dsrc">Data source</button>${files}`},
- errorHtml(e){const setup=!data;const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Connect your schedule data':'Could not load'}</h3><div class="pb">
-  ${(e&&e.message&&e.message!='setup')||lastErr?`<div class="note">${esc2(e&&e.message&&e.message!='setup'?e.message:lastErr)}</div>`:''}<p>This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.</p>
-  <form id="srcf">${dbxOk?`<p><button class="pri" type="submit">${HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
+  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))} <button type="button" class="small" id="retry">Retry now</button></span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
+  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
+  return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="syn">Sync now</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`},
+ errorHtml(e){const setup=!data;const ask=setup&&!canLoad();const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();
+  const msg=(e&&e.message&&e.message!='setup')?e.message:(lastErr&&lastErr.indexOf('Offline')<0?lastErr:'');
+  return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${ask?NEED:(setup?'Connect your schedule data':'Could not load')}</h3><div class="pb">
+  ${msg?`<div class="note">${esc2(msg)}</div>`:''}<p>${ask?'Load the Harswells job schedules from the company Dropbox. Nothing is stored in the app until you do.':'This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.'}</p>
+  <form id="srcf" action="#/" method="get">${dbxOk?`<p><button class="pri load-dbx" type="button">${ask||HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const dr=document.getElementById('demoreset');if(dr)dr.onclick=()=>{if(confirm('Reset the demo? This clears your demo edits, flags and approvals in this browser.'))window.HWS_DEMO_RESET()};
   const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
+  const retry=document.getElementById('retry');if(retry)retry.onclick=ev=>{ev.preventDefault();ev.stopPropagation();sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')))};
+  document.querySelectorAll('button.load-dbx').forEach(b=>{b.type='button';b.onclick=ev=>{ev.preventDefault();loadDropbox()}});
+  const ab=document.getElementById('auth-banner');if(ab)ab.onclick=async()=>{try{const A=HWSSync.DropboxBackend();HWSSync.LS.set('hws-sync-kind','dropbox');cfg={source:'dropbox-api'};saveCfg();await A.connect()}catch(e){toast(e.message)}};
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
   const om=document.getElementById('offmgr');if(om&&window.HWSOffline)om.onclick=()=>HWSOffline.openManager();
-  const f=document.getElementById('srcf');if(f)f.onsubmit=async ev=>{ev.preventDefault();cfg={source:'dropbox-api'};saveCfg();
-   {const A=HWSSync.DropboxBackend();if(!A.ready()){HWSSync.LS.set('hws-sync-kind','dropbox');try{await A.connect()}catch(e){toast(e.message)}return}}
-   try{const ok=await sync(true);if(ok){if(typeof closeModal=='function')closeModal();location.hash='#/';if(!STORE){DATA=data;await syncBoot();openStore();startLive()}route()}else toast('Could not load: '+(lastErr||'sign in again'))}catch(e){toast('Sign in with Dropbox first')}}},
+  const f=document.getElementById('srcf');if(f)f.onsubmit=ev=>{ev.preventDefault();loadDropbox()}},
  _dev:DEV};
+try{paintVersion()}catch(e){}
 window.WSData=W;
 })();
 </script>
@@ -1074,7 +1218,24 @@ class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
 const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Harswells Team Folder/Harswells Live Schedule/sync',dataPath:'/Harswells Team Folder/Harswells Live Schedule/data/data.json',pathRoot:'root'}},root.HWS_CONFIG||{});
 try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours;if('live' in ov)CFG.live=!!ov.live}}catch(e){}
-const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+/* iOS Home Screen can drop localStorage when the service worker replaces its shell cache
+   (the cache name includes the build version). The worker itself never clears localStorage
+   or IndexedDB. These keys are copied into IndexedDB and put back before sign-in is read. */
+const MIRROR=['hws-dbx-auth','hws-sync-kind','hws-cfg-v1','hws-dbx-pkce'];
+function pinStorage(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}}
+async function mirror(k,v){if(MIRROR.indexOf(k)<0)return;try{await kvPut('mirror:'+k,v==null?undefined:v);pinStorage()}catch(e){}}
+function mirrorUsable(k,raw){if(raw==null||raw===''||raw==='null')return false;let v;try{v=JSON.parse(raw)}catch(e){return false}
+ if(k==='hws-cfg-v1')return !!(v&&v.source==='dropbox-api');
+ if(k==='hws-dbx-auth')return !!(v&&v.access_token);
+ return v!=null}
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},
+ set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}mirror(k,v)},
+ mirror,
+ async restore(){for(const k of MIRROR){let raw=null;try{raw=localStorage.getItem(k)}catch(e){}
+  if(mirrorUsable(k,raw)){try{await mirror(k,JSON.parse(raw))}catch(e){}continue}
+  let saved;try{saved=await kvGet('mirror:'+k)}catch(e){saved=undefined}
+  if(saved==null)continue;
+  try{localStorage.setItem(k,JSON.stringify(saved))}catch(e){}}}};
 /* tiny IndexedDB kv (directory handles are structured-cloneable, not JSON) */
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('hws-sync',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function kvGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
@@ -1107,28 +1268,36 @@ function FsaBackend(handle){let dir=handle||null,perm=handle?'granted':'none';/*
  return A}
 /* ---------------------------------------------------------------- back end (b): Dropbox HTTP API + OAuth PKCE */
 const DBX={auth:'https://www.dropbox.com/oauth2/authorize',token:'https://api.dropboxapi.com/oauth2/token',api:'https://api.dropboxapi.com/2/',content:'https://content.dropboxapi.com/2/',notify:'https://notify.dropboxapi.com/2/'};
+const SIGNIN_MSG='Dropbox sign-in expired, tap to sign in';
+function authDenied(status, summary){
+  if(status===401||status===403)return true;
+  return /expired_access_token|invalid_access_token|invalid_grant|insufficient_scope|missing_scope|no_permission|insufficient_permissions/.test(String(summary||''));
+}
 const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b64u(a.buffer).slice(0,n)}
 const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
 let ROOT_P=null; /* one shared get_current_account for all backend instances */
 function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
  const hosted=()=>/^https?:$/.test(location.protocol);
- const redirectUri=()=>location.origin+location.pathname;
+ /* Dropbox must return to the app directory, never to a .pdf path or index.html.
+    A return URL whose path ends in .pdf makes Safari show a PDF error. */
+ const redirectUri=()=>{let path=location.pathname;const base=path.split('/').pop()||'';if(/\.[A-Za-z0-9]{1,8}$/.test(base))path=path.replace(/[^/]*$/,'');if(!path.endsWith('/'))path+='/';return location.origin+path};
  const full=p=>(c.syncRoot.replace(/\/$/,'')+'/'+p.replace(/^\//,''));
  async function tokenReq(params){const r=await fetch(DBX.token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString(),credentials:'omit'});
-  const j=await r.json().catch(()=>({}));if(!r.ok)throw new AuthError('Dropbox sign-in failed: '+(j.error_description||j.error||('HTTP '+r.status)));return j}
+  const j=await r.json().catch(()=>({}));if(!r.ok){const blob=String(j.error||'')+' '+String(j.error_description||'');if(authDenied(r.status, blob))throw new AuthError(SIGNIN_MSG);throw new AuthError('Dropbox sign-in failed: '+(j.error_description||j.error||('HTTP '+r.status)))}return j}
  function keep(j){auth=Object.assign({},auth||{},{access_token:j.access_token,expires_at:Date.now()+((j.expires_in||14400)-60)*1000},j.refresh_token?{refresh_token:j.refresh_token}:{},j.account_id?{account_id:j.account_id}:{});LS.set('hws-dbx-auth',auth)}
  async function token(){if(!auth||!auth.access_token)throw new AuthError('not signed in to Dropbox');if(Date.now()<auth.expires_at)return auth.access_token;
-  if(!auth.refresh_token)throw new AuthError('Dropbox session expired; sign in again');keep(await tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}));return auth.access_token}
+  if(!auth.refresh_token)throw new AuthError(SIGNIN_MSG);keep(await tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}));return auth.access_token}
  function hdrs(t,extra){const h=Object.assign({Authorization:'Bearer '+t},extra||{});if(c.pathRoot=='home')h['Dropbox-API-Path-Root']='{".tag": "home"}';else if(c.pathRoot=='root'&&auth&&auth.root_ns)h['Dropbox-API-Path-Root']=asciiJson({'.tag':'root',root:auth.root_ns});return h}
  async function call(url,init,retry){
   /* team space: every request needs the account's root namespace. Devices signed in before 9/27 5:25 PM may lack it: fetch it once (no re-sign-in). */
   if(c.pathRoot=='root'&&auth&&auth.access_token&&!auth.root_ns&&!/users\/get_current_account$/.test(url)){ROOT_P=ROOT_P||A.account().finally(()=>{ROOT_P=null});await ROOT_P;if(!auth.root_ns){const a2=LS.get('hws-dbx-auth');if(a2&&a2.root_ns)auth.root_ns=a2.root_ns}if(!auth.root_ns)throw new Error('Could not read your Dropbox team information. Check the connection and tap Sync now.')}
   const t=await token();init.headers=hdrs(t,init.headers);init.credentials='omit';let r;try{r=await fetch(url,init)}catch(e){throw new Error('offline or Dropbox unreachable ('+e.message+')')}
-  if(r.status==401&&!retry&&auth.refresh_token){auth.expires_at=0;return call(url,Object.assign({},init,{headers:Object.fromEntries(Object.entries(init.headers).filter(([k])=>k!='Authorization'&&k!='Dropbox-API-Path-Root'))}),true)}
+  if((r.status==401||r.status==403)&&!retry&&auth&&auth.refresh_token){auth.expires_at=0;return call(url,Object.assign({},init,{headers:Object.fromEntries(Object.entries(init.headers).filter(([k])=>k!='Authorization'&&k!='Dropbox-API-Path-Root'))}),true)}
+  if(r.status==401||r.status==403)throw new AuthError(SIGNIN_MSG);
   return r}
  async function err(r){let j=null;try{j=await r.json()}catch(e){}return (j&&(j.error_summary||(j.error&&j.error['.tag'])))||('HTTP '+r.status)}
- async function rpc(ep,body){const r=await call(DBX.api+ep,{method:'POST',headers:{'Content-Type':'application/json'},body:body===null?'null':JSON.stringify(body)});if(r.ok)return r.json();const e=await err(r);const x=new Error('Dropbox '+ep+': '+e);x.status=r.status;x.summary=e;throw x}
+ async function rpc(ep,body){const r=await call(DBX.api+ep,{method:'POST',headers:{'Content-Type':'application/json'},body:body===null?'null':JSON.stringify(body)});if(r.ok)return r.json();const e=await err(r);if(authDenied(r.status,e)){const x=new AuthError(SIGNIN_MSG);x.status=r.status;x.summary=e;throw x}const x=new Error('Dropbox '+ep+': '+e);x.status=r.status;x.summary=e;throw x}
  const A={kind:'dropbox',label:'Dropbox',CFG:c,
   available:()=>true,
   configured:()=>!!c.appKey&&!/^__|REPLACE|YOUR_/i.test(c.appKey),
@@ -1147,10 +1316,10 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
    const p=LS.get('hws-dbx-pkce');['code','state','error','error_description'].forEach(k=>u.searchParams.delete(k));history.replaceState(null,'',u.pathname+(u.search||'')+((p&&p.back)||u.hash||''));
    if(e)throw new AuthError('Dropbox sign-in cancelled: '+e);if(!p||p.state!==state)throw new AuthError('Dropbox sign-in: state mismatch (start again)');
    keep(await tokenReq({code,grant_type:'authorization_code',client_id:c.appKey,code_verifier:p.verifier,redirect_uri:p.redirect_uri}));LS.set('hws-dbx-pkce',null);await A.account();return true},
-  async account(){try{const a=await rpc('users/get_current_account',null);auth.name=(a.name&&a.name.display_name)||'';auth.email=a.email||'';auth.root_ns=a.root_info&&a.root_info.root_namespace_id;LS.set('hws-dbx-auth',auth);return a}catch(e){return null}},
+  async account(){try{const a=await rpc('users/get_current_account',null);auth.name=(a.name&&a.name.display_name)||'';auth.email=a.email||'';auth.root_ns=a.root_info&&a.root_info.root_namespace_id;LS.set('hws-dbx-auth',auth);return a}catch(e){if(e&&e.name==='AuthError')throw e;return null}},
   async disconnect(){try{if(auth&&auth.access_token)await rpc('auth/token/revoke',null)}catch(e){}auth=null;LS.set('hws-dbx-auth',null)},
   async readAbs(path){const r=await call(DBX.content+'files/download',{method:'POST',headers:{'Dropbox-API-Arg':asciiJson({path})}});
-   if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
+   if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;if(authDenied(r.status,e))throw new AuthError(SIGNIN_MSG);throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
    let meta={};try{meta=JSON.parse(r.headers.get('Dropbox-API-Result')||'{}')}catch(e){}return {text:await r.text(),rev:meta.rev||null}},
   async existsAbs(path){try{await rpc('files/get_metadata',{path});return true}catch(e){if(e.status==409)return false;throw e}},
   async metaAbs(path){try{return await rpc('files/get_metadata',{path})}catch(e){if(e.status==409)return null;throw e}},
@@ -1319,6 +1488,8 @@ async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{cons
 async function idbPut(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>{d.close();res()};t.onerror=()=>rej(t.error)})}
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+/* '0' means the last real data attempt failed. It is a display bit only.
+   Background sync must still run while it is '0' (pwa-data.js). */
 function offlineNow(){if(!navigator.onLine)return true;return lsGet(NET_KEY)==='0'}
 function markNet(on){lsSet(NET_KEY,on?'1':'0')}
 function pinRec(){return idbGet('pin').catch(()=>null)}
@@ -1746,11 +1917,20 @@ function barHtml(slug){
   const on=slug?jobSaved(slug):false;
   return `<div class="offbar">${slug?`<button type="button" class="small" data-offslug="${esc(slug)}" aria-pressed="${on?'true':'false'}">${on?'Saved for offline':'Save for offline'}</button>`:''}<span class="small" data-offsize>Saved files: …</span><button type="button" class="small" data-offclear>Clear saved files</button><p class="hint">${esc(IOS_NOTE)}</p></div>`;
 }
+function shellVersionLine(){
+  try{
+    const b=window.HWS_BUILD||{};
+    if(!/^[0-9a-f]{10}$/.test(String(b.version||'')))return '';
+    return 'Version '+b.version+' · built '+(b.built||'');
+  }catch(e){return ''}
+}
 async function openManager(){
   const m=await measure();
   const persist=await askPersist();
   const stay=persist==='granted'?'This phone accepted a request to keep the saved copy.':'iOS can still delete the copy under storage pressure even after that request.';
-  const html=`<h2>Saved for offline</h2><p><b>${esc(fmtBytes(m.bytes))}</b> of about 50 MB · ${m.count} file${m.count===1?'':'s'}.</p><p class="small">${esc(IOS_NOTE)} ${esc(stay)}</p><div class="mbtns"><button type="button" class="danger" id="offclearall">Clear saved files</button><span class="sp"></span><button type="button" data-close>Close</button></div>`;
+  const stamp=shellVersionLine();
+  const verLine=stamp?`<p class="hws-ver" id="hws-ver-sheet">${esc(stamp)}</p>`:'';
+  const html=`<h2>Saved for offline</h2><p><b>${esc(fmtBytes(m.bytes))}</b> of about 50 MB · ${m.count} file${m.count===1?'':'s'}.</p><p class="small">${esc(IOS_NOTE)} ${esc(stay)}</p>${verLine}<div class="mbtns"><button type="button" class="danger" id="offclearall">Clear saved files</button><span class="sp"></span><button type="button" data-close>Close</button></div>`;
   if(typeof openModal==='function'){
     openModal(html, modal=>{
       const b=modal.querySelector('#offclearall');
@@ -5206,36 +5386,68 @@ function fileLinkName(href) {
   return "";
 }
 function markedFileEl(el) {
-  if (!el) return null;
+  if (!el || !el.closest) return null;
   const chip = el.closest("[data-flink], [data-file], [data-file-path], [data-file-rel]");
   if (!chip || chip.classList.contains("pr-auto") || chip.classList.contains("pr-measure") || chip.hasAttribute("data-fsrc") || chip.hasAttribute("data-fplan")) return null;
+  return chip;
+}
+/* The app, an OAuth return (?code= / ?state=), and ordinary controls are never files.
+   A button that sits inside some other marked element must not open the preview. */
+function shellHref(href) {
+  const raw = String(href || "").trim();
+  if (!raw || raw === "#" || raw.charAt(0) === "#") return true;
+  try {
+    const u = new URL(raw, location.href);
+    if (u.origin === location.origin && (u.searchParams.has("code") || u.searchParams.has("state") || u.searchParams.has("error"))) return true;
+    if (u.origin !== location.origin) return false;
+    const base = u.pathname.split("/").pop() || "";
+    if (!base || /\.html?$/i.test(base)) return true;
+    return !knownFileName(base);
+  } catch (e) { return false; }
+}
+function fileControl(el) {
+  const chip = markedFileEl(el);
+  if (!chip) return null;
+  const hit = el.closest("button, a, input, select, textarea, label, summary");
+  if (hit && hit !== chip && !chip.contains(hit)) return null;
+  if (hit && hit !== chip && chip.contains(hit) && !markedFileEl(hit)) return null;
   return chip;
 }
 
 if (typeof document !== "undefined") {
   document.addEventListener("click", (ev) => {
-    const chip = markedFileEl(ev.target);
+    const t = ev.target && ev.target.nodeType === 1 ? ev.target : (ev.target && ev.target.parentElement);
+    const chip = fileControl(t);
     if (!chip) return;
     const rel = chip.getAttribute("data-file-rel") || "";
     const path = chip.getAttribute("data-file-path") || chip.getAttribute("data-path") || "";
     const name = chip.getAttribute("data-file-name") || chip.getAttribute("data-name") || "";
     const href = chip.getAttribute("href") || "";
     const slug = chip.getAttribute("data-file-slug") || (J && J.slug) || "";
+    /* Stop the browser before any later return. A .pdf href would otherwise leave
+       the app, and Safari reports that navigation as a PDF error. */
+    if (chip.tagName === "A" && href && !shellHref(href)) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
     if (chip.getAttribute("data-ffolder") === "1") {
       ev.preventDefault();
       ev.stopPropagation();
       fileOpenFolder(slug, path || rel);
       return;
     }
+    if (shellHref(href) && !rel && !path && !knownFileName(name)) return;
     if (!rel && !path && !name && !knownFileName(href)) return;
+    if (href && shellHref(href) && !rel && !path) return;
     ev.preventDefault();
     ev.stopPropagation();
     const fileName = name || knownFileName(path) || knownFileName(href) || "File";
-    if (href && window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) {
+    if (!knownFileName(fileName) && !rel && !path) return;
+    if (href && !shellHref(href) && window.HWSOffline && typeof HWSOffline.isSavedFile === "function" && HWSOffline.isSavedFile(href)) {
       fileOpenUrl(href, fileName, slug);
       return;
     }
-    fileOpen(slug, rel, fileBytes.get(slug), { path: path || filePathFromUrl(href), name: fileName, url: href });
+    fileOpen(slug, rel, fileBytes.get(slug), { path: path || filePathFromUrl(href), name: fileName, url: shellHref(href) ? "" : href });
   }, true);
 }
 
@@ -5359,7 +5571,7 @@ function importFile(file){const r=new FileReader();r.onload=()=>{try{const res=S
   toast(`Imported ${res.added} edit(s) in ${res.jobs} job(s)`+(res.failed?` · ${res.failed} could not be applied (see History)`:'')+(res.otherSnapshot?' · note: made on a different snapshot':''))}catch(e){toast('Import failed: '+e.message)}};r.onerror=()=>toast('Could not read that file');r.readAsArrayBuffer(file)}
 function ensureName(then){if(STORE.who()){then();return}openModal(`<h2>Your name</h2><p class="small mut">Shown on your edits, exports and check-outs so the office knows who changed what.</p><form id="wf"><input name="n" placeholder="Your first name" required style="width:100%" autocomplete="name"><div class="mbtns"><button class="pri" type="submit">Continue</button><span class="sp"></span><button type="button" data-close>Cancel</button></div></form>`,
  m=>{m.querySelector('#wf').onsubmit=e=>{e.preventDefault();STORE.setWho(new FormData(e.target).get('n'));closeModal();then()}})}
-function openChanges(){const eds=STORE.editedJobs();const n=STORE.pendingTotal();const names=Object.fromEntries(((DATA.common||{}).all_jobs||[]).map(x=>[x.slug,x.name]));const others=STORE.otherVersions();
+function openChanges(){if(!STORE||!DATA){toast('Sign in to Dropbox to load jobs');return}const eds=STORE.editedJobs();const n=STORE.pendingTotal();const names=Object.fromEntries(((DATA.common||{}).all_jobs||[]).map(x=>[x.slug,x.name]));const others=STORE.otherVersions();
  const co=J&&syncOn()?STORE.checkout(J.slug):null;const ls=J&&lockCache[J.slug];
  openModal(`<h2>My changes</h2>
  <label class="small">Your name <input id="whoin" value="${esc(STORE.who())}" placeholder="Your first name" style="width:160px" autocomplete="name"></label>
@@ -5464,6 +5676,7 @@ function startLive(){if(!liveOn()||!STORE||!STORE.live){if(window.WSData)WSData.
   onSnapshot:async()=>{if(window.WSData)await WSData.sync(true)}});
  window.LIVE_DBG=LIVE;LIVE.start()}
 async function boot(){try{
+  if(window.HWSSync&&HWSSync.LS.restore)await HWSSync.LS.restore();
   await syncRedirect();
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();

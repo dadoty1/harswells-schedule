@@ -1,8 +1,11 @@
 /* Harswells service worker. The shell cache name includes the build version, and activate deletes every older shell
-   cache so a deploy cannot leave a phone on stuck files. Private data.json is not in the shell: it is cached only
+   cache so a deploy cannot leave a phone on stuck files. index.html (and the directory URL) is network-first while
+   online, so a stale shell cannot persist; offline still uses the cached shell. sw.js and version.json are not
+   intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='6b822928e8';
+const VERSION='ac7820a764';
+const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
 const FILES='hws-files';
@@ -23,6 +26,9 @@ async function copyData(fromName,dest){
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(SHELL).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });
+/* A new build only deletes old hws-shell-* and hws-data-* Cache Storage. It does not
+   clear localStorage or IndexedDB, and hws-files is kept. Sign-in is mirrored in IndexedDB
+   (see sync.js) because iOS can still drop localStorage when this cache is replaced. */
 self.addEventListener('activate',e=>{
   e.waitUntil((async()=>{
     const dest=await caches.open(DATA);
@@ -41,7 +47,9 @@ self.addEventListener('activate',e=>{
   })());
 });
 self.addEventListener('message',e=>{
-  if(e.data==='skip-waiting'||(e.data&&e.data.type==='skip-waiting'))self.skipWaiting();
+  const d=e.data;
+  const t=d&&d.type;
+  if(d==='skip-waiting'||t==='skip-waiting'||d==='SKIP_WAITING'||t==='SKIP_WAITING')self.skipWaiting();
 });
 async function staleWhileRevalidate(req){
   const cache=await caches.open(DATA);
@@ -54,32 +62,46 @@ async function staleWhileRevalidate(req){
     if(res&&res.ok){
       const headers=new Headers(res.headers);
       headers.set('X-HWS-Cache','fresh');
+      headers.delete('X-HWS-Net');
       const body=await res.clone().blob();
       await cache.put(key,new Response(body,{status:res.status,statusText:res.statusText,headers}));
     }
     return res;
   }).catch(()=>null);
-  if(!revalidate&&cached){
-    network.then(res=>{
-      if(!res)return;
-      self.clients.matchAll({type:'window'}).then(cs=>cs.forEach(c=>c.postMessage({type:'hws-data-updated'})));
-    }).catch(()=>{});
-    const headers=new Headers(cached.headers);
+  /* A cache hit while revalidating is not an offline mode. X-HWS-Net: 0 is set only when
+     the network attempt itself failed, and that response is never stored. */
+  async function serveCached(hit, failed){
+    const headers=new Headers(hit.headers);
     headers.set('X-HWS-Cache','stale');
-    const body=await cached.blob();
-    return new Response(body,{status:cached.status,statusText:cached.statusText,headers});
-  }
-  const res=await network;
-  if(res)return res;
-  if(cached){
-    const headers=new Headers(cached.headers);
-    headers.set('X-HWS-Cache','stale');
-    const body=await cached.blob();
+    if(failed) headers.set('X-HWS-Net','0');
+    else headers.delete('X-HWS-Net');
+    const body=await hit.blob();
     return new Response(body,{status:200,statusText:'OK',headers});
   }
-  return new Response('offline',{status:503,headers:{'Content-Type':'text/plain','X-HWS-Cache':'miss'}});
+  if(!revalidate&&cached){
+    network.then(res=>{
+      if(!res||!res.ok)return;
+      self.clients.matchAll({type:'window'}).then(cs=>cs.forEach(c=>c.postMessage({type:'hws-data-updated'})));
+    }).catch(()=>{});
+    return serveCached(cached, false);
+  }
+  const res=await network;
+  /* status 0 is a dropped connection (WebKit abort / iOS blip), not an HTTP answer. */
+  if(res&&res.status!==0)return res;
+  if(cached)return serveCached(cached, true);
+  return new Response('offline',{status:503,headers:{'Content-Type':'text/plain','X-HWS-Cache':'miss','X-HWS-Net':'0'}});
 }
-function pdfRequest(req){try{return /\.pdf$/i.test(new URL(req.url).pathname)}catch(e){return false}}
+function documentPdf(req){try{
+  const u=new URL(req.url);
+  if(!/\.pdf$/i.test(u.pathname))return false;
+  return req.mode==='navigate'||req.destination==='document'||req.destination==='iframe';
+}catch(e){return false}}
+function pdfRequest(req){try{
+  if(documentPdf(req))return false;
+  const u=new URL(req.url);
+  return /\.pdf$/i.test(u.pathname);
+}catch(e){return false}}
+function appRoot(){return new URL('./', self.location.href);}
 function pdfHtml(req,res){
   if(!pdfRequest(req)||!res)return false;
   const ct=(res.headers.get('content-type')||'').toLowerCase();
@@ -124,14 +146,64 @@ async function filesThenNet(req){
     throw e;
   }
 }
+function updateScript(url){
+  return /\/sw\.js$/i.test(url.pathname)||/\/version\.json$/i.test(url.pathname);
+}
+function appDocument(url){
+  return url.pathname.endsWith('/index.html')||url.pathname.endsWith('/');
+}
+async function networkFirstDoc(req){
+  let res=null;
+  try{
+    res=await fetch(new Request(req.url,{cache:'no-store',credentials:'same-origin',redirect:'follow',headers:{'X-HWS-Shell-Net':'1'}}));
+  }catch(e){
+    try{res=await fetch(req)}catch(err){res=null}
+  }
+  if(res&&res.ok){
+    try{
+      const box=await caches.open(SHELL);
+      try{await box.put(new Request(req.url), res.clone())}catch(e){}
+      try{await box.put('index.html', res.clone())}catch(e){}
+    }catch(e){}
+    return res;
+  }
+  const hit=await caches.match(req,{ignoreSearch:true});
+  if(hit)return hit;
+  const shell=await caches.match('index.html');
+  if(shell)return shell;
+  if(res)return res;
+  return fetch(req);
+}
 self.addEventListener('fetch',e=>{
   const req=e.request;
   if(req.method!=='GET')return;
+  /* The worker's own index.html fetch carries this header. Letting it through
+     reaches the network; answering it from cache would keep the old shell. */
+  if(req.headers.get('X-HWS-Shell-Net')==='1')return;
   let url;try{url=new URL(req.url)}catch(err){return}
+  /* A document load is the app. Safari shows a PDF error when the address ends in .pdf,
+     including an OAuth return (?code=) onto that path. Send those to the app root and
+     keep the query so sign-in can finish. This worker's shell cache is versioned, so an
+     older cached index (and its click handler) is deleted on activate. */
+  if(documentPdf(req)){
+    const dest=appRoot();
+    dest.search=url.search;
+    dest.hash=url.hash;
+    e.respondWith(Response.redirect(dest.href, 302));
+    return;
+  }
+  /* sw.js and version.json are how the page sees a new build. Never cache them. */
+  if(updateScript(url))return;
   /* This origin only. dropbox.com is another host, so those links are never cached. */
   if(url.origin!==self.location.origin||url.pathname.includes('/demo/')||/(^|\.)dropbox\.com$|(^|\.)dropboxusercontent\.com$/i.test(url.hostname))return;
   if(url.pathname.indexOf('/plan-room/cad/')>=0){e.respondWith(runtimeCad(req));return}
   if(dataUrl(url)){e.respondWith(staleWhileRevalidate(req));return}
+  /* Online document loads take the network copy and refresh the shell cache.
+     Offline keeps the cached shell so the app still opens. */
+  if(DOC_NETWORK_FIRST&&self.navigator.onLine&&appDocument(url)&&(req.mode==='navigate'||req.destination==='document')){
+    e.respondWith(networkFirstDoc(req));
+    return;
+  }
   const shell=ASSETS.some(a=>{
     if(a==='./')return url.pathname.endsWith('/');
     return url.pathname.endsWith('/'+a)||url.pathname.endsWith(a);
