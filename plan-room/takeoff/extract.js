@@ -85,6 +85,27 @@ function xSetName(name) {
   s = s.replace(/[\s_]+/g, " ").replace(/^\s+|\s+$/g, "").replace(/[-\s]+$/g, "");
   return s || "Sheet";
 }
+function xCleanLabel(title, page) {
+  const raw = String(title == null ? "" : title);
+  if (window.HWSPlanIndex && HWSPlanIndex.sanitizeTitle) {
+    const cleaned = HWSPlanIndex.sanitizeTitle(raw, page || 1);
+    if (!raw.trim()) return "";
+    return cleaned;
+  }
+  return raw.replace(/[\u0000-\u001F\u007F]/g, " ").replace(/[^\u0020-\u007E]/g, " ").replace(/\s+/g, " ").trim();
+}
+function xDecodeContent(items) {
+  const raw = (items || []).map((it) => ({
+    str: String((it && it.str) || ""),
+    font: (it && (it.fontName || it.font)) || "",
+    x: 0, y: 0, w: 0, h: 0,
+  })).filter((it) => {
+    const s = it.str.replace(/[\u0000-\u0008\u000E-\u001F]/g, "");
+    return !!s.trim() || s.length > 0;
+  });
+  if (window.HWSPlanIndex && HWSPlanIndex.correctItems) return HWSPlanIndex.correctItems(raw).items || [];
+  return raw.map((it) => ({ str: it.str.replace(/[\u0000-\u001F\u007F]/g, " ") }));
+}
 function xSheetName(fileName, page, title) {
   const set = xSetName(fileName);
   if (window.HWSPlanIndex && HWSPlanIndex.sheetFileName) return HWSPlanIndex.sheetFileName(set, page, title);
@@ -158,30 +179,93 @@ function xAskFrame(view) {
     frame.contentWindow.postMessage({ type: "hws-pdf-titles" }, location.origin);
   });
 }
-async function xTitles(bytes, view) {
-  const fromFrame = await xAskFrame(view);
-  if (fromFrame && fromFrame.length) return fromFrame;
-  try {
-    if (!window.pdfjsLib) await xLoadScript(xVendor("pdf.min.js"));
-    const lib = window.pdfjsLib;
-    if (!lib || !lib.getDocument) return [];
-    if (lib.GlobalWorkerOptions) lib.GlobalWorkerOptions.workerSrc = xVendor("pdf.worker.min.js");
-    const doc = await lib.getDocument({ data: bytes.slice ? bytes.slice(0) : bytes }).promise;
-    const out = [];
-    for (let i = 1; i <= doc.numPages; i++) {
-      const content = await doc.getPage(i).then((page) => page.getTextContent());
-      let best = "";
-      (content.items || []).forEach((it) => {
-        const s = String(it.str || "").replace(/\s+/g, " ").trim();
-        if (s.length < 4 || s.length > 60 || !/[A-Za-z]/.test(s)) return;
-        if (s.length > best.length) best = s;
-      });
-      out.push(best);
-    }
-    return out;
-  } catch (e) { return []; }
+async function xPdf(bytes) {
+  if (!window.pdfjsLib) await xLoadScript(xVendor("pdf.min.js"));
+  const lib = window.pdfjsLib;
+  if (!lib || !lib.getDocument) return null;
+  if (lib.GlobalWorkerOptions && !lib.GlobalWorkerOptions.workerSrc) {
+    lib.GlobalWorkerOptions.workerSrc = xVendor("pdf.worker.min.js");
+  }
+  const data = bytes.slice ? bytes.slice(0) : bytes;
+  return lib.getDocument({ data: data }).promise;
 }
-function xPanel(host, pages, titles) {
+async function xIndexPages(bytes) {
+  if (!window.HWSPlanIndex || !HWSPlanIndex.buildPage || !HWSPlanIndex.itemsFromContent) return [];
+  const doc = await xPdf(bytes);
+  if (!doc) return [];
+  const out = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const got = HWSPlanIndex.itemsFromContent(page, content);
+    out.push(HWSPlanIndex.buildPage({
+      page: i,
+      items: got.items,
+      text: "",
+      source: "text",
+      width: got.width,
+      height: got.height,
+      userUnit: got.userUnit,
+      rotate: got.rotate,
+    }));
+  }
+  return out;
+}
+function xMetaFromPages(pages) {
+  const titles = [];
+  const meta = {};
+  (pages || []).forEach((p) => {
+    if (!p) return;
+    titles[p.page - 1] = xCleanLabel(p.title || "", p.page);
+    meta[p.page] = {
+      sheet: p.sheet || "",
+      scale: p.scale || null,
+      rotation: Number(p.rotate) || 0,
+    };
+  });
+  return { titles: titles, meta: meta };
+}
+async function xTitlesFromBytes(bytes) {
+  const indexed = await xIndexPages(bytes);
+  if (indexed.length) return xMetaFromPages(indexed).titles;
+  const doc = await xPdf(bytes);
+  if (!doc) return [];
+  const out = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const content = await doc.getPage(i).then((page) => page.getTextContent());
+    const items = xDecodeContent(content.items);
+    let best = "";
+    items.forEach((it) => {
+      const s = String(it.str || "").replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim();
+      if (s.length < 4 || s.length > 60 || !/[A-Za-z]/.test(s)) return;
+      if (s.length > best.length) best = s;
+    });
+    out.push(xCleanLabel(best, i));
+  }
+  return out;
+}
+async function xDescribe(bytes, view) {
+  if (window.HWSPlanIndex && bytes) {
+    try {
+      const indexed = await xIndexPages(bytes);
+      if (indexed.length) return xMetaFromPages(indexed);
+    } catch (e) {}
+  }
+  const titles = await xTitles(bytes, view);
+  return { titles: titles, meta: {} };
+}
+async function xTitles(bytes, view) {
+  if (window.HWSPlanIndex && bytes) {
+    try {
+      const decoded = await xTitlesFromBytes(bytes);
+      if (decoded.some((t) => t)) return decoded;
+    } catch (e) {}
+  }
+  const fromFrame = await xAskFrame(view);
+  if (fromFrame && fromFrame.length) return fromFrame.map((t, i) => xCleanLabel(t, i + 1));
+  try { return await xTitlesFromBytes(bytes); } catch (e) { return []; }
+}
+function xPanel(host, pages, titles, meta) {
   const old = host.querySelector("[data-xpanel]");
   if (old) old.remove();
   const box = document.createElement("div");
@@ -190,7 +274,12 @@ function xPanel(host, pages, titles) {
   const rows = [];
   for (let n = 1; n <= pages; n++) {
     const title = (titles && titles[n - 1]) || "";
-    rows.push('<label><input type="checkbox" data-xpage="' + n + '"> Page ' + n + (title ? " · " + xEsc(title) : "") + "</label>");
+    const row = meta && meta[n];
+    const sheet = row && row.sheet ? String(row.sheet).replace(/[\u0000-\u001F\u007F]/g, "").trim() : "";
+    const bits = ["Page " + n];
+    if (sheet) bits.push(sheet);
+    if (title) bits.push(title);
+    rows.push('<label><input type="checkbox" data-xpage="' + n + '"> ' + bits.map(xEsc).join(" · ") + "</label>");
   }
   box.innerHTML = '<h3>Extract page for takeoff</h3><p>Each selected page is saved as its own PDF.</p>' + rows.join("")
     + '<div class="xactions"><button type="button" data-xcancel>Cancel</button><button type="button" data-xsave>Save page for takeoff</button></div>';
@@ -227,7 +316,7 @@ async function xSave(opts) {
   const saved = [];
   for (let i = 0; i < made.length; i++) {
     const item = made[i];
-    const title = titles[item.page - 1] || "";
+    const title = xCleanLabel(titles[item.page - 1] || "", item.page);
     const meta = (opts.meta && opts.meta[item.page]) || {};
     const facts = xFacts(item.doc.getPage(0));
     const name = xSheetName(opts.sourceName, item.page, title);
@@ -236,6 +325,7 @@ async function xSave(opts) {
     const raw = await item.doc.save();
     const dest = xDest(opts.slug, opts.plans, name);
     await xUpload(dest.full, raw);
+    const rotation = meta.rotation != null && meta.rotation !== "" ? meta.rotation : facts.rotation;
     const sidecar = {
       schema: "harswells.sheet_extract.v1",
       source_path: opts.sourcePath || "",
@@ -246,7 +336,7 @@ async function xSave(opts) {
       sheet: name,
       sheet_id: meta.sheet || "",
       scale: meta.scale || null,
-      rotation: facts.rotation,
+      rotation: rotation,
       user_unit: facts.user_unit,
     };
     await xUpload(dest.full.replace(/\.pdf$/i, ".source.json"), new TextEncoder().encode(JSON.stringify(sidecar)));
@@ -257,7 +347,7 @@ async function xSave(opts) {
       page: item.page, title: title,
       sheet_id: meta.sheet || "",
       scale_label: (meta.scale && meta.scale.label) || "",
-      rotation: facts.rotation,
+      rotation: rotation,
       user_unit: facts.user_unit,
     };
     xRemember(opts.slug, rec);
@@ -298,8 +388,9 @@ async function xOpenPreview(view) {
   const pages = (state.pages || (stage && +stage.getAttribute("data-fpages"))) || 0;
   if (pages < 2) { xToast("This PDF has one page."); return; }
   if (!state.bytes) { xToast("This PDF is not open yet."); return; }
-  const titles = await xTitles(state.bytes, view);
-  const box = xPanel(view, pages, titles);
+  const described = await xDescribe(state.bytes, view);
+  const titles = described.titles || [];
+  const box = xPanel(view, pages, titles, described.meta);
   const save = box.querySelector("[data-xsave]");
   save.onclick = async () => {
     const picked = Array.from(box.querySelectorAll("[data-xpage]:checked")).map((el) => +el.getAttribute("data-xpage"));
@@ -311,6 +402,7 @@ async function xOpenPreview(view) {
         bytes: state.bytes,
         pages: picked,
         titles: titles,
+        meta: described.meta,
         sourceName: (state.entry && state.entry.name) || "plan.pdf",
         sourceRel: (state.entry && state.entry.rel) || "",
         sourcePath: (state.entry && state.entry.path) || "",
@@ -339,8 +431,9 @@ async function xOpenPlan() {
     const src = await lib.PDFDocument.load(bytes, { ignoreEncryption: true });
     const pages = src.getPageCount();
     if (pages < 2) { xToast("This PDF has one page."); return; }
-    const titles = await xTitles(bytes, null);
-    const box = xPanel(document.body, pages, titles);
+    const described = await xDescribe(bytes, null);
+    const titles = described.titles || [];
+    const box = xPanel(document.body, pages, titles, described.meta);
     const save = box.querySelector("[data-xsave]");
     save.onclick = async () => {
       const picked = Array.from(box.querySelectorAll("[data-xpage]:checked")).map((el) => +el.getAttribute("data-xpage"));
@@ -352,6 +445,7 @@ async function xOpenPlan() {
           bytes: bytes,
           pages: picked,
           titles: titles,
+          meta: described.meta,
           sourceName: name,
           sourceRel: params.get("rel") || "",
           sourcePath: path,

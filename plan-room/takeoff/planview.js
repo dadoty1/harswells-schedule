@@ -1,7 +1,8 @@
 /* Plan text, scale, and single-page open. Runs in the takeoff viewer and
-   on page.html. Text comes from the PDF text layer. A page with no text
-   is read with OCR the first time that page is needed. A saved index for
-   the same file revision is reused. */
+   on page.html. Text comes from the PDF text layer, after a per-font
+   code-point fix. OCR runs only when that text is still unreadable, and
+   only on the title block. A saved index for the same file revision is
+   reused, so a later open does not read the file again. */
 (function () {
   var API = window.HWSPlanIndex;
   if (!API) return;
@@ -17,6 +18,7 @@
     fromCache: false,
     fileId: "",
     revision: "",
+    ocrRuns: 0,
   };
 
   function note(text) {
@@ -130,40 +132,7 @@
   }
 
   function itemsFromContent(page, content) {
-    var vp = page.getViewport({ scale: 1 });
-    var viewW = page.view ? (page.view[2] - page.view[0]) : 0;
-    var userUnit = page.userUnit > 0 ? page.userUnit : (viewW > 0 ? vp.width / viewW : 1);
-    var items = [];
-    (content.items || []).forEach(function (it) {
-      var str = it && it.str ? String(it.str) : "";
-      if (!str.trim() || !it.transform) return;
-      var t = it.transform;
-      var w = Number(it.width) || 0;
-      var h = Number(it.height) || Math.hypot(t[2] || 0, t[3] || 0) || 0;
-      var slen = Math.hypot(t[0] || 0, t[1] || 0) || 1;
-      var hlen = Math.hypot(t[2] || 0, t[3] || 0) || 1;
-      var x1 = t[4] + ((t[0] || 0) / slen) * w + ((t[2] || 0) / hlen) * h;
-      var y1 = t[5] + ((t[1] || 0) / slen) * w + ((t[3] || 0) / hlen) * h;
-      var p0 = vp.convertToViewportPoint(t[4], t[5]);
-      var p1 = vp.convertToViewportPoint(x1, y1);
-      var x = Math.min(p0[0], p1[0]);
-      var y = Math.min(p0[1], p1[1]);
-      items.push({
-        str: str,
-        x: x,
-        y: y,
-        w: Math.abs(p1[0] - p0[0]) || 1,
-        h: Math.abs(p1[1] - p0[1]) || 1,
-        font: it.fontName || "",
-      });
-    });
-    return {
-      items: items,
-      width: vp.width,
-      height: vp.height,
-      userUnit: userUnit > 0 ? userUnit : 1,
-      rotate: page.rotate || 0,
-    };
+    return API.itemsFromContent(page, content);
   }
 
   var ocrWorker = null;
@@ -189,6 +158,7 @@
   }
 
   function ocrPage(pdfPage, region) {
+    state.ocrRuns += 1;
     var scale = 2;
     var vp = pdfPage.getViewport({ scale: scale });
     var canvas = document.createElement("canvas");
@@ -260,26 +230,12 @@
     return doc.getPage(n).then(function (pdfPage) {
       return pdfPage.getTextContent().then(function (content) {
         var got = itemsFromContent(pdfPage, content);
-        var text = got.items.map(function (it) { return it.str; }).join(" ").replace(/\s+/g, " ").trim();
         var verdict = API.correctItems(got.items);
-        if (verdict.reliable) return pageFrom(n, got, got.items, text, "text");
-        if (!allowOcr) return pageFrom(n, got, got.items, text, "text");
-        // Title-block OCR on every text page made a real plan set take minutes to index.
-        // Until the font decode is fixed, OCR only a page with no text layer at all.
-        if (text.length >= 2) return pageFrom(n, got, got.items, text, "text");
-        if (text.length < 2) {
-          note("Reading scan on page " + n + "…");
-          return ocrPage(pdfPage, false).then(function (ocr) {
-            return pageFrom(n, { width: ocr.width || got.width, height: ocr.height || got.height, userUnit: got.userUnit, rotate: got.rotate }, ocr.items, ocr.text, "ocr");
-          });
-        }
+        if (verdict.reliable) return pageFrom(n, got, got.items, "", "text");
+        if (!allowOcr) return pageFrom(n, got, got.items, "", "text");
         note("Reading title block on page " + n + "…");
         return ocrPage(pdfPage, true).then(function (ocr) {
-          var row = pageFrom(n, got, ocr.items, ocr.text, "ocr");
-          if (row.sheet || (row.scale && row.scale.label)) return row;
-          return ocrPage(pdfPage, false).then(function (full) {
-            return pageFrom(n, got, full.items, full.text, "ocr");
-          });
+          return pageFrom(n, { width: ocr.width || got.width, height: ocr.height || got.height, userUnit: got.userUnit, rotate: got.rotate }, ocr.items, ocr.text, "ocr");
         });
       });
     });
@@ -312,6 +268,7 @@
     }
     paintScale();
     paintSheets();
+    pushSheetLabels();
     pushCalibrations();
     var page = index && index.pages && index.pages.filter(function (p) { return p.page === state.current; })[0];
     if (page) showPageLabel(page);
@@ -320,7 +277,7 @@
   function showPageLabel(page) {
     var title = document.getElementById("hws-title");
     if (!title || !PAGE) return;
-    var bits = [page.sheet || ("Page " + page.page), page.title || ""].filter(Boolean);
+    var bits = [showText(page.sheet) || ("Page " + page.page), showText(page.title)].filter(Boolean);
     title.textContent = bits.join(" · ") || (params.get("name") || "Plan");
   }
 
@@ -349,6 +306,23 @@
     if (!prev) return false;
     if (confirmed) return false;
     return prev.source === "measured" || prev.source === "declared";
+  }
+
+  function pushSheetLabels() {
+    var viewer = window.HWSPlanViewer;
+    var index = state.index;
+    if (!viewer || !viewer.store || typeof viewer.store.setSheet !== "function" || !index) return;
+    (index.pages || []).forEach(function (p) {
+      var number = showText(p.sheet);
+      var title = showText(p.title);
+      if (!number && !title) return;
+      viewer.store.setSheet({
+        sheetId: number || String(p.page),
+        page: p.page,
+        number: number,
+        title: title,
+      });
+    });
   }
 
   function pushCalibrations() {
@@ -394,19 +368,21 @@
     };
   }
 
-  function buildIndex(doc, pages, revision, complete) {
+  function buildIndex(doc, pages, revision, complete, ms) {
     return {
       schema: API.SCHEMA,
       revision: revision,
       file: params.get("name") || "plan.pdf",
       fileId: fileId(),
       complete: !!complete,
+      ms: ms || 0,
       pages: pages,
     };
   }
 
   function extractDoc(doc, pageList, revision, complete) {
     rememberRuns();
+    var started = Date.now();
     var pages = [];
     var chain = Promise.resolve();
     pageList.forEach(function (n) {
@@ -417,7 +393,7 @@
     });
     return chain.then(function () {
       pages.sort(function (a, b) { return a.page - b.page; });
-      var index = buildIndex(doc, pages, revision, complete);
+      var index = buildIndex(doc, pages, revision, complete, Date.now() - started);
       state.fromCache = false;
       publish(index);
       return persist().then(function () {
@@ -526,7 +502,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "hws-hitrow";
-      btn.textContent = (hit.sheet || ("Page " + hit.page)) + " · " + hit.snippet;
+      btn.textContent = (showText(hit.sheet) || ("Page " + hit.page)) + " · " + showText(hit.snippet);
       btn.onclick = function () { highlight(hit.page, hit.box); };
       box.appendChild(btn);
     });
@@ -610,8 +586,8 @@
     (state.index.pages || []).forEach(function (page) {
       var row = document.createElement("div");
       row.className = "hws-sheetrow";
-      var label = (page.sheet || ("Page " + page.page)) + (page.title ? (" · " + page.title) : "");
-      var scale = page.scale ? page.scale.label : "No scale";
+      var label = (showText(page.sheet) || ("Page " + page.page)) + (showText(page.title) ? (" · " + showText(page.title)) : "");
+      var scale = page.scale ? showText(page.scale.label) : "No scale";
       row.innerHTML = '<label><input type="checkbox" data-xpage="' + page.page + '"> ' + escapeHtml(label) + '</label>'
         + '<div class="hws-sheetmeta"><div>' + escapeHtml(scale) + '</div>'
         + '<a class="hws-openone" href="' + escapeHtml(pageOnlyHref(page.page)) + '">Open this page only</a></div>'
@@ -619,6 +595,13 @@
       host.appendChild(row);
     });
     thumbAll();
+  }
+
+  function showText(v) {
+    var s = String(v == null ? "" : v);
+    if (API.stripControls) s = API.stripControls(s);
+    else s = s.replace(/[\u0000-\u001F\u007F]/g, " ");
+    return s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
   }
 
   function escapeHtml(v) {
@@ -663,7 +646,7 @@
       var titles = [];
       var meta = {};
       (state.index.pages || []).forEach(function (p) {
-        titles[p.page - 1] = p.title || p.sheet || "";
+        titles[p.page - 1] = showText(p.title) || showText(p.sheet) || "";
         meta[p.page] = { sheet: p.sheet || "", scale: p.scale || null };
       });
       return window.HWSExtract.save({
@@ -801,7 +784,7 @@
       state.current = n;
       return readPage(doc, n, true).then(function (row) {
         rememberRuns();
-        var index = buildIndex(doc, [row], "page-" + n, false);
+        var index = buildIndex(doc, [row], "page-" + n, false, 0);
         state.fromCache = false;
         publish(index);
         return paintCanvas(n);
@@ -854,6 +837,7 @@
     get index() { return state.index; },
     get page() { return state.current; },
     get fromCache() { return state.fromCache; },
+    get ocrRuns() { return state.ocrRuns; },
     feetBetween: function (pageNo, p1, p2, space) {
       var page = pageRec(pageNo);
       if (!page || !page.scale) return 0;

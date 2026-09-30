@@ -81,9 +81,16 @@ window.addEventListener("message", (ev) => {
   });
 });
 function bestTitle(items) {
+  let rows = items || [];
+  if (window.HWSPlanIndex && HWSPlanIndex.correctItems) {
+    rows = HWSPlanIndex.correctItems(rows.map((it) => ({
+      str: String((it && it.str) || ""),
+      font: (it && (it.fontName || it.font)) || "",
+    }))).items || [];
+  }
   let best = "";
-  (items || []).forEach((it) => {
-    const s = String((it && it.str) || "").replace(/\s+/g, " ").trim();
+  rows.forEach((it) => {
+    const s = String((it && it.str) || "").replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim();
     if (s.length < 4 || s.length > 60 || !/[A-Za-z]/.test(s)) return;
     if (/^(sheet|date|rev|revision|scale|drawn|checked|project|north|page)$/i.test(s)) return;
     if (s.length > best.length) best = s;
