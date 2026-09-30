@@ -724,7 +724,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'b463cfacc6',built:'9/30/2026 4:12 AM AZ'};
+const HWS_BUILD={version:'15d6f3ea13',built:'9/30/2026 5:57 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -1044,16 +1044,19 @@ function setPct(r,C,today,pct){pct=parseFloat(pct);pct=isNaN(pct)?0:Math.max(0,M
 /* state = {rows:[raw schedule rows], flags:[{task,pred,type,created}]}; ctx = {today, cal, settings, stamp:'YYYY-MM-DD HH:MM'} */
 function applyTentative(state,ops,ctx){
  ctx=ctx||{};
+ const job=String(ctx.slug||'');
  let list=Array.isArray(state.tentative)?state.tentative.map(function(a){return Object.assign({},a)}):[];
  const msgs=[];
  (ops||[]).forEach(function(op){
   if(!op||op.op!=='tentative')return;
-  const slug=String(op.slug||ctx.slug||'');
+  const asked=String(op.slug||'');
+  if(asked&&job&&asked!==job)throw new EditError('that line belongs to another job');
+  const slug=job||asked;
   const code=String(op.cost_code||'');
   const bid=String(op.bid_id||'');
   if(!slug||!code)return;
   list=list.filter(function(a){return !(a.slug===slug&&String(a.cost_code)===code)});
-  if(bid)list.push({slug:slug,cost_code:code,bid_id:bid,by:String(op.by||ctx.who||''),at:String(op.at||ctx.stamp||'')});
+  if(bid)list.push({slug:slug,cost_code:code,bid_id:bid,by:String(ctx.who||op.by||''),at:String(op.at||ctx.stamp||'')});
   msgs.push(bid?('tentative forecast '+code):('cleared tentative forecast '+code))});
  state.tentative=list;
  return msgs.join('; ')}
@@ -1272,7 +1275,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function baseOf(slug){const j=data.jobs[slug];if(!j)return null;const c=data.common||{};const sp=E.splitJob(j);
   const base=Object.assign({},j,{modules:c.modules,mod_cols:c.mod_cols,mod_files:c.mod_files,all_jobs:c.all_jobs,built:data.built,today:data.today,trackerRows:sp.trackerRows});
   return {base,rows:sp.rows}}
- function ctx(settings,e){const c=data.common||{};return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||'',poRoles:c.po_roles||{},poMeta:c.po_meta||{}}}
+ function ctx(settings,e,slug){const c=data.common||{};return {today:data.today,cal:E.makeCal(settings.saturday,settings.holidays),settings,stamp:String(e.ts||nowAZ()).slice(0,16),who:e.who||'',slug:slug||'',poRoles:c.po_roles||{},poMeta:c.po_meta||{}}}
  function derive(slug,c){const J=E.deriveJob(c.base,c.state,{settings:c.settings,extra:extra?{orders:(extra.orders||{})[slug]||[],btve:(extra.btve||{})[slug]||[]}:null,poState:{pos:c.state.pos||[],bid_status:c.state.bid_status||{}}});
   const h=[];let n=0;const r=rec.jobs[slug];
   if(LIVE){const seq=liveSeq(r);const u=undoneSet(seq);const q=new Set(r?r.log.map(e=>e.id):[]);
@@ -1286,7 +1289,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   let settings={saturday:!!(b.base.settings||{}).saturday,holidays:(b.base.settings||{}).holidays||'construction',cascade_bt:!!(b.base.settings||{}).cascade_bt,info:E.clone(b.base.info||{}),phase_colors:E.clone(b.base.phase_colors||{})};
   const r=rec.jobs[slug];let entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));if(LIVE)entries=entries.concat(effective(liveSeq(r)));else r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
   entries.forEach(e=>{if(e.kind=='settings'){settings=mergeSettings(settings,e.settings||{});return}
-   try{const x=E.applyEdit(state,LIVE?remapOps(slug,e.ops||[]):e.ops,ctx(settings,e));state=x.state;delete e.failed}catch(err){e.failed=err.message}});
+   try{const x=E.applyEdit(state,LIVE?remapOps(slug,e.ops||[]):e.ops,ctx(settings,e,slug));state=x.state;delete e.failed}catch(err){e.failed=err.message}});
   const c={base:b.base,state,settings};if(LIVE&&r)c.review=reviews(effective(liveSeq(r)));c.J=derive(slug,c);cache[slug]=c;return c}
  function countsAsHubEdit(e){if(!e)return false;const ops=e.ops||[];if(e.kind==='edit'&&ops.length&&ops.every(op=>op&&op.op==='tentative'))return false;return true}
  function pendingCount(r){if(!r)return 0;const log=LIVE?r.log:(r.log||[]).filter(e=>!e.undone);return log.filter(countsAsHubEdit).length}
@@ -1299,7 +1302,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
    const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:(ops||[]).map(strip)};
    if(e.ops.length&&e.ops.every(op=>op&&op.op==='tentative')){const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e));c.state=x.state;c.J=derive(slug,c);return {J:c.J,result:x.result}}
    if(LIVE){e.ts_ms=Date.now();e.device=devId();const taken=new Set(c.state.rows.map(r=>r.id));e.ops.forEach(op=>{if(op.op=='add'&&!op.new_id){let n;do{n='N'+(10000+Math.floor(Math.random()*89999))}while(taken.has(n));taken.add(n);op.new_id=n}})}
-   const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e));let k=0;e.ops.forEach(op=>{if(op.op=='add')op.new_id=x.result.new_ids[k++]});
+   const x=E.applyEdit(c.state,e.ops,ctx(c.settings,e,slug));let k=0;e.ops.forEach(op=>{if(op.op=='add')op.new_id=x.result.new_ids[k++]});
    e.summary=x.result.summary;jr(slug).log.push(e);save();c.state=x.state;c.J=derive(slug,c);return {J:c.J,result:x.result}},
   undo(slug){if(LIVE){const r=rec.jobs[slug];const seq=liveSeq(r);const u=undoneSet(seq);const me=who(),d=devId();
     const last=seq.slice().reverse().find(e=>(e.kind=='edit'||e.kind=='settings')&&!u.has(e.id)&&!APPLIED.has(e.id)&&(e.device?e.device===d:e.who===me));
@@ -4229,6 +4232,7 @@ function lineLinksJob(slug){var jobs=MONEY&&MONEY.line_links&&MONEY.line_links.j
 function lineLinkBucket(slug,code){var lines=lineLinksJob(slug).lines||{};return lines[code]||{invoices:[],actual_rows:[],bids_received:[],bids_approved:[]}}
 function bidAmountOf(item){if(!item)return null;if(item.amount!=null&&item.amount!==''){var n=+item.amount;return isNaN(n)?null:n}var id=item.bid_id||item.id||'';if(id&&typeof moneyNum==='function'){var rec=moneyNum(id,'amount');if(rec!=null)return rec}var rows=(MONEY&&MONEY.bid_comparison)||[];for(var i=0;i<rows.length;i++){if(String(rows[i].id)===String(id)&&rows[i].amount!=null&&rows[i].amount!==''){var m=+rows[i].amount;return isNaN(m)?null:m}}return null}
 function findBid(slug,code,bidId){var box=lineLinkBucket(slug,code);var lists=(box.bids_received||[]).concat(box.bids_approved||[]);for(var i=0;i<lists.length;i++){if(String(lists[i].bid_id)===String(bidId))return lists[i]}var u=(lineLinksJob(slug).unassigned||{}).bids||[];for(var j=0;j<u.length;j++){if(String(u[j].bid_id)===String(bidId))return u[j]}return null}
+function bidOnLine(slug,code,bidId){var box=lineLinkBucket(slug,code);var lists=(box.bids_received||[]).concat(box.bids_approved||[]);for(var i=0;i<lists.length;i++){if(String(lists[i].bid_id)===String(bidId))return true}return false}
 function tentativeVendor(slug,code,row){var bid=findBid(slug,code,row&&row.bid_id);return (bid&&bid.vendor)||''}
 function tentativeAmount(slug,code,row){var bid=findBid(slug,code,row&&row.bid_id);return bidAmountOf(bid)}
 function withForecast(slug,line){var revised=line.revised!=null?+line.revised:(+line.budget||0);var projected=line.projected_cost!=null?+line.projected_cost:(line.projected!=null?+line.projected:revised);var forecast=projected;var hit=tentativeFor(slug,line.cost_code);if(hit){var amt=tentativeAmount(slug,line.cost_code,hit);if(amt!=null)forecast=amt}var variance=Math.round((revised-forecast)*100)/100;return Object.assign({},line,{forecast:forecast,variance:variance,projected_cost:projected})}
@@ -4246,8 +4250,8 @@ function linkCountText(slug,code){var box=lineLinkBucket(slug,code);var inv=(box
 function linkDetailHtml(slug,line){var box=lineLinkBucket(slug,line.cost_code);var invoices=box.invoices||[],approved=box.bids_approved||[],received=box.bids_received||[],actuals=box.actual_rows||[];function block(title,body){return '<h3 class="pgh">'+esc(title)+'</h3>'+(body||'<div class="small mut">None on this line.</div>')}var invBody=invoices.map(function(it){return invoiceRowHtml(slug,it)}).join('');var actBody=actuals.map(function(it){return '<div class="ll-row"><b>'+esc(it.label||it.id||'Actual')+'</b><div class="ll-meta">'+amountMark(it.amount,'amount not read')+'</div></div>'}).join('');var apprBody=approved.map(function(it){return '<div class="ll-bid"><b>'+esc(it.vendor||'Vendor')+'</b> '+amountMark(bidAmountOf(it),'no amount yet')+'</div>'}).join('');var recBody=received.map(function(it){return bidRowHtml(slug,line.cost_code,it)}).join('');return '<div class="ll-detail" data-line-detail="'+esc(line.cost_code)+'">'+block('Invoices',invBody)+block('Actual rows',actBody)+block('Approved bids',apprBody)+block('Bids received',recBody)+'</div>'}
 function unassignedHtml(slug){var u=lineLinksJob(slug).unassigned||{};var invoices=u.invoices||[],bids=u.bids||[];if(!invoices.length&&!bids.length)return '';function row(it,kind){var label=it.vendor||it.name||it.po||it.bid_id||kind;var amt=it.amount==null||it.amount===''?'':(' '+amountMark(it.amount,'amount not read'));return '<div class="ll-row"><b>'+esc(label)+'</b><div class="small mut">'+esc(it.why||'')+'</div>'+amt+'</div>'}return '<section class="unassigned" data-unassigned="1"><h3 class="pgh">Unassigned</h3>'+invoices.map(function(it){return row(it,'Invoice')}).join('')+bids.map(function(it){return row(it,'Bid')}).join('')+'</section>'}
 function moneyLinesHtml(slug){if(typeof moneyReady==='function'&&!moneyReady())return '';var lines=typeof budgetLines==='function'?budgetLines(slug,true):[];if(!lines.length&&!(lineLinksJob(slug).unassigned&&((lineLinksJob(slug).unassigned.invoices||[]).length||(lineLinksJob(slug).unassigned.bids||[]).length)))return '';var body=lines.map(function(l){var key=slug+'\n'+l.cost_code;var open=!!openLines[key];return '<div class="ll-wrap"><button type="button" class="ll-toggle" data-mline="'+esc(l.cost_code)+'" data-slug="'+esc(slug)+'" aria-expanded="'+(open?'true':'false')+'"><b class="ll-title">'+esc(l.title||l.cost_code)+'</b><span class="ll-code small mut">'+esc(l.cost_code)+'</span>'+linkCountText(slug,l.cost_code)+'</button>'+(open?'<div class="ll-body">'+forecastNote(slug,l)+linkDetailHtml(slug,l)+'</div>':'')+'</div>'}).join('');return '<div class="money-lines" data-moneylines="'+esc(slug)+'">'+body+unassignedHtml(slug)+'</div>'}
-function assignTentative(slug,code,bidId){if(typeof moneyReady==='function'&&!moneyReady())return;var by=(typeof STORE!=='undefined'&&STORE&&STORE.who)?STORE.who():'';var at=new Date().toISOString().slice(0,19);var bid=bidId||'';TENTATIVE=TENTATIVE.filter(function(a){return !(a.slug===slug&&sameLineCode(a.cost_code,code))});if(bid)TENTATIVE.push({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});postTentative({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});refreshMoneyViews()}
-function postTentative(row){try{if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;fetch('/api/money/tentative',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){})}catch(e){}}
+function assignTentative(slug,code,bidId){if(typeof moneyReady==='function'&&!moneyReady())return;var by=(typeof STORE!=='undefined'&&STORE&&STORE.who)?STORE.who():'';var at=new Date().toISOString().slice(0,19);var bid=bidId||'';if(bid&&!bidOnLine(slug,code,bid))return;var prev=TENTATIVE.slice();TENTATIVE=TENTATIVE.filter(function(a){return !(a.slug===slug&&sameLineCode(a.cost_code,code))});if(bid)TENTATIVE.push({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});postTentative({slug:slug,cost_code:code,bid_id:bid,by:by,at:at},prev);refreshMoneyViews()}
+function postTentative(row,prev){try{if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;fetch('/api/money/tentative',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(row)}).then(function(r){var ct=r.headers.get('content-type')||'';if(ct.indexOf('json')<0)return;return r.json().then(function(j){if(!r.ok||!j||j.ok===false){if(prev)TENTATIVE=prev;refreshMoneyViews();return}if(Array.isArray(j.assignments)){loadTentativeDoc({tentative:j.assignments});refreshMoneyViews()}})}).catch(function(){})}catch(e){}}
 function refreshMoneyViews(){if(budgetRoot&&budgetRoot.isConnected)paintJobBudget(budgetRoot);document.querySelectorAll('[data-moneylines]').forEach(function(box){var slug=box.getAttribute('data-moneylines')||'';var html=moneyLinesHtml(slug);if(!html){box.remove();return}var hold=document.createElement('div');hold.innerHTML=html;var fresh=hold.firstChild;if(fresh&&box.parentNode){box.parentNode.replaceChild(fresh,box);bindLineLinks(fresh)}});try{if(typeof parseHash==='function'&&parseHash().page==='money'&&typeof renderMoney==='function')renderMoney()}catch(e){}}
 function bindLineLinks(root){if(!root)return;root.querySelectorAll('[data-mline]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.getAttribute('data-mline')||'';var key=slug+'\n'+code;openLines[key]=!openLines[key];refreshMoneyViews()}});root.querySelectorAll('[data-inv]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.closest('[data-line-detail]')&&el.closest('[data-line-detail]').getAttribute('data-line-detail');var file=el.getAttribute('data-file')||'';var box=lineLinkBucket(slug,code||'');var item=null;(box.invoices||[]).forEach(function(it){if(String(it.file_id||'')===file)item=it});if(!item)item={file_id:file,path:el.getAttribute('data-path')||'',name:el.getAttribute('data-name')||''};openInvoicePreview(slug,item)}});root.querySelectorAll('[data-tent]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'',el.getAttribute('data-tent')||'')}});root.querySelectorAll('[data-tent-undo]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'','')}})}
 
