@@ -365,10 +365,39 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .selcard .pbody{flex:1;min-width:0}.selcard .pt{display:block;font-weight:650}.selcard .ps{display:block;color:#667085;font-size:13px;margin-top:2px}
 .selcard .psrc{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
 .money-list{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%}
-.money-job{display:block;width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px;min-height:72px;color:inherit;text-decoration:none!important}
-.money-job .mj-name,.money-job .mj-amt{display:block;width:100%;max-width:100%;white-space:normal;overflow:visible;text-overflow:clip}
+.money-job{display:block;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px;min-height:44px;color:inherit;text-decoration:none!important;overflow-wrap:anywhere}
+.money-job .mj-name,.money-job .mj-amt,.money-job .mj-badges,.money-job .mj-alt,.money-job .mj-src,.money-job .mj-over{display:block;width:100%;max-width:100%;white-space:normal;overflow:visible;overflow-wrap:anywhere;text-overflow:clip}
 .money-job .mj-name{font-weight:650;font-size:16px;line-height:1.3;color:var(--ink)}
 .money-job .mj-amt{margin-top:4px;color:#667085;font-size:13.5px;line-height:1.4}
+.bvs-badge{display:inline-flex;align-items:center;min-height:22px;margin:6px 6px 0 0;padding:2px 8px;border-radius:99px;background:#eef2f6;color:#344054;font-size:12px;font-weight:700;vertical-align:middle}
+.bvs-badge.rough,.bvs-badge.nobudget,.bvs-badge.nospend,.bvs-badge.closed{background:#eef2f6;color:#475467}
+.bvs-badge.conflict,.bvs-badge.warnflag{background:#fffaeb;color:#b54708}
+.bvs-badge.conflict{background:#fde8e6;color:#b42318}
+.bvs-badge.stated{background:#e0e7ff;color:#1e3a8a}
+.bvs-note,.bvs-label,.money-job .mj-label,.money-job .mj-ref{display:block;margin-top:4px;font-size:12px;line-height:1.35;color:#667085;overflow-wrap:anywhere}
+.bvs-closed-over{display:block;margin-top:4px;color:#667085;font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.bvs-ref{margin-top:6px;font-size:12px;line-height:1.35;color:#667085}
+.bvs-ref summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.jbudget .sumcard .bvs-closed-over,.jbudget .sumcard .bvs-label,.jbudget .sumcard .bvs-ref{color:#d5deea}
+.jbudget .sumcard .bvs-badge.stated{background:#e0e7ff;color:#1e3a8a}
+.jbudget .sumcard .bvs-badge.closed{background:#eef2f6;color:#475467}
+.jbudget .sumcard .bvs-badge.warnflag{background:#fffaeb;color:#b54708}
+.bvs-bar{display:block;height:10px;background:#e6ebf2;border-radius:99px;overflow:hidden;margin:8px 0}
+.bvs-bar i{display:block;height:10px;width:0;background:#1f3a68;border-radius:99px}
+.bvs-bar.warn i{background:#d97706}
+.bvs-bar.over i{background:#d92d20}
+.bvs-over{display:block;margin-top:4px;color:#b42318;font-weight:700;font-size:13.5px;line-height:1.35;overflow-wrap:anywhere}
+p.bvs-note{margin:4px 0 0}
+.bvs-alt,.bvs-src,.money-job .mj-alt,.money-job .mj-src{display:block;margin-top:4px;font-size:12px;line-height:1.35;color:#667085;overflow-wrap:anywhere}
+.jbudget .sumcard .bvs-note,.jbudget .sumcard .bvs-alt,.jbudget .sumcard .bvs-src,.jbudget .sumcard .bvs-nums{color:#d5deea}
+.jbudget .sumcard .bvs-bar{background:#314864}
+.jbudget .sumcard .bvs-bar i{background:#fff}
+.jbudget .sumcard .bvs-bar.warn i{background:#f5c16c}
+.jbudget .sumcard .bvs-bar.over i{background:#ff8a80}
+.jbudget .sumcard .bvs-over{color:#ffb4ab}
+.jbudget .sumcard .bvs-badge{background:#eef2f6;color:#344054}
+.jbudget .sumcard .bvs-badge.conflict{background:#fde8e6;color:#b42318}
+.money-list{max-width:100%;overflow-wrap:anywhere}
 .bvacard{background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px 8px;margin:0 0 10px}
 .bvacard h3{margin:0 0 2px;font-size:16px}
 .bvanum{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid #edf0f4;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -684,7 +713,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'1c50437644',built:'9/29/2026 4:02 PM AZ'};
+const HWS_BUILD={version:'34b28153d5',built:'9/29/2026 5:32 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -3820,13 +3849,204 @@ function mMoney(M){if(!J)return;if(typeof canSeeMoney==='function'&&canSeeMoney(
 function prelimHomeCount(){let n=0;Object.keys(DATA.jobs||{}).forEach(slug=>{const idx=((DATA.jobs[slug]||{}).budget_index)||[];if(idx.length)idx.forEach(l=>{n+=+l.preliminary_count||0});else jobSelections(slug).forEach(s=>{if(budgetBucket(s)==='preliminary')n++})});return n}
 function moneyHiddenHtml(){return `<div class="hph"><h1>Money</h1></div><div class="note" id="money-hidden">${esc(moneyHiddenNote())}</div>`}
 function jobHasFigures(lines){return (lines||[]).some(function(l){return ['budget','committed','preliminary','actual','pending','remaining','projected'].some(function(k){return l[k]!=null&&l[k]!==''&&!isNaN(+l[k])})})}
-function moneyJobCard(slug){const lines=linesFor(slug);if(!jobHasFigures(lines))return '';const t=totalsOf(lines);const n=lines.reduce(function(a,l){return a+(l.preliminary_items||[]).length},0);
- return `<a class="money-job" data-jobmoney="${esc(slug)}" href="#/job/${esc(slug)}/money"><span class="mj-name">${esc(moneyJobName(slug))}</span><span class="mj-amt">Budget ${fmt$(t.budget)} · Committed ${fmt$(t.committed)}${n?' · '+n+' preliminary':''}</span></a>`}
+function numOrNull(v){if(v==null||v==='')return null;if(typeof v==='boolean')return null;var n=+v;return isNaN(n)?null:n}
+function sumField(lines,key){var any=false,n=0;(lines||[]).forEach(function(l){if(!l||l[key]==null||l[key]===''||isNaN(+l[key]))return;any=true;n+=+l[key]});return any?n:null}
+function bvsMap(){var box=MONEY&&MONEY.budget_vs_spent;var jobs=box&&box.jobs;return jobs&&typeof jobs==='object'?jobs:null}
+function bvsEntry(slug){var jobs=bvsMap();return jobs&&jobs[slug]?jobs[slug]:null}
+function jobMoneyLines(slug){var job=MONEY&&MONEY.jobs&&MONEY.jobs[slug];return (job&&job.lines)||[]}
+/* Remaining is budget minus the larger of committed and actual (spent).
+   % used is spent / budget. The bar caps at 100%. A closed job stays neutral.
+   An active overrun is red. Otherwise percent used above 90 is amber, and above 100 is red. */
+function bvsMath(budget,spent,committed){
+ budget=numOrNull(budget);spent=numOrNull(spent);committed=numOrNull(committed);
+ var remaining=null;
+ if(budget!=null&&(spent!=null||committed!=null)){
+  var useSpent=spent==null?0:spent;
+  var useComm=committed==null?useSpent:committed;
+  remaining=Math.round((budget-Math.max(useComm,useSpent))*100)/100}
+ var pct=null;
+ if(budget!=null&&budget>0&&spent!=null)pct=Math.round((spent/budget)*1000)/10;
+ var overBy=null;
+ if(budget!=null&&budget>0&&spent!=null&&spent>budget)overBy=Math.round((spent-budget)*100)/100;
+ var width=0;if(pct!=null)width=Math.max(0,Math.min(100,pct));
+ return {budget:budget,spent:spent,committed:committed,remaining:remaining,pct_used:pct,over_by:overBy,width:width,tone:bvsTone('active',null,pct)}}
+function bvsTone(status,overrun,pct){
+ if(status==='closed')return '';
+ if(overrun&&overrun.active===true)return 'over';
+ if(overrun&&overrun.active===false){
+  if(pct!=null&&pct>90&&pct<=100)return 'warn';
+  if(pct!=null&&pct<=90)return 'ok';
+  return ''}
+ if(pct!=null&&pct>100)return 'over';
+ if(pct!=null&&pct>90)return 'warn';
+ if(pct==null)return '';
+ return 'ok'}
+function bvsIsHot(row){
+ if(!row||row.status==='closed')return false;
+ if(row.overrun&&row.overrun.active===true)return true;
+ return row.over_by!=null}
+function bvsFigures(slug){
+ var bvs=bvsEntry(slug)||{};
+ var job=(MONEY&&MONEY.jobs&&MONEY.jobs[slug])||{};
+ var lines=job.lines||[];
+ var totals=job.totals||{};
+ var hasLines=jobHasFigures(lines);
+ var budget=null,spent=null,committed=null;
+ if(hasLines){
+  budget=numOrNull(totals.budget);
+  if(budget==null)budget=sumField(lines,'budget');
+  if(budget==null)budget=sumField(lines,'revised');
+  spent=numOrNull(totals.actual);
+  if(spent==null)spent=sumField(lines,'actual');
+  committed=numOrNull(totals.committed);
+  if(committed==null)committed=sumField(lines,'committed')}
+ var hasEntry=!!bvsEntry(slug);
+ // Lines with real figures win. Zero-filled lines (no budget on any line) do not hide the reviewed entry:
+ // the entry's budget and spent fill in, and an entry that says "no spend data" (spent null) keeps a zero actual from reading as spend.
+ var zeroFilled=hasLines&&!(budget>0);
+ if(hasEntry&&zeroFilled)budget=numOrNull(bvs.budget);
+ if(hasEntry&&!(spent>0)){if(bvs.spent===null)spent=null;else if(zeroFilled&&numOrNull(bvs.spent)!=null)spent=numOrNull(bvs.spent)}
+ if(hasEntry&&spent==null&&!(committed>0))committed=null;
+ if(budget==null)budget=numOrNull(bvs.budget);
+ if(spent==null&&!(hasEntry&&bvs.spent===null))spent=numOrNull(bvs.spent);
+ if(committed==null&&!(hasEntry&&spent==null))committed=numOrNull(bvs.committed);
+ var kind=bvs.budget_kind||(hasLines?'real':'');
+ var math=bvsMath(budget,spent,committed);
+ var status=bvs.status==='closed'?'closed':'active';
+ var overrun=bvs.overrun&&typeof bvs.overrun==='object'?bvs.overrun:null;
+ var ref=bvs.reference_detail&&typeof bvs.reference_detail==='object'?bvs.reference_detail:null;
+ math.tone=bvsTone(status,overrun,math.pct_used);
+ return Object.assign({
+  slug:slug,name:bvs.name||'',budget_kind:kind,status:status,
+  budget_basis:bvs.budget_basis||'',budget_label:bvs.budget_label||'',
+  budget_source:bvs.budget_source||'',budget_as_of:bvs.budget_as_of||'',
+  spent_source:bvs.spent_source||'',spent_as_of:bvs.spent_as_of||'',
+  flags:Array.isArray(bvs.flags)?bvs.flags:[],
+  notes:Array.isArray(bvs.notes)?bvs.notes:[],
+  alt_sources:Array.isArray(bvs.alt_sources)?bvs.alt_sources:[],
+  overrun:overrun,reference_detail:ref,hasLines:!!hasLines
+ },math)}
+function bvsBadges(row){
+ var out=[];
+ var stated=row.budget_basis==='dean_stated';
+ if(row.status==='closed')out.push({cls:'closed',label:'Closed'});
+ if(stated)out.push({cls:'stated',label:'D'+'ean-stated'});
+ else if(row.budget_kind==='rough')out.push({cls:'rough',label:'rough',note:'planning number, not a budget'});
+ if(row.budget_kind==='none'||(row.budget==null&&row.budget_kind!=='rough'&&!stated))out.push({cls:'nobudget',label:'no budget found'});
+ else if(row.budget_kind==='rough'&&row.budget==null&&!stated)out.push({cls:'nobudget',label:'no budget found'});
+ if(row.spent==null)out.push({cls:'nospend',label:'no spend data'});
+ var seenConflict=false;
+ (row.flags||[]).forEach(function(f){f=String(f||'').trim();if(!f)return;
+  if(f.indexOf('CONFLICT')===0){if(!seenConflict){out.push({cls:'conflict',label:'conflict'});seenConflict=true}return}
+  out.push({cls:'warnflag',label:f})});
+ return out}
+function bvsSort(rows){
+ var kind={real:0,rough:1,none:2};
+ return (rows||[]).slice().sort(function(a,b){
+  var ac=a.status==='closed'?1:0,bc=b.status==='closed'?1:0;if(ac!==bc)return ac-bc;
+  var ao=bvsIsHot(a)?0:1,bo=bvsIsHot(b)?0:1;if(ao!==bo)return ao-bo;
+  var ap=a.pct_used==null?-1:+a.pct_used,bp=b.pct_used==null?-1:+b.pct_used;if(ap!==bp)return bp-ap;
+  var ak=kind[a.budget_kind]==null?9:kind[a.budget_kind],bk=kind[b.budget_kind]==null?9:kind[b.budget_kind];
+  if(ak!==bk)return ak-bk;
+  var an=String(a.name||a.slug||''),bn=String(b.name||b.slug||'');
+  return an<bn?-1:(an>bn?1:0)})}
+function bvsCounts(rows){var real=0,rough=0,none=0,over=0;(rows||[]).forEach(function(r){
+ if(r.budget_kind==='rough')rough++;else if(r.budget_kind==='none')none++;else real++;
+ if(bvsIsHot(r))over++});return {real:real,rough:rough,none:none,over:over}}
+function bvsSlugs(){var jobs=bvsMap();if(jobs)return Object.keys(jobs);
+ return Object.keys((typeof DATA!=='undefined'&&DATA&&DATA.jobs)||{}).filter(function(slug){return jobHasFigures(jobMoneyLines(slug))})}
+function pctUsedText(n){if(n==null||isNaN(+n))return '';var t=Math.round(+n*10)/10;return (t%1?String(t):String(Math.round(t)))+'%'}
+function bvsMoneyText(n){if(n==null||isNaN(+n))return '—';return typeof fmt$==='function'?fmt$(n):String(Math.round(+n))}
+function bvsNumsText(row){
+ var budget=row.budget==null?'—':bvsMoneyText(row.budget);
+ var spent=row.spent==null?'no spend data':bvsMoneyText(row.spent);
+ var rem=row.remaining==null?'—':bvsMoneyText(row.remaining);
+ var pct=row.pct_used==null?'—':pctUsedText(row.pct_used);
+ return 'Budget '+budget+' · Spent '+spent+' · Remaining '+rem+' · '+pct+' used'}
+function bvsBarHtml(row){
+ var tone=row.tone==='warn'||row.tone==='over'?(' '+row.tone):'';
+ var pctAttr=row.pct_used==null?'':String(row.pct_used);
+ return '<span class="bvs-bar'+tone+'" data-bvs-bar="1" data-pct="'+pctAttr+'"><i style="width:'+row.width+'%"></i></span>'}
+function bvsBadgeHtml(row){return bvsBadges(row).map(function(b){
+ var note=b.note?' <span class="bvs-note">'+esc(b.note)+'</span>':'';
+ return '<span class="bvs-badge '+b.cls+'">'+esc(b.label)+'</span>'+note}).join(' ')}
+function bvsSourceLine(row){var parts=[];
+ if(row.budget_source||row.budget_as_of)parts.push('Budget: '+(row.budget_source||'—')+(row.budget_as_of?(' ('+row.budget_as_of+')'):''));
+ if(row.spent_source||row.spent_as_of)parts.push('Spent: '+(row.spent_source||'—')+(row.spent_as_of?(' ('+row.spent_as_of+')'):''));
+ return parts.join(' · ')}
+function bvsCompact(n){n=+n;if(isNaN(n))return '';var sign=n<0?'-':'';var v=Math.abs(n);var t;
+ if(v>=1000000){t=Math.round(v/10000)/100;return sign+(t%1?String(t):String(Math.round(t)))+'M'}
+ if(v>=1000){t=Math.round(v/100)/10;return sign+(t%1?String(t):String(Math.round(t)))+'K'}
+ return sign+String(Math.round(v))}
+function bvsRefSummary(row){var ref=row&&row.reference_detail;if(!ref||typeof ref!=='object')return '';
+ var source=ref.source||'reference lines';var total=numOrNull(ref.total);var compact=total==null?'':bvsCompact(total);
+ return 'Reference: '+source+(compact?(' ('+compact+')'):'')}
+function bvsRefHtml(row){var summary=bvsRefSummary(row);if(!summary)return '';var ref=row.reference_detail;var bits=[];
+ if(ref.as_of)bits.push('as of '+ref.as_of);if(ref.lines_file)bits.push(String(ref.lines_file));
+ var total=numOrNull(ref.total);if(total!=null)bits.push(bvsMoneyText(total));
+ return '<details class="bvs-ref"><summary>'+esc(summary)+'</summary>'+(bits.length?'<div class="bvs-ref-body">'+esc(bits.join(' · '))+'</div>':'')+'</details>'}
+function bvsNotesHtml(row){var notes=(row&&row.notes)||[];if(!notes.length)return '';
+ return '<div class="bvs-notes">'+notes.map(function(n){return '<p class="bvs-note">'+esc(n)+'</p>'}).join('')+'</div>'}
+function bvsOverHtml(row,tag){tag=tag||'div';var o=row.overrun;
+ if(o&&o.active===true){var bits=['Over budget'];if(o.label&&o.label!=='Over budget')bits.push(o.label);if(o.basis)bits.push(o.basis);
+  if(o.amount!=null&&!isNaN(+o.amount))bits.push(bvsMoneyText(o.amount));if(o.pct!=null&&!isNaN(+o.pct))bits.push(pctUsedText(o.pct));
+  return '<'+tag+' class="bvs-over">'+esc(bits.join(' · '))+'</'+tag+'>'}
+ if(o&&o.active===false){var muted=['Closed overrun'];if(o.basis)muted.push(o.basis);if(o.label)muted.push(o.label);
+  if(o.amount!=null&&!isNaN(+o.amount))muted.push(bvsMoneyText(o.amount));if(o.pct!=null&&!isNaN(+o.pct))muted.push(pctUsedText(o.pct));
+  return '<'+tag+' class="bvs-closed-over">'+esc(muted.join(' · '))+'</'+tag+'>'}
+ if(row.status!=='closed'&&row.over_by!=null)return '<'+tag+' class="bvs-over">over by '+esc(bvsMoneyText(row.over_by))+'</'+tag+'>';
+ return ''}
+function altSourceText(alts){var bits=[];(alts||[]).forEach(function(a){
+ if(a==null||a==='')return;
+ if(typeof a==='string'||typeof a==='number'){bits.push(String(a));return}
+ var name=a.source||a.label||a.name||a.file||'';
+ var fig=numOrNull(a.amount!=null?a.amount:(a.figure!=null?a.figure:(a.spent!=null?a.spent:(a.value!=null?a.value:null))));
+ var bit=name;
+ if(fig!=null)bit=(bit?bit+' ':'')+bvsMoneyText(fig);
+ if(bit)bits.push(bit)});
+ return bits.length?('alt source: '+bits.join('; ')):'';}
+function bvsName(slug,row){var named='';try{named=moneyJobName(slug)}catch(e){named=''}
+ if(named&&named!==slug)return named;if(row&&row.name)return row.name;return named||slug}
+function bvsBlock(slug,show){
+ if(!show)return '<div class="bvs" data-bvs="hidden"><p class="amt-hidden">Amounts hidden</p></div>';
+ var entry=bvsEntry(slug);var lines=jobMoneyLines(slug);
+ if(!entry&&!jobHasFigures(lines))return '';
+ var row=bvsFigures(slug);
+ var badges=bvsBadgeHtml(row);
+ var alt=altSourceText(row.alt_sources);
+ var src=bvsSourceLine(row);
+ var label=row.budget_label?'<div class="bvs-label">'+esc(row.budget_label)+'</div>':'';
+ return '<div class="bvs" data-bvs="1" data-tone="'+(row.tone||'none')+'" data-status="'+esc(row.status||'active')+'">'+
+  (badges?'<div class="bvs-badges">'+badges+'</div>':'')+label+
+  '<div class="bvs-nums">'+esc(bvsNumsText(row))+'</div>'+
+  bvsBarHtml(row)+bvsOverHtml(row,'div')+bvsNotesHtml(row)+
+  (alt?'<div class="bvs-alt">'+esc(alt)+'</div>':'')+
+  (src?'<div class="bvs-src">'+esc(src)+'</div>':'')+bvsRefHtml(row)+'</div>'}
+function moneyJobCard(slug){
+ var entry=bvsEntry(slug);var lines=jobMoneyLines(slug);
+ if(!entry&&!jobHasFigures(lines))return '';
+ var row=bvsFigures(slug);var name=bvsName(slug,row);
+ var badges=bvsBadgeHtml(row);
+ var alt=altSourceText(row.alt_sources);
+ var src=bvsSourceLine(row);
+ var refSum=bvsRefSummary(row);
+ var label=row.budget_label?'<span class="mj-label">'+esc(row.budget_label)+'</span>':'';
+ var notes=(row.notes||[]).map(function(n){return '<span class="bvs-note">'+esc(n)+'</span>'}).join('');
+ return '<a class="money-job" data-jobmoney="'+esc(slug)+'" data-status="'+esc(row.status||'active')+'" href="#/job/'+esc(slug)+'/money"><span class="mj-name">'+esc(name)+'</span>'+
+  (badges?'<span class="mj-badges">'+badges+'</span>':'')+label+
+  '<span class="mj-amt">'+esc(bvsNumsText(row))+'</span>'+
+  bvsBarHtml(row)+bvsOverHtml(row,'span')+notes+
+  (alt?'<span class="mj-alt">'+esc(alt)+'</span>':'')+
+  (src?'<span class="mj-src">'+esc(src)+'</span>':'')+
+  (refSum?'<span class="mj-ref">'+esc(refSum)+'</span>':'')+'</a>'}
 function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
  if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
   loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
- const cards=Object.keys(DATA.jobs||{}).map(moneyJobCard).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
- hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut">Budget vs actual</div></div><div class="money-list">${cards}</div>`);bindDrill(document)}
+ var rows=bvsSort(bvsSlugs().map(bvsFigures));
+ var c=bvsCounts(rows);
+ var mix=c.real+' real · '+c.rough+' rough · '+c.none+' no budget · '+c.over+' over budget';
+ var cards=rows.map(function(r){return moneyJobCard(r.slug)}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
+ hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut" id="money-mix">${esc(mix)}</div></div><div class="money-list">${cards}</div>`);bindDrill(document)}
 function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
 function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
@@ -3901,7 +4121,12 @@ function jobBudgetHtml(slug){
  var nav=budgetNav||{cat:'',line:''};
  var roll=typeof selectionRollupHtml==='function'?selectionRollupHtml(slug):'';
  var hid=show?'':'<div class="note" id="money-hidden">'+esc(typeof moneyHiddenNote==='function'?moneyHiddenNote():'Amounts hidden')+'</div>';
- if(!lines.length)return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+'<div class="sumcard" data-budget="summary"><h2>Budget</h2><div class="small">'+esc(name)+'</div><p>No budget lines for this job yet.</p></div></div>';
+ if(!lines.length){
+  var emptyMsg='No budget lines for this job yet.';
+  if(show){var emptyRow=bvsFigures(slug);
+   if(emptyRow.budget_basis==='dean_stated'||emptyRow.budget_kind==='rough')emptyMsg='';
+   else if(emptyRow.budget_kind==='none'||(emptyRow.budget==null&&bvsEntry(slug)))emptyMsg='No budget found'}
+  return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+'<article class="sumcard" data-budget="summary"><h2>Budget</h2><div class="small">'+esc(name)+'</div>'+bvsBlock(slug,show)+(emptyMsg?'<p>'+esc(emptyMsg)+'</p>':'')+'</article></div>'}
  if(nav.line){
   var line=null;lines.forEach(function(l){if(l.cost_code===nav.line)line=l});
   if(!line)nav.line='';
@@ -3937,6 +4162,7 @@ function jobBudgetHtml(slug){
  var groups=budgetGroups(slug,lines);
  return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+
   '<article class="sumcard" data-budget="summary"><div class="small">Job budget</div><h2>'+esc(name)+'</h2>'+
+  bvsBlock(slug,show)+
   '<div class="small">'+lines.length+' lines · '+pctText(progress)+' complete</div>'+budgetMeter(progress)+
   (show?budgetCols({original:sumKey(lines,'original'),approved_cos:sumKey(lines,'approved_cos'),revised:sumKey(lines,'revised'),committed:sumKey(lines,'committed'),actual:sumKey(lines,'actual'),projected_cost:sumKey(lines,'projected_cost'),variance:sumKey(lines,'variance'),pct_complete:progress},true):'<p class="amt-hidden">Amounts hidden</p>')+
   '</article>'+revenueCard(slug,show)+
