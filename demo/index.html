@@ -437,6 +437,14 @@ tr[data-sel]{cursor:pointer}
 #offline-banner #retry{background:#fff;color:#3b2f1a;border:0;border-radius:8px;font-weight:700}
 #auth-banner{display:inline-block;max-width:100%;background:#15233b;color:#fff;font-weight:700;padding:8px 10px;border:0;border-radius:8px;text-align:left;cursor:pointer}
 #signin-prompt{display:inline-flex;align-items:center;background:#15233b;color:#fff;font-weight:700;padding:6px 10px;border-radius:8px}
+.bvs-tent{display:block;margin-top:4px;font-size:12px;line-height:1.35;color:#667085;overflow-wrap:anywhere}
+.jbudget .sumcard .bvs-tent{color:#d5deea}
+.money-lines,.ll-wrap,.ll-body,.ll-row,.ll-bid,.ll-detail,.unassigned,.ll-toggle,.ll-tent{max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+.money-lines{margin:0 0 8px}
+.ll-toggle{display:block;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px;margin:0 0 8px;color:inherit;font:inherit;min-height:44px}
+.ll-row,.ll-bid{display:block;width:100%;max-width:100%;box-sizing:border-box;background:#fff;border:1px solid #dde3ec;border-radius:12px;padding:10px 12px;margin:0 0 6px}
+.ll-open,[data-tent],[data-tent-undo]{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:6px 6px 0 0;padding:8px 12px;max-width:100%;box-sizing:border-box}
+.ll-tent{margin:6px 0}
 button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700}
 #srcf button.load-dbx{display:block;width:100%;max-width:420px;min-height:48px;padding:10px 18px;font-size:17px}
 .offbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
@@ -1077,12 +1085,32 @@ function setPct(r,C,today,pct){pct=parseFloat(pct);pct=isNaN(pct)?0:Math.max(0,M
  if(pct>=100){if(!wasDone)freeze(r,C);r.status='complete';r.actual_start=r.actual_start||r.start;r.actual_finish=r.actual_finish||((r.finish||today)<today?(r.finish||today):today)}
  else{if(wasDone)r.actual_finish='';r.status=pct>0?'in progress':'not started';if(pct>0&&!r.actual_start)r.actual_start=(r.start||today)<today?(r.start||today):today}}
 /* state = {rows:[raw schedule rows], flags:[{task,pred,type,created}]}; ctx = {today, cal, settings, stamp:'YYYY-MM-DD HH:MM'} */
+function applyTentative(state,ops,ctx){
+ ctx=ctx||{};
+ let list=Array.isArray(state.tentative)?state.tentative.map(function(a){return Object.assign({},a)}):[];
+ const msgs=[];
+ (ops||[]).forEach(function(op){
+  if(!op||op.op!=='tentative')return;
+  const slug=String(op.slug||ctx.slug||'');
+  const code=String(op.cost_code||'');
+  const bid=String(op.bid_id||'');
+  if(!slug||!code)return;
+  list=list.filter(function(a){return !(a.slug===slug&&String(a.cost_code)===code)});
+  if(bid)list.push({slug:slug,cost_code:code,bid_id:bid,by:String(op.by||ctx.who||''),at:String(op.at||ctx.stamp||'')});
+  msgs.push(bid?('tentative forecast '+code):('cleared tentative forecast '+code))});
+ state.tentative=list;
+ return msgs.join('; ')}
 function applyEdit(state,ops,ctx){
  ctx=ctx||{}; let poSummary='';
+ const tentOps=(ops||[]).filter(function(o){return o&&o.op==='tentative'});
+ ops=(ops||[]).filter(function(o){return o&&o.op!=='tentative'});
+ const tentMsg=applyTentative(state,tentOps,ctx);
+ const keptTentative=state.tentative||[];
  if(root.HWSPos&&ops.some(o=>root.HWSPos.OPS.indexOf(o.op)>=0)){const split=root.HWSPos.peel(ops);
-  if(split.po.length){const r=root.HWSPos.apply(state,split.po,ctx);state=r.state;poSummary=r.summary||''}
+  if(split.po.length){const r=root.HWSPos.apply(state,split.po,ctx);state=r.state;state.tentative=keptTentative;poSummary=r.summary||''}
   ops=split.rest;
-  if(!ops.length)return {state:{rows:state.rows,flags:state.flags||[],pos:state.pos||[],bid_status:state.bid_status||{}},result:{summary:poSummary,shifted:[],pushed:[],flagged:[],new_ids:[],po_ids:[]}}}
+  if(!ops.length)return {state:{rows:state.rows,flags:state.flags||[],pos:state.pos||[],bid_status:state.bid_status||{},tentative:state.tentative||keptTentative},result:{summary:[tentMsg,poSummary].filter(Boolean).join('; '),shifted:[],pushed:[],flagged:[],new_ids:[],po_ids:[]}}}
+ if(!ops.length)return {state:{rows:state.rows,flags:state.flags||[],pos:state.pos||[],bid_status:state.bid_status||{},tentative:keptTentative},result:{summary:tentMsg,shifted:[],pushed:[],flagged:[],new_ids:[],po_ids:[]}}
  const {today,cal}=ctx;const st=ctx.settings||{};const rows=clone(state.rows);rows.forEach(r=>FIELDS.forEach(f=>{if(r[f]==null)r[f]=''}));
  const by={};rows.forEach(r=>by[r.id]=r);const c0=computed(rows,today,cal),C0=c0.C;const v0=violations(c0.rows);const touched=new Set(),msgs=[],newIds=[];
  const S=v=>v==null?'':String(v);
@@ -1121,8 +1149,9 @@ function applyEdit(state,ops,ctx){
  const newflags=Object.entries(v1).filter(([k])=>!(k in v0)).map(([k,val])=>{const [t,p]=k.split('\u0001');return {task:t,pred:p,type:val[0],created:ctx.stamp}});
  const fl=flBefore.filter(f=>(f.task+'\u0001'+f.pred) in v1&&f.task in by).concat(newflags.filter(f=>!flBefore.some(g=>g.task==f.task&&g.pred==f.pred)));
  let summary=msgs.join('; ');if(shifted.length)summary+=`; ${shifted.length} downstream task(s) shifted`;if(pushed.length)summary+=`; ${pushed.length} imported schedule task(s) moved`;if(newflags.length)summary+=`; ${newflags.length} locked task(s) flagged (not moved)`;
+ if(tentMsg)summary=summary?tentMsg+'; '+summary:tentMsg;
  if(poSummary)summary=summary?poSummary+'; '+summary:poSummary;
- return {state:{rows,flags:fl,pos:state.pos||[],bid_status:state.bid_status||{}},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
+ return {state:{rows,flags:fl,pos:state.pos||[],bid_status:state.bid_status||{},tentative:state.tentative||keptTentative},result:{summary,shifted,pushed,flagged:newflags.map(f=>Object.assign({},f,{task_name:c1.C[f.task].task,pred_name:c1.C[f.pred].task})),new_ids:newIds}}}
 /* ---------- derived job (modules.load_schedules + build_conflicts + build_todos + jobs.job_slice) ---------- */
 const PALETTE=['#2563eb','#0e9384','#7a3ff2','#dc6803','#c11574','#12a150','#4f46e5','#b54708','#0086c9','#6172f3','#ee46bc','#669f2a'];
 function pyRound(x){const f=Math.floor(x),d=x-f;if(Math.abs(d-0.5)<1e-9)return f%2==0?f:f+1;return Math.round(x)}
@@ -1204,6 +1233,7 @@ function deriveJob(base,state,opts){opts=opts||{};const today=base.today;const s
  if(opts.poState){J.hub_pos=opts.poState.pos||[];const bs=opts.poState.bid_status||{};
   if(J.bids&&Object.keys(bs).length)J.bids=J.bids.map(p=>Object.assign({},p,{subs:(p.subs||[]).map(s=>bs[s.id]?Object.assign({},s,{status:bs[s.id].status}):s)}));}
  J.counts=Object.assign({},base.counts||{},{schedule:tasks.length,selections:selections.length,todos:todos.length,conflicts:conflicts.length,pos:(J.hub_pos||[]).length});
+ J.tentative=Array.isArray(state.tentative)?state.tentative:[];
  return J}
 function listRow(J,old){const t=J.tasks.filter(x=>x.source!='TRACKER');return Object.assign({},old,{stage:(J.info||{}).status||J.stage,pm:(J.info||{}).pm||'',client:(J.info||{}).client||'',start:J.summary.start||'',finish:J.summary.finish||'',tasks:J.tasks.length,
  bt:J.summary.bt,real:J.summary.real,draft:J.summary.draft,overdue:(old&&old.closed)?0:J.tasks.filter(x=>x.overdue).length,pct:J.pct,high:J.conflicts.filter(c=>c.severity=='high').length,conflicts:J.conflicts.length,next:(J.summary.next||[])[0]||null})}
@@ -1295,7 +1325,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:false,failed:e.failed,where:'checked in'+(cs.who?' by '+cs.who:'')})));
    r.log.forEach(e=>h.push({n:++n,ts:e.ts,who:e.who,kind:e.kind,summary:e.summary,undone:e.undone,failed:e.failed,where:'this browser'}))}
   J.history=h;J.pending=r?r.log.filter(e=>!e.undone).length:0;return J}
- function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[],pos:E.clone(b.base.hub_pos||[]),bid_status:{}};
+ function build(slug){const b=baseOf(slug);if(!b)return null;let state={rows:b.rows,flags:[],pos:E.clone(b.base.hub_pos||[]),bid_status:{},tentative:[]};
   let settings={saturday:!!(b.base.settings||{}).saturday,holidays:(b.base.settings||{}).holidays||'construction',cascade_bt:!!(b.base.settings||{}).cascade_bt,info:E.clone(b.base.info||{}),phase_colors:E.clone(b.base.phase_colors||{})};
   const r=rec.jobs[slug];let entries=[];if(r){r.remote.forEach(cs=>cs.entries.forEach(e=>entries.push(e)));if(LIVE)entries=entries.concat(effective(liveSeq(r)));else r.log.forEach(e=>{if(!e.undone)entries.push(e)})}
   entries.forEach(e=>{if(e.kind=='settings'){settings=mergeSettings(settings,e.settings||{});return}
@@ -2139,7 +2169,7 @@ const E=window.HWSEngine;
 const $=s=>document.querySelector(s);
 function visibleCopy(v){let s=String(v==null?'':v);s=s.replace(/https?:\/\/[^\s"'<>]*buildertrend\.(?:net|com)[^\s"'<>]*/gi,'');s=s.replace(/\b(?:not\s+)?in\s+buildertrend\b/gi,'');s=s.replace(/\bbuildertrend\b/gi,'');s=s.replace(/[ \t]{2,}/g,' ').replace(/\s+([,.;:])/g,function(_m,ch){return ch}).replace(/\(\s+/g,'(').replace(/\s+\)/g,')');return s.replace(/^[ \t]+|[ \t]+$/g,'')}
 const esc=v=>visibleCopy(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt$=v=>(v==null||v===''||isNaN(+v))?'':'$'+Math.round(+v).toLocaleString();
+const fmt$=v=>{if(v==null||v===''||isNaN(+v))return '';const n=Math.round(+v);return (n<0?'-$':'$')+Math.abs(n).toLocaleString();};
 const DAY=864e5;const dP=s=>{if(!s)return null;const [y,m,d]=String(s).slice(0,10).split('-').map(Number);return Date.UTC(y,m-1,d)};
 const iso=ms=>new Date(ms).toISOString().slice(0,10);const addD=(s,n)=>iso(dP(s)+n*DAY);
 const md=s=>{if(!s)return '';const t=new Date(dP(s));return (t.getUTCMonth()+1)+'/'+t.getUTCDate()};
@@ -4067,7 +4097,7 @@ function bvsBlock(slug,show){
   '<div class="bvs-nums">'+esc(bvsNumsText(row))+'</div>'+
   bvsBarHtml(row)+bvsOverHtml(row,'div')+bvsNotesHtml(row)+
   (alt?'<div class="bvs-alt">'+esc(alt)+'</div>':'')+
-  (src?'<div class="bvs-src">'+esc(src)+'</div>':'')+bvsRefHtml(row)+'</div>'}
+  (src?'<div class="bvs-src">'+esc(src)+'</div>':'')+bvsRefHtml(row)+tentativeBanner(slug)+'</div>'}
 function moneyJobCard(slug){
  var entry=bvsEntry(slug);var lines=jobMoneyLines(slug);
  if(!entry&&!jobHasFigures(lines))return '';
@@ -4084,19 +4114,19 @@ function moneyJobCard(slug){
   bvsBarHtml(row)+bvsOverHtml(row,'span')+notes+
   (alt?'<span class="mj-alt">'+esc(alt)+'</span>':'')+
   (src?'<span class="mj-src">'+esc(src)+'</span>':'')+
-  (refSum?'<span class="mj-ref">'+esc(refSum)+'</span>':'')+'</a>'}
+  (refSum?'<span class="mj-ref">'+esc(refSum)+'</span>':'')+tentativeBanner(slug)+'</a>'}
 function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
  if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
   loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
  var rows=bvsSort(bvsSlugs().map(bvsFigures));
  var c=bvsCounts(rows);
  var mix=c.real+' real · '+c.rough+' rough · '+c.none+' no budget · '+c.over+' over budget';
- var cards=rows.map(function(r){return moneyJobCard(r.slug)}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
- hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut" id="money-mix">${esc(mix)}</div></div><div class="money-list">${cards}</div>`);bindDrill(document)}
+ var cards=rows.map(function(r){var card=moneyJobCard(r.slug);if(!card)return '';return card+moneyLinesHtml(r.slug)}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
+ hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut" id="money-mix">${esc(mix)}</div></div><div class="money-list">${cards}</div>`);bindDrill(document);bindLineLinks(document)}
 function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
 function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
-function applyMoneyDoc(doc){if(!canSeeMoney()||!doc||!doc.jobs||typeof doc.jobs!=='object')return false;MONEY=doc;moneyLoaded=true;return true}
+function applyMoneyDoc(doc){if(!canSeeMoney()||!doc||!doc.jobs||typeof doc.jobs!=='object')return false;MONEY=doc;moneyLoaded=true;loadTentativeDoc(doc);return true}
 function moneyDropboxPath(){return moneyDropboxPaths()[0]||''}
 /* moneyPath is the Dropbox file id of money.json in the private money folder (outside the team folder). An id reads the same
    for every person the folder is shared with, and the public shell carries no folder or staff names. moneyPaths are optional fallbacks. */
@@ -4123,12 +4153,12 @@ function budgetLines(slug,show){
  if(show&&moneyLines.length)return moneyLines.map(function(l){
   var revised=l.revised!=null?+l.revised:(+l.budget||0);
   var projected=l.projected_cost!=null?+l.projected_cost:Math.max(revised,+l.committed||0,+l.actual||0);
-  return Object.assign({},l,{category:l.category||'Other',pct_complete:+l.pct_complete||0,original:+l.original||0,approved_cos:+l.approved_cos||0,
+  return withForecast(slug,Object.assign({},l,{category:l.category||'Other',pct_complete:+l.pct_complete||0,original:+l.original||0,approved_cos:+l.approved_cos||0,
    revised:revised,committed:+l.committed||0,actual:+l.actual||0,projected_cost:projected,variance:l.variance!=null?+l.variance:(revised-projected),
    po_labels:(l.po_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
    bill_labels:(l.actual_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
    co_labels:(l.co_items||[]).map(function(i){return i.label||i.id}).filter(Boolean),
-   bid_labels:(l.bid_items||[]).map(function(i){return i.label||i.id}).filter(Boolean)});
+   bid_labels:(l.bid_items||[]).map(function(i){return i.label||i.id}).filter(Boolean)}));
  });
  return idx.map(function(l){return {cost_code:l.cost_code,title:l.title||l.cost_code,bt_code:l.bt_code||'',category:l.category||'Other',pct_complete:+l.pct_complete||0,
   po_count:+l.po_count||0,actual_count:+l.actual_count||0,co_count:+l.co_count||0,bid_count:+l.bid_count||0,pending_count:+l.pending_count||0,
@@ -4147,7 +4177,7 @@ function catPct(slug,cat,lines,show){
  if(!lines.length)return 0;
  return Math.round(10*lines.reduce(function(a,l){return a+(+l.pct_complete||0)},0)/lines.length)/10}
 function budgetCols(l,show){
- var rows=[['Original budget',l.original],['Approved change orders',l.approved_cos],['Revised budget',l.revised],['Committed',l.committed],['Actual costs',l.actual],['Projected cost',l.projected_cost],['Variance',l.variance]];
+ var rows=[['Original budget',l.original],['Approved change orders',l.approved_cos],['Revised budget',l.revised],['Committed',l.committed],['Actual costs',l.actual],['Projected cost',l.projected_cost],['Forecast',l.forecast!=null?l.forecast:l.projected_cost],['Variance',l.variance]];
  return '<div class="cols">'+rows.map(function(r){return '<span>'+r[0]+'</span>'+budgetAmt(show,r[1])}).join('')+'<span>Complete</span><span>'+pctText(l.pct_complete)+'</span></div>'}
 function revenueCard(slug,show){
  var rev=(show&&MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].revenue)||{};
@@ -4185,11 +4215,14 @@ function jobBudgetHtml(slug){
     '<button type="button" class="linecard" data-budget-back="cat">Back to '+esc(line.category||'categories')+'</button>'+
     '<article class="sumcard" data-budget="line"><div class="small">'+esc(line.category||'')+'</div><h2>'+esc(line.title||line.cost_code)+'</h2><div class="small">'+esc(line.cost_code)+'</div>'+
     budgetMeter(line.pct_complete)+'<div class="small">'+pctText(line.pct_complete)+' complete</div>'+
-    (show?budgetCols(line,true):'<p class="amt-hidden">Amounts hidden</p>')+'</article>'+
+    (show?budgetCols(line,true):'<p class="amt-hidden">Amounts hidden</p>')+(show?forecastNote(slug,line):'')+
+    (show&&tentativeCount(slug)?('<div class="small">incl. '+tentativeCount(slug)+' tentative</div>'):'')+'</article>'+
     drillList('Purchase orders',line.po_labels,poItems,show)+
     drillList('Bills',line.bill_labels,bills,show)+
     drillList('Change orders',line.co_labels,cos,show)+
     drillList('Awarded bids',line.bid_labels,bids,show)+
+    (show?linkDetailHtml(slug,line):'')+
+    (show?unassignedHtml(slug):'')+
     '</div>';
   }
  }
@@ -4200,7 +4233,7 @@ function jobBudgetHtml(slug){
    '<button type="button" class="linecard" data-budget-back="home">Back to budget</button>'+
    '<article class="sumcard" data-budget="category"><h2>'+esc(nav.cat)+'</h2><div class="small">'+list.length+' lines · '+pctText(catPct(slug,nav.cat,list,show))+' complete</div>'+
    budgetMeter(catPct(slug,nav.cat,list,show))+(show?'<div class="small">Revised '+budgetAmt(true,sumKey(list,'revised'))+'</div>':'<p class="amt-hidden">Amounts hidden</p>')+'</article>'+
-   list.map(function(l){return '<button type="button" class="linecard" data-budget-line="'+esc(l.cost_code)+'"><b>'+esc(l.title||l.cost_code)+'</b><div class="small mut">'+esc(l.cost_code)+' · '+pctText(l.pct_complete)+' complete</div>'+budgetMeter(l.pct_complete)+(show?'<div class="small">Revised '+budgetAmt(true,l.revised)+' · Variance '+budgetAmt(true,l.variance)+'</div>':'<div class="amt-hidden">Amounts hidden</div>')+'</button>'}).join('')+
+   list.map(function(l){return '<div class="ll-wrap"><button type="button" class="linecard" data-budget-line="'+esc(l.cost_code)+'"><b>'+esc(l.title||l.cost_code)+'</b><div class="small mut">'+esc(l.cost_code)+' · '+pctText(l.pct_complete)+' complete</div>'+budgetMeter(l.pct_complete)+(show?'<div class="small">Revised '+budgetAmt(true,l.revised)+' · Forecast '+budgetAmt(true,l.forecast)+' · Variance '+budgetAmt(true,l.variance)+'</div>'+linkCountText(slug,l.cost_code):'<div class="amt-hidden">Amounts hidden</div>')+'</button>'+(show?forecastNote(slug,l):'')+'</div>'}).join('')+
    '</div>';
  }
  var progress=job.budget_progress!=null?+job.budget_progress:catPct(slug,'',lines,show);
@@ -4210,17 +4243,53 @@ function jobBudgetHtml(slug){
   '<article class="sumcard" data-budget="summary"><div class="small">Job budget</div><h2>'+esc(name)+'</h2>'+
   bvsBlock(slug,show)+
   '<div class="small">'+lines.length+' lines · '+pctText(progress)+' complete</div>'+budgetMeter(progress)+
-  (show?budgetCols({original:sumKey(lines,'original'),approved_cos:sumKey(lines,'approved_cos'),revised:sumKey(lines,'revised'),committed:sumKey(lines,'committed'),actual:sumKey(lines,'actual'),projected_cost:sumKey(lines,'projected_cost'),variance:sumKey(lines,'variance'),pct_complete:progress},true):'<p class="amt-hidden">Amounts hidden</p>')+
-  '</article>'+revenueCard(slug,show)+
+  (show?budgetCols({original:sumKey(lines,'original'),approved_cos:sumKey(lines,'approved_cos'),revised:sumKey(lines,'revised'),committed:sumKey(lines,'committed'),actual:sumKey(lines,'actual'),projected_cost:sumKey(lines,'projected_cost'),forecast:sumKey(lines,'forecast'),variance:sumKey(lines,'variance'),pct_complete:progress},true):'<p class="amt-hidden">Amounts hidden</p>')+
+  (show&&tentativeCount(slug)?('<div class="small">incl. '+tentativeCount(slug)+' tentative</div>'):'')+
+  '</article>'+revenueCard(slug,show)+(show?unassignedHtml(slug):'')+
   '<h3 class="pgh">Categories</h3>'+
   groups.map(function(g){var pct=catPct(slug,g.category,g.lines,show);return '<button type="button" class="catcard" data-budget-cat="'+esc(g.category)+'"><b>'+esc(g.category)+'</b><div class="small mut">'+g.lines.length+' lines · '+pctText(pct)+' complete</div>'+budgetMeter(pct)+(show?'<div class="small">Revised '+budgetAmt(true,sumKey(g.lines,'revised'))+'</div>':'<div class="amt-hidden">Amounts hidden</div>')+'</button>'}).join('')+
   (show&&typeof moneyExtras==='function'?moneyExtras(slug):'')+
   '</div>'}
 function paintJobBudget(root){if(!root)return;var slug=root.getAttribute('data-slug')||(typeof J!=='undefined'&&J&&J.slug)||'';if(root.querySelector){var box=root.querySelector('.jbudget');if(box)slug=box.getAttribute('data-slug')||slug}root.innerHTML=jobBudgetHtml(slug);bindJobBudget(root)}
-function bindJobBudget(root){if(!root)return;
+function bindJobBudget(root){if(!root)return;budgetRoot=root;
  root.querySelectorAll('[data-budget-cat]').forEach(function(el){el.onclick=function(){budgetNav.cat=el.getAttribute('data-budget-cat');budgetNav.line='';paintJobBudget(root)}});
  root.querySelectorAll('[data-budget-line]').forEach(function(el){el.onclick=function(){budgetNav.line=el.getAttribute('data-budget-line');paintJobBudget(root)}});
- root.querySelectorAll('[data-budget-back]').forEach(function(el){el.onclick=function(){if(el.getAttribute('data-budget-back')==='home'){budgetNav.cat='';budgetNav.line=''}else budgetNav.line='';paintJobBudget(root)}})}
+ root.querySelectorAll('[data-budget-back]').forEach(function(el){el.onclick=function(){if(el.getAttribute('data-budget-back')==='home'){budgetNav.cat='';budgetNav.line=''}else budgetNav.line='';paintJobBudget(root)}});
+ bindLineLinks(root)}
+var budgetRoot=null;
+var openLines={};
+var TENTATIVE=[];
+function cleanTentative(a){if(!a)return null;return {slug:String(a.slug||''),cost_code:String(a.cost_code||''),bid_id:String(a.bid_id||''),by:String(a.by||''),at:String(a.at||'')}}
+function loadTentativeDoc(doc){var rows=(doc&&doc.tentative)||[];TENTATIVE=Array.isArray(rows)?rows.map(cleanTentative).filter(function(a){return a&&a.slug&&a.cost_code&&a.bid_id}):[]}
+function tentativeRows(){return TENTATIVE.filter(function(a){return a&&a.bid_id})}
+function sameLineCode(a,b){return String(a||'')===String(b||'')}
+function tentativeFor(slug,code){var hit=null;tentativeRows().forEach(function(a){if(a.slug===slug&&sameLineCode(a.cost_code,code))hit=a});return hit}
+function tentativeCount(slug){var seen={};tentativeRows().forEach(function(a){if(a.slug===slug)seen[a.cost_code]=1});return Object.keys(seen).length}
+function lineLinksJob(slug){var jobs=MONEY&&MONEY.line_links&&MONEY.line_links.jobs;return (jobs&&jobs[slug])||{lines:{},unassigned:{invoices:[],bids:[]},skipped:[]}}
+function lineLinkBucket(slug,code){var lines=lineLinksJob(slug).lines||{};return lines[code]||{invoices:[],actual_rows:[],bids_received:[],bids_approved:[]}}
+function bidAmountOf(item){if(!item)return null;if(item.amount!=null&&item.amount!==''){var n=+item.amount;return isNaN(n)?null:n}var id=item.bid_id||item.id||'';if(id&&typeof moneyNum==='function'){var rec=moneyNum(id,'amount');if(rec!=null)return rec}var rows=(MONEY&&MONEY.bid_comparison)||[];for(var i=0;i<rows.length;i++){if(String(rows[i].id)===String(id)&&rows[i].amount!=null&&rows[i].amount!==''){var m=+rows[i].amount;return isNaN(m)?null:m}}return null}
+function findBid(slug,code,bidId){var box=lineLinkBucket(slug,code);var lists=(box.bids_received||[]).concat(box.bids_approved||[]);for(var i=0;i<lists.length;i++){if(String(lists[i].bid_id)===String(bidId))return lists[i]}var u=(lineLinksJob(slug).unassigned||{}).bids||[];for(var j=0;j<u.length;j++){if(String(u[j].bid_id)===String(bidId))return u[j]}return null}
+function tentativeVendor(slug,code,row){var bid=findBid(slug,code,row&&row.bid_id);return (bid&&bid.vendor)||''}
+function tentativeAmount(slug,code,row){var bid=findBid(slug,code,row&&row.bid_id);return bidAmountOf(bid)}
+function withForecast(slug,line){var revised=line.revised!=null?+line.revised:(+line.budget||0);var projected=line.projected_cost!=null?+line.projected_cost:(line.projected!=null?+line.projected:revised);var forecast=projected;var hit=tentativeFor(slug,line.cost_code);if(hit){var amt=tentativeAmount(slug,line.cost_code,hit);if(amt!=null)forecast=amt}var variance=Math.round((revised-forecast)*100)/100;return Object.assign({},line,{forecast:forecast,variance:variance,projected_cost:projected})}
+function forecastRollup(slug){if(typeof moneyReady==='function'&&!moneyReady())return '';var lines=typeof budgetLines==='function'?budgetLines(slug,true):[];if(!lines.length||!tentativeCount(slug))return '';var forecast=0,variance=0;lines.forEach(function(l){forecast+=+l.forecast||0;variance+=+l.variance||0});function txt(n){if(n==null||isNaN(+n)||+n===0)return '—';return typeof bvsMoneyText==='function'?bvsMoneyText(n):String(Math.round(n))}return 'Forecast '+txt(forecast)+' · Variance '+txt(variance)}
+function tentativeBanner(slug){var n=tentativeCount(slug);if(!n||(typeof moneyReady==='function'&&!moneyReady()))return '';var roll=forecastRollup(slug);var label='incl. '+n+' tentative';if(roll)label=roll+' · '+label;return '<span class="bvs-tent">'+esc(label)+'</span>'}
+function paidMark(paid){if(paid){var html=typeof chip==='function'?chip('Paid','ok'):'';if(html&&html.indexOf('Paid')>=0)return html;return '<span class="chip">Paid</span>'}return '<span class="mut">payment not confirmed</span>'}
+function tentChip(vendor){var label='Tentative · '+(vendor||'bid');var html=typeof chip==='function'?chip(label,'prelim'):'';if(html&&html.indexOf('Tentative')>=0)return html;return '<span class="chip">'+esc(label)+'</span>'}
+function amountMark(amount,empty){if(amount==null||amount==='')return '<span class="mut">'+esc(empty)+'</span>';return budgetAmt(true,amount)}
+function invoiceSourceUrl(item){if(!item||!item.path)return '';if(typeof fileDropboxUrl==='function'){var built=fileDropboxUrl({path:item.path,name:item.name||'',tag:'file'});if(built)return built}var parts=String(item.path).split('/').filter(Boolean);function enc(s){return encodeURIComponent(s).replace(/[!'()*]/g,function(c){return '%'+c.charCodeAt(0).toString(16).toUpperCase()})}var parent=parts.slice(0,-1).map(enc).join('/');var name=item.name||parts[parts.length-1]||'';return 'https://www.dropbox.com/home/'+parent+'?preview='+enc(name)+'&role=work'}
+function openInvoicePreview(slug,item){if(typeof moneyReady==='function'&&!moneyReady())return;if(!item||item.po)return;var url=invoiceSourceUrl(item);var entry={tag:'file',name:item.name||'Invoice',rel:'',path:item.path||'',source:url};if(typeof fileOpen==='function'){fileOpen(slug||'',item.file_id||item.name||'',[],entry);var live=document.querySelector('.fview [data-fsrc]');if(live&&url){live.href=url;live.hidden=false}return}document.querySelectorAll('.fview').forEach(function(n){n.remove()});var view=document.createElement('div');view.className='fview';view.innerHTML='<div class="fshell"><div class="fbar"><button type="button" data-fclose>Close</button><h2>'+esc(item.name||item.vendor||'Invoice')+'</h2></div><div class="fstage"><div class="fnote">In-hub preview</div></div><div class="facts"><a data-fsrc target="_blank" rel="noopener" href="'+esc(url)+'">View source</a></div></div>';document.body.appendChild(view);var close=view.querySelector('[data-fclose]');if(close)close.onclick=function(){view.remove()}}
+function invoiceRowHtml(slug,item){var vendor=item.vendor||item.name||(item.po?('PO '+item.po):'Invoice');var meta=[item.date,item.doc].filter(Boolean).join(' · ');var open=item.po?'':'<button type="button" class="ll-open" data-inv="1" data-slug="'+esc(slug)+'" data-file="'+esc(item.file_id||'')+'" data-path="'+esc(item.path||'')+'" data-name="'+esc(item.name||'')+'">Open</button>';return '<div class="ll-row"><b>'+esc(vendor)+'</b><div class="small mut">'+esc(meta)+'</div><div class="ll-meta">'+paidMark(!!item.paid)+' '+amountMark(item.amount,'amount not read')+'</div>'+open+'</div>'}
+function bidRowHtml(slug,code,item){var amt=bidAmountOf(item);var cur=tentativeFor(slug,code);var on=cur&&String(cur.bid_id)===String(item.bid_id);var btn=(amt!=null)?'<button type="button" data-tent="'+esc(item.bid_id)+'" data-slug="'+esc(slug)+'" data-code="'+esc(code)+'">Tentatively assign</button>':'';var undo=on?'<button type="button" data-tent-undo="1" data-slug="'+esc(slug)+'" data-code="'+esc(code)+'">Undo</button>':'';return '<div class="ll-bid"><b>'+esc(item.vendor||'Vendor')+'</b> '+amountMark(amt,'no amount yet')+' '+(on?tentChip(item.vendor):'')+' '+btn+' '+undo+'</div>'}
+function forecastNote(slug,line){var hit=tentativeFor(slug,line.cost_code);if(!hit)return '';var vendor=tentativeVendor(slug,line.cost_code,hit);return '<div class="ll-tent">'+tentChip(vendor)+' <button type="button" data-tent-undo="1" data-slug="'+esc(slug)+'" data-code="'+esc(line.cost_code)+'">Undo</button></div>'}
+function linkCountText(slug,code){var box=lineLinkBucket(slug,code);var inv=(box.invoices||[]).length,br=(box.bids_received||[]).length,ba=(box.bids_approved||[]).length;if(!inv&&!br&&!ba)return '';var bits=[];if(inv)bits.push(inv+(inv===1?' invoice':' invoices'));if(ba)bits.push(ba+(ba===1?' approved bid':' approved bids'));if(br)bits.push(br+(br===1?' bid received':' bids received'));return '<div class="small mut">'+esc(bits.join(' · '))+'</div>'}
+function linkDetailHtml(slug,line){var box=lineLinkBucket(slug,line.cost_code);var invoices=box.invoices||[],approved=box.bids_approved||[],received=box.bids_received||[],actuals=box.actual_rows||[];function block(title,body){return '<h3 class="pgh">'+esc(title)+'</h3>'+(body||'<div class="small mut">None on this line.</div>')}var invBody=invoices.map(function(it){return invoiceRowHtml(slug,it)}).join('');var actBody=actuals.map(function(it){return '<div class="ll-row"><b>'+esc(it.label||it.id||'Actual')+'</b><div class="ll-meta">'+amountMark(it.amount,'amount not read')+'</div></div>'}).join('');var apprBody=approved.map(function(it){return '<div class="ll-bid"><b>'+esc(it.vendor||'Vendor')+'</b> '+amountMark(bidAmountOf(it),'no amount yet')+'</div>'}).join('');var recBody=received.map(function(it){return bidRowHtml(slug,line.cost_code,it)}).join('');return '<div class="ll-detail" data-line-detail="'+esc(line.cost_code)+'">'+block('Paid invoices',invBody)+block('Actual rows',actBody)+block('Approved bids',apprBody)+block('Bids received',recBody)+'</div>'}
+function unassignedHtml(slug){var u=lineLinksJob(slug).unassigned||{};var invoices=u.invoices||[],bids=u.bids||[];if(!invoices.length&&!bids.length)return '';function row(it,kind){var label=it.vendor||it.name||it.po||it.bid_id||kind;var amt=it.amount==null||it.amount===''?'':(' '+amountMark(it.amount,'amount not read'));return '<div class="ll-row"><b>'+esc(label)+'</b><div class="small mut">'+esc(it.why||'')+'</div>'+amt+'</div>'}return '<section class="unassigned" data-unassigned="1"><h3 class="pgh">Unassigned</h3>'+invoices.map(function(it){return row(it,'Invoice')}).join('')+bids.map(function(it){return row(it,'Bid')}).join('')+'</section>'}
+function moneyLinesHtml(slug){if(typeof moneyReady==='function'&&!moneyReady())return '';var lines=typeof budgetLines==='function'?budgetLines(slug,true):[];if(!lines.length&&!(lineLinksJob(slug).unassigned&&((lineLinksJob(slug).unassigned.invoices||[]).length||(lineLinksJob(slug).unassigned.bids||[]).length)))return '';var body=lines.map(function(l){var key=slug+'\n'+l.cost_code;var open=!!openLines[key];return '<div class="ll-wrap"><button type="button" class="ll-toggle" data-mline="'+esc(l.cost_code)+'" data-slug="'+esc(slug)+'" aria-expanded="'+(open?'true':'false')+'"><b>'+esc(l.title||l.cost_code)+'</b><span class="small mut">'+esc(l.cost_code)+'</span>'+linkCountText(slug,l.cost_code)+'</button>'+(open?'<div class="ll-body">'+forecastNote(slug,l)+linkDetailHtml(slug,l)+'</div>':'')+'</div>'}).join('');return '<div class="money-lines" data-moneylines="'+esc(slug)+'">'+body+unassignedHtml(slug)+'</div>'}
+function assignTentative(slug,code,bidId){if(typeof moneyReady==='function'&&!moneyReady())return;var by=(typeof STORE!=='undefined'&&STORE&&STORE.who)?STORE.who():'';var at=new Date().toISOString().slice(0,19);var bid=bidId||'';TENTATIVE=TENTATIVE.filter(function(a){return !(a.slug===slug&&sameLineCode(a.cost_code,code))});if(bid)TENTATIVE.push({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});if(typeof STORE!=='undefined'&&STORE&&STORE.edit){try{STORE.edit(slug,[{op:'tentative',slug:slug,cost_code:code,bid_id:bid,by:by,at:at}])}catch(e){}}postTentative({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});refreshMoneyViews()}
+function postTentative(row){try{if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;fetch('/api/money/tentative',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(function(){})}catch(e){}}
+function refreshMoneyViews(){if(budgetRoot&&budgetRoot.isConnected)paintJobBudget(budgetRoot);document.querySelectorAll('[data-moneylines]').forEach(function(box){var slug=box.getAttribute('data-moneylines')||'';var html=moneyLinesHtml(slug);if(!html){box.remove();return}var hold=document.createElement('div');hold.innerHTML=html;var fresh=hold.firstChild;if(fresh&&box.parentNode){box.parentNode.replaceChild(fresh,box);bindLineLinks(fresh)}});try{if(typeof parseHash==='function'&&parseHash().page==='money'&&typeof renderMoney==='function')renderMoney()}catch(e){}}
+function bindLineLinks(root){if(!root)return;root.querySelectorAll('[data-mline]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.getAttribute('data-mline')||'';var key=slug+'\n'+code;openLines[key]=!openLines[key];refreshMoneyViews()}});root.querySelectorAll('[data-inv]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.closest('[data-line-detail]')&&el.closest('[data-line-detail]').getAttribute('data-line-detail');var file=el.getAttribute('data-file')||'';var box=lineLinkBucket(slug,code||'');var item=null;(box.invoices||[]).forEach(function(it){if(String(it.file_id||'')===file)item=it});if(!item)item={file_id:file,path:el.getAttribute('data-path')||'',name:el.getAttribute('data-name')||''};openInvoicePreview(slug,item)}});root.querySelectorAll('[data-tent]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'',el.getAttribute('data-tent')||'')}});root.querySelectorAll('[data-tent-undo]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'','')}})}
 
 /* Bid tracker: one tile per job, then that job's trade packages. Amounts come from the private money file. */
 function bidSeeMoney(){if(typeof moneyReady==='function')return !!moneyReady();return typeof canSeeMoney==='function'&&canSeeMoney()}
@@ -6028,7 +6097,7 @@ function openSheet(slug, entry, images, index) {
     swipe.hidden = !many;
     view.querySelector("[data-fcount]").textContent = many ? (state.index + 1) + " / " + state.images.length : "";
     view.querySelector(".fbar h2").textContent = fileDisplayTitle(state.entry);
-    const src = state.found ? fileSourceUrl(state.entry) : "";
+    const src = fileSourceUrl(state.entry);
     const a = view.querySelector("[data-fsrc]");
     if (src) { a.href = src; a.hidden = false; } else { a.removeAttribute("href"); a.hidden = true; }
   }
