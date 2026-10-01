@@ -370,6 +370,11 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .money-job .mj-name,.money-job .mj-amt,.money-job .mj-badges,.money-job .mj-alt,.money-job .mj-src,.money-job .mj-over{display:block;width:100%;max-width:100%;white-space:normal;overflow:visible;overflow-wrap:anywhere;text-overflow:clip}
 .money-job .mj-name{font-weight:650;font-size:16px;line-height:1.3;color:var(--ink)}
 .money-job .mj-amt{margin-top:4px;color:#667085;font-size:13.5px;line-height:1.4}
+.money-job .mj-meta{display:block;margin-top:6px}
+.money-job .mj-review,.money-job .mj-closed{display:inline-block;margin:0 6px 0 0;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700;line-height:1.4}
+.money-job .mj-review{background:#fffaeb;color:#b54708}
+.money-job .mj-closed{background:#eef2f6;color:#475467}
+.money-job .mj-why{display:block;margin-top:4px;color:#667085;font-size:12px;font-weight:650;line-height:1.35}
 .bvs-badge{display:inline-flex;align-items:center;min-height:22px;margin:6px 6px 0 0;padding:2px 8px;border-radius:99px;background:#eef2f6;color:#344054;font-size:12px;font-weight:700;vertical-align:middle}
 .bvs-badge.rough,.bvs-badge.nobudget,.bvs-badge.nospend,.bvs-badge.closed{background:#eef2f6;color:#475467}
 .bvs-badge.conflict,.bvs-badge.warnflag{background:#fffaeb;color:#b54708}
@@ -4124,14 +4129,119 @@ function moneyJobCard(slug){
   (alt?'<span class="mj-alt">'+esc(alt)+'</span>':'')+
   (src?'<span class="mj-src">'+esc(src)+'</span>':'')+
   (refSum?'<span class="mj-ref">'+esc(refSum)+'</span>':'')+tentativeBanner(slug)+'</a>'}
+/* First view uses figures already on the money file. It does not recompute or save them.
+   Locked budget: the stored entry's budget_kind is real, the number is finite, and it is not an estimate and not a CONFLICT.
+   A blank kind or any other kind does not show a budget number. The kind filled in from lines is not used.
+   An estimate (rough, estimate, stated rough total, a label or flag that says estimate, or a label or flag that says rough total) shows the word Estimate.
+   Paid: line-linked invoices whose paid flag is exactly true and whose amount is a finite number.
+   The strings no and false, whitespace amounts, unassigned, unpaid, and blank amounts stay out.
+   Committed: the existing committed total (firm POs and awarded bids) when it is a finite number. Pending and preliminary stay out.
+   A committed value that is present but not finite stays off the card and adds one review.
+   Remaining: the existing remaining, only when it is finite, the budget is locked, and both the stored actual and the verified paid total are finite and within one cent.
+   A missing or non-finite side is not a match, including when committed alone produced a remaining figure.
+   When a finite remaining figure exists but the two sides do not match, the number stays off and the review count gains one, with the reason remaining not verified.
+   The review badge counts unmatched invoices and bids, unread amounts, blank received bids, tentative lines, draft POs, a conflict, and that remaining check. */
+function moneyFinite(v){
+ if(v==null||typeof v==='boolean')return null;
+ if(typeof v==='string'){if(v.trim()==='')return null;v=v.trim()}
+ var n=+v;return isFinite(n)?n:null}
+function budgetFlaggedEstimate(row){
+ if(!row)return false;
+ var kind=String(row.budget_kind||'').toLowerCase();
+ if(kind==='rough'||kind==='estimate')return true;
+ if(String(row.budget_basis||'')==='dean_stated')return true;
+ var blob=[row.budget_label||''].concat(row.flags||[]).join(' ').toLowerCase();
+ if(blob.indexOf('rough total')>=0)return true;
+ return blob.indexOf('estimate')>=0}
+function budgetLocked(row){
+ if(!row||budgetFlaggedEstimate(row))return false;
+ var stored=bvsEntry(row.slug);
+ if(!stored||stored.budget_kind!=='real')return false;
+ var flags=row.flags||[];
+ for(var i=0;i<flags.length;i++){if(String(flags[i]||'').indexOf('CONFLICT')===0)return false}
+ return moneyFinite(row.budget)!=null}
+function paidReadTotal(slug){
+ var lines=(lineLinksJob(slug).lines)||{};
+ var any=false,n=0;
+ Object.keys(lines).forEach(function(code){
+  ((lines[code]||{}).invoices||[]).forEach(function(it){
+   if(!it||it.paid!==true)return;
+   var amt=moneyFinite(it.amount);
+   if(amt==null)return;
+   any=true;n+=amt})});
+ return any?Math.round(n*100)/100:null}
+function actualMatchesPaid(spent, paid){
+ var s=moneyFinite(spent),p=moneyFinite(paid);
+ if(s==null||p==null)return false;
+ return Math.abs(s-p)<=0.01}
+function remainingNeedsReview(slug){
+ var row=bvsFigures(slug);
+ if(!budgetLocked(row)||moneyFinite(row.remaining)==null)return false;
+ return !actualMatchesPaid(row.spent, paidReadTotal(slug))}
+function committedNeedsReview(row){
+ var v=row?row.committed:null;
+ if(v==null||v==='')return false;
+ return moneyFinite(v)==null}
+function moneyReviewCount(slug){
+ var n=0;
+ var job=lineLinksJob(slug);
+ var u=job.unassigned||{};
+ n+=(u.invoices||[]).length+(u.bids||[]).length;
+ var lines=job.lines||{};
+ Object.keys(lines).forEach(function(code){
+  var box=lines[code]||{};
+  var tent=tentativeFor(slug,code);
+  (box.invoices||[]).forEach(function(it){if(it&&(it.amount==null||it.amount===''))n++});
+  (box.bids_received||[]).forEach(function(it){
+   if(bidAmountOf(it)!=null)return;
+   if(tent&&String(tent.bid_id)===String(it.bid_id||it.id||''))return;
+   n++})});
+ n+=tentativeCount(slug);
+ var drafts=((MONEY&&MONEY.imports&&MONEY.imports.po_amounts)||[]).filter(function(p){return p&&p.job===slug&&String(p.status||'draft')==='draft'});
+ n+=drafts.length;
+ var row=bvsFigures(slug);
+ var conflict=false;
+ (row.flags||[]).forEach(function(f){if(String(f||'').indexOf('CONFLICT')===0)conflict=true});
+ if(conflict)n+=1;
+ if(remainingNeedsReview(slug))n+=1;
+ if(committedNeedsReview(row))n+=1;
+ return n}
+function moneyFirstView(slug){
+ var row=bvsFigures(slug);
+ var locked=budgetLocked(row);
+ var paid=paidReadTotal(slug);
+ var committed=moneyFinite(row.committed);
+ var finiteRemaining=moneyFinite(row.remaining);
+ var hasRemaining=locked&&finiteRemaining!=null;
+ var matched=actualMatchesPaid(row.spent, paid);
+ var remaining=(hasRemaining&&matched)?finiteRemaining:null;
+ var reasons=(hasRemaining&&!matched)?['remaining not verified']:[];
+ return {slug:slug,name:bvsName(slug,row),status:row.status||'active',estimate:budgetFlaggedEstimate(row),locked:!!locked,
+  budget:locked?+row.budget:null,paid:paid,committed:committed,remaining:remaining,review:moneyReviewCount(slug),reviewReasons:reasons}}
+function moneyFirstBits(view){
+ var bits=[];
+ if(view.estimate)bits.push('Estimate');
+ else if(view.locked)bits.push('Budget '+bvsMoneyText(view.budget));
+ if(view.paid!=null)bits.push('Paid '+bvsMoneyText(view.paid));
+ if(view.committed!=null)bits.push('Committed '+bvsMoneyText(view.committed));
+ if(view.remaining!=null)bits.push('Remaining '+bvsMoneyText(view.remaining));
+ return bits}
+function moneyFirstCard(slug){
+ var entry=bvsEntry(slug);var lines=jobMoneyLines(slug);
+ if(!entry&&!jobHasFigures(lines))return '';
+ var view=moneyFirstView(slug);
+ var review=view.review?('<span class="mj-review">'+view.review+' to review</span>'):'';
+ var why=(view.reviewReasons||[]).indexOf('remaining not verified')>=0?'<span class="mj-why">remaining not verified</span>':'';
+ var closed=view.status==='closed'?'<span class="mj-closed">Closed</span>':'';
+ var meta=(closed||review||why)?'<span class="mj-meta">'+closed+review+why+'</span>':'';
+ return '<a class="money-job" data-jobmoney="'+esc(slug)+'" data-status="'+esc(view.status)+'" data-review="'+view.review+'" href="#/job/'+esc(slug)+'/money"><span class="mj-name">'+esc(view.name)+'</span>'+
+  meta+'<span class="mj-amt">'+esc(moneyFirstBits(view).join(' · '))+'</span></a>'}
 function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
  if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
   loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
  var rows=bvsSort(bvsSlugs().map(bvsFigures));
- var c=bvsCounts(rows);
- var mix=c.real+' real · '+c.rough+' rough · '+c.none+' no budget · '+c.over+' over budget';
- var cards=rows.map(function(r){var card=moneyJobCard(r.slug);if(!card)return '';return card+moneyLinesHtml(r.slug)}).filter(Boolean).join('')||'<div class="none">No budget lines yet.</div>';
- hubShell('money',`<div class="hph"><h1>Money</h1><div class="small mut" id="money-mix">${esc(mix)}</div></div><div class="money-list">${cards}</div>`);bindDrill(document);bindLineLinks(document)}
+ var cards=rows.map(function(r){return moneyFirstCard(r.slug)}).filter(Boolean).join('')||'<div class="none">No jobs yet.</div>';
+ hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="money-list" id="money-list">${cards}</div>`)}
 function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
 function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
