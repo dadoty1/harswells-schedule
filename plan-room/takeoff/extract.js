@@ -29,6 +29,7 @@ async function xLib() {
   return window.PDFLib;
 }
 function xAuth() {
+  if (window.HWSSync && HWSSync.LS) return HWSSync.LS.get("hws-dbx-auth");
   try { return JSON.parse(localStorage.getItem("hws-dbx-auth") || "null"); } catch (e) { return null; }
 }
 function xHeaders(auth, extra) {
@@ -49,7 +50,8 @@ async function xEnsureAuth() {
     if (r.ok) {
       const a = await r.json();
       auth.root_ns = a.root_info && a.root_info.root_namespace_id;
-      localStorage.setItem("hws-dbx-auth", JSON.stringify(auth));
+      if (window.HWSSync && HWSSync.LS) HWSSync.LS.set("hws-dbx-auth", auth);
+      else localStorage.setItem("hws-dbx-auth", JSON.stringify(auth));
     }
   } catch (e) {}
   return xAuth() || auth;

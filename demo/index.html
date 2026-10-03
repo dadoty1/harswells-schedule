@@ -1440,22 +1440,58 @@ class ConflictError extends Error{constructor(m){super(m);this.name='ConflictErr
 class LockedError extends Error{constructor(lock){super(`Checked out by ${lock.holder||'someone'} since ${lock.checked_out_at||'?'}`);this.name='LockedError';this.lock=lock}}
 class AuthError extends Error{constructor(m){super(m);this.name='AuthError'}}
 class SetupError extends Error{constructor(m,where){super(m);this.name='SetupError';this.where=where}}
-const CFG=Object.assign({live:true,lockHours:12,dropbox:{appKey:'',syncRoot:'/Sample Builders Team Folder/Sample Builders Live Schedule/sync',dataPath:'/Sample Builders Team Folder/Sample Builders Live Schedule/data/data.json',moneyPath:'id:ZrGzURS6iZsAAAAAAAAAIw',moneyPaths:[],pathRoot:'root'}},root.HWS_CONFIG||{});
+const DEFAULT_DBX={appKey:'',syncRoot:'/Sample Builders Team Folder/Sample Builders Live Schedule/sync',dataPath:'/Sample Builders Team Folder/Sample Builders Live Schedule/data/data.json',privatePath:'/Sample Builders Team Folder/Sample Builders Live Schedule/data/hub-private.json',pathRoot:'root'};
+const incoming=root.HWS_CONFIG||{};
+const CFG=Object.assign({live:true,lockHours:12},incoming);
+CFG.dropbox=Object.assign({},DEFAULT_DBX,incoming.dropbox||{});
+/* A money file id baked into the shell is ignored. ensureMoneyPaths fills it after sign-in.
+   The override is applied first, then both keys are deleted again so a saved override cannot put them back. */
+delete CFG.dropbox.moneyPath;delete CFG.dropbox.moneyPaths;
 try{const ov=JSON.parse(localStorage.getItem('hws-config-override')||'null');if(ov){if(ov.dropbox)CFG.dropbox=Object.assign({},CFG.dropbox,ov.dropbox);if(ov.lockHours)CFG.lockHours=ov.lockHours;if('live' in ov)CFG.live=!!ov.live}}catch(e){}
+delete CFG.dropbox.moneyPath;delete CFG.dropbox.moneyPaths;
 /* iOS Home Screen can drop localStorage when the service worker replaces its shell cache
    (the cache name includes the build version). The worker itself never clears localStorage
-   or IndexedDB. These keys are copied into IndexedDB and put back before sign-in is read. */
+   or IndexedDB. These keys are copied into IndexedDB and put back before sign-in is read.
+   Access and refresh tokens are not put back into localStorage. The access token stays in
+   memory and sessionStorage. The IndexedDB mirror keeps the public fields plus the refresh
+   token, never the access token. A cold start with an empty sessionStorage exchanges that
+   refresh token. Other page scripts can still open IndexedDB. */
 const MIRROR=['hws-dbx-auth','hws-sync-kind','hws-cfg-v1','hws-dbx-pkce'];
+const ACCESS_SS='hws-dbx-access';
+let secretMem=null;
+function pubAuth(v){if(!v||typeof v!=='object')return v;const o=Object.assign({},v);delete o.access_token;delete o.refresh_token;return o}
+function takeSecret(v){if(!v||typeof v!=='object')return null;const s={};if(v.access_token)s.access_token=v.access_token;if(v.refresh_token)s.refresh_token=v.refresh_token;return (s.access_token||s.refresh_token)?s:null}
+function rememberSecret(sec){if(!sec){secretMem=null;try{sessionStorage.removeItem(ACCESS_SS)}catch(e){}return}
+ secretMem=Object.assign({},secretMem||{},sec);try{if(secretMem.access_token)sessionStorage.setItem(ACCESS_SS,secretMem.access_token);else sessionStorage.removeItem(ACCESS_SS)}catch(e){}}
+function loadSecret(){if(secretMem&&(secretMem.access_token||secretMem.refresh_token))return secretMem;let access='';try{access=sessionStorage.getItem(ACCESS_SS)||''}catch(e){}
+ if(access)secretMem=Object.assign({},secretMem||{},{access_token:access});return secretMem}
+function joinedAuth(pub){const sec=loadSecret()||{};if(!pub&&!sec.access_token&&!sec.refresh_token)return null;const o=Object.assign({},pub||{});if(sec.access_token)o.access_token=sec.access_token;return o}
+function mirrorAuth(pub){const o=Object.assign({},pub||{});delete o.access_token;if(secretMem&&secretMem.refresh_token)o.refresh_token=secretMem.refresh_token;else delete o.refresh_token;return o}
 function pinStorage(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}}
 async function mirror(k,v){if(MIRROR.indexOf(k)<0)return;try{await kvPut('mirror:'+k,v==null?undefined:v);pinStorage()}catch(e){}}
 function mirrorUsable(k,raw){if(raw==null||raw===''||raw==='null')return false;let v;try{v=JSON.parse(raw)}catch(e){return false}
  if(k==='hws-cfg-v1')return !!(v&&v.source==='dropbox-api');
  if(k==='hws-dbx-auth')return !!(v&&v.access_token);
  return v!=null}
-const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},
- set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}mirror(k,v)},
+const LS={get(k){let pub=null;try{pub=JSON.parse(localStorage.getItem(k)||'null')}catch(e){pub=null}
+  if(k!=='hws-dbx-auth')return pub;
+  const legacy=takeSecret(pub);
+  if(legacy){rememberSecret(legacy);try{localStorage.setItem(k,JSON.stringify(pubAuth(pub)))}catch(e){}}
+  return joinedAuth(legacy?pubAuth(pub):pub)},
+ set(k,v){if(k==='hws-dbx-auth'){if(v==null){rememberSecret(null);try{localStorage.removeItem(k)}catch(e){}mirror(k,null);return}
+  const sec=takeSecret(v);if(sec)rememberSecret(sec);const pub=pubAuth(v);
+  try{localStorage.setItem(k,JSON.stringify(pub))}catch(e){}
+  mirror(k,mirrorAuth(pub));return}
+  try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}mirror(k,v)},
  mirror,
  async restore(){for(const k of MIRROR){let raw=null;try{raw=localStorage.getItem(k)}catch(e){}
+  if(k==='hws-dbx-auth'){let pub=null;try{pub=JSON.parse(raw||'null')}catch(e){pub=null}
+   const legacy=takeSecret(pub);
+   if(legacy){rememberSecret(legacy);const clean=pubAuth(pub);try{localStorage.setItem(k,JSON.stringify(clean))}catch(e){}try{await mirror(k,mirrorAuth(clean))}catch(e){}continue}
+   let saved;try{saved=await kvGet('mirror:'+k)}catch(e){saved=undefined}
+   if(saved==null){loadSecret();continue}
+   const sec=takeSecret(saved);if(sec)rememberSecret(sec);
+   const clean=pubAuth(saved);try{if(clean)localStorage.setItem(k,JSON.stringify(clean))}catch(e){}continue}
   if(mirrorUsable(k,raw)){try{await mirror(k,JSON.parse(raw))}catch(e){}continue}
   let saved;try{saved=await kvGet('mirror:'+k)}catch(e){saved=undefined}
   if(saved==null)continue;
@@ -1502,6 +1538,7 @@ function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b
 const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
 let ROOT_P=null; /* one shared get_current_account for all backend instances */
 function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
+ if(secretMem&&secretMem.refresh_token)auth=Object.assign({},auth||{},{refresh_token:secretMem.refresh_token});
  const hosted=()=>/^https?:$/.test(location.protocol);
  /* Dropbox must return to the app directory, never to a .pdf path or index.html.
     A return URL whose path ends in .pdf makes Safari show a PDF error. */
@@ -1510,8 +1547,11 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
  async function tokenReq(params){const r=await fetch(DBX.token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString(),credentials:'omit'});
   const j=await r.json().catch(()=>({}));if(!r.ok){const blob=String(j.error||'')+' '+String(j.error_description||'');if(authDenied(r.status, blob))throw new AuthError(SIGNIN_MSG);throw new AuthError('Dropbox sign-in failed: '+(j.error_description||j.error||('HTTP '+r.status)))}return j}
  function keep(j){auth=Object.assign({},auth||{},{access_token:j.access_token,expires_at:Date.now()+((j.expires_in||14400)-60)*1000},j.refresh_token?{refresh_token:j.refresh_token}:{},j.account_id?{account_id:j.account_id}:{});LS.set('hws-dbx-auth',auth)}
- async function token(){if(!auth||!auth.access_token)throw new AuthError('not signed in to Dropbox');if(Date.now()<auth.expires_at)return auth.access_token;
-  if(!auth.refresh_token)throw new AuthError(SIGNIN_MSG);keep(await tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}));return auth.access_token}
+ let warming=null;
+ function armRefresh(){if(warming)return warming;warming=tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}).then(function(j){warming=null;keep(j);return auth.access_token}).catch(function(e){warming=null;throw e});return warming}
+ async function token(){if(auth&&auth.access_token&&Date.now()<(auth.expires_at||0))return auth.access_token;
+  if(auth&&auth.refresh_token)return armRefresh();
+  throw new AuthError(auth&&auth.access_token?SIGNIN_MSG:'not signed in to Dropbox')}
  function hdrs(t,extra){const h=Object.assign({Authorization:'Bearer '+t},extra||{});if(c.pathRoot=='home')h['Dropbox-API-Path-Root']='{".tag": "home"}';else if(c.pathRoot=='root'&&auth&&auth.root_ns)h['Dropbox-API-Path-Root']=asciiJson({'.tag':'root',root:auth.root_ns});return h}
  async function call(url,init,retry){
   /* team space: every request needs the account's root namespace. Devices signed in before 9/27 5:25 PM may lack it: fetch it once (no re-sign-in). */
@@ -1527,7 +1567,8 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
   configured:()=>!!c.appKey&&!/^__|REPLACE|YOUR_/i.test(c.appKey),
   async restore(){return !!(auth&&auth.access_token)},
   needsPermission:()=>false,
-  ready:()=>!!(auth&&auth.access_token),
+  ready(){if(auth&&auth.access_token)return true;if(auth&&auth.refresh_token){armRefresh();return true}return false},
+  token,
   describe:()=>auth?`Dropbox${auth.name?' · '+auth.name:''}${auth.email?' ('+auth.email+')':''}`:'Dropbox (signed out)',
   /* sign-in: hosted app = redirect flow; file:// = open Dropbox in a new tab and paste the code it shows (no redirect URI) */
   async connect(){if(!A.configured())throw new AuthError('Dropbox App key is not configured in this build (see DEPLOY.md: register a Dropbox app, then set dropboxAppKey)');
@@ -3757,10 +3798,12 @@ function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
 
 /* Budget vs actual and the Preliminary selection status.
    Dollar amounts are read from the private money file only: window.__HWS_MONEY, a Dropbox
-   download of dropbox.moneyPath / moneyPaths after sign-in (the private money folder, not the public Pages
+   download after sign-in (the file id comes from the private config, not the public Pages
    build), or GET /api/money.json on the office box. They are not taken from the team
-   schedule payload. The money page is limited to common.money_viewers (every hub member since 9/29).
-   Committed POs may also arrive later in money.pos (data/money-pos.json). A missing list changes nothing. */
+   schedule payload. The role check stays, and it is not the only lock: the public shell
+   has no file id, and Dropbox sharing on the money folder is the lock on the phone.
+   The money page is limited to common.money_viewers (every hub member since 9/29).
+   Committed POs may also arrive later in money.pos. A missing list changes nothing. */
 let MONEY=window.__HWS_MONEY||{version:1,selections:{},jobs:{},pos:[],actuals:[],records:{},amounts:{}};
 let moneyLoaded=!!(window.__HWS_MONEY&&window.__HWS_MONEY.jobs);
 let moneyLoading=false;
@@ -3768,19 +3811,19 @@ const MONEY_NOTE='(amounts on money page)';
 function moneyReady(){return !!(moneyLoaded&&typeof canSeeMoney==='function'&&canSeeMoney())}
 function moneyNum(id, key){if(id==null||id==='')return null;const rec=(MONEY.records||{})[String(id)];if(!rec)return null;
  const v=rec[key||'amount'];if(v==null||v==='')return null;const n=+String(v).replace(/[$,]/g,'');return isNaN(n)?null:n}
-function moneyPlain(id, key, raw){const text=raw==null?'':String(raw).trim();
- const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
- const see=moneyReady();
- if(text&&!numeric)return text;
+function moneyPlain(id, key, raw){const see=moneyReady();
  if(!see)return MONEY_NOTE;
+ const text=raw==null?'':String(raw).trim();
+ const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
+ if(text&&!numeric)return text;
  const n=moneyNum(id, key||'amount');
  if(n==null)return MONEY_NOTE;
  return fmt$(n)}
-function moneyCellHtml(id, key, raw){const text=raw==null?'':String(raw).trim();
- const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
- const see=moneyReady();
- if(text&&!numeric)return esc(text);
+function moneyCellHtml(id, key, raw){const see=moneyReady();
  if(!see)return '<span class="mut">'+MONEY_NOTE+'</span>';
+ const text=raw==null?'':String(raw).trim();
+ const numeric=text!==''&&/^\$?\s?-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(text);
+ if(text&&!numeric)return esc(text);
  const n=moneyNum(id, key||'amount');
  if(n==null)return '<span class="mut">'+MONEY_NOTE+'</span>';
  return fmt$(n)}
@@ -4272,16 +4315,23 @@ function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function applyMoneyDoc(doc){if(!canSeeMoney()||!doc||!doc.jobs||typeof doc.jobs!=='object')return false;MONEY=doc;moneyLoaded=true;loadTentativeDoc(doc);loadPoMatchDoc(doc);return true}
 function moneyDropboxPath(){return moneyDropboxPaths()[0]||''}
-/* moneyPath is the Dropbox file id of money.json in the private money folder (outside the team folder). An id reads the same
-   for every person the folder is shared with, and the public shell carries no folder or staff names. moneyPaths are optional fallbacks. */
+/* Paths are empty until sign-in. The private config (not the public shell) names the file. */
 function moneyDropboxPaths(){const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};const out=[];
  [d.moneyPath].concat(Array.isArray(d.moneyPaths)?d.moneyPaths:[]).forEach(function(p){p=String(p||'').trim();if(p&&out.indexOf(p)<0)out.push(p)});return out}
+let moneyPathsReady=false;
+async function ensureMoneyPaths(){if(moneyPathsReady)return;const d=(window.HWSSync&&HWSSync.CFG&&HWSSync.CFG.dropbox)||{};
+ if(d.moneyPath||(Array.isArray(d.moneyPaths)&&d.moneyPaths.length)){moneyPathsReady=true;return}
+ const A=window.HWSSync&&HWSSync.DropboxBackend?HWSSync.DropboxBackend():null;const where=String(d.privatePath||'').trim();
+ if(A&&A.ready()&&where){try{const got=await A.readAbs(where);if(got&&got.text){const doc=JSON.parse(got.text);const box=(doc&&doc.dropbox)||doc||{};
+  if(box.moneyPath)d.moneyPath=String(box.moneyPath);if(Array.isArray(box.moneyPaths))d.moneyPaths=box.moneyPaths.map(function(p){return String(p)})}}catch(e){}}
+ moneyPathsReady=true}
 async function loadMoneyFile(){if(!canSeeMoney()||moneyLoaded||moneyLoading)return;moneyLoading=true;
  try{if(window.__HWS_MONEY&&window.__HWS_MONEY.jobs&&applyMoneyDoc(window.__HWS_MONEY)){if(typeof route==='function')route();return}
+  await ensureMoneyPaths();
   const paths=moneyDropboxPaths();const A=window.HWSSync&&HWSSync.DropboxBackend?HWSSync.DropboxBackend():null;
   if(A&&A.ready()){for(const path of paths){try{const got=await A.readAbs(path);if(got&&got.text){const doc=JSON.parse(got.text);if(applyMoneyDoc(doc)){if(typeof route==='function')route();return}}}catch(e){}}}
-  if(/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname)){try{const who=STORE&&STORE.who?STORE.who():'';
-   const r=await fetch('/api/money.json?who='+encodeURIComponent(who),{cache:'no-store',credentials:'same-origin'});
+  if(/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname)){try{
+   const r=await fetch('/api/money.json',{cache:'no-store',credentials:'same-origin'});
    const ct=r.headers.get('content-type')||'';if(r.ok&&/json/.test(ct)){const doc=await r.json();if(applyMoneyDoc(doc)){if(typeof route==='function')route()}}}catch(e){}}
  }finally{moneyLoading=false}}
 var budgetNav={cat:'',line:''};
@@ -8173,6 +8223,7 @@ async function xLib() {
   return window.PDFLib;
 }
 function xAuth() {
+  if (window.HWSSync && HWSSync.LS) return HWSSync.LS.get("hws-dbx-auth");
   try { return JSON.parse(localStorage.getItem("hws-dbx-auth") || "null"); } catch (e) { return null; }
 }
 function xHeaders(auth, extra) {
@@ -8193,7 +8244,8 @@ async function xEnsureAuth() {
     if (r.ok) {
       const a = await r.json();
       auth.root_ns = a.root_info && a.root_info.root_namespace_id;
-      localStorage.setItem("hws-dbx-auth", JSON.stringify(auth));
+      if (window.HWSSync && HWSSync.LS) HWSSync.LS.set("hws-dbx-auth", auth);
+      else localStorage.setItem("hws-dbx-auth", JSON.stringify(auth));
     }
   } catch (e) {}
   return xAuth() || auth;
