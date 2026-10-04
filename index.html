@@ -729,7 +729,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'1dcb673fcd',built:'10/3/2026 2:29 PM AZ'};
+const HWS_BUILD={version:'8f96d8e6dc',built:'10/3/2026 8:19 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -1406,21 +1406,43 @@ delete CFG.dropbox.moneyPath;delete CFG.dropbox.moneyPaths;
 /* iOS Home Screen can drop localStorage when the service worker replaces its shell cache
    (the cache name includes the build version). The worker itself never clears localStorage
    or IndexedDB. These keys are copied into IndexedDB and put back before sign-in is read.
-   Access and refresh tokens are not put back into localStorage. The access token stays in
-   memory and sessionStorage. The IndexedDB mirror keeps the public fields plus the refresh
-   token, never the access token. A cold start with an empty sessionStorage exchanges that
-   refresh token. Other page scripts can still open IndexedDB. */
+   Access and refresh tokens are not put back into localStorage. On the web, the access token
+   stays in memory and sessionStorage. On the iPhone system sheet it stays in memory only and
+   is never written to or read from sessionStorage. The IndexedDB mirror keeps the public
+   fields plus the refresh token on the web, never the access token. A cold start with an
+   empty sessionStorage exchanges that refresh token. Other page scripts can still open IndexedDB. */
 const MIRROR=['hws-dbx-auth','hws-sync-kind','hws-cfg-v1','hws-dbx-pkce'];
 const ACCESS_SS='hws-dbx-access';
 let secretMem=null;
+let keychainClosed=false;
+const SIGNED_OUT='hws-ios-signed-out';
+let signedOutRetry=null;
 function pubAuth(v){if(!v||typeof v!=='object')return v;const o=Object.assign({},v);delete o.access_token;delete o.refresh_token;return o}
 function takeSecret(v){if(!v||typeof v!=='object')return null;const s={};if(v.access_token)s.access_token=v.access_token;if(v.refresh_token)s.refresh_token=v.refresh_token;return (s.access_token||s.refresh_token)?s:null}
-function rememberSecret(sec){if(!sec){secretMem=null;try{sessionStorage.removeItem(ACCESS_SS)}catch(e){}return}
- secretMem=Object.assign({},secretMem||{},sec);try{if(secretMem.access_token)sessionStorage.setItem(ACCESS_SS,secretMem.access_token);else sessionStorage.removeItem(ACCESS_SS)}catch(e){}}
-function loadSecret(){if(secretMem&&(secretMem.access_token||secretMem.refresh_token))return secretMem;let access='';try{access=sessionStorage.getItem(ACCESS_SS)||''}catch(e){}
+function iosSheet(){try{return !!(root.HwsIos&&root.HwsIos.useSystemSheet&&root.HwsIos.useSystemSheet())}catch(e){return false}}
+function signedOutMarked(){try{return localStorage.getItem(SIGNED_OUT)==='1'}catch(e){return false}}
+function markSignedOut(){try{localStorage.setItem(SIGNED_OUT,'1')}catch(e){}}
+function clearSignedOut(){try{localStorage.removeItem(SIGNED_OUT)}catch(e){}}
+/* The marker is the digit 1. It is not a token. A failed Keychain delete sets it so the next launch retries and does not read. */
+function kickSignedOutRetry(){
+ if(!iosSheet()||!signedOutMarked())return Promise.resolve(false);
+ keychainClosed=true;
+ if(signedOutRetry)return signedOutRetry;
+ signedOutRetry=(async()=>{try{if(!root.HwsIos||typeof root.HwsIos.clearRefreshToken!=='function')throw new Error('keychain delete failed');await root.HwsIos.clearRefreshToken();clearSignedOut();return true}catch(e){return false}finally{signedOutRetry=null;keychainClosed=true}})();
+ return signedOutRetry}
+/* iOS: the refresh token goes to the biometric keychain, never IndexedDB or sessionStorage.
+   The returned promise settles only after that Keychain write, so a rotated token is not lost.
+   The web path still writes the access token to sessionStorage before this function returns. */
+function rememberSecret(sec){if(!sec){secretMem=null;if(!iosSheet()){try{sessionStorage.removeItem(ACCESS_SS)}catch(e){}}return Promise.resolve()}
+ let pending=Promise.resolve();
+ if(iosSheet()&&sec.refresh_token&&root.HwsIos&&root.HwsIos.saveRefreshToken){const tok=sec.refresh_token;delete sec.refresh_token;pending=Promise.resolve(root.HwsIos.saveRefreshToken(tok))}
+ secretMem=Object.assign({},secretMem||{},sec);
+ if(!iosSheet()){try{if(secretMem.access_token)sessionStorage.setItem(ACCESS_SS,secretMem.access_token);else sessionStorage.removeItem(ACCESS_SS)}catch(e){}}
+ return pending}
+function loadSecret(){if(secretMem&&(secretMem.access_token||secretMem.refresh_token))return secretMem;if(iosSheet())return secretMem;let access='';try{access=sessionStorage.getItem(ACCESS_SS)||''}catch(e){}
  if(access)secretMem=Object.assign({},secretMem||{},{access_token:access});return secretMem}
 function joinedAuth(pub){const sec=loadSecret()||{};if(!pub&&!sec.access_token&&!sec.refresh_token)return null;const o=Object.assign({},pub||{});if(sec.access_token)o.access_token=sec.access_token;return o}
-function mirrorAuth(pub){const o=Object.assign({},pub||{});delete o.access_token;if(secretMem&&secretMem.refresh_token)o.refresh_token=secretMem.refresh_token;else delete o.refresh_token;return o}
+function mirrorAuth(pub){const o=Object.assign({},pub||{});delete o.access_token;if(iosSheet()){delete o.refresh_token;return o}if(secretMem&&secretMem.refresh_token)o.refresh_token=secretMem.refresh_token;else delete o.refresh_token;return o}
 function pinStorage(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}}
 async function mirror(k,v){if(MIRROR.indexOf(k)<0)return;try{await kvPut('mirror:'+k,v==null?undefined:v);pinStorage()}catch(e){}}
 function mirrorUsable(k,raw){if(raw==null||raw===''||raw==='null')return false;let v;try{v=JSON.parse(raw)}catch(e){return false}
@@ -1432,10 +1454,10 @@ const LS={get(k){let pub=null;try{pub=JSON.parse(localStorage.getItem(k)||'null'
   const legacy=takeSecret(pub);
   if(legacy){rememberSecret(legacy);try{localStorage.setItem(k,JSON.stringify(pubAuth(pub)))}catch(e){}}
   return joinedAuth(legacy?pubAuth(pub):pub)},
- set(k,v){if(k==='hws-dbx-auth'){if(v==null){rememberSecret(null);try{localStorage.removeItem(k)}catch(e){}mirror(k,null);return}
-  const sec=takeSecret(v);if(sec)rememberSecret(sec);const pub=pubAuth(v);
+ set(k,v){if(k==='hws-dbx-auth'){if(v==null){const done=rememberSecret(null);try{localStorage.removeItem(k)}catch(e){}mirror(k,null);return done}
+  const sec=takeSecret(v);const done=sec?rememberSecret(sec):Promise.resolve();const pub=pubAuth(v);
   try{localStorage.setItem(k,JSON.stringify(pub))}catch(e){}
-  mirror(k,mirrorAuth(pub));return}
+  mirror(k,mirrorAuth(pub));return done}
   try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}mirror(k,v)},
  mirror,
  async restore(){for(const k of MIRROR){let raw=null;try{raw=localStorage.getItem(k)}catch(e){}
@@ -1445,6 +1467,7 @@ const LS={get(k){let pub=null;try{pub=JSON.parse(localStorage.getItem(k)||'null'
    let saved;try{saved=await kvGet('mirror:'+k)}catch(e){saved=undefined}
    if(saved==null){loadSecret();continue}
    const sec=takeSecret(saved);if(sec)rememberSecret(sec);
+   if(iosSheet()&&saved&&saved.refresh_token){delete saved.refresh_token;try{await mirror(k,pubAuth(saved))}catch(e){}}
    const clean=pubAuth(saved);try{if(clean)localStorage.setItem(k,JSON.stringify(clean))}catch(e){}continue}
   if(mirrorUsable(k,raw)){try{await mirror(k,JSON.parse(raw))}catch(e){}continue}
   let saved;try{saved=await kvGet('mirror:'+k)}catch(e){saved=undefined}
@@ -1491,7 +1514,7 @@ const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,
 function randStr(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return b64u(a.buffer).slice(0,n)}
 const asciiJson=o=>JSON.stringify(o).replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
 let ROOT_P=null; /* one shared get_current_account for all backend instances */
-function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
+function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');if(iosSheet())kickSignedOutRetry();
  if(secretMem&&secretMem.refresh_token)auth=Object.assign({},auth||{},{refresh_token:secretMem.refresh_token});
  const hosted=()=>/^https?:$/.test(location.protocol);
  /* Dropbox must return to the app directory, never to a .pdf path or index.html.
@@ -1500,10 +1523,12 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
  const full=p=>(c.syncRoot.replace(/\/$/,'')+'/'+p.replace(/^\//,''));
  async function tokenReq(params){const r=await fetch(DBX.token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString(),credentials:'omit'});
   const j=await r.json().catch(()=>({}));if(!r.ok){const blob=String(j.error||'')+' '+String(j.error_description||'');if(authDenied(r.status, blob))throw new AuthError(SIGNIN_MSG);throw new AuthError('Dropbox sign-in failed: '+(j.error_description||j.error||('HTTP '+r.status)))}return j}
- function keep(j){auth=Object.assign({},auth||{},{access_token:j.access_token,expires_at:Date.now()+((j.expires_in||14400)-60)*1000},j.refresh_token?{refresh_token:j.refresh_token}:{},j.account_id?{account_id:j.account_id}:{});LS.set('hws-dbx-auth',auth)}
+ function keep(j){auth=Object.assign({},auth||{},{access_token:j.access_token,expires_at:Date.now()+((j.expires_in||14400)-60)*1000},j.refresh_token?{refresh_token:j.refresh_token}:{},j.account_id?{account_id:j.account_id}:{});return Promise.resolve(LS.set('hws-dbx-auth',auth))}
  let warming=null;
- function armRefresh(){if(warming)return warming;warming=tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}).then(function(j){warming=null;keep(j);return auth.access_token}).catch(function(e){warming=null;throw e});return warming}
+ function armRefresh(){if(warming)return warming;warming=tokenReq({grant_type:'refresh_token',refresh_token:auth.refresh_token,client_id:c.appKey}).then(function(j){warming=null;return Promise.resolve(keep(j)).then(function(){return auth.access_token})}).catch(function(e){warming=null;throw e});return warming}
  async function token(){if(auth&&auth.access_token&&Date.now()<(auth.expires_at||0))return auth.access_token;
+  if(iosSheet()){await kickSignedOutRetry();if(!signedOutMarked()&&!keychainClosed&&root.HwsIos&&root.HwsIos.retireLegacyRefreshItems){try{await root.HwsIos.retireLegacyRefreshItems()}catch(e){}}}
+  if(!keychainClosed&&!signedOutMarked()&&!(auth&&auth.refresh_token)&&iosSheet()&&root.HwsIos&&root.HwsIos.readRefreshToken){try{const tok=await root.HwsIos.readRefreshToken();if(tok)auth=Object.assign({},auth||{},{refresh_token:tok})}catch(e){}}
   if(auth&&auth.refresh_token)return armRefresh();
   throw new AuthError(auth&&auth.access_token?SIGNIN_MSG:'not signed in to Dropbox')}
  function hdrs(t,extra){const h=Object.assign({Authorization:'Bearer '+t},extra||{});if(c.pathRoot=='home')h['Dropbox-API-Path-Root']='{".tag": "home"}';else if(c.pathRoot=='root'&&auth&&auth.root_ns)h['Dropbox-API-Path-Root']=asciiJson({'.tag':'root',root:auth.root_ns});return h}
@@ -1526,6 +1551,14 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
   describe:()=>auth?`Dropbox${auth.name?' · '+auth.name:''}${auth.email?' ('+auth.email+')':''}`:'Dropbox (signed out)',
   /* sign-in: hosted app = redirect flow; file:// = open Dropbox in a new tab and paste the code it shows (no redirect URI) */
   async connect(){if(!A.configured())throw new AuthError('Dropbox App key is not configured in this build (see DEPLOY.md: register a Dropbox app, then set dropboxAppKey)');
+   /* iPhone app: system sign-in sheet (ASWebAuthenticationSession), never the webview.
+      The PKCE verifier stays in this call. The refresh token goes to the biometric keychain. */
+   if(root.HwsIos&&typeof root.HwsIos.useSystemSheet==='function'&&root.HwsIos.useSystemSheet()){
+    if(signedOutRetry){try{await signedOutRetry}catch(e){}}
+    const done=await root.HwsIos.connectDropbox({appKey:c.appKey});
+    const j=await tokenReq({code:done.code,grant_type:'authorization_code',client_id:c.appKey,code_verifier:done.verifier,redirect_uri:done.redirectUri});
+    if(j.refresh_token&&root.HwsIos.saveRefreshToken){await root.HwsIos.saveRefreshToken(j.refresh_token);delete j.refresh_token}
+    keychainClosed=false;clearSignedOut();await keep(j);await A.account();return 'system'}
    const verifier=randStr(64);const ch=b64u(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));const state=randStr(16);
    const q={client_id:c.appKey,response_type:'code',code_challenge:ch,code_challenge_method:'S256',token_access_type:'offline',state};
    if(hosted()){q.redirect_uri=redirectUri();LS.set('hws-dbx-pkce',{verifier,state,redirect_uri:q.redirect_uri,back:location.hash});location.assign(DBX.auth+'?'+new URLSearchParams(q));return 'redirect'}
@@ -1536,7 +1569,7 @@ function DropboxBackend(){const c=CFG.dropbox;let auth=LS.get('hws-dbx-auth');
    if(e)throw new AuthError('Dropbox sign-in cancelled: '+e);if(!p||p.state!==state)throw new AuthError('Dropbox sign-in: state mismatch (start again)');
    keep(await tokenReq({code,grant_type:'authorization_code',client_id:c.appKey,code_verifier:p.verifier,redirect_uri:p.redirect_uri}));LS.set('hws-dbx-pkce',null);await A.account();return true},
   async account(){try{const a=await rpc('users/get_current_account',null);auth.name=(a.name&&a.name.display_name)||'';auth.email=a.email||'';auth.root_ns=a.root_info&&a.root_info.root_namespace_id;LS.set('hws-dbx-auth',auth);return a}catch(e){if(e&&e.name==='AuthError')throw e;return null}},
-  async disconnect(){try{if(auth&&auth.access_token)await rpc('auth/token/revoke',null)}catch(e){}auth=null;LS.set('hws-dbx-auth',null)},
+  async disconnect(){try{if(auth&&auth.access_token)await rpc('auth/token/revoke',null)}catch(e){}auth=null;LS.set('hws-dbx-auth',null);if(iosSheet()){keychainClosed=true;try{if(!root.HwsIos||typeof root.HwsIos.clearRefreshToken!=='function')throw new Error('keychain delete failed');await root.HwsIos.clearRefreshToken();clearSignedOut()}catch(e){markSignedOut()}}},
   async readAbs(path){const r=await call(DBX.content+'files/download',{method:'POST',headers:{'Dropbox-API-Arg':asciiJson({path})}});
    if(r.status==409){const e=await err(r);if(/not_found/.test(e))return null;if(authDenied(r.status,e))throw new AuthError(SIGNIN_MSG);throw new Error('Dropbox download: '+e)}if(!r.ok)throw new Error('Dropbox download: HTTP '+r.status);
    let meta={};try{meta=JSON.parse(r.headers.get('Dropbox-API-Result')||'{}')}catch(e){}return {text:await r.text(),rev:meta.rev||null}},
