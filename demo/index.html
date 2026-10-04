@@ -366,6 +366,12 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .selcard .pbody{flex:1;min-width:0}.selcard .pt{display:block;font-weight:650}.selcard .ps{display:block;color:#667085;font-size:13px;margin-top:2px}
 .selcard .psrc{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
 .money-list{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%}
+.money-totals{display:flex;flex-direction:column;gap:4px;width:100%;box-sizing:border-box;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.warranty-fold{margin:12px 0;background:#fff;border:1px solid #dde3ec;border-radius:14px;overflow:hidden}
+.warranty-fold>summary{min-height:44px;padding:12px 14px;font-weight:650;cursor:pointer;display:flex;align-items:center;gap:8px}
+.warranty-fold .rows,.warranty-fold .money-list{padding:0 10px 10px}
+.stage-move{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.stage-move button{min-height:44px}
 .money-job{display:block;width:100%;max-width:100%;box-sizing:border-box;text-align:left;background:#fff;border:1px solid #dde3ec;border-radius:14px;padding:14px;min-height:44px;color:inherit;text-decoration:none!important;overflow-wrap:anywhere}
 .money-job .mj-name,.money-job .mj-amt,.money-job .mj-badges,.money-job .mj-alt,.money-job .mj-src,.money-job .mj-over{display:block;width:100%;max-width:100%;white-space:normal;overflow:visible;overflow-wrap:anywhere;text-overflow:clip}
 .money-job .mj-name{font-weight:650;font-size:16px;line-height:1.3;color:var(--ink)}
@@ -6345,6 +6351,26 @@ function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id=
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
  return `${other}<button class="pri small" id="co">Check out to edit</button>`}
+function azStamp(){try{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Phoenix',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+ const g=t=>parts.find(p=>p.type===t).value;return g('year')+'-'+g('month')+'-'+g('day')+' '+g('hour')+':'+g('minute')+':'+g('second')+' AZ'}catch(e){return new Date(Date.now()-7*3600e3).toISOString().slice(0,19).replace('T',' ')+' AZ'}}
+function stageMoveHtml(){if(typeof canSeeMoney!=='function'||!canSeeMoney())return '';
+ const w=typeof warrantyStage==='function'?warrantyStage():null;if(!w||!J)return '';
+ const on=typeof jobIsWarranty==='function'&&jobIsWarranty(J);
+ const label=on?'Move back to active':('Move to '+w.label);
+ const who=(J.info&&J.info.stage_by)||'';const when=(J.info&&J.info.stage_at)||'';
+ const note=(who||when)?`<span class="small mut" data-stage-log="1">${esc([who,when].filter(Boolean).join(' · '))}</span>`:'';
+ return `<div class="stage-move"><button type="button" class="pri" id="stage-move" data-to-warranty="${on?'0':'1'}">${esc(label)}</button>${note}</div>`}
+function moveJobStage(toWarranty){if(typeof canSeeMoney!=='function'||!canSeeMoney())return;
+ const w=typeof warrantyStage==='function'?warrantyStage():null;if(!w||!J||!STORE||!STORE.setSettings)return;
+ const info=Object.assign({},J.info||{});
+ const who=(STORE.who&&STORE.who())||'';const when=azStamp();
+ if(toWarranty){if(typeof isWarrantyStage!=='function'||!isWarrantyStage(info.status)){let prior=info.status||'';if(!prior&&!(typeof isWarrantyStage==='function'&&isWarrantyStage(J.stage)))prior=J.stage||'';info.prior_status=prior}
+  info.status=w.label}
+ else{let back=info.prior_status||'';if(!back||(typeof isWarrantyStage==='function'&&isWarrantyStage(back))){const active=(typeof jobStages==='function'?jobStages():[]).filter(s=>s&&s.group==='active')[0];back=active&&active.label?active.label:'Active'}
+  info.status=back;info.prior_status=''}
+ info.stage_by=who;info.stage_at=when;
+ const summary=(who||'hub')+' set stage to '+info.status+' at '+when;
+ J=STORE.setSettings(J.slug,{info:info},summary);renderJob();toast(summary);if(typeof liveSaved==='function')liveSaved(J.slug)}
 function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>'+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
@@ -6352,7 +6378,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
- ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div></div>`;
+ ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof stageMoveHtml==='function'?stageMoveHtml():''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div></div>`;
  const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
  const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
@@ -6365,6 +6391,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  document.body.classList.add('has-tabs');document.body.classList.remove('hubp');document.body.dataset.pg='job';
  bindTop();const M=$('#mod');
  const co=$('#co');if(co)co.onclick=()=>doCheckout(J.slug);const ci=$('#ci');if(ci)ci.onclick=()=>doCheckin(J.slug);
+ const sm=$('#stage-move');if(sm)sm.onclick=()=>moveJobStage(sm.getAttribute('data-to-warranty')==='1');
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
  if(typeof photoMountJob==='function')photoMountJob(document.getElementById('photo-slot'));
@@ -7156,7 +7183,9 @@ function hubStats(){const h=H(),td=hubToday(),we=h.weekEnd||addD(td,7);const T=a
  const toPlace=h.orderby.length+h.orders.filter(o=>/not ordered|quoted|pending/i.test(o.status||'')&&!h.orderby.some(z=>z.ref==o.id)).length;
  const dl=h.deliveries.filter(d=>d.date>=td);const dlWeek=dl.filter(d=>d.date<=we);
  const fu=h.fups;const fuDue=fu.filter(f=>f.due&&f.due<=we);
- return {td,we,overdue,today,week,high,bOpen,bWeek,bPast,bIn,toPlace,dl,dlWeek,fu,fuDue,jobs:(DATA.list&&DATA.list.jobs||[]).length}}
+ const listed=listedJobRows();
+ const activeN=listed.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage))).length;
+ return {td,we,overdue,today,week,high,bOpen,bWeek,bPast,bIn,toPlace,dl,dlWeek,fu,fuDue,jobs:activeN}}
 /* ---- shared chrome ---- */
 function hubNav(){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files'],['chat','Chat','#/chat']];
  if(typeof canSeeMoney==='function'&&canSeeMoney())it.splice(2,0,['money','Money','#/money']);return it}
@@ -7185,6 +7214,15 @@ function homeComparison(){if(typeof renderBidHome==='function'){const html=rende
   return `<h2 class="sh2">${g.slug?`<a href="${jobHref(g.slug,'bids')}">${title}</a>`:title} <span>${(g.rows||[]).length}</span></h2><div class="cards">${rows}</div>`}).join('');
  return `<section class="home-cmp"><h2 class="sh2 first">Bid comparison</h2>${see?'':'<div class="hint">Amounts stay on the money page.</div>'}${block}</section>`}
 function longDate(s){const t=new Date(dP(s));return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][t.getUTCDay()]+', '+MON[t.getUTCMonth()]+' '+t.getUTCDate()}
+function listedJobRows(){try{if(typeof STORE!=='undefined'&&STORE&&STORE.getList){const L=STORE.getList();if(L&&L.jobs)return L.jobs}}catch(e){}
+ return (DATA&&DATA.list&&DATA.list.jobs)||[]}
+function warrantyJobs(rows){const list=rows||listedJobRows();
+ return list.filter(j=>typeof isWarrantyStage==='function'&&isWarrantyStage(j&&j.stage))}
+function warrantyFold(where,rows){const w=typeof warrantyStage==='function'?warrantyStage():null;if(!w)return '';
+ const jobs=warrantyJobs(rows);if(!jobs.length)return '';
+ const body=jobs.map(j=>`<a class="hrow" data-warranty-job="${esc(j.slug)}" href="${jobHref(j.slug)}"><span class="lb"><span class="lt">${esc(j.name)}</span>${j.address?`<span class="ls">${esc(j.address)}</span>`:''}</span></a>`).join('');
+ const open=(where==='jobs'&&typeof st!=='undefined'&&st&&st.lq)?' open':'';
+ return `<details class="warranty-fold" data-warranty-section="${esc(where)}"${open}><summary>${esc(w.label)} <span>${jobs.length}</span></summary><div class="rows">${body}</div></details>`}
 /* ---- Home ---- */
 function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" href="${href}"><span class="ti">${ico(icon)}</span><span class="tn">${num}</span><span class="tl">${label}</span>${sub?`<span class="ts">${sub}</span>`:''}</a>`}
 function renderHome(){if(typeof photoUsesFieldHome==='function'&&photoUsesFieldHome()){photoRenderFieldHome();return}const S=hubStats();const who=STORE&&STORE.who?STORE.who():'';const nFold=Object.values((DATA.common||{}).job_links||{}).filter(j=>(j.items||[]).some(i=>i.kind=='dropbox')).length;
@@ -7206,6 +7244,7 @@ function renderHome(){if(typeof photoUsesFieldHome==='function'&&photoUsesFieldH
   <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
  hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}${typeof selectionHomeCard==='function'?selectionHomeCard():''}<div class="tiles">${tiles}</div>${dash}
  ${homeComparison()}
+ ${warrantyFold('home')}
  <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidTracker==='function')bindBidTracker(document.getElementById('root'));if(typeof bindBidCards==='function')bindBidCards(document);document.title='Sample Builders · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
@@ -7318,8 +7357,11 @@ function attSlugs(){return Object.keys(DATA.jobs||{})}
 function attInfo(slug){const J=attJ(slug);return (J&&J.info)||{}}
 function attBase(slug){const a=AT();return a&&a.baseline&&a.baseline.jobs&&a.baseline.jobs[slug]||null}
 function attStale(slug){const b=attBase(slug);return !!(b&&b.quality=='stale')}
-function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];if(closed.indexOf(slug)>=0||/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
- return slug!='general'&&!/complet|closeout|overhead|company/i.test(J.stage||'')}
+function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).status||'');const stage=String(J.stage||'');const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];
+ if(closed.indexOf(slug)>=0)return false;
+ if(typeof isWarrantyStage==='function'&&(isWarrantyStage(s)||isWarrantyStage(stage)||isWarrantyStage((J.info&&J.info.status)||'')))return false;
+ if(/inactive|complete|closed|on hold|lost/i.test(s))return false;if(/active|building|construction/i.test(s))return true;
+ return slug!='general'&&!/complet|closeout|overhead|company/i.test(stage)}
 function attOwn(){return (AT()&&AT().owner)||{}}
 function attSig(){return attOwn().name||''}
 function attIsOwner(){try{const O=attOwn();if(!O.match)return false;const re=new RegExp(O.match,'i');const d=(SY&&SY.A&&SY.A.describe)?SY.A.describe():'';const w=STORE&&STORE.who?STORE.who():'';return re.test(d)||re.test(w)}catch(e){return false}}
@@ -7902,6 +7944,87 @@ function cogsName(raw){raw=String(raw||'').trim();if(!raw)return '';const map=(D
  if(map[raw])return map[raw];const hit=Object.keys(map).find(k=>String(map[k]).toLowerCase()===raw.toLowerCase());return hit?map[hit]:raw}
 function canSeeMoney(){const blob=[(STORE&&STORE.who)?STORE.who():'',(SY&&SY.A&&SY.A.describe)?SY.A.describe():''].join(' ');
  return moneyViewers().some(n=>new RegExp('\\b'+String(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(blob))}
+/* Stage list comes from common.job_stages. A warranty group leaves the active lists. No job is named here. */
+function jobStages(){var rows=(DATA&&DATA.common&&DATA.common.job_stages)||[];return Array.isArray(rows)?rows:[]}
+function warrantyStage(){var rows=jobStages();for(var i=0;i<rows.length;i++){if(rows[i]&&rows[i].group==='warranty')return rows[i]}return null}
+function isWarrantyStage(text){var w=warrantyStage();if(!w)return false;var t=String(text==null?'':text).replace(/\s+/g,' ').trim().toLowerCase();if(!t)return false;
+ return t===String(w.label||'').trim().toLowerCase()||t===String(w.id||'').trim().toLowerCase()}
+function jobStageOf(slug){var rows=[];try{if(typeof STORE!=='undefined'&&STORE&&STORE.getList){var L=STORE.getList();if(L&&L.jobs)rows=L.jobs}}catch(e){}
+ if(!rows.length&&DATA&&DATA.list&&DATA.list.jobs)rows=DATA.list.jobs;
+ for(var i=0;i<rows.length;i++){if(rows[i]&&rows[i].slug===slug)return rows[i].stage||''}
+ var job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};return (job.info&&job.info.status)||job.stage||''}
+function jobIsWarranty(job){if(!job)return false;return isWarrantyStage((job.info&&job.info.status)||job.stage||'')}
+function fieldAmount(v){if(v==null||v===''||typeof v==='boolean')return null;if(typeof v==='string'&&v.trim()==='')return null;var n=+String(v).replace(/[$,\s]/g,'');return isFinite(n)?n:null}
+function coBlob(co){return [co&&co.status,co&&co.owner_approval,co&&co.builder_approval].join(' ').toLowerCase()}
+function coStatusText(v){return String(v==null?'':v).replace(/\s+/g,' ').trim().toLowerCase()}
+function coIsApproved(co){if(!co)return false;var s=coStatusText(co.status);return s==='approved'||s==='signed'||s==='accepted'}
+function coIsDead(co){return /void|reject|declin|cancel|denied/.test(coBlob(co))}
+function bidIsAwarded(status){var s=String(status||'').trim().toLowerCase();return s==='awarded'||s==='accepted'||s==='won'||s==='contracted'||s.indexOf('awarded')===0||s.indexOf('accepted')===0}
+function bidIsDead(status){return /declin|reject|lost|withdraw|void|no bid|no-bid|cancel|denied/.test(String(status||'').toLowerCase())}
+function recordAmount(records,id){var rec=records&&records[String(id||'')];if(!rec||typeof rec!=='object'||!('amount' in rec))return null;return fieldAmount(rec.amount)}
+function coVerified(co,records){if(!co)return null;var n=fieldAmount(co.amount);if(n!=null)return n;var keys=[co.co_number,co.id,co.source_id];for(var i=0;i<keys.length;i++){n=recordAmount(records,keys[i]);if(n!=null)return n}return null}
+function bidVerified(sub,records){if(!sub)return null;var n=fieldAmount(sub.amount);if(n!=null)return n;return recordAmount(records,sub.id)}
+function contractJob(slug){return (DATA&&DATA.jobs&&DATA.jobs[slug])||{}}
+function originalContract(slug,job){var records=(MONEY&&MONEY.records)||{};var rec=records[slug];
+ if(rec&&typeof rec==='object'&&('contract' in rec)){var n=fieldAmount(rec.contract);if(n!=null)return n}
+ var saved=(MONEY&&MONEY.revenue&&MONEY.revenue[slug])||null;
+ if(saved&&typeof saved==='object'&&('contract' in saved)){var s=fieldAmount(saved.contract);if(s!=null)return s}
+ var info=(job&&job.info)||{};
+ if(info.contract!=null&&info.contract!==''){var c=fieldAmount(info.contract);if(c!=null)return c}
+ var block=(MONEY&&MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].revenue)||null;
+ if(block&&typeof block==='object'&&('contract' in block)){var b=fieldAmount(block.contract);if(b!=null&&b!==0)return b}
+ return null}
+function approvedTotal(slug,job){var records=(MONEY&&MONEY.records)||{};var cos=job&&job.cos;
+ if(Array.isArray(cos)){var total=0;cos.forEach(function(co){if(!coIsApproved(co)||coIsDead(co))return;var n=coVerified(co,records);if(n!=null)total+=n});return total}
+ var block=(MONEY&&MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].revenue)||null;
+ if(block&&typeof block==='object'&&('approved_cos' in block)){var n=fieldAmount(block.approved_cos);if(n!=null)return n}
+ return 0}
+function pendingCos(job){var records=(MONEY&&MONEY.records)||{};var cos=job&&job.cos;if(!Array.isArray(cos))return 0;var total=0;
+ cos.forEach(function(co){if(coIsApproved(co)||coIsDead(co))return;var n=coVerified(co,records);if(n!=null)total+=n});return total}
+function packageSubs(pkg){var subs=((pkg&&pkg.subs)||[]).filter(function(s){return s&&typeof s==='object'});if(subs.length)return subs;
+ if(pkg&&(pkg.id||(pkg.amount!=null&&pkg.amount!=='')))return [pkg];return []}
+function packageBid(job,bidId){var hit=null;(job&&job.bids||[]).forEach(function(pkg){packageSubs(pkg).forEach(function(sub){if(String(sub.id||'')===String(bidId))hit=sub})});return hit}
+function unsignedAndTentative(slug,job){var records=(MONEY&&MONEY.records)||{};var rows=((MONEY&&MONEY.tentative)||[]).filter(function(a){return a&&a.slug===slug&&a.bid_id});
+ var tentativeIds={},tentative=0,missing=0;
+ rows.forEach(function(row){var id=String(row.bid_id);tentativeIds[id]=1;var sub=packageBid(job,id)||{id:id,status:row.status||''};
+  if(bidIsAwarded(sub.status))return;var n=bidVerified(sub,records);if(n==null)missing++;else tentative+=n});
+ var seen={};Object.keys(tentativeIds).forEach(function(id){seen[id]=1});
+ var packages=[];(job&&job.bids||[]).forEach(function(pkg){if(!pkg)return;packageSubs(pkg).forEach(function(sub){if(sub.id)seen[String(sub.id)]=1});packages.push(pkg)});
+ var links=((MONEY&&MONEY.line_links&&MONEY.line_links.jobs)||{})[slug]||{};var lines=links.lines||{};
+ Object.keys(lines).forEach(function(code){var box=lines[code]||{};var subs=[];(box.bids_received||[]).forEach(function(item){if(!item)return;var id=String(item.bid_id||item.id||'');if(!id||seen[id])return;seen[id]=1;subs.push({id:id,status:item.status||'received',amount:item.amount,vendor:item.vendor})});
+  if(subs.length)packages.push({id:'line:'+code,subs:subs})});
+ var unsigned=0,unresolved=0;
+ packages.forEach(function(pkg){var subs=packageSubs(pkg);
+  if(subs.some(function(sub){return bidIsAwarded(sub.status||pkg.status||'')}))return;
+  var covered=subs.some(function(sub){return sub.id&&tentativeIds[String(sub.id)]});if(covered)return;
+  var amounts=[];subs.forEach(function(sub){var status=sub.status||pkg.status||'';if(bidIsAwarded(status)||bidIsDead(status))return;var n=bidVerified(sub,records);if(n!=null)amounts.push(n)});
+  if(amounts.length===1)unsigned+=amounts[0];else if(amounts.length>1)unresolved++});
+ return {unsigned:unsigned,tentative:tentative,unresolved:unresolved,missingTentative:missing}}
+function contractView(slug){var job=contractJob(slug);var original=originalContract(slug,job);var approved=approvedTotal(slug,job);var pendingCo=pendingCos(job);
+ var extra=unsignedAndTentative(slug,job);var on=original!=null;
+ return {slug:slug,contractOnFile:on,original:original,approved:approved,active:on?original+approved:null,pendingCos:pendingCo,unsigned:extra.unsigned,tentative:extra.tentative,unresolved:extra.unresolved,missingTentative:extra.missingTentative,pending:pendingCo+extra.unsigned+extra.tentative}}
+function contractListBits(slug){var v=contractView(slug);var active=v.contractOnFile?bvsMoneyText(v.active):'Not on file';
+ var pend=v.pending?bvsMoneyText(v.pending):(v.unresolved?'more than one unsigned bid (not added)':'None');
+ return ['Active contract '+active,'Pending / potential '+pend+' (not final)']}
+function contractCell(on,n){if(!on)return 'Not on file';if(n==null||!isFinite(+n))return 'Not on file';if(+n===0)return 'None';return budgetAmt(true,n)}
+function contractCard(slug,show){if(!show)return '<section class="revcard" data-contract="1"><p class="amt-hidden">Amounts hidden</p></section>';
+ var v=contractView(slug);var pend=v.pending?budgetAmt(true,v.pending):(v.unresolved?'Not added':'None');
+ var extra=v.unresolved?'<div class="small mut">'+v.unresolved+' package'+(v.unresolved===1?' has':'s have')+' more than one unsigned bid (not added)</div>':'';
+ return '<section class="revcard" data-contract="1"><div class="small">Contract</div>'+
+  '<div class="cols"><span>Active contract</span>'+contractCell(v.contractOnFile,v.active)+'</div>'+
+  '<div class="cols"><span>Original contract</span>'+contractCell(v.contractOnFile,v.original)+'</div>'+
+  '<div class="cols"><span>Approved change orders</span>'+contractCell(true,v.approved)+'</div>'+
+  '<div class="small">Pending / potential <span class="mut">not final</span></div>'+
+  '<div class="cols"><span>Pending / potential</span>'+pend+'</div>'+
+  '<div class="cols"><span>Pending change orders</span>'+contractCell(true,v.pendingCos)+'</div>'+
+  '<div class="cols"><span>Unsigned bids and proposals</span>'+contractCell(true,v.unsigned)+'</div>'+
+  '<div class="cols"><span>Tentative</span>'+contractCell(true,v.tentative)+'</div>'+extra+'</section>'}
+function moneyTotalsHtml(slugs){var on=0,miss=0,active=0,pending=0;(slugs||[]).forEach(function(slug){var v=contractView(slug);
+ if(v.contractOnFile){on++;active+=+v.active||0}else miss++;
+ pending+=+v.pending||0});
+ var aText=on?bvsMoneyText(active):'Not on file';var pText=pending?bvsMoneyText(pending):'None';
+ var missText=miss?'<div class="small mut">'+miss+' active job'+(miss===1?' has':'s have')+' no contract on file</div>':'';
+ return '<div class="money-totals" data-money-totals="1"><div>Active contract <b>'+esc(aText)+'</b></div><div>Pending / potential <span class="mut">not final</span> <b>'+esc(pText)+'</b></div>'+missText+'</div>'}
 function overlay(){let o={status:{},estimates:{}};try{o=Object.assign(o,JSON.parse(localStorage.getItem(MONEY_KEY)||'{}'))}catch(e){}
  o.status=o.status||{};o.estimates=o.estimates||{};return o}
 function saveOverlay(o){try{localStorage.setItem(MONEY_KEY,JSON.stringify(o))}catch(e){}}
@@ -8363,13 +8486,18 @@ function moneyFirstCard(slug){
  var closed=view.status==='closed'?'<span class="mj-closed">Closed</span>':'';
  var meta=(closed||review||why)?'<span class="mj-meta">'+closed+review+why+'</span>':'';
  return '<a class="money-job" data-jobmoney="'+esc(slug)+'" data-status="'+esc(view.status)+'" data-review="'+view.review+'" href="#/job/'+esc(slug)+'/money"><span class="mj-name">'+esc(view.name)+'</span>'+
-  meta+'<span class="mj-amt">'+esc(moneyFirstBits(view).join(' · '))+'</span></a>'}
+  meta+'<span class="mj-amt">'+esc(moneyFirstBits(view).concat(contractListBits(slug)).join(' · '))+'</span></a>'}
 function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
  if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
   loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
  var rows=bvsSort(bvsSlugs().map(bvsFigures));
- var cards=rows.map(function(r){return moneyFirstCard(r.slug)}).filter(Boolean).join('')||'<div class="none">No jobs yet.</div>';
- hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="money-list" id="money-list">${cards}</div>`)}
+ var active=[],warranty=[];
+ rows.forEach(function(r){if(isWarrantyStage(jobStageOf(r.slug)))warranty.push(r.slug);else active.push(r.slug)});
+ var cards=active.map(function(slug){return moneyFirstCard(slug)}).filter(Boolean).join('')||'<div class="none">No jobs yet.</div>';
+ var wlabel=(warrantyStage()||{}).label||'';
+ var wcards=warranty.map(function(slug){return moneyFirstCard(slug)}).filter(Boolean).join('');
+ var section=wcards?'<details class="warranty-fold" data-warranty-section="money"><summary>'+esc(wlabel)+' <span>'+warranty.length+'</span></summary><div class="money-list">'+wcards+'</div></details>':'';
+ hubShell('money',`<div class="hph"><h1>Money</h1></div>${moneyTotalsHtml(active)}<div class="money-list" id="money-list">${cards}</div>${section}`)}
 function moneyLinksForTask(slug,taskId){const out=[];jobSelections(slug).forEach(s=>{if(s.task_id===taskId||(s.links||[]).some(l=>l.type==='task'&&String(l.id).endsWith(':'+taskId)))out.push({type:'selection',id:slug+':'+s.id,label:(s.choice||s.title||s.id)+(budgetBucket(s)==='preliminary'?' · Preliminary':'')})});return out}
 function moneyLinksForBid(bidId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.bid_id===bidId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
 function moneyLinksForOrder(orderId){const out=[];Object.keys(DATA.jobs||{}).forEach(slug=>{jobSelections(slug).forEach(s=>{if(s.po_id===orderId)out.push({type:'selection',id:slug+':'+s.id,label:s.choice||s.title||s.id})})});return out}
@@ -8435,8 +8563,11 @@ function budgetCols(l,show){
  return '<div class="cols">'+rows.map(function(r){return '<span>'+r[0]+'</span>'+budgetAmt(show,r[1])}).join('')+'<span>Complete</span><span>'+pctText(l.pct_complete)+'</span></div>'}
 function revenueCard(slug,show){
  var rev=(show&&MONEY.jobs&&MONEY.jobs[slug]&&MONEY.jobs[slug].revenue)||{};
+ var view=show?contractView(slug):null;
  var rows=[['Contract amount','contract'],['Approved change orders','approved_cos'],['Invoiced to date','invoiced'],['Received','received'],['Balance to finish','balance_to_finish']];
- return '<section class="revcard"><div class="small">Revenue</div>'+rows.map(function(r){return '<div class="cols"><span>'+r[0]+'</span>'+budgetAmt(show,rev[r[1]]||0)+'</div>'}).join('')+'</section>'}
+ return '<section class="revcard"><div class="small">Revenue</div>'+rows.map(function(r){
+  if(r[1]==='contract')return '<div class="cols"><span>'+r[0]+'</span>'+(show?(view.contractOnFile?budgetAmt(true,view.original):'Not on file'):budgetAmt(false))+'</div>';
+  return '<div class="cols"><span>'+r[0]+'</span>'+budgetAmt(show,rev[r[1]]||0)+'</div>'}).join('')+'</section>'}
 function drillList(title,labels,items,show){
  var body='';
  if(show&&items&&items.length)body=items.map(function(it){return '<div class="linecard"><b>'+esc(it.label||it.id||title)+'</b><div class="small mut">'+esc([it.vendor,it.status].filter(Boolean).join(' · '))+'</div>'+budgetAmt(true,it.amount)+'</div>'}).join('');
@@ -8456,7 +8587,7 @@ function jobBudgetHtml(slug){
   if(show){var emptyRow=bvsFigures(slug);
    if(emptyRow.budget_basis==='dean_stated'||emptyRow.budget_kind==='rough')emptyMsg='';
    else if(emptyRow.budget_kind==='none'||(emptyRow.budget==null&&bvsEntry(slug)))emptyMsg='No budget found'}
-  return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+'<article class="sumcard" data-budget="summary"><h2>Budget</h2><div class="small">'+esc(name)+'</div>'+bvsBlock(slug,show)+(emptyMsg?'<p>'+esc(emptyMsg)+'</p>':'')+'</article></div>'}
+  return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+contractCard(slug,show)+'<article class="sumcard" data-budget="summary"><h2>Budget</h2><div class="small">'+esc(name)+'</div>'+bvsBlock(slug,show)+(emptyMsg?'<p>'+esc(emptyMsg)+'</p>':'')+'</article></div>'}
  if(nav.line){
   var line=null;lines.forEach(function(l){if(l.cost_code===nav.line)line=l});
   if(!line)nav.line='';
@@ -8493,7 +8624,7 @@ function jobBudgetHtml(slug){
  var progress=job.budget_progress!=null?+job.budget_progress:catPct(slug,'',lines,show);
  if(show){var proj=sumKey(lines,'projected_cost');progress=proj?Math.round(1000*sumKey(lines,'actual')/proj)/10:0}
  var groups=budgetGroups(slug,lines);
- return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+
+ return '<div class="jbudget" data-slug="'+esc(slug)+'">'+roll+hid+contractCard(slug,show)+
   '<article class="sumcard" data-budget="summary"><div class="small">Job budget</div><h2>'+esc(name)+'</h2>'+
   bvsBlock(slug,show)+
   '<div class="small">'+lines.length+' lines · '+pctText(progress)+' complete</div>'+budgetMeter(progress)+
@@ -13022,12 +13153,13 @@ function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'dis
  <label>Holidays<select name="holidays" ${dis}>${[['construction','Major US holidays (New Year, Memorial, July 4, Labor, Thanksgiving + Fri, Christmas)'],['federal','All 11 US federal holidays'],['none','No holidays']].map(([k,l])=>`<option value="${k}" ${s.holidays==k?'selected':''}>${l}</option>`).join('')}</select></label>
  <label class="cb w"><input type="checkbox" name="cascade_bt" ${s.cascade_bt?'checked':''} ${dis}> Imported schedule rows follow their links when a predecessor is moved here (off = those rows stay locked and get flagged instead)</label>
  <label>Project manager<input name="pm" value="${esc(i.pm)}" ${dis}></label><label>Client / owner<input name="client" value="${esc(i.client)}" ${dis}></label>
- <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${dis}></label><label>Contract<input name="contract" value="${esc(contractShow)}" ${seeMoney?dis:'disabled'}></label>
+ <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${seeMoney?dis:'disabled'}></label><label>Contract<input name="contract" value="${esc(contractShow)}" ${seeMoney?dis:'disabled'}></label>
  <label class="w">Notes<textarea name="notes" rows="2" ${dis}>${esc(i.notes)}</textarea></label>
  <div class="w"><div class="small mut" style="margin:6px 0 4px">Phase colors</div><div style="display:flex;flex-wrap:wrap;gap:8px">${pcs.map(([p,c])=>`<label class="cb small" style="border:1px solid var(--line);border-radius:6px;padding:3px 6px"><input type="color" data-pc="${esc(p)}" value="${esc(c)}" ${dis} style="width:34px;padding:0;border:0"> ${esc(p)}</label>`).join('')||'<span class="mut small">No phases yet</span>'}</div></div></div>
  ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>`);
  if(!EDIT)return;$('#sf').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const pc={};M.querySelectorAll('[data-pc]').forEach(x=>{if(x.value!=(J.phase_colors||{})[x.dataset.pc])pc[x.dataset.pc]=x.value});
-  const info={pm:f.get('pm'),client:f.get('client'),status:f.get('status'),notes:f.get('notes')};
+  const info={pm:f.get('pm'),client:f.get('client'),notes:f.get('notes')};
+  if(seeMoney)info.status=f.get('status');
   const entered=String(f.get('contract')==null?'':f.get('contract'));
   if(seeMoney&&entered!=='(amounts on money page)'&&(contractNum!=null||contractRaw||entered!==''))info.contract=entered;
   else if(!seeMoney&&contractRaw&&contractRaw===contractShow)info.contract=contractRaw;
@@ -13117,16 +13249,20 @@ async function doRelease(slug){const co=STORE.checkout(slug);if(STORE.pending(sl
  busy(true);try{await SY.locks.release(slug,co)}catch(e){if(e.name!='ConflictError'){toast('Could not release: '+e.message);busy(false);return}}STORE.setCheckout(slug,null);lockCache[slug]={state:'free',at:Date.now()};if(J&&J.slug==slug)renderJob();toast('Check-out cancelled');busy(false)}
 let busyN=0;function busy(on){busyN+=on?1:-1;document.body.classList.toggle('busy',busyN>0)}
 /* ---------- landing (all jobs) ---------- */
-function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const wds=s=>typeof wdSearchText=='function'?wdSearchText(s):'';const jobs=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage+' '+(j.search||'')+' '+wds(j.slug)).toLowerCase().includes(q));
- const hi=L.jobs.reduce((a,j)=>a+j.high,0),od=L.jobs.reduce((a,j)=>a+j.overdue,0);document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
- $('#root').innerHTML=topHtml('jobs')+`<main class="main hub-jobs" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div><div class="lcards"><div class="lcard"><div class="n">${L.jobs.length}</div><div class="b">Jobs</div><div class="small mut">each has its own schedule workspace</div></div>
+function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const wds=s=>typeof wdSearchText=='function'?wdSearchText(s):'';const matched=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage+' '+(j.search||'')+' '+wds(j.slug)).toLowerCase().includes(q));
+ const warranty=matched.filter(j=>typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage));
+ const jobs=matched.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
+ const activeAll=L.jobs.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
+ const counted=L.jobs.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
+ const hi=counted.reduce((a,j)=>a+(+j.high||0),0),od=counted.reduce((a,j)=>a+(+j.overdue||0),0);document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
+ $('#root').innerHTML=topHtml('jobs')+`<main class="main hub-jobs" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div><div class="lcards"><div class="lcard"><div class="n">${activeAll.length}</div><div class="b">Jobs</div><div class="small mut">each has its own schedule workspace</div></div>
  <div class="lcard red"><div class="n">${od}</div><div class="b">Overdue tasks</div><div class="small mut">not complete, past finish</div></div><div class="lcard red"><div class="n">${hi}</div><div class="b">High conflicts</div><div class="small mut">across all jobs</div></div>
  <div class="lcard"><div class="n">${L.jobs.filter(j=>j.tasks).length}</div><div class="b">Jobs with a schedule</div><div class="small mut">dated work on the hub</div></div></div>
  <div class="panel"><h3>Job workspaces <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb"><div class="jgrid">
  ${jobs.map(j=>{const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
  <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
- ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div></div></div></main>`+gnavHtml('jobs');
+ ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div>${typeof warrantyFold==='function'?warrantyFold('jobs',warranty):''}</div></div></main>`+gnavHtml('jobs');
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Sample Builders · Job workspaces'}
 /* ---------- boot ---------- */
 function route(){closeModal();if(!DATA)return;const p=parseHash();
