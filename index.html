@@ -729,7 +729,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'8f96d8e6dc',built:'10/3/2026 8:19 PM AZ'};
+const HWS_BUILD={version:'02a494ccae',built:'10/3/2026 9:59 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -2153,8 +2153,8 @@ function paintBar(root){
       if(r.error&&typeof toast==='function')toast(r.error);
     };
   });
-  const clr=root.querySelector('[data-offclear]');
-  if(clr&&!clr.dataset.bound){clr.dataset.bound='1';clr.onclick=async()=>{
+  const clearBtn=root.querySelector('[data-offclear]');
+  if(clearBtn&&!clearBtn.dataset.bound){clearBtn.dataset.bound='1';clearBtn.onclick=async()=>{
     if(!confirm('Clear saved files on this phone? Plans you saved for offline are removed. The schedule stays.'))return;
     await clearFiles();
     paintBar(document);
@@ -2345,8 +2345,8 @@ function mSchedule(M){const tasks=J.tasks||[];const phases=[...new Set(tasks.map
  const co2=$('#co2');if(co2)co2.onclick=()=>doCheckout(J.slug);
  if($('#pr'))$('#pr').onclick=()=>window.print();bindCsv(M);
  if($('#flt'))$('#flt').onclick=()=>openModal(`<h2>Filters</h2><div class="fsheet">${filt}</div>${view=='gantt'?`<div class="mbtns"><button id="ca2">Collapse phases</button><button id="ea2">Expand phases</button><label class="small">Color <select id="cb2"><option value="source" ${st.colorBy=='source'?'selected':''}>by source</option><option value="phase" ${st.colorBy=='phase'?'selected':''}>by phase</option></select></label></div>`:''}
-  ${legend()}<div class="mbtns">${EDIT?'<button id="bl2">Set baseline</button>':''}<button id="pr2">Print</button>${csvBtn('schedule')}<button id="clr">Clear filters</button><span class="sp"></span><button class="pri" data-close>Done</button></div>`,m=>{
-  bindFilters(m,()=>{saveUi()});m.querySelector('#clr').onclick=()=>{Object.assign(st,{phase:'',who:'',src:'',q:'',overdue:false,critOnly:false,showDone:true});closeModal();re()};
+  ${legend()}<div class="mbtns">${EDIT?'<button id="bl2">Set baseline</button>':''}<button id="pr2">Print</button>${csvBtn('schedule')}<button id="clear-filters">Clear filters</button><span class="sp"></span><button class="pri" data-close>Done</button></div>`,m=>{
+  bindFilters(m,()=>{saveUi()});m.querySelector('#clear-filters').onclick=()=>{Object.assign(st,{phase:'',who:'',src:'',q:'',overdue:false,critOnly:false,showDone:true});closeModal();re()};
   const bl2=m.querySelector('#bl2');if(bl2)bl2.onclick=()=>{closeModal();setBaseline()};m.querySelector('#pr2').onclick=()=>{closeModal();setTimeout(()=>window.print(),100)};bindCsv(m);
   const ca2=m.querySelector('#ca2');if(ca2){ca2.onclick=()=>{phases.forEach(p=>st.collapsed[J.slug+'|'+p]=true);closeModal();re()};m.querySelector('#ea2').onclick=()=>{phases.forEach(p=>delete st.collapsed[J.slug+'|'+p]);closeModal();re()};m.querySelector('#cb2').onchange=e=>{st.colorBy=e.target.value}}},()=>re());
  function drawView(){const el=$('#sv');const ts=filtered();if(!(J.tasks||[]).length){el.innerHTML=emptyState('No schedule yet',EDIT?' Tap “+ Add” to start one.':' No schedule items for this job.');return}
