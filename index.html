@@ -726,6 +726,53 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .photo-app .photo-wait{display:inline-block;margin:0 0 12px;padding:6px 10px;border-radius:999px;background:#fef4e6;color:#7a4b00;font-weight:700}
 .photo-app .photo-err{color:#b42318;font-weight:600}
 .photo-app input[type="text"]{width:100%;min-height:44px;margin:0 0 8px;padding:8px 10px;font-size:17px;border:1px solid #d0d5dd;border-radius:10px}
+
+/* Home v3. One ranked list, then the sections this person left on.
+   Phone is a single column. A wide screen puts My day and Jobs beside the list. */
+.home-v3{min-width:0;max-width:100%}
+.home-hello-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.home-hello-row h1{min-width:0}
+.home-edit{flex:none;border:0;background:transparent;color:var(--navy2);font-weight:700;font-size:15px;min-height:44px;padding:0 4px;cursor:pointer}
+.home-fresh{color:var(--mut);font-size:13px;margin-top:4px}
+.home-fresh.stale{color:#b54708;font-weight:650}
+.home-sec{margin:0 0 16px;min-width:0}
+.home-sec-h{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
+.home-sec-h h2{margin:0;font-size:18px;color:var(--navy);letter-spacing:-.01em}
+.home-sec-h a,.home-see{margin-left:auto;font-weight:700;font-size:14px;white-space:nowrap}
+.home-rank{color:var(--mut);font-size:13px;margin:0 2px 8px}
+.needs-card{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:12px 12px 14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.needs-list{background:#fff;border:1px solid #edf0f4;border-radius:12px;overflow:hidden}
+.need-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;border-top:1px solid #edf0f4;color:var(--ink);text-decoration:none!important;max-width:100%;box-sizing:border-box}
+.needs-list>.need-row:first-child{border-top:0}
+.need-row:active{background:#f3f6fb}
+.need-n{flex:none;width:28px;height:28px;border-radius:50%;color:#fff;font-weight:750;font-size:14px;display:flex;align-items:center;justify-content:center}
+.need-n.red{background:#d92d20}
+.need-n.amber{background:#b54708}
+.need-n.blue{background:#1845a8}
+.need-row .lb{min-width:0}
+.need-row .ls{white-space:normal;overflow-wrap:anywhere}
+.home-go{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;min-height:48px;margin:12px 0 0;border-radius:12px;background:var(--navy);color:#fff;font-weight:750;font-size:16px;text-decoration:none!important}
+.home-attn{margin-top:10px}
+.home-go:active{background:var(--navy2)}
+.home-split{display:block;min-width:0}
+.home-col{min-width:0}
+.home-filters{flex-wrap:wrap}
+.home-edit-lock,.home-edit-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;border-top:1px solid #edf0f4}
+.home-edit-lock{font-weight:650}
+.home-edit-row label{display:flex;align-items:center;gap:8px;min-height:44px;font-weight:600}
+.home-edit-move{display:flex;gap:6px}
+.home-edit-move button{min-height:36px;padding:0 10px}
+.home-edit .aacts{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.home-edit .home-save{background:var(--navy);color:#fff;border:0;border-radius:10px;min-height:44px;padding:0 16px;font-weight:700}
+.hub-home,.home-v3,.needs-list,.need-row,.home-sec{overflow-wrap:anywhere}
+@media(min-width:900px){
+ .home-split{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.9fr);gap:18px;align-items:start}
+ .needs-card{padding:16px 16px 18px}
+}
+@media(max-width:760px){
+ .home-v3,.hub-home{max-width:100%}
+ .hello .home-hello-row h1{font-size:23px}
+}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
@@ -746,7 +793,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'3a52674d49',built:'10/4/2026 1:40 AM AZ'};
+const HWS_BUILD={version:'616f088d29',built:'10/4/2026 3:18 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -7084,9 +7131,762 @@ function attachOfflinePlans(M){
 }
 window.HWSOfflinePlans={attach:attachOfflinePlans};
 
+/* Home v3. Needs you today is a ranked list, not a row of counters.
+   Lines are rebuilt from parts. The money-page placeholder is never shown.
+   Roles pick the default sections. Edit home can hide or reorder them.
+   Needs you today stays first. The money section follows the hub-member gate.
+   This file never requests the money file. */
+const HOME_BANDS = ['due', 'blocks', 'risk', 'age'];
+const HOME_BLOCK = {bid:0, bid_nodate:0, invoice:0, order:1, delivery:1, bill:1, schedule:2, conflict:2, followup:3, selection:3, permit:3};
+const HOME_MONEY = {invoice:1, bill:1, money:1};
+const HOME_TOGGLE = ['my_day', 'jobs', 'money', 'photos', 'inbox', 'buying', 'conflicts', 'everything'];
+const HOME_LABEL = {needs:'Needs you today', my_day:'My day', jobs:'Jobs', money:'Money', photos:'Photos', inbox:'Inbox', buying:'Buying', conflicts:'Schedule conflicts', everything:'Everything else'};
+const HOME_DEFAULTS = {
+  owner: ['needs', 'my_day', 'jobs', 'money', 'photos', 'inbox', 'buying', 'conflicts', 'everything'],
+  owner_money: ['needs', 'money', 'my_day', 'everything'],
+  staff: ['needs', 'my_day', 'jobs', 'money', 'photos', 'inbox', 'buying', 'conflicts', 'everything'],
+  pm: ['needs', 'my_day', 'jobs', 'everything'],
+  field: ['needs', 'my_day', 'jobs'],
+  guest: ['needs', 'photos']
+};
+const HOME_FILTERS = [['overdue', 'Overdue'], ['week', 'Due this week'], ['bids', 'Open bids'], ['orders', 'Flagged orders'], ['followups', 'Follow-ups'], ['conflicts', 'Conflicts']];
+const HOME_LOG = 'hws-home-events-v1';
+
+function homeStrip(text) {
+  return String(text == null ? '' : text)
+    .replace(/[\(\[]?\s*amounts?\s+on\s+(?:the\s+)?money\s+page\s*[\)\]]?/gi, ' ')
+    .replace(/\$\s?\d[\d,]*(?:\.\d+)?[kKmM]?/g, ' ')
+    .replace(/\$\s*[•·*]{2,}/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([,.;:])/g, function (_m, ch) { return ch; })
+    .replace(/^[\s·\-–—,;:]+|[\s·\-–—,;:]+$/g, '');
+}
+function homePublicText(text) { return homeStrip(text); }
+function homeWho() {
+  try { if (typeof STORE !== 'undefined' && STORE && STORE.who) { const w = STORE.who(); if (w) return String(w); } } catch (e) {}
+  try { return localStorage.getItem('hws-who') || ''; } catch (e) { return ''; }
+}
+function homeCanon(raw) {
+  const role = String(raw || '').trim().toLowerCase();
+  if (role === 'owner') return 'owner';
+  if (role === 'owner_money' || role === 'partner') return 'owner_money';
+  if (role === 'staff') return 'staff';
+  if (role === 'pm' || role === 'lead' || role === 'office') return 'pm';
+  if (role === 'field') return 'field';
+  if (role === 'guest' || role === 'client') return 'guest';
+  return '';
+}
+function homeEscapeRe(text) {
+  return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function homeMatch(table, blob) {
+  if (!table || !blob) return '';
+  const keys = Object.keys(table).sort(function (a, b) { return String(b).length - String(a).length; });
+  for (let i = 0; i < keys.length; i++) {
+    const name = String(keys[i]).trim();
+    if (!name) continue;
+    if (new RegExp('\\b' + homeEscapeRe(name) + '\\b', 'i').test(blob)) return table[keys[i]];
+  }
+  return '';
+}
+function homeViewerBlob() {
+  const who = String(homeWho() || '').trim();
+  let extra = '';
+  try {
+    if (typeof SY !== 'undefined' && SY && SY.A && SY.A.describe) extra = String(SY.A.describe() || '');
+  } catch (e) { extra = ''; }
+  return [who, extra].filter(Boolean).join(' ');
+}
+function homeLookup(table, who) {
+  if (!table || !who) return '';
+  if (table[who]) return table[who];
+  const low = String(who).trim().toLowerCase();
+  const key = Object.keys(table).find(function (k) { return String(k).trim().toLowerCase() === low; });
+  return key ? table[key] : '';
+}
+function homeRole() {
+  const blob = homeViewerBlob();
+  const common = (typeof DATA !== 'undefined' && DATA && DATA.common) || {};
+  const named = homeCanon(homeMatch(common.home_roles, blob) || homeMatch(common.roles, blob) || homeLookup(common.roles, homeWho()));
+  if (named) return named;
+  let photo = '';
+  if (typeof photoRole === 'function') { try { photo = photoRole() || ''; } catch (e) { photo = ''; } }
+  if (photo === 'field') return 'field';
+  if (photo === 'client') return 'guest';
+  try { if (typeof parseHash === 'function' && parseHash().page === 'client') return 'guest'; } catch (e) {}
+  return 'guest';
+}
+function homeMoneyOk() {
+  if (typeof canSeeMoney === 'function') return !!canSeeMoney();
+  const blob = homeViewerBlob();
+  const viewers = ((typeof DATA !== 'undefined' && DATA && DATA.common && DATA.common.money_viewers) || []);
+  return viewers.some(function (n) {
+    return new RegExp('\\b' + homeEscapeRe(n) + '\\b', 'i').test(blob);
+  });
+}
+function homeLayoutKey(who) {
+  const slug = String(who || 'signed-out').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'signed-out';
+  return 'hws-home-layout-v3:' + slug;
+}
+function homePrefs() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(homeLayoutKey(homeWho())) || 'null');
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch (e) {}
+  return null;
+}
+function homeSavePrefs(prefs) {
+  const body = {order: (prefs && prefs.order) || [], off: (prefs && prefs.off) || []};
+  try { localStorage.setItem(homeLayoutKey(homeWho()), JSON.stringify(body)); } catch (e) {}
+}
+function homeCatalog(role, moneyOk) {
+  role = HOME_DEFAULTS[role] ? role : 'guest';
+  if (role === 'guest') return ['photos'];
+  if (role === 'field') return HOME_TOGGLE.filter(function (section) { return section !== 'money'; });
+  const allowed = moneyOk === true || (moneyOk !== false && (role === 'owner' || role === 'owner_money' || role === 'staff'));
+  return HOME_TOGGLE.filter(function (section) { return section !== 'money' || allowed; });
+}
+function homeLayout(role, moneyOk) {
+  role = HOME_DEFAULTS[role] ? role : 'guest';
+  const catalog = homeCatalog(role, moneyOk);
+  const base = HOME_DEFAULTS[role].filter(function (section) { return section === 'needs' || catalog.indexOf(section) >= 0; });
+  if (moneyOk && role !== 'guest' && catalog.indexOf('money') >= 0 && base.indexOf('money') < 0) {
+    const at = base.indexOf('jobs');
+    base.splice(at >= 0 ? at + 1 : 1, 0, 'money');
+  }
+  const prefs = homePrefs();
+  if (!prefs) return base;
+  const off = {};
+  (prefs.off || []).forEach(function (section) { if (section !== 'needs') off[section] = 1; });
+  const order = [];
+  (prefs.order || []).forEach(function (section) {
+    if (catalog.indexOf(section) >= 0 && !off[section] && order.indexOf(section) < 0) order.push(section);
+  });
+  base.forEach(function (section) {
+    if (section !== 'needs' && order.indexOf(section) < 0 && !off[section] && catalog.indexOf(section) >= 0) order.push(section);
+  });
+  return ['needs'].concat(order);
+}
+function homeBandIndex(item) {
+  let band = item.band || 'age';
+  if (HOME_BANDS.indexOf(band) < 0) band = 'age';
+  let idx = HOME_BANDS.indexOf(band);
+  if ((+item.stale_days || 0) >= 3) idx = Math.min(HOME_BANDS.length - 1, idx + 1);
+  return idx;
+}
+function homeSortKey(item) {
+  const band = item.band || 'age';
+  const block = band === 'blocks' ? (HOME_BLOCK[item.problem] == null ? 9 : HOME_BLOCK[item.problem]) : 0;
+  return [homeBandIndex(item), block, item.due || '9999-99-99', -(+item.age_days || 0), item.milestone || '9999-99-99', String(item.job || '').toLowerCase(), String(item.id || '')];
+}
+function homeCmp(a, b) {
+  const ka = homeSortKey(a), kb = homeSortKey(b);
+  for (let i = 0; i < ka.length; i++) {
+    if (ka[i] < kb[i]) return -1;
+    if (ka[i] > kb[i]) return 1;
+  }
+  return 0;
+}
+function homeCollapse(items) {
+  const groups = {}, order = [];
+  (items || []).forEach(function (item) {
+    const key = (item.slug || item.job || '') + '\n' + (item.problem || 'item');
+    if (!groups[key]) { groups[key] = []; order.push(key); }
+    groups[key].push(item);
+  });
+  return order.map(function (key) {
+    const rows = groups[key].slice().sort(homeCmp);
+    const top = Object.assign({}, rows[0]);
+    let total = 0;
+    rows.forEach(function (row) { total += (+row.count || 1); if (row.missed) top.missed = true; });
+    top.count = total;
+    if (top.problem === 'conflict' && total > 1) {
+      top.verb = 'Review';
+      top.thing = 'the schedule, ' + total + ' items behind';
+    }
+    return top;
+  });
+}
+function homePrepare(items, role) {
+  const allowed = homeMoneyOk(role);
+  const out = [];
+  (items || []).forEach(function (item) {
+    const row = Object.assign({}, item);
+    const problem = row.problem || '';
+    if (!allowed && (HOME_MONEY[problem] || row.risk === 'money')) return;
+    delete row.amount;
+    row.show_amount = false;
+    out.push(row);
+  });
+  return out;
+}
+function homeCap(role) { return role === 'field' ? 3 : 5; }
+function homeRank(items, role) {
+  role = HOME_DEFAULTS[role] ? role : 'guest';
+  const merged = homeCollapse(homePrepare(items, role)).sort(homeCmp);
+  return {shown: merged.slice(0, homeCap(role)), all: merged};
+}
+function homeVerbThing(kind, count) {
+  const verb = {bid:'Chase', bid_nodate:'Set a due date on', delivery:'Confirm', schedule:'Review', conflict:'Review', followup:'Finish', order:'Place', selection:'Send', permit:'Answer', invoice:'Approve', bill:'Code'}[kind] || 'Open';
+  let thing = {bid:'the open bids', bid_nodate:'the bid requests', delivery:'the delivery', schedule:'the schedule', conflict:'the schedule conflict', followup:'the follow-up', order:'the order', selection:'the selection', permit:'the permit', invoice:'the next invoice', bill:'the bill'}[kind] || 'this item';
+  if (kind === 'bid' && count > 1) thing = count + ' open bids';
+  if (kind === 'delivery' && count > 1) thing = 'the deliveries';
+  return {verb: verb, thing: thing};
+}
+function homeRewrite(item) {
+  item = item || {};
+  const kind = item.problem || item.kind || '';
+  const blob = ((item.legacy || '') + ' ' + (item.thing || '')).toLowerCase();
+  let verb = homeStrip(item.verb || '');
+  let thing = homeStrip(item.thing || '');
+  let why = homeStrip(item.why || '');
+  const job = homeStrip(item.job || '');
+  const count = +item.count || 0;
+  if (blob.indexOf('bid request') >= 0 && (blob.indexOf('due date') >= 0 || blob.indexOf('no due') >= 0)) {
+    verb = 'Set a due date on'; thing = 'the bid requests'; why = '';
+  } else if (/\bbids?\s+due\b/.test(blob) || (blob.indexOf('chase') >= 0 && blob.indexOf('bid') >= 0)) {
+    verb = 'Chase'; thing = 'the open bids'; why = '';
+  }
+  if (!verb || !thing) {
+    const fallback = homeVerbThing(kind, count);
+    verb = verb || fallback.verb;
+    thing = thing || fallback.thing;
+  }
+  if (kind === 'conflict' && count > 1) {
+    verb = 'Review';
+    thing = 'the schedule, ' + count + ' items behind';
+  }
+  let title = (verb + ' ' + thing).replace(/\s+/g, ' ').trim();
+  const bits = [];
+  if (job) bits.push(job);
+  if (why && title.toLowerCase().indexOf(why.toLowerCase()) < 0) bits.push(why);
+  const stale = +item.stale_days || 0;
+  if (stale >= 3) {
+    const mark = stale + ' days';
+    if (bits.join(' ').indexOf(mark) < 0) bits.push(mark);
+  }
+  let line = bits.length ? title + ' · ' + bits.join(' · ') : title;
+  return homeStrip(line);
+}
+function homeTags(item, today, weekEnd) {
+  const tags = [];
+  const due = item.due || '';
+  if (item.missed || (due && today && due < today)) tags.push('overdue');
+  if (due && today && weekEnd && due >= today && due <= weekEnd) tags.push('week');
+  const problem = item.problem || '';
+  if (problem === 'bid' || problem === 'bid_nodate') tags.push('bids');
+  if (problem === 'order') tags.push('orders');
+  if (problem === 'followup') tags.push('followups');
+  if (problem === 'conflict') tags.push('conflicts');
+  return tags;
+}
+function homeCounts(items, today, weekEnd) {
+  const counts = {overdue:0, week:0, bids:0, orders:0, followups:0, conflicts:0};
+  (items || []).forEach(function (item) {
+    homeTags(item, today, weekEnd).forEach(function (tag) { counts[tag] += 1; });
+  });
+  return counts;
+}
+function homeSlug(slug) { return String(slug || '').toLowerCase().replace(/[^a-z0-9-]/g, ''); }
+function homeHrefFor(item) {
+  if (item && item.href && String(item.href).charAt(0) === '#') return item.href;
+  const slug = homeSlug(item && item.slug);
+  if (!slug) return '#/needs';
+  if (item.problem === 'bid' || item.problem === 'bid_nodate') return '#/job/' + slug + '/bids';
+  if (item.problem === 'conflict') return '#/job/' + slug + '/conflicts';
+  if (item.problem === 'selection') return '#/job/' + slug + '/selections';
+  if (item.problem === 'followup') return '#/job/' + slug + '/todos';
+  if (item.problem === 'order' || item.problem === 'delivery') return '#/trackers/orders';
+  return '#/job/' + slug + '/schedule';
+}
+function homeTone(index) { return index < 2 ? 'red' : (index === 2 ? 'amber' : 'blue'); }
+function homeRow(item, index) {
+  const line = homeRewrite(item);
+  const parts = line.split(' · ');
+  const title = parts[0] || line;
+  const sub = parts.slice(1).join(' · ');
+  const kind = item.problem || '';
+  return `<a class="need-row" data-kind="${esc(kind)}" href="${esc(homeHrefFor(item))}"><span class="need-n ${homeTone(index)}">${index + 1}</span><span class="lb"><span class="lt">${esc(title)}</span>${sub ? `<span class="ls">${esc(sub)}</span>` : ''}</span></a>`;
+}
+function homeLog(name, itemType) {
+  const row = {name: name, role: homeRole(), item_type: itemType || '', ts: Date.now()};
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(HOME_LOG) || '[]'); } catch (e) { list = []; }
+  if (!Array.isArray(list)) list = [];
+  list.push(row);
+  if (list.length > 200) list = list.slice(-200);
+  try { localStorage.setItem(HOME_LOG, JSON.stringify(list)); } catch (e) {}
+  return row;
+}
+function homeNoteView() {
+  const now = Date.now();
+  if (window.__hwsHomeViewAt && now - window.__hwsHomeViewAt < 1500) return;
+  window.__hwsHomeViewAt = now;
+  homeLog('home_view', '');
+}
+function homePmOn() {
+  const home = (DATA && DATA.common && DATA.common.home) || {};
+  return !!(home.pm_scope || home.pm_scope_enabled);
+}
+function homeAssigned(slug) {
+  const att = (DATA && DATA.common && DATA.common.attention) || {};
+  const row = (att.assigned || {})[slug] || {};
+  let pm = row.pm || '';
+  try {
+    const job = (typeof STORE !== 'undefined' && STORE && STORE.getJob) ? STORE.getJob(slug) : (DATA.jobs || {})[slug];
+    if (job && job.info && job.info.pm) pm = job.info.pm;
+  } catch (e) {}
+  return pm || '';
+}
+function homeInScope(item, role) {
+  if (role !== 'pm' || !homePmOn()) return true;
+  const who = homeWho().trim().toLowerCase();
+  if (!who) return false;
+  return homeAssigned(item.slug || '').toLowerCase().indexOf(who) >= 0;
+}
+function homeGuestSlug() {
+  const common = (DATA && DATA.common) || {};
+  return homeSlug((common.home && common.home.guest_job) || common.guest_job || '');
+}
+function homeAgeDays(due, today) {
+  if (!due || !today || due >= today) return 0;
+  const a = Date.parse(String(due).slice(0, 10) + 'T00:00:00Z');
+  const b = Date.parse(String(today).slice(0, 10) + 'T00:00:00Z');
+  if (!isFinite(a) || !isFinite(b)) return 0;
+  return Math.max(0, Math.round((b - a) / (24 * 60 * 60 * 1000)));
+}
+function homePush(items, row) {
+  if (!row || !row.problem) return;
+  const td = (typeof hubToday === 'function') ? hubToday() : homeAzDay();
+  if (row.due) {
+    const age = homeAgeDays(row.due, td);
+    row.age_days = age;
+    if (age >= 3) row.stale_days = Math.max(+row.stale_days || 0, age);
+  }
+  row.legacy = homeStrip(row.legacy || '') ? (row.legacy || '') : (row.legacy || '');
+  items.push(row);
+}
+function homeCollect() {
+  const items = [];
+  const td = (typeof hubToday === 'function') ? hubToday() : homeAzDay();
+  const we = (typeof H === 'function' && H().weekEnd) || (typeof addD === 'function' ? addD(td, 7) : td);
+  const jobs = {};
+  if (typeof allTasks === 'function') {
+    allTasks().forEach(function (x) {
+      const t = x.t || {};
+      if (t.done || t.status === 'done') return;
+      const finish = t.finish || t.start;
+      if (!finish) return;
+      const missed = !!(t.overdue || finish < td);
+      const dueToday = t.start && t.start <= td && finish >= td;
+      const thisWeek = t.start && t.start > td && t.start <= we;
+      if (!missed && !dueToday && !thisWeek) return;
+      const bucket = jobs[x.slug] || (jobs[x.slug] = {slug:x.slug, job:x.job, missed:0, today:0, week:0, nearest:finish, sample:t.task || ''});
+      if (missed) bucket.missed += 1;
+      else if (dueToday) bucket.today += 1;
+      else bucket.week += 1;
+      if (finish < bucket.nearest) bucket.nearest = finish;
+      if (t.task) bucket.sample = bucket.sample || t.task;
+    });
+  }
+  Object.keys(jobs).forEach(function (slug) {
+    const b = jobs[slug];
+    const n = b.missed + b.today + b.week;
+    const band = (b.missed || b.today) ? 'due' : 'age';
+    homePush(items, {
+      id: slug + '|schedule', slug: slug, job: b.job, problem: 'schedule', band: band,
+      missed: b.missed > 0, due: b.nearest, count: n, milestone: b.nearest,
+      verb: b.missed ? 'Clear' : 'Finish',
+      thing: b.missed ? (n + ' overdue schedule items') : (n === 1 ? b.sample : (n + ' items on the schedule')),
+      why: b.missed ? 'missed' : 'due today',
+      legacy: b.sample
+    });
+  });
+  const jobMap = (DATA && DATA.jobs) || {};
+  Object.keys(jobMap).forEach(function (slug) {
+    let job = jobMap[slug];
+    try { if (typeof STORE !== 'undefined' && STORE && STORE.getJob) job = STORE.getJob(slug) || job; } catch (e) {}
+    const conf = (job && job.conflicts) || [];
+    const rows = conf.filter(function (c) { return c && (c.severity === 'high' || /past|behind|overdue/i.test(c.title || '')); });
+    if (!rows.length) return;
+    const missed = rows.some(function (c) { return /past|overdue/i.test((c.title || '') + ' ' + (c.kind || '')); });
+    homePush(items, {
+      id: slug + '|conflict', slug: slug, job: (job && job.name) || slug, problem: 'conflict',
+      band: missed ? 'due' : 'risk', missed: missed, due: td, count: rows.length, milestone: '',
+      why: 'schedule risk', legacy: rows[0].title || ''
+    });
+  });
+  const bids = {};
+  ((typeof H === 'function' ? H().bids : []) || []).forEach(function (b) {
+    const status = String(b.status || '').toLowerCase();
+    if (status === 'received' || status === 'declined' || status === 'awarded') return;
+    const past = !!(b.pastDue || (b.due && b.due < td));
+    const noDate = !b.due;
+    const week = b.due && b.due > td && b.due <= we;
+    if (!past && b.due !== td && !noDate && !week) return;
+    const problem = noDate ? 'bid_nodate' : 'bid';
+    const key = (b.slug || b.job || '') + '|' + problem;
+    const g = bids[key] || (bids[key] = {slug:b.slug, job:b.job, problem:problem, count:0, past:false, due:b.due || '', noDate:noDate, legacy:''});
+    g.count += 1;
+    if (past) g.past = true;
+    if (b.due && (!g.due || b.due < g.due)) g.due = b.due;
+    g.legacy = g.legacy || ((b.notes || '') + ' ' + (b.amount_label || ''));
+    bids[key] = g;
+  });
+  Object.keys(bids).forEach(function (key) {
+    const g = bids[key];
+    const band = (g.past || g.due === td) ? 'due' : 'blocks';
+    homePush(items, {
+      id: key, slug: g.slug, job: g.job, problem: g.problem, band: band, missed: g.past,
+      due: g.due || '', count: g.count, milestone: g.due || '',
+      verb: g.problem === 'bid_nodate' ? 'Set a due date on' : 'Chase',
+      thing: g.problem === 'bid_nodate' ? 'the bid requests' : (g.count > 1 ? g.count + ' open bids' : 'the open bids'),
+      why: g.past ? 'missed' : (g.noDate ? 'blocks the order' : ''),
+      legacy: g.legacy
+    });
+  });
+  const seenDelivery = {};
+  ((typeof H === 'function' ? H().deliveries : []) || []).forEach(function (d) {
+    if (!d || !d.date || d.date > td) return;
+    const key = (d.slug || d.job || '') + '|delivery';
+    if (seenDelivery[key]) { seenDelivery[key].count += 1; if (d.date < td) seenDelivery[key].missed = true; return; }
+    seenDelivery[key] = {
+      id: key, slug: d.slug, job: d.job || '', problem: 'delivery', band: 'due',
+      missed: d.date < td, due: d.date, count: 1, milestone: d.date,
+      verb: 'Confirm', thing: d.title || 'the delivery', why: d.date < td ? 'missed' : 'due today',
+      legacy: d.title || ''
+    };
+  });
+  Object.keys(seenDelivery).forEach(function (key) { homePush(items, seenDelivery[key]); });
+  const fups = {};
+  ((typeof H === 'function' ? H().fups : []) || []).forEach(function (f) {
+    if (!f || !f.due || f.status === 'done' || f.due > we) return;
+    const key = (f.slug || f.job || '') + '|followup';
+    const g = fups[key] || (fups[key] = {id:key, slug:f.slug, job:f.job || '', problem:'followup', count:0, missed:false, due:f.due, legacy:f.item || ''});
+    g.count += 1;
+    if (f.due < td) g.missed = true;
+    if (f.due < g.due) g.due = f.due;
+    fups[key] = g;
+  });
+  Object.keys(fups).forEach(function (key) {
+    const g = fups[key];
+    g.band = (g.missed || g.due === td) ? 'due' : 'age';
+    g.verb = 'Finish';
+    g.thing = g.count > 1 ? (g.count + ' follow-ups') : 'the follow-up';
+    g.why = g.missed ? 'missed' : '';
+    g.milestone = g.due;
+    homePush(items, g);
+  });
+  ((typeof H === 'function' ? H().orderby : []) || []).forEach(function (o) {
+    if (!o) return;
+    const late = o.by && o.by < td;
+    homePush(items, {
+      id: (o.slug || '') + '|order|' + (o.ref || o.title || ''),
+      slug: o.slug, job: o.job || '', problem: 'order', band: late ? 'due' : 'blocks',
+      missed: !!late, due: o.by || '', count: 1, milestone: o.need || o.by || '',
+      verb: 'Place', thing: 'the order', why: late ? 'missed' : 'blocks the schedule',
+      legacy: o.title || ''
+    });
+  });
+  if (typeof selDeadlineJobs === 'function') {
+    selDeadlineJobs().forEach(function (r) {
+      if (!r || (!r.overdue && !r.week)) return;
+      homePush(items, {
+        id: (r.slug || '') + '|selection', slug: r.slug, job: r.name || '', problem: 'selection',
+        band: r.overdue ? 'due' : 'age', missed: r.overdue > 0, due: td, count: (r.overdue || 0) + (r.week || 0),
+        verb: 'Send', thing: 'the selection', why: r.overdue ? 'waiting on the client' : 'due this week'
+      });
+    });
+  }
+  return items;
+}
+function homeItemsFor(role) {
+  let items = homeCollect().filter(function (item) { return homeInScope(item, role); });
+  if (role === 'guest') {
+    const only = homeGuestSlug();
+    items = only ? items.filter(function (item) { return homeSlug(item.slug) === only; }) : [];
+  }
+  return items;
+}
+function homeAzDay() {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {timeZone:'America/Phoenix', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date());
+  } catch (e) {
+    return typeof iso === 'function' ? iso(Date.now() - 7 * 3600e3) : '';
+  }
+}
+function homeFresh() {
+  const raw = String((DATA && DATA.built) || '');
+  const cleaned = raw.replace(/\s*AZ\s*$/i, '').replace(/^[A-Za-z]{3},\s*/, '').replace(/^[A-Za-z]{3}\s+/, '');
+  const ms = Date.parse(cleaned);
+  if (!isFinite(ms)) return {stale:false, text:'Live · shared schedule'};
+  let clock = '';
+  try {
+    clock = new Intl.DateTimeFormat('en-US', {timeZone:'America/Phoenix', hour:'numeric', minute:'2-digit'}).format(new Date(ms));
+  } catch (e) { clock = ''; }
+  if (Date.now() - ms > 12 * 3600 * 1000) {
+    let when = raw.replace(/\s*AZ\s*$/i, '');
+    return {stale:true, text:'Data from ' + when + ', refresh paused'};
+  }
+  return {stale:false, text: clock ? ('Live · data from ' + clock + ' AZ') : 'Live · shared schedule'};
+}
+function homeMine(slug, role) {
+  if (role !== 'guest') return true;
+  const only = homeGuestSlug();
+  return !!only && homeSlug(slug) === only;
+}
+function homeMyDayRows() {
+  const td = (typeof hubToday === 'function') ? hubToday() : homeAzDay();
+  const role = homeRole();
+  if (role === 'guest' && !homeGuestSlug()) return [];
+  const rows = [];
+  if (typeof allTasks === 'function') {
+    allTasks().forEach(function (x) {
+      const t = x.t || {};
+      if (t.done || t.status === 'done') return;
+      if (!homeMine(x.slug, role)) return;
+      const insp = t.milestone_type === 'inspection' || /inspect/i.test(t.task || '');
+      if (t.start === td || (insp && (t.finish === td || t.start === td))) {
+        rows.push({title: homePublicText(t.task || 'Scheduled item'), sub: x.job || '', href: typeof jobHref === 'function' ? jobHref(x.slug) : '#/trackers/today'});
+      }
+    });
+  }
+  ((typeof H === 'function' ? H().deliveries : []) || []).forEach(function (d) {
+    if (!d || d.date !== td || !homeMine(d.slug, role)) return;
+    rows.push({title: homePublicText(d.title || 'Delivery'), sub: d.job || '', href: '#/trackers/orders'});
+  });
+  return rows.slice(0, 6);
+}
+function homeSection(kind, inner) {
+  if (!inner) return '';
+  return `<section class="home-sec" data-sec="${kind}"><div class="home-sec-h"><h2>${esc(HOME_LABEL[kind] || kind)}</h2></div>${inner}</section>`;
+}
+function homeAttnRow(role) {
+  if (role !== 'owner' && role !== 'owner_money' && role !== 'pm' && role !== 'staff') return '';
+  return '<a class="hrow home-attn" href="#/attention"><span class="lb"><span class="lt">Attention</span><span class="ls">Drift, quiet jobs, and who is assigned</span></span></a>';
+}
+function homeNeedsHtml(shown, all) {
+  const n = all.length;
+  const sub = n ? `<p class="home-rank">${Math.min(shown.length, n)} of ${n} · ranked by due date, then what blocks the work, then schedule risk, then age</p>` : '';
+  const rows = shown.map(homeRow).join('') || '<div class="none">Nothing needs you today</div>';
+  const go = shown.length ? `<a class="home-go" data-kind="primary" href="${esc(homeHrefFor(shown[0]))}">Start with #1</a>` : '';
+  const see = n ? `<a class="home-see" href="#/needs">See all ${n}</a>` : '';
+  const attn = homeAttnRow(homeRole());
+  return `<section class="home-sec needs-card" data-sec="needs" aria-label="Needs you today"><div class="home-sec-h"><h2>Needs you today</h2>${see}</div>${sub}<div class="needs-list">${rows}</div>${go}${attn}</section>`;
+}
+function homeMyDayHtml() {
+  const rows = homeMyDayRows();
+  const body = rows.map(function (row) {
+    return `<a class="hrow" href="${esc(row.href)}"><span class="lb"><span class="lt">${esc(row.title)}</span>${row.sub ? `<span class="ls">${esc(row.sub)}</span>` : ''}</span></a>`;
+  }).join('') || '<div class="none">Nothing else on the calendar today</div>';
+  return `<section class="home-sec" data-sec="my_day"><div class="home-sec-h"><h2>My day</h2><a href="#/trackers/today">Today</a></div><div class="rows">${body}</div></section>`;
+}
+function homeJobsHtml(role) {
+  let rows = typeof listedJobRows === 'function' ? listedJobRows() : [];
+  if (role === 'guest') {
+    const only = homeGuestSlug();
+    rows = only ? rows.filter(function (j) { return j.slug === only; }) : [];
+  } else if (role === 'pm' && homePmOn()) {
+    const who = homeWho().trim().toLowerCase();
+    rows = rows.filter(function (j) { return who && homeAssigned(j.slug).toLowerCase().indexOf(who) >= 0; });
+  }
+  rows = rows.filter(function (j) { return !(typeof isWarrantyStage === 'function' && isWarrantyStage(j && j.stage)); });
+  const shown = rows.slice(0, role === 'field' ? 1 : 3);
+  const body = shown.map(function (j) {
+    const sub = homePublicText([j.stage, j.address].filter(Boolean).join(' · '));
+    const href = typeof jobHref === 'function' ? jobHref(j.slug) : '#/jobs';
+    return `<a class="hrow" href="${esc(href)}"><span class="lb"><span class="lt">${esc(j.name || '')}</span>${sub ? `<span class="ls">${esc(sub)}</span>` : ''}</span></a>`;
+  }).join('') || '<div class="none">No jobs yet</div>';
+  const all = role === 'guest' ? '' : `<a data-home-jobs href="#/jobs">All ${rows.length}</a>`;
+  return `<section class="home-sec" data-sec="jobs"><div class="home-sec-h"><h2>Jobs</h2>${all}</div><div class="rows">${body}</div></section>`;
+}
+function homeMoneyHtml() {
+  return homeSection('money', `<div class="rows"><a class="hrow" href="#/money"><span class="lb"><span class="lt">Open the money page</span><span class="ls">Invoices, bills, and budget stay there</span></span></a></div>`);
+}
+function homePhotosHtml() {
+  return homeSection('photos', `<div class="rows"><a class="hrow" href="#/files"><span class="lb"><span class="lt">Latest photos and walkthroughs</span><span class="ls">Open a job folder to see them</span></span></a></div>`);
+}
+function homeInboxHtml() {
+  return homeSection('inbox', `<div class="rows"><a class="hrow" href="#/chat"><span class="lb"><span class="lt">Slack and mail waiting to be filed</span><span class="ls">Nothing is sent from here</span></span></a></div>`);
+}
+function homeBuyingHtml() {
+  const sel = typeof selectionHomeCard === 'function' ? selectionHomeCard() : '';
+  const links = [['#/trackers/bids', 'Bids', 'Open bids and packages'], ['#/trackers/orders', 'Orders', 'To place and deliveries'], ['#/trackers/pos', 'Purchase orders', 'Drafts waiting for a person']];
+  const rows = links.map(function (link) {
+    return `<a class="hrow" href="${link[0]}"><span class="lb"><span class="lt">${esc(link[1])}</span><span class="ls">${esc(link[2])}</span></span></a>`;
+  }).join('');
+  return `<section class="home-sec" data-sec="buying"><div class="home-sec-h"><h2>Buying</h2></div>${sel}<div class="rows">${rows}</div></section>`;
+}
+function homeConflictsHtml(all) {
+  const rows = (all || []).filter(function (item) { return item.problem === 'conflict'; });
+  const body = rows.map(function (item) {
+    const line = homeRewrite(item);
+    return `<a class="hrow" href="${esc(homeHrefFor(item))}"><span class="lb"><span class="lt">${esc(line.split(' · ')[0])}</span><span class="ls">${esc(line.split(' · ').slice(1).join(' · '))}</span></span></a>`;
+  }).join('') || '<div class="none">No schedule conflicts</div>';
+  return `<section class="home-sec" data-sec="conflicts"><div class="home-sec-h"><h2>Schedule conflicts</h2><a href="#/trackers/conflicts">All</a></div><div class="rows">${body}</div></section>`;
+}
+function homeElseHtml(moneyOk) {
+  const links = [
+    ['#/trackers/bids', 'Bids', 'data-home-bids'],
+    ['#/trackers/orders', 'Orders', ''],
+    ['#/trackers/fups', 'Follow-ups', ''],
+    ['#/trackers/conflicts', 'Conflicts', ''],
+    ['#/files', 'Photos', ''],
+    ['#/chat', 'Inbox', ''],
+    ['#/trackers/today', 'Today', '']
+  ];
+  if (moneyOk) links.push(['#/money', 'Money', '']);
+  const body = links.map(function (link) {
+    return `<a class="hrow" href="${link[0]}" ${link[2]}><span class="lb"><span class="lt">${esc(link[1])}</span></span></a>`;
+  }).join('');
+  return `<section class="home-sec" data-sec="everything"><div class="home-sec-h"><h2>Everything else</h2></div><div class="rows">${body}</div></section>`;
+}
+function homeBlock(kind, ctx) {
+  if (kind === 'needs') return homeNeedsHtml(ctx.shown, ctx.all);
+  if (kind === 'my_day') return homeMyDayHtml();
+  if (kind === 'jobs') return homeJobsHtml(ctx.role);
+  if (kind === 'money') return homeMoneyHtml();
+  if (kind === 'photos') return homePhotosHtml();
+  if (kind === 'inbox') return homeInboxHtml();
+  if (kind === 'buying') return homeBuyingHtml();
+  if (kind === 'conflicts') return homeConflictsHtml(ctx.all);
+  if (kind === 'everything') return homeElseHtml(ctx.moneyOk);
+  return '';
+}
+function homeBind(root) {
+  if (!root) return;
+  root.querySelectorAll('.need-row').forEach(function (a) {
+    a.addEventListener('click', function () {
+      const kind = a.getAttribute('data-kind') || '';
+      homeLog('home_tap', kind);
+      homeLog('home_action', kind);
+    });
+  });
+  const go = root.querySelector('.home-go');
+  if (go) go.addEventListener('click', function () {
+    homeLog('home_tap', 'primary');
+    homeLog('home_action', 'primary');
+  });
+  const see = root.querySelector('.home-see');
+  if (see) see.addEventListener('click', function () { homeLog('home_tap', 'see_all'); });
+  const edit = root.querySelector('.home-edit');
+  if (edit) edit.addEventListener('click', homeEditOpen);
+}
+function homeEditOpen() {
+  if (typeof openModal !== 'function') return;
+  const role = homeRole();
+  const moneyOk = homeMoneyOk(role);
+  const catalog = homeCatalog(role, moneyOk);
+  const current = homeLayout(role, moneyOk);
+  const on = {};
+  catalog.forEach(function (section) { on[section] = current.indexOf(section) >= 0; });
+  const order = current.filter(function (section) { return section !== 'needs' && catalog.indexOf(section) >= 0; });
+  catalog.forEach(function (section) { if (order.indexOf(section) < 0) order.push(section); });
+  openModal(`<div class="home-edit"><h2>Edit home</h2><p class="hint">Needs you today stays at the top.</p><div class="home-edit-lock"><span>Needs you today</span><b>On</b></div><div id="home-edit-list"></div><div class="aacts"><button type="button" class="home-save" id="home-edit-save">Save</button><button type="button" data-close>Cancel</button></div></div>`, function (modal) {
+    const list = modal.querySelector('#home-edit-list');
+    function draw() {
+      list.innerHTML = order.map(function (section, index) {
+        return `<div class="home-edit-row"><label><input type="checkbox" data-sec="${esc(section)}" ${on[section] ? 'checked' : ''}> ${esc(HOME_LABEL[section] || section)}</label><span class="home-edit-move"><button type="button" data-up="${index}" ${index === 0 ? 'disabled' : ''}>Up</button><button type="button" data-down="${index}" ${index === order.length - 1 ? 'disabled' : ''}>Down</button></span></div>`;
+      }).join('');
+      list.querySelectorAll('input[data-sec]').forEach(function (input) {
+        input.onchange = function () { on[input.getAttribute('data-sec')] = input.checked; };
+      });
+      list.querySelectorAll('[data-up]').forEach(function (btn) {
+        btn.onclick = function () {
+          const index = +btn.getAttribute('data-up');
+          if (index < 1) return;
+          const swap = order[index - 1];
+          order[index - 1] = order[index];
+          order[index] = swap;
+          draw();
+        };
+      });
+      list.querySelectorAll('[data-down]').forEach(function (btn) {
+        btn.onclick = function () {
+          const index = +btn.getAttribute('data-down');
+          if (index >= order.length - 1) return;
+          const swap = order[index + 1];
+          order[index + 1] = order[index];
+          order[index] = swap;
+          draw();
+        };
+      });
+    }
+    draw();
+    modal.querySelector('#home-edit-save').onclick = function () {
+      homeSavePrefs({order: order.slice(), off: order.filter(function (section) { return !on[section]; })});
+      if (typeof closeModal === 'function') closeModal();
+      renderHomeV3();
+    };
+  });
+}
+function homeWarrantyHtml(role) {
+  if (typeof warrantyFold !== 'function') return '';
+  if (role !== 'guest') return warrantyFold('home');
+  const only = homeGuestSlug();
+  if (!only) return '';
+  const rows = (typeof listedJobRows === 'function' ? listedJobRows() : []).filter(function (j) {
+    return j && homeSlug(j.slug) === only;
+  });
+  return warrantyFold('home', rows);
+}
+function renderHomeV3() {
+  const role = homeRole();
+  const moneyOk = homeMoneyOk(role);
+  const ranked = homeRank(homeItemsFor(role), role);
+  const layout = homeLayout(role, moneyOk);
+  const ctx = {role: role, moneyOk: moneyOk, shown: ranked.shown, all: ranked.all};
+  const blocks = {};
+  layout.forEach(function (kind) { blocks[kind] = homeBlock(kind, ctx); });
+  const side = [];
+  const rest = [];
+  layout.forEach(function (kind) {
+    if (kind === 'needs') return;
+    if (!rest.length && side.length < 2 && (kind === 'my_day' || kind === 'jobs')) side.push(kind);
+    else rest.push(kind);
+  });
+  const who = homeWho();
+  const fresh = homeFresh();
+  const hello = `<div class="hello"><div class="home-hello-row"><h1>${typeof greet === 'function' ? greet() : 'Hello'}${who ? ', ' + esc(who) : ''}</h1><button type="button" class="home-edit">Edit home</button></div><div class="date">${typeof longDate === 'function' ? longDate(homeAzDay()) : ''}</div><div class="home-fresh${fresh.stale ? ' stale' : ''}">${esc(fresh.text)}</div></div>`;
+  const needs = blocks.needs || '';
+  const sideHtml = side.map(function (kind) { return blocks[kind] || ''; }).join('');
+  const top = sideHtml ? `<div class="home-split"><div class="home-col">${needs}</div><div class="home-col">${sideHtml}</div></div>` : needs;
+  const below = rest.map(function (kind) { return blocks[kind] || ''; }).join('');
+  const slack = typeof slackChannelNote === 'function' ? slackChannelNote() : '';
+  const warranty = homeWarrantyHtml(role);
+  if (typeof hubShell === 'function') hubShell('home', `<div class="home-v3">${hello}${slack}${top}${below}${warranty}</div>`);
+  homeBind(document.getElementById('root'));
+  homeNoteView();
+  document.title = 'Harswells · Home';
+}
+function renderNeedsAll(sub) {
+  const role = homeRole();
+  const ranked = homeRank(homeItemsFor(role), role);
+  const today = (typeof hubToday === 'function') ? hubToday() : homeAzDay();
+  const weekEnd = (typeof H === 'function' && H().weekEnd) || today;
+  const known = HOME_FILTERS.some(function (pair) { return pair[0] === sub; });
+  const filter = known ? sub : '';
+  const counts = homeCounts(ranked.all, today, weekEnd);
+  const rows = filter ? ranked.all.filter(function (item) { return homeTags(item, today, weekEnd).indexOf(filter) >= 0; }) : ranked.all;
+  const chips = `<a class="fchip ${filter ? '' : 'on'}" href="#/needs">All <b>${ranked.all.length}</b></a>` + HOME_FILTERS.map(function (pair) {
+    return `<a class="fchip ${filter === pair[0] ? 'on' : ''}" href="#/needs/${pair[0]}">${esc(pair[1])} <b>${counts[pair[0]] || 0}</b></a>`;
+  }).join('');
+  const list = rows.map(homeRow).join('') || '<div class="none">Nothing in this filter</div>';
+  if (typeof hubShell === 'function') {
+    hubShell('needs', `<div class="home-v3"><div class="hph"><h1>Needs you</h1><a href="#/">Home</a></div><div class="chips home-filters">${chips}</div><div class="needs-list">${list}</div></div>`);
+  }
+  homeBind(document.getElementById('root'));
+  document.title = 'Harswells · Needs you';
+}
+var HWSHome = {
+  strip: homeStrip, rewrite: homeRewrite, rank: homeRank, layout: homeLayout, catalog: homeCatalog,
+  role: homeRole, moneyOk: homeMoneyOk, counts: homeCounts, collect: homeCollect
+};
+if (typeof window !== 'undefined') window.HWSHome = HWSHome;
+
 /* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
-const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money'];
+const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money','needs'];
 const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
  jobs:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
  trackers:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>',
@@ -7179,33 +7979,13 @@ function warrantyFold(where,rows){const w=typeof warrantyStage==='function'?warr
  return `<details class="warranty-fold" data-warranty-section="${esc(where)}"${open}><summary>${esc(w.label)} <span>${jobs.length}</span></summary><div class="rows">${body}</div></details>`}
 /* ---- Home ---- */
 function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" href="${href}"><span class="ti">${ico(icon)}</span><span class="tn">${num}</span><span class="tl">${label}</span>${sub?`<span class="ts">${sub}</span>`:''}</a>`}
-function renderHome(){if(typeof photoUsesFieldHome==='function'&&photoUsesFieldHome()){photoRenderFieldHome();return}const S=hubStats();const who=STORE&&STORE.who?STORE.who():'';const nFold=Object.values((DATA.common||{}).job_links||{}).filter(j=>(j.items||[]).some(i=>i.kind=='dropbox')).length;
- const prelimN=(typeof prelimHomeCount==='function')?prelimHomeCount():0;
- const tiles=[(typeof canSeeMoney==='function'&&canSeeMoney())?tile('#/money','money','Money',prelimN,'Budget vs actual','navy'):'',tile('#/jobs','jobs','Jobs',S.jobs,'Schedules & workspaces','navy'),
-  tile('#/trackers/today','cal','Today',S.today.length,S.overdue.length?`<b class="red">${S.overdue.length} overdue</b>`:'Nothing overdue',S.overdue.length?'warn':''),
-  tile('#/trackers/bids','doc','Bids',(typeof bidAttentionCount==='function'?bidAttentionCount():S.bWeek.length+S.bPast.length),(typeof bidTileSub==='function'?bidTileSub(S):`${S.bPast.length?`<b class="red">${S.bPast.length} past due</b> · `:''}${S.bWeek.length} this week`),(typeof bidAttentionCount==='function'?bidAttentionCount():S.bPast.length)?'warn':''),
-  tile('#/files','files','Files',nFold,'Job folders & forms'),
-  tile('#/trackers/orders','truck','Orders',S.toPlace,`to place · ${S.dlWeek.length} deliver${S.dlWeek.length==1?'y':'ies'}`,S.toPlace?'amber':''),
-  tile('#/trackers/pos','box','POs',(typeof poCounts==='function'?poCounts(poAll()):{all:0}).all,(function(){if(typeof poCounts!='function')return '';const c=poCounts(poAll());return `${c.draft} draft · ${c.approved} approved · ${c.entered_in_adaptive} entered`})()),
-  tile('#/trackers/fups','user','Follow-ups',S.fu.length,`${S.fuDue.length} due this week`),
-  tile('#/trackers/conflicts','alert','Conflicts',S.high.length,'high priority',S.high.length?'warn':''),
-  tile('#/chat','chat','Chat','<span class="soon">Soon</span>','Linked to Slack','ghost')].join('');
- const top=(arr,n,f)=>arr.slice(0,n).map(f).join('')||`<div class="none">Nothing here</div>`;
- const dash=`<div class="dgrid desk-only">
-  <section class="dcard"><h3>${ico('cal')} Today & this week<a href="#/trackers/today">All</a></h3>${top(S.today.concat(S.week),5,x=>hrow(jobHref(x.slug),esc(x.t.task),esc(x.job),dchip(x.t.start<S.td?S.td:x.t.start,S.td)))}${S.overdue.length?hrow('#/trackers/today',`<span class="red">${S.overdue.length} overdue tasks</span>`,'not complete, past their finish date',''):''}</section>
-  <section class="dcard"><h3>${ico('doc')} Bids due<a href="#/trackers/bids">All</a></h3>${typeof bidDeskHtml==='function'?bidDeskHtml(S):top(S.bPast.concat(S.bWeek),6,b=>hrow('#/trackers/bids',esc(b.vendor),esc(b.trade+' · '+b.job),dchip(b.due,S.td)))}</section>
-  <section class="dcard"><h3>${ico('truck')} Deliveries coming<a href="#/trackers/orders">All</a></h3>${top(S.dl,6,d=>hrow(d.slug?jobHref(d.slug):'#/trackers/orders',esc(d.title),esc((d.job||'')+(d.src=='calendar'?' · calendar notice':' · order ETA')),dchip(d.date,S.td)))}</section>
-  <section class="dcard"><h3>${ico('user')} Follow-ups owed<a href="#/trackers/fups">All</a></h3>${top(S.fu.slice().sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1),6,f=>hrow('#/trackers/fups',esc(f.item),esc((f.owner||'')+' · '+(f.job||'')),dchip(f.due,S.td)))}</section></div>`;
- hubShell('home',`<div class="hello"><h1>${greet()}${who?', '+esc(who):''}</h1><div class="date">${longDate(S.td)}</div></div>${slackChannelNote()}${typeof attSummaryCard=='function'?attSummaryCard():''}${typeof selectionHomeCard==='function'?selectionHomeCard():''}<div class="tiles">${tiles}</div>${dash}
- ${homeComparison()}
- ${warrantyFold('home')}
- <div class="asof">Trackers as of ${esc(H().asof||'')} · schedule data ${esc(builtShort())} AZ</div>`);if(typeof bindBidTracker==='function')bindBidTracker(document.getElementById('root'));if(typeof bindBidCards==='function')bindBidCards(document);document.title='Harswells · Home'}
+function renderHome(){if(typeof photoUsesFieldHome==='function'&&photoUsesFieldHome()){photoRenderFieldHome();return}if(typeof renderHomeV3==='function'){renderHomeV3();return}hubShell('home','<div class="hello"><h1>Home</h1></div>');document.title='Harswells · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
 function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
  const seg=`<div class="seg2" role="tablist">${TSUB.map(([k,l])=>`<a href="#/trackers/${k}" class="${k==sub?'on':''}" role="tab">${l}</a>`).join('')}</div>`;
  let body='';
- if(sub=='today'){const sec=(t,l,cls)=>l.length?`<h2 class="sh2 ${cls||''}">${t} <span>${l.length}</span></h2><div class="rows">${l.slice(0,80).map(x=>hrow(jobHref(x.slug),esc(x.t.task),esc(x.job)+(x.t.phase?' · '+esc(x.t.phase):''),dchip(x.t.overdue||x.t.finish<S.td?x.t.finish:x.t.start,S.td))).join('')}</div>`:'';
+ if(sub=='today'){const pub=t=>typeof homePublicText==='function'?homePublicText(t):String(t||'');const sec=(t,l,cls)=>l.length?`<h2 class="sh2 ${cls||''}">${t} <span>${l.length}</span></h2><div class="rows">${l.slice(0,80).map(x=>hrow(jobHref(x.slug),esc(pub(x.t.task)),esc(pub(x.job))+(x.t.phase?' · '+esc(pub(x.t.phase)):''),dchip(x.t.overdue||x.t.finish<S.td?x.t.finish:x.t.start,S.td))).join('')}</div>`:'';
   body=sec('Overdue',S.overdue.sort((a,b)=>a.t.finish<b.t.finish?-1:1),'red')+sec('Today',S.today)+sec('This week',S.week.sort((a,b)=>a.t.start<b.t.start?-1:1))||'<div class="none">Nothing scheduled this week</div>'}
  if(sub=='bids'&&typeof renderBidTracker==='function'){body=renderBidTracker()}
  else if(sub=='bids'){const f=st.hbF||'due';const q=(st.bq||'').toLowerCase();
@@ -7284,7 +8064,7 @@ function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>{if(
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=(companyLinks().flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
-function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
+function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
 /* Attention screen (owner request 9/27 7:51 PM): ONE place for what needs attention today vs this week. Phone-first.
    Four parts, each drills down count -> list -> item (with actions on the same tap; no dead-end numbers, 7:52 PM):
