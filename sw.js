@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='616f088d29';
+const VERSION='1d89088563';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
@@ -196,6 +196,8 @@ self.addEventListener('fetch',e=>{
   if(updateScript(url))return;
   /* This origin only. dropbox.com is another host, so those links are never cached. */
   if(url.origin!==self.location.origin||url.pathname.includes('/demo/')||/(^|\.)dropbox\.com$|(^|\.)dropboxusercontent\.com$/i.test(url.hostname))return;
+  /* Account numbers. The page asks with cache no-store. Do not answer from the file cache. */
+  if(/\/api\/job\/[a-z0-9-]+\/property$/i.test(url.pathname))return;
   if(url.pathname.indexOf('/plan-room/cad/')>=0){e.respondWith(runtimeCad(req));return}
   if(dataUrl(url)){e.respondWith(staleWhileRevalidate(req));return}
   /* Online document loads take the network copy and refresh the shell cache.

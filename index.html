@@ -727,6 +727,63 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .photo-app .photo-err{color:#b42318;font-weight:600}
 .photo-app input[type="text"]{width:100%;min-height:44px;margin:0 0 8px;padding:8px 10px;font-size:17px;border:1px solid #d0d5dd;border-radius:10px}
 
+.prop-page{max-width:720px}
+.prop-page h2{margin:0 0 8px;font-size:22px}
+.prop-page h3{margin:16px 0 8px;font-size:15px}
+.prop-page h4{margin:0 0 6px;font-size:14px}
+.prop-addr{margin:0 0 8px;font-size:16px}
+.prop-page dl{margin:0}
+.prop-page dl div{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.prop-page dt{flex:0 0 42%;color:var(--mut);font-size:13px}
+.prop-page dd{margin:0;font-size:16px;overflow-wrap:anywhere}
+.prop-link,.proplink{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;font-weight:700}
+.prop-form label,.prop-field{display:flex;flex-direction:column;gap:4px;margin:0 0 12px;font-size:14px;font-weight:600}
+.prop-page input:not([type=checkbox]):not([type=file]),.prop-page select,.prop-page textarea,.feat-page input:not(.feat-switch):not([type=checkbox]):not([type=file]),.feat-page select{
+  width:100%;min-height:44px;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.prop-page textarea{min-height:72px}
+.prop-set{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:8px 12px 4px}
+.prop-set legend{font-weight:700;padding:0 4px}
+.prop-page button,.feat-page button,.feat-person{min-height:44px}
+.prop-files{margin:8px 0 4px}
+.prop-files h5{margin:0 0 4px;font-size:13px}
+.prop-files ul,.prop-pick{list-style:none;margin:0;padding:0}
+.prop-file-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.prop-file-name{flex:1;min-width:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.prop-file-name small{display:block;font-size:12px;font-weight:500}
+.prop-file-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.prop-file-actions button,.prop-file-tools button,.prop-pick button,.prop-rename button{padding:0 12px}
+.prop-vis{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin:0}
+.prop-page input[type=checkbox]{width:22px;height:22px;min-height:22px;flex:0 0 22px;padding:0;margin:0}
+.prop-file-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.prop-rename{display:flex;flex:1;gap:8px;min-width:0}
+.prop-rename[hidden],.prop-pick[hidden],.prop-file-name[hidden]{display:none}
+.prop-upload{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
+.feature-off{padding:28px 16px}
+.feature-off h1{margin:0 0 8px;font-size:22px}
+.feat-page{max-width:720px}
+.feat-page h1{margin:0 0 8px;font-size:22px}
+.feat-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;font-size:16px;font-weight:600}
+.feat-label{flex:1;min-width:0;line-height:1.2}
+.feat-toggle{position:relative;width:48px;height:28px;flex:0 0 48px}
+.feat-page input.feat-switch{
+  appearance:none;-webkit-appearance:none;display:block;width:48px;height:28px;min-height:28px;max-height:28px;
+  margin:0;padding:0;border:0;border-radius:999px;background:#c5ced9}
+.feat-page input.feat-switch:checked{background:#1f3b5b}
+.feat-toggle i{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;pointer-events:none;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.feat-page input.feat-switch:checked + i{transform:translateX(20px)}
+.feat-who{padding:10px 0;border-bottom:1px solid var(--line)}
+.feat-who-line{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.feat-sum{margin:2px 0 0;font-size:14px;font-weight:500}
+.feat-edit{flex:0 0 auto}
+.feat-pflags{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.feat-pflags[hidden]{display:none}
+.feat-person{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px 12px;font-weight:600}
+.feat-add{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+@media(max-width:760px){
+  .prop-page dl div{flex-direction:column;gap:2px}
+  .prop-page dt{flex-basis:auto}
+}
+
 /* Home v3. One ranked list, then the sections this person left on.
    Phone is a single column. A wide screen puts My day and Jobs beside the list. */
 .home-v3{min-width:0;max-width:100%}
@@ -793,7 +850,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'616f088d29',built:'10/4/2026 3:18 PM AZ'};
+const HWS_BUILD={version:'1d89088563',built:'10/4/2026 6:54 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -3868,7 +3925,8 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function get(slug){return cache[slug]||build(slug)}
  const S={KEY,persist,version,
   saveError:()=>lastSaveErr,
-  who,setWho(n){try{localStorage.setItem('hws-who',String(n||'').trim().slice(0,60))}catch(e){}},
+  who,setWho(n){const next=String(n||'').trim().slice(0,60);try{if(typeof propertyOnWho==='function')propertyOnWho(next)}catch(e){}try{localStorage.setItem('hws-who',next)}catch(e){}},
+  invalidate(){Object.keys(cache).forEach(function(k){delete cache[k]})},
   getJob(slug){const c=get(slug);return c?c.J:null},
   edit(slug,ops){const c=get(slug);const strip=op=>{op=E.clone(op);const wipe=o=>{if(!o||typeof o!='object')return;['amount','unit_price','total','extended_cost','deposit_paid','paid_to_date'].forEach(k=>delete o[k])};wipe(op);wipe(op.bid);wipe(op.order);wipe(op.fields);return op};
    const e={id:uid(),ts:nowAZ(),who:who(),kind:'edit',ops:(ops||[]).map(strip)};
@@ -4771,6 +4829,364 @@ window.HWSOffline={
 };
 })();
 
+/* Company feature switches. Provider names are not in this file.
+   A missing flag stays on. Company off wins over a person. A person can be off
+   while the company stays on. Nav, home, and the editable home all use featureOn.
+   A feature that is off is omitted from the job object the screen reads. */
+'use strict';
+const HWS_FEATURES = [
+  ['money', 'Money'],
+  ['bids', 'Bid Room'],
+  ['client_portal', 'Client portal'],
+  ['photos', 'Photos'],
+  ['plan_room', 'Plan Room'],
+  ['selections', 'Selections'],
+  ['intake', 'Intake']
+];
+const HWS_FEATURE_IDS = HWS_FEATURES.map(function (row) { return row[0]; });
+const HWS_JOB_KEYS = {
+  money: ['budget', 'budget_index', 'budget_categories', 'budget_progress', 'budget_lines', 'money'],
+  bids: ['bids'],
+  client_portal: ['client_portal'],
+  photos: ['photos', 'walkthroughs'],
+  plan_room: ['plans'],
+  selections: ['selections', 'selection_summary'],
+  intake: ['messages']
+};
+const HWS_COUNT_KEYS = {
+  bids: ['bids'],
+  selections: ['selections'],
+  money: ['budget'],
+  intake: ['messages']
+};
+
+function companyDoc() {
+  const block = DATA && DATA.common && DATA.common.company;
+  return block && typeof block === 'object' ? block : {};
+}
+function featureList() { return HWS_FEATURES.slice(); }
+function _personName(person) { return String(person && person.name || '').trim(); }
+function _nameHit(name, blob) {
+  name = String(name || '').trim();
+  blob = String(blob || '');
+  if (!name || !blob) return false;
+  const re = new RegExp('\\b' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+  return re.test(blob);
+}
+function currentWhoName() {
+  try {
+    if (typeof STORE !== 'undefined' && STORE && STORE.who) return STORE.who() || '';
+  } catch (e) {}
+  return '';
+}
+function findPerson(who) {
+  const want = String(who || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!want) return null;
+  const people = companyDoc().people || [];
+  const hits = [];
+  for (let i = 0; i < people.length; i++) {
+    const name = _personName(people[i]).replace(/\s+/g, ' ').trim().toLowerCase();
+    if (name && name === want) hits.push(people[i]);
+  }
+  return hits.length === 1 ? hits[0] : null;
+}
+const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1};
+function roleOf(who) {
+  who = String(who == null ? currentWhoName() : who).replace(/\s+/g, ' ').trim();
+  if (!who) return 'guest';
+  const person = findPerson(who);
+  const role = String(person && person.role || '').trim().toLowerCase();
+  return HWS_ROLES[role] ? role : 'guest';
+}
+function isOwner(who) { return roleOf(who) === 'owner'; }
+function featureOn(id, who) {
+  if (HWS_FEATURE_IDS.indexOf(id) < 0) return true;
+  const flags = companyDoc().features || {};
+  if (flags[id] === false) return false;
+  const person = findPerson(who == null ? currentWhoName() : who);
+  if (person && person.features && person.features[id] === false) return false;
+  return true;
+}
+function modFeature(mod) {
+  return ({
+    money: 'money', budget: 'money', bids: 'bids', selections: 'selections',
+    plans: 'plan_room', takeoffs: 'plan_room', messages: 'intake', photos: 'photos'
+  })[mod] || '';
+}
+function jobPmMatch(job, who) {
+  const pm = String(job && job.info && job.info.pm || '').replace(/\s+/g, ' ').trim();
+  const name = String(who == null ? currentWhoName() : who).replace(/\s+/g, ' ').trim();
+  if (!pm || !name) return false;
+  if (pm.toLowerCase() === name.toLowerCase()) return true;
+  if (name.indexOf(' ') < 0) return false;
+  return _nameHit(name, pm);
+}
+function canSeePropertyRefs(who, job) {
+  if (['owner', 'pm', 'member'].indexOf(roleOf(who)) >= 0) return true;
+  return !!(job && jobPmMatch(job, who));
+}
+function canEditProperty(job, who) {
+  const role = roleOf(who);
+  if (role === 'owner' || role === 'pm') return true;
+  return jobPmMatch(job, who);
+}
+function notEnabledHtml() {
+  return '<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>';
+}
+function showNotEnabled(page) {
+  const html = notEnabledHtml();
+  if (typeof hubShell === 'function') hubShell(page || 'home', html);
+  else {
+    const root = document.getElementById('root');
+    if (root) root.innerHTML = html;
+  }
+}
+function propertyDollarName(text) {
+  return /\$\s?\d/.test(String(text || ''));
+}
+function propertyImageName(name) {
+  return /\.(png|jpe?g|gif|webp|heic|tiff?|bmp)$/i.test(String(name || ''));
+}
+function stripProperty(property, who, job) {
+  if (!property || typeof property !== 'object') return property;
+  const see = canSeePropertyRefs(who, job);
+  const hideImages = typeof featureOn === 'function' && !featureOn('photos', who);
+  const out = {};
+  Object.keys(property).forEach(function (key) {
+    if (key !== 'utilities' || !property.utilities || typeof property.utilities !== 'object') {
+      out[key] = property[key];
+      return;
+    }
+    const utils = {};
+    Object.keys(property.utilities).forEach(function (uid) {
+      const src = property.utilities[uid] || {};
+      const row = Object.assign({}, src);
+      const locked = !!src.account;
+      if (!see) {
+        delete row.account;
+        delete row.ref;
+        delete row.reference;
+      }
+      const files = (src.attachments || []).filter(function (item) {
+        if (!item || !item.name) return false;
+        if (hideImages && propertyImageName(item.name)) return false;
+        if (!see && (locked || item.client_visible !== true)) return false;
+        if (!see && (propertyDollarName(item.name) || propertyDollarName(item.rel))) return false;
+        return true;
+      }).map(function (item) {
+        return {
+          id: item.id,
+          name: item.name,
+          rel: item.rel || '',
+          client_visible: item.client_visible === true && !locked && !propertyDollarName(item.name) && !propertyDollarName(item.rel)
+        };
+      });
+      if (files.length) row.attachments = files;
+      else delete row.attachments;
+      utils[uid] = row;
+    });
+    out.utilities = utils;
+  });
+  return out;
+}
+function featureOverrideText(person) {
+  const bits = [];
+  HWS_FEATURES.forEach(function (row) {
+    const flags = person.features || {};
+    if (!Object.prototype.hasOwnProperty.call(flags, row[0])) return;
+    if (flags[row[0]] === false) bits.push(row[1] + ' off');
+    else if (flags[row[0]] === true) bits.push(row[1] + ' on');
+  });
+  return bits.length ? bits.join(', ') : 'Uses company settings';
+}
+function stripJob(job, who) {
+  if (!job || typeof job !== 'object') return job;
+  const out = Object.assign({}, job);
+  HWS_FEATURE_IDS.forEach(function (fid) {
+    if (featureOn(fid, who)) return;
+    (HWS_JOB_KEYS[fid] || []).forEach(function (key) { delete out[key]; });
+  });
+  if (out.counts && typeof out.counts === 'object') {
+    out.counts = Object.assign({}, out.counts);
+    HWS_FEATURE_IDS.forEach(function (fid) {
+      if (featureOn(fid, who)) return;
+      (HWS_COUNT_KEYS[fid] || []).forEach(function (key) { delete out.counts[key]; });
+    });
+  }
+  if (out.property) out.property = stripProperty(out.property, who, job);
+  return out;
+}
+let audienceSourceDoc = null;
+function audienceSource() {
+  if (audienceSourceDoc || !DATA) return audienceSourceDoc;
+  try {
+    audienceSourceDoc = JSON.parse(JSON.stringify({
+      jobs: DATA.jobs || {},
+      intake: DATA.intake || [],
+      hub: DATA.common && DATA.common.hub ? DATA.common.hub : null
+    }));
+  } catch (e) {
+    audienceSourceDoc = null;
+  }
+  return audienceSourceDoc;
+}
+function rememberPropertyRecord(slug, rec) {
+  const src = audienceSource();
+  if (src && src.jobs && src.jobs[slug]) src.jobs[slug].property = rec;
+}
+function applyFeatureStrip() {
+  if (!DATA || typeof stripPayload !== 'function') return;
+  const src = audienceSource();
+  if (!src) return;
+  const stripped = stripPayload({
+    jobs: src.jobs,
+    intake: src.intake,
+    common: src.hub ? {hub: src.hub} : {}
+  }, currentWhoName());
+  if (!stripped) return;
+  if (stripped.jobs && DATA.jobs) {
+    Object.keys(DATA.jobs).forEach(function (slug) {
+      if (stripped.jobs[slug]) DATA.jobs[slug] = stripped.jobs[slug];
+    });
+  }
+  if (Array.isArray(stripped.intake)) DATA.intake = stripped.intake;
+  if (src.hub && stripped.common && stripped.common.hub && DATA.common) DATA.common.hub = stripped.common.hub;
+  try {
+    if (typeof STORE !== 'undefined' && STORE && STORE.invalidate) STORE.invalidate();
+  } catch (e) {}
+}
+function stripPayload(doc, who) {
+  if (!doc || typeof doc !== 'object') return doc;
+  const out = Object.assign({}, doc);
+  if (out.jobs && typeof out.jobs === 'object') {
+    const jobs = {};
+    Object.keys(out.jobs).forEach(function (slug) { jobs[slug] = stripJob(out.jobs[slug], who); });
+    out.jobs = jobs;
+  }
+  if (!featureOn('intake', who) && Array.isArray(out.intake)) out.intake = [];
+  const hub = out.common && out.common.hub;
+  if (hub && !featureOn('bids', who)) {
+    out.common = Object.assign({}, out.common);
+    out.common.hub = Object.assign({}, hub, {bids: [], comparison: []});
+  }
+  return out;
+}
+function renderFeatures() {
+  if (!isOwner()) { showNotEnabled('settings'); return; }
+  const doc = companyDoc();
+  const flags = doc.features || {};
+  const rows = HWS_FEATURES.map(function (row) {
+    const on = flags[row[0]] !== false;
+    return '<label class="feat-row"><span class="feat-label">' + esc(row[1]) + '</span><span class="feat-toggle"><input type="checkbox" class="feat-switch" data-feat="' + row[0] + '"' + (on ? ' checked' : '') + '><i aria-hidden="true"></i></span></label>';
+  }).join('');
+  const people = (doc.people || []).map(function (person) {
+    const bits = HWS_FEATURES.map(function (row) {
+      const flag = person.features && Object.prototype.hasOwnProperty.call(person.features, row[0]) ? person.features[row[0]] : null;
+      const label = flag === false ? 'off' : (flag === true ? 'on' : 'follows company');
+      return '<button type="button" class="feat-person" data-person="' + esc(person.name) + '" data-fid="' + row[0] + '" data-state="' + (flag === false ? '0' : (flag === true ? '1' : '')) + '"><span>' + esc(row[1]) + '</span><span class="mut">' + label + '</span></button>';
+    }).join('');
+    return '<div class="feat-who"><div class="feat-who-line"><div><b>' + esc(person.name) + '</b> <span class="mut">' + esc(person.role || '') + '</span><div class="feat-sum">' + esc(featureOverrideText(person)) + '</div></div><button type="button" class="feat-edit">Edit</button></div><div class="feat-pflags" hidden>' + bits + '</div></div>';
+  }).join('');
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form><h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  if (typeof hubShell === 'function') hubShell('settings', body);
+  else document.getElementById('root').innerHTML = body;
+  const form = document.getElementById('featco');
+  if (form) form.onsubmit = function (ev) {
+    ev.preventDefault();
+    const next = Object.assign({}, companyDoc());
+    next.features = Object.assign({}, next.features || {});
+    form.querySelectorAll('[data-feat]').forEach(function (box) { next.features[box.getAttribute('data-feat')] = !!box.checked; });
+    saveCompany(next, 'Features saved');
+  };
+  document.querySelectorAll('.feat-edit').forEach(function (btn) {
+    btn.onclick = function () {
+      const panel = btn.closest('.feat-who').querySelector('.feat-pflags');
+      if (!panel) return;
+      panel.hidden = !panel.hidden;
+      btn.textContent = panel.hidden ? 'Edit' : 'Done';
+    };
+  });
+  document.querySelectorAll('.feat-person').forEach(function (btn) {
+    btn.onclick = function () {
+      const next = Object.assign({}, companyDoc());
+      const name = btn.getAttribute('data-person');
+      const fid = btn.getAttribute('data-fid');
+      const state = btn.getAttribute('data-state');
+      const cycle = state === '' ? false : (state === '0' ? true : null);
+      next.people = (next.people || []).map(function (person) {
+        if (person.name !== name) return person;
+        const copy = Object.assign({}, person);
+        copy.features = Object.assign({}, person.features || {});
+        if (cycle === null) delete copy.features[fid];
+        else copy.features[fid] = cycle;
+        return copy;
+      });
+      saveCompany(next, 'Saved for ' + name);
+    };
+  });
+  const add = document.getElementById('featadd');
+  if (add) add.onsubmit = function (ev) {
+    ev.preventDefault();
+    const fd = new FormData(add);
+    const name = String(fd.get('name') || '').trim();
+    if (!name) return;
+    const next = Object.assign({}, companyDoc());
+    const people = (next.people || []).slice();
+    const added = name.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!people.some(function (person) { return _personName(person).replace(/\s+/g, ' ').trim().toLowerCase() === added; })) {
+      people.push({name: name, role: fd.get('role') || 'member', features: {}});
+    }
+    next.people = people;
+    saveCompany(next, 'Added ' + name);
+  };
+  document.title = 'Harswells · Features';
+}
+function saveCompany(next, msg) {
+  if (!DATA.common) DATA.common = {};
+  DATA.common.company = next;
+  try { localStorage.setItem('hws-company', JSON.stringify(next)); } catch (e) {}
+  const hub = window.HWS_CONFIG && HWS_CONFIG.hubUrl;
+  if (hub) {
+    fetch(hub.replace(/\/$/, '') + '/api/company', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({features: next.features || {}, people: next.people || [], company_id: next.company_id || ''})
+    }).catch(function () {});
+  }
+  if (typeof toast === 'function') toast(msg || 'Saved');
+  renderFeatures();
+}
+function loadCompanyOverride() {
+  try {
+    const raw = localStorage.getItem('hws-company');
+    if (!raw || !DATA) return;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return;
+    if (!DATA.common) DATA.common = {};
+    const base = DATA.common.company || {};
+    const next = Object.assign({}, base, saved);
+    const baseFlags = base.features && typeof base.features === 'object' ? base.features : {};
+    const savedFlags = saved.features && typeof saved.features === 'object' ? saved.features : {};
+    next.features = Object.assign({}, baseFlags, savedFlags);
+    Object.keys(baseFlags).forEach(function (fid) {
+      if (baseFlags[fid] === false) next.features[fid] = false;
+    });
+    DATA.common.company = next;
+  } catch (e) {}
+}
+window.HWSFeatures = {
+  ids: HWS_FEATURE_IDS,
+  featureOn: featureOn,
+  roleOf: roleOf,
+  isOwner: isOwner,
+  canEditProperty: canEditProperty,
+  canSeePropertyRefs: canSeePropertyRefs,
+  stripJob: stripJob,
+  stripPayload: stripPayload,
+  notEnabledHtml: notEnabledHtml,
+  render: renderFeatures
+};
+
 /* Walkthrough photos. Location is read once per photo while a walkthrough is open.
    Bytes stay on this phone until Dropbox returns a matching content hash.
    The public shell has no job names. Sites come from the live data. */
@@ -5483,7 +5899,10 @@ window.HWSOffline={
     if (role === "field" || role === "office" || role === "owner" || role === "client") return role;
     return "non-member";
   }
-  function photoUsesFieldHome() { return photoRole() === "field"; }
+  function photoUsesFieldHome() {
+    if (typeof featureOn === "function" && !featureOn("photos")) return false;
+    return photoRole() === "field";
+  }
   function saveSitePin(store, slug, fix, who, role) {
     if (!canSetSite(role)) return { ok: false };
     const body = { site: { lat: +fix.lat, lon: +fix.lon, radius_m: DEFAULT_RADIUS_M, who: who || "", at: azParts(Date.now()).taken_at } };
@@ -6237,6 +6656,7 @@ window.HWSOffline={
   }
   function photoMountJob(el) {
     if (!el) return;
+    if (typeof featureOn === "function" && !featureOn("photos")) { el.innerHTML = ""; return; }
     let slug = "";
     try { slug = (typeof J !== "undefined" && J && J.slug) || ""; } catch (e) { slug = ""; }
     mount(el, { role: photoRole(), surface: "job", slug: slug, who: currentWho(), jobs: jobsFromData(), sites: sitesFromData(), store: typeof STORE !== "undefined" ? STORE : null });
@@ -6347,7 +6767,7 @@ function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)locat
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 const TABS=[['schedule','Schedule'],['slack','Slack'],['todos','To-Dos'],['files','Files'],['more','More']];
-const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,rfis:(typeof mRfis==='function'?mRfis:mSchedule),specs:(typeof mSpecs==='function'?mSpecs:mSchedule),conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
+const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,rfis:(typeof mRfis==='function'?mRfis:mSchedule),specs:(typeof mSpecs==='function'?mSpecs:mSchedule),conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory,property:(typeof mProperty==='function'?mProperty:mSchedule)};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
 function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
@@ -6373,17 +6793,18 @@ function moveJobStage(toWarranty){if(typeof canSeeMoney!=='function'||!canSeeMon
  const summary=(who||'hub')+' set stage to '+info.status+' at '+when;
  J=STORE.setSettings(J.slug,{info:info},summary);renderJob();toast(summary);if(typeof liveSaved==='function')liveSaved(J.slug)}
 function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>'+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
+ if(typeof HWSFeatures!=='undefined'&&HWSFeatures.stripJob)J=HWSFeatures.stripJob(J);
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
- const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
+ const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span><a class="proplink" href="${modHref('property')}">Property info</a>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof stageMoveHtml==='function'?stageMoveHtml():''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div></div>`;
- const sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
+ const sideMods=((typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[]).filter(([k])=>typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k)));
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
- const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney())?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
- <div class="grp">Job</div><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files<span class="cnt">${(typeof HWSFiles!=='undefined'&&HWSFiles.count&&HWSFiles.count(J.slug))||(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
+ const side=`<nav class="side">${sideMods.map(([k,l])=>`<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(c[k]||'')}</span></a>`).join('')}${(typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
+ <div class="grp">Job</div><a href="${modHref('property')}" class="${mod=='property'?'on':''}">Property info</a><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files<span class="cnt">${(typeof HWSFiles!=='undefined'&&HWSFiles.count&&HWSFiles.count(J.slug))||(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
  const primary=TABS.some(t=>t[0]==mod);
  const tabs=`<nav class="jtabs" aria-label="Job sections">${TABS.map(([k,l])=>{const on=k==mod||(k=='more'&&!primary&&mod!=='plans');const n=k==='slack'?slackN:(k==='more'?hc:0);
   return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}" ${on?'aria-current="page"':''}><span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`}).join('')}</nav>`;
@@ -6394,10 +6815,12 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const co=$('#co');if(co)co.onclick=()=>doCheckout(J.slug);const ci=$('#ci');if(ci)ci.onclick=()=>doCheckin(J.slug);
  const sm=$('#stage-move');if(sm)sm.onclick=()=>moveJobStage(sm.getAttribute('data-to-warranty')==='1');
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
- try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}
+ const feat=typeof modFeature==='function'?modFeature(mod):'';
+ if(feat&&typeof featureOn==='function'&&!featureOn(feat)){M.innerHTML=typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>'}
+ else {try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}}
  if(typeof photoMountJob==='function')photoMountJob(document.getElementById('photo-slot'));
  document.title=J.name+' · Harswells';if(syncOn()&&!lockCache[J.slug])refreshLock(J.slug)}
-function openMore(){const c=J.counts||{};const items=[['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['rfis','RFIs'],['specs','Specs']].concat((typeof canSeeMoney==='function'&&canSeeMoney())?[['money','Budget vs actual']]:[]).concat([['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]).filter(([,l])=>!/buildertrend/i.test(l));
+function openMore(){const c=J.counts||{};const items=[['property','Property info'],['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['rfis','RFIs'],['specs','Specs']].concat((typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))?[['money','Budget vs actual']]:[]).concat([['logs','Daily Logs'],['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]).filter(([k,l])=>!/buildertrend/i.test(l)&&(typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k))));
  openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${k==='slack'?(typeof slackRows==='function'?slackRows().length||'':''):(c[k]||(k=='history'?(J.history||[]).length||'':''))}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
  m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
@@ -7224,6 +7647,10 @@ function homeMoneyOk() {
     return new RegExp('\\b' + homeEscapeRe(n) + '\\b', 'i').test(blob);
   });
 }
+function homeFeat(id) {
+  if (typeof featureOn !== 'function') return true;
+  return featureOn(id) !== false;
+}
 function homeLayoutKey(who) {
   const slug = String(who || 'signed-out').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'signed-out';
   return 'hws-home-layout-v3:' + slug;
@@ -7241,10 +7668,15 @@ function homeSavePrefs(prefs) {
 }
 function homeCatalog(role, moneyOk) {
   role = HOME_DEFAULTS[role] ? role : 'guest';
-  if (role === 'guest') return ['photos'];
-  if (role === 'field') return HOME_TOGGLE.filter(function (section) { return section !== 'money'; });
+  function keep(section) {
+    if (section === 'money') return homeFeat('money');
+    if (section === 'photos') return homeFeat('photos');
+    return true;
+  }
+  if (role === 'guest') return ['photos'].filter(keep);
+  if (role === 'field') return HOME_TOGGLE.filter(function (section) { return section !== 'money' && keep(section); });
   const allowed = moneyOk === true || (moneyOk !== false && (role === 'owner' || role === 'owner_money' || role === 'staff'));
-  return HOME_TOGGLE.filter(function (section) { return section !== 'money' || allowed; });
+  return HOME_TOGGLE.filter(function (section) { return (section !== 'money' || (allowed && homeFeat('money'))) && keep(section); });
 }
 function homeLayout(role, moneyOk) {
   role = HOME_DEFAULTS[role] ? role : 'guest';
@@ -7313,7 +7745,9 @@ function homePrepare(items, role) {
   (items || []).forEach(function (item) {
     const row = Object.assign({}, item);
     const problem = row.problem || '';
-    if (!allowed && (HOME_MONEY[problem] || row.risk === 'money')) return;
+    if ((!allowed || !homeFeat('money')) && (HOME_MONEY[problem] || row.risk === 'money')) return;
+    if (!homeFeat('bids') && (problem === 'bid' || problem === 'bid_nodate')) return;
+    if (!homeFeat('selections') && problem === 'selection') return;
     delete row.amount;
     row.show_amount = false;
     out.push(row);
@@ -7517,7 +7951,7 @@ function homeCollect() {
     });
   });
   const bids = {};
-  ((typeof H === 'function' ? H().bids : []) || []).forEach(function (b) {
+  if (homeFeat('bids')) ((typeof H === 'function' ? H().bids : []) || []).forEach(function (b) {
     const status = String(b.status || '').toLowerCase();
     if (status === 'received' || status === 'declined' || status === 'awarded') return;
     const past = !!(b.pastDue || (b.due && b.due < td));
@@ -7588,7 +8022,7 @@ function homeCollect() {
       legacy: o.title || ''
     });
   });
-  if (typeof selDeadlineJobs === 'function') {
+  if (homeFeat('selections') && typeof selDeadlineJobs === 'function') {
     selDeadlineJobs().forEach(function (r) {
       if (!r || (!r.overdue && !r.week)) return;
       homePush(items, {
@@ -7711,7 +8145,11 @@ function homeInboxHtml() {
 }
 function homeBuyingHtml() {
   const sel = typeof selectionHomeCard === 'function' ? selectionHomeCard() : '';
-  const links = [['#/trackers/bids', 'Bids', 'Open bids and packages'], ['#/trackers/orders', 'Orders', 'To place and deliveries'], ['#/trackers/pos', 'Purchase orders', 'Drafts waiting for a person']];
+  const links = [
+    homeFeat('bids') ? ['#/trackers/bids', 'Bids', 'Open bids and packages'] : null,
+    ['#/trackers/orders', 'Orders', 'To place and deliveries'],
+    ['#/trackers/pos', 'Purchase orders', 'Drafts waiting for a person']
+  ].filter(Boolean);
   const rows = links.map(function (link) {
     return `<a class="hrow" href="${link[0]}"><span class="lb"><span class="lt">${esc(link[1])}</span><span class="ls">${esc(link[2])}</span></span></a>`;
   }).join('');
@@ -7727,15 +8165,15 @@ function homeConflictsHtml(all) {
 }
 function homeElseHtml(moneyOk) {
   const links = [
-    ['#/trackers/bids', 'Bids', 'data-home-bids'],
+    homeFeat('bids') ? ['#/trackers/bids', 'Bids', 'data-home-bids'] : null,
     ['#/trackers/orders', 'Orders', ''],
     ['#/trackers/fups', 'Follow-ups', ''],
     ['#/trackers/conflicts', 'Conflicts', ''],
-    ['#/files', 'Photos', ''],
+    homeFeat('photos') ? ['#/files', 'Photos', ''] : null,
     ['#/chat', 'Inbox', ''],
     ['#/trackers/today', 'Today', '']
-  ];
-  if (moneyOk) links.push(['#/money', 'Money', '']);
+  ].filter(Boolean);
+  if (moneyOk && homeFeat('money')) links.push(['#/money', 'Money', '']);
   const body = links.map(function (link) {
     return `<a class="hrow" href="${link[0]}" ${link[2]}><span class="lb"><span class="lt">${esc(link[1])}</span></span></a>`;
   }).join('');
@@ -7847,14 +8285,15 @@ function renderHomeV3() {
   });
   const who = homeWho();
   const fresh = homeFresh();
-  const hello = `<div class="hello"><div class="home-hello-row"><h1>${typeof greet === 'function' ? greet() : 'Hello'}${who ? ', ' + esc(who) : ''}</h1><button type="button" class="home-edit">Edit home</button></div><div class="date">${typeof longDate === 'function' ? longDate(homeAzDay()) : ''}</div><div class="home-fresh${fresh.stale ? ' stale' : ''}">${esc(fresh.text)}</div></div>`;
+  const featLink = (typeof isOwner === 'function' && isOwner()) ? '<a class="proplink" href="#/settings">Features</a>' : '';
+  const hello = `<div class="hello"><div class="home-hello-row"><h1>${typeof greet === 'function' ? greet() : 'Hello'}${who ? ', ' + esc(who) : ''}</h1><button type="button" class="home-edit">Edit home</button></div><div class="date">${typeof longDate === 'function' ? longDate(homeAzDay()) : ''}</div><div class="home-fresh${fresh.stale ? ' stale' : ''}">${esc(fresh.text)}</div>${featLink}</div>`;
   const needs = blocks.needs || '';
   const sideHtml = side.map(function (kind) { return blocks[kind] || ''; }).join('');
   const top = sideHtml ? `<div class="home-split"><div class="home-col">${needs}</div><div class="home-col">${sideHtml}</div></div>` : needs;
   const below = rest.map(function (kind) { return blocks[kind] || ''; }).join('');
   const slack = typeof slackChannelNote === 'function' ? slackChannelNote() : '';
   const warranty = homeWarrantyHtml(role);
-  if (typeof hubShell === 'function') hubShell('home', `<div class="home-v3">${hello}${slack}${top}${below}${warranty}</div>`);
+  if (typeof hubShell === 'function') hubShell('home', `<div class="home-v3" data-edit-home="1">${hello}${slack}${top}${below}${warranty}</div>`);
   homeBind(document.getElementById('root'));
   homeNoteView();
   document.title = 'Harswells · Home';
@@ -7868,7 +8307,8 @@ function renderNeedsAll(sub) {
   const filter = known ? sub : '';
   const counts = homeCounts(ranked.all, today, weekEnd);
   const rows = filter ? ranked.all.filter(function (item) { return homeTags(item, today, weekEnd).indexOf(filter) >= 0; }) : ranked.all;
-  const chips = `<a class="fchip ${filter ? '' : 'on'}" href="#/needs">All <b>${ranked.all.length}</b></a>` + HOME_FILTERS.map(function (pair) {
+  const filters = HOME_FILTERS.filter(function (pair) { return pair[0] !== 'bids' || homeFeat('bids'); });
+  const chips = `<a class="fchip ${filter ? '' : 'on'}" href="#/needs">All <b>${ranked.all.length}</b></a>` + filters.map(function (pair) {
     return `<a class="fchip ${filter === pair[0] ? 'on' : ''}" href="#/needs/${pair[0]}">${esc(pair[1])} <b>${counts[pair[0]] || 0}</b></a>`;
   }).join('');
   const list = rows.map(homeRow).join('') || '<div class="none">Nothing in this filter</div>';
@@ -7886,7 +8326,7 @@ if (typeof window !== 'undefined') window.HWSHome = HWSHome;
 
 /* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
-const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money','needs'];
+const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money','settings','needs'];
 const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
  jobs:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
  trackers:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>',
@@ -7942,7 +8382,7 @@ function hubStats(){const h=H(),td=hubToday(),we=h.weekEnd||addD(td,7);const T=a
  return {td,we,overdue,today,week,high,bOpen,bWeek,bPast,bIn,toPlace,dl,dlWeek,fu,fuDue,jobs:activeN}}
 /* ---- shared chrome ---- */
 function hubNav(){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files'],['chat','Chat','#/chat']];
- if(typeof canSeeMoney==='function'&&canSeeMoney())it.splice(2,0,['money','Money','#/money']);return it}
+ if(typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))it.splice(2,0,['money','Money','#/money']);return it}
 function gnavHtml(page){const it=hubNav();
  return `<nav class="tabbar gtabs" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" data-g="${k}" class="${k==page?'on':''}" ${k==page?'aria-current="page"':''}>${ico(k)}<span>${l}</span></a>`).join('')}</nav>`}
 function dnavHtml(page){const it=hubNav();
@@ -7955,7 +8395,7 @@ function lrow(x,extra){if(btFace(x))return '';const h=hostedRow(x,extra,'lrow');
 function hrow(href,title,sub,right,cls){return `<a class="hrow ${cls||''}" href="${href}"><span class="lb"><span class="lt">${title}</span>${sub?`<span class="ls">${sub}</span>`:''}</span>${right||''}${ico('chev','go')}</a>`}
 function dchip(d,td){if(!d)return '';const c=d<td?'overdue':(d==td?'today':'');return `<span class="dchip ${c}">${d==td?'Today':(d==addD(td,1)?'Tomorrow':dow(d)+' '+md(d))}</span>`}
 function greet(){const h=+new Date(Date.now()-7*3600e3).toISOString().slice(11,13);return h<12?'Good morning':(h<17?'Good afternoon':'Good evening')}
-function homeComparison(){if(typeof renderBidHome==='function'){const html=renderBidHome();if(html)return html}const groups=(H().comparison)||[];if(!groups.length)return '';
+function homeComparison(){if(typeof featureOn==='function'&&!featureOn('bids'))return '';if(typeof renderBidHome==='function'){const html=renderBidHome();if(html)return html}const groups=(H().comparison)||[];if(!groups.length)return '';
  const money=(typeof MONEY!=='undefined'&&MONEY&&MONEY.bid_comparison)||[];const byId={};money.forEach(r=>{if(r&&r.id)byId[r.id]=r});
  const see=typeof moneyReady==='function'&&moneyReady();
  const block=groups.map(g=>{const rows=(g.rows||[]).map(x=>{const priv=see?byId[x.id]:null;const n=see&&typeof moneyNum==='function'?moneyNum(x.id,'amount'):null;const amt=n!=null?fmt$(n):(priv&&priv.amount!=null&&priv.amount!==''?fmt$(priv.amount):(x.amount_label||''));
@@ -7982,12 +8422,14 @@ function tile(href,icon,label,num,sub,cls){return `<a class="tile ${cls||''}" hr
 function renderHome(){if(typeof photoUsesFieldHome==='function'&&photoUsesFieldHome()){photoRenderFieldHome();return}if(typeof renderHomeV3==='function'){renderHomeV3();return}hubShell('home','<div class="hello"><h1>Home</h1></div>');document.title='Harswells · Home'}
 /* ---- Trackers ---- */
 const TSUB=[['today','Today'],['bids','Bids'],['orders','Orders'],['pos','POs'],['fups','Follow-ups'],['conflicts','Conflicts']];
-function renderTrackers(sub){sub=TSUB.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
- const seg=`<div class="seg2" role="tablist">${TSUB.map(([k,l])=>`<a href="#/trackers/${k}" class="${k==sub?'on':''}" role="tab">${l}</a>`).join('')}</div>`;
+function trackerSubs(){return TSUB.filter(([k])=>k!=='bids'||typeof featureOn!=='function'||featureOn('bids'))}
+function renderTrackers(sub){const subs=trackerSubs();sub=subs.some(t=>t[0]==sub)?sub:'today';const S=hubStats();const h=H();
+ const seg=`<div class="seg2" role="tablist">${subs.map(([k,l])=>`<a href="#/trackers/${k}" class="${k==sub?'on':''}" role="tab">${l}</a>`).join('')}</div>`;
  let body='';
  if(sub=='today'){const pub=t=>typeof homePublicText==='function'?homePublicText(t):String(t||'');const sec=(t,l,cls)=>l.length?`<h2 class="sh2 ${cls||''}">${t} <span>${l.length}</span></h2><div class="rows">${l.slice(0,80).map(x=>hrow(jobHref(x.slug),esc(pub(x.t.task)),esc(pub(x.job))+(x.t.phase?' · '+esc(pub(x.t.phase)):''),dchip(x.t.overdue||x.t.finish<S.td?x.t.finish:x.t.start,S.td))).join('')}</div>`:'';
   body=sec('Overdue',S.overdue.sort((a,b)=>a.t.finish<b.t.finish?-1:1),'red')+sec('Today',S.today)+sec('This week',S.week.sort((a,b)=>a.t.start<b.t.start?-1:1))||'<div class="none">Nothing scheduled this week</div>'}
- if(sub=='bids'&&typeof renderBidTracker==='function'){body=renderBidTracker()}
+ if(sub=='bids'&&typeof featureOn==='function'&&!featureOn('bids')){body=typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1></div>'}
+ else if(sub=='bids'&&typeof renderBidTracker==='function'){body=renderBidTracker()}
  else if(sub=='bids'){const f=st.hbF||'due';const q=(st.bq||'').toLowerCase();
   const L0={due:S.bPast.concat(S.bWeek),open:S.bOpen,in:S.bIn,all:h.bids}[f]||[];const L=L0.filter(b=>!q||[b.vendor,b.trade,b.job,b.owner,jobSearch(b.slug)].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
   body=`<div class="fbar"><div class="chips">${[['due','Due now',S.bPast.length+S.bWeek.length],['open','Waiting',S.bOpen.length],['in','Quotes in',S.bIn.length],['all','All',h.bids.length]].map(([k,l,n])=>`<button class="fchip ${f==k?'on':''}" data-bf="${k}">${l} <b>${n}</b></button>`).join('')}</div>
@@ -8064,7 +8506,7 @@ function mFiles(M){const L=JL(J.slug);const grp={};(L.items||[]).forEach(x=>{if(
 /* ---- Chat (placeholder) ---- */
 function renderChat(){const sl=(companyLinks().flatMap(g=>g.items||[])).find(x=>x.kind=='slack');
  hubShell('chat',`<div class="soonc"><div class="bubble">${ico('chat')}</div><h1>Team chat is coming soon</h1><p>Chat will be linked to Slack, so each job's conversation lives next to its schedule, files and trackers.</p>${sl?`<a class="pbtn" href="${esc(safeUrl(sl.url))}" target="_blank" rel="noopener">${ico('ext')} Open Slack for now</a>`:''}</div>`);document.title='Harswells · Chat'}
-function renderHub(p){const pg=p.page;if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
+function renderHub(p){const pg=p.page;if(pg=='settings'&&typeof renderFeatures==='function')renderFeatures();else if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else renderHome();window.scrollTo(0,0)}
 
 /* Attention screen (owner request 9/27 7:51 PM): ONE place for what needs attention today vs this week. Phone-first.
    Four parts, each drills down count -> list -> item (with actions on the same tap; no dead-end numbers, 7:52 PM):
@@ -8577,6 +9019,7 @@ function renderMoney(){
  document.querySelectorAll('[data-po]').forEach(function(b){b.onclick=function(){poSheet(b.dataset.po)}});
  const btn=document.getElementById('loadmoney');if(btn) btn.onclick=function(){poLoadMoney()}}
 function poLoadMoney(){
+ if(typeof featureOn==='function'&&!featureOn('money'))return;
  const who=STORE&&STORE.who?STORE.who():'';
  fetch('api/money/pos?who='+encodeURIComponent(who),{credentials:'same-origin'}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.ok) throw new Error(j.error||'Could not load amounts') ;return j.money||{}})}).then(function(money){
   document.querySelectorAll('[data-money]').forEach(function(el){const row=money[el.dataset.money];if(!row) return;const n=row.total;el.textContent=(n==null?'':('$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})))});
@@ -8847,7 +9290,7 @@ function saveSelection(slug,body){body.slug=slug;const bs=String(body.budget_sta
  else{delete o.status[body.id]}
  saveOverlay(o);closeModal();
  if(parseHash().focus)history.replaceState(null,'','#/job/'+slug+'/'+(parseHash().mod||'selections'));
- const post=()=>{if(!/^(127\.0\.0\.1|localhost)$/.test(location.hostname)||!canSeeMoney())return;
+ const post=()=>{if(typeof featureOn==='function'&&!featureOn('selections'))return;if(!/^(127\.0\.0\.1|localhost)$/.test(location.hostname)||!canSeeMoney())return;
   fetch('/api/job/'+slug+'/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(!j.ok)toast(j.error||'Office save failed')}).catch(()=>{})};
  post();toast(bs==='approved'?'Approved — moved to committed':(bs==='preliminary'?'Marked preliminary':'Updated'));
  if(J&&J.slug===slug){const fn=MODFN()[curMod()];if(fn)fn($('#mod'))}else if(typeof renderMoney==='function'&&parseHash().page==='money')renderMoney()}
@@ -9221,7 +9664,7 @@ function moneyFirstCard(slug){
  var meta=(closed||review||why)?'<span class="mj-meta">'+closed+review+why+'</span>':'';
  return '<a class="money-job" data-jobmoney="'+esc(slug)+'" data-status="'+esc(view.status)+'" data-review="'+view.review+'" href="#/job/'+esc(slug)+'/money"><span class="mj-name">'+esc(view.name)+'</span>'+
   meta+'<span class="mj-amt">'+esc(moneyFirstBits(view).concat(contractListBits(slug)).join(' · '))+'</span></a>'}
-function renderMoney(){if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
+function renderMoney(){if(typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>');return}if(!canSeeMoney()){hubShell('money',moneyHiddenHtml());return}
  if(!moneyLoaded){hubShell('money',`<div class="hph"><h1>Money</h1></div><div class="note" id="money-wait">Loading amounts…</div>`);
   loadMoneyFile().then(function(){if(!moneyLoaded&&typeof parseHash==='function'&&parseHash().page==='money'){hubShell('money',moneyHiddenHtml());if(typeof injectMainNav==='function')injectMainNav()}});return}
  var rows=bvsSort(bvsSlugs().map(bvsFigures));
@@ -9247,7 +9690,7 @@ async function ensureMoneyPaths(){if(moneyPathsReady)return;const d=(window.HWSS
  if(A&&A.ready()&&where){try{const got=await A.readAbs(where);if(got&&got.text){const doc=JSON.parse(got.text);const box=(doc&&doc.dropbox)||doc||{};
   if(box.moneyPath)d.moneyPath=String(box.moneyPath);if(Array.isArray(box.moneyPaths))d.moneyPaths=box.moneyPaths.map(function(p){return String(p)})}}catch(e){}}
  moneyPathsReady=true}
-async function loadMoneyFile(){if(!canSeeMoney()||moneyLoaded||moneyLoading)return;moneyLoading=true;
+async function loadMoneyFile(){if(typeof featureOn==='function'&&!featureOn('money'))return;if(!canSeeMoney()||moneyLoaded||moneyLoading)return;moneyLoading=true;
  try{if(window.__HWS_MONEY&&window.__HWS_MONEY.jobs&&applyMoneyDoc(window.__HWS_MONEY)){if(typeof route==='function')route();return}
   await ensureMoneyPaths();
   const paths=moneyDropboxPaths();const A=window.HWSSync&&HWSSync.DropboxBackend?HWSSync.DropboxBackend():null;
@@ -9408,7 +9851,7 @@ function linkDetailHtml(slug,line){var box=lineLinkBucket(slug,line.cost_code);v
 function unassignedHtml(slug){var u=lineLinksJob(slug).unassigned||{};var invoices=u.invoices||[],bids=u.bids||[];if(!invoices.length&&!bids.length)return '';function row(it,kind){var label=it.vendor||it.name||it.po||it.bid_id||kind;var amt=it.amount==null||it.amount===''?'':(' '+amountMark(it.amount,'amount not read'));return '<div class="ll-row"><b>'+esc(label)+'</b><div class="small mut">'+esc(it.why||'')+'</div>'+amt+'</div>'}return '<section class="unassigned" data-unassigned="1"><h3 class="pgh">Unassigned</h3>'+invoices.map(function(it){return row(it,'Invoice')}).join('')+bids.map(function(it){return row(it,'Bid')}).join('')+'</section>'}
 function moneyLinesHtml(slug){if(typeof moneyReady==='function'&&!moneyReady())return '';var lines=typeof budgetLines==='function'?budgetLines(slug,true):[];if(!lines.length&&!(lineLinksJob(slug).unassigned&&((lineLinksJob(slug).unassigned.invoices||[]).length||(lineLinksJob(slug).unassigned.bids||[]).length)))return '';var body=lines.map(function(l){var key=slug+'\n'+l.cost_code;var open=!!openLines[key];return '<div class="ll-wrap"><button type="button" class="ll-toggle" data-mline="'+esc(l.cost_code)+'" data-slug="'+esc(slug)+'" aria-expanded="'+(open?'true':'false')+'"><b class="ll-title">'+esc(l.title||l.cost_code)+'</b><span class="ll-code small mut">'+esc(l.cost_code)+'</span>'+linkCountText(slug,l.cost_code)+'</button>'+(open?'<div class="ll-body">'+forecastNote(slug,l)+linkDetailHtml(slug,l)+'</div>':'')+'</div>'}).join('');return '<div class="money-lines" data-moneylines="'+esc(slug)+'">'+body+unassignedHtml(slug)+'</div>'}
 function assignTentative(slug,code,bidId){if(typeof moneyReady==='function'&&!moneyReady())return;var by=(typeof STORE!=='undefined'&&STORE&&STORE.who)?STORE.who():'';var at=new Date().toISOString().slice(0,19);var bid=bidId||'';if(bid&&!bidOnLine(slug,code,bid))return;var prev=TENTATIVE.slice();TENTATIVE=TENTATIVE.filter(function(a){return !(a.slug===slug&&sameLineCode(a.cost_code,code))});if(bid)TENTATIVE.push({slug:slug,cost_code:code,bid_id:bid,by:by,at:at});postTentative({slug:slug,cost_code:code,bid_id:bid,by:by,at:at},prev);refreshMoneyViews()}
-function postTentative(row,prev){try{if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;var roll=function(){if(prev)TENTATIVE=prev;try{refreshMoneyViews()}catch(err){}};fetch('/api/money/tentative',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(row)}).then(function(r){var ct=r.headers.get('content-type')||'';if(ct.indexOf('json')<0){roll();return}return r.json().then(function(j){if(j&&j.ok===false){roll();return}try{if(j&&Array.isArray(j.assignments))loadTentativeDoc({tentative:j.assignments});refreshMoneyViews()}catch(err){}})}).catch(function(){roll()})}catch(e){}}
+function postTentative(row,prev){try{if(typeof featureOn==='function'&&!featureOn('money'))return;if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;var roll=function(){if(prev)TENTATIVE=prev;try{refreshMoneyViews()}catch(err){}};fetch('/api/money/tentative',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(row)}).then(function(r){var ct=r.headers.get('content-type')||'';if(ct.indexOf('json')<0){roll();return}return r.json().then(function(j){if(j&&j.ok===false){roll();return}try{if(j&&Array.isArray(j.assignments))loadTentativeDoc({tentative:j.assignments});refreshMoneyViews()}catch(err){}})}).catch(function(){roll()})}catch(e){}}
 function refreshMoneyViews(){if(budgetRoot&&budgetRoot.isConnected)paintJobBudget(budgetRoot);document.querySelectorAll('[data-moneylines]').forEach(function(box){var slug=box.getAttribute('data-moneylines')||'';var html=moneyLinesHtml(slug);if(!html){box.remove();return}var hold=document.createElement('div');hold.innerHTML=html;var fresh=hold.firstChild;if(fresh&&box.parentNode){box.parentNode.replaceChild(fresh,box);bindLineLinks(fresh)}});try{if(typeof parseHash==='function'&&parseHash().page==='money'&&typeof renderMoney==='function')renderMoney()}catch(e){}}
 function bindLineLinks(root){if(!root)return;root.querySelectorAll('[data-mline]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.getAttribute('data-mline')||'';var key=slug+'\n'+code;openLines[key]=!openLines[key];refreshMoneyViews()}});root.querySelectorAll('[data-inv]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var slug=el.getAttribute('data-slug')||'';var code=el.closest('[data-line-detail]')&&el.closest('[data-line-detail]').getAttribute('data-line-detail');var file=el.getAttribute('data-file')||'';var box=lineLinkBucket(slug,code||'');var item=null;(box.invoices||[]).forEach(function(it){if(String(it.file_id||'')===file)item=it});if(!item)item={file_id:file,path:el.getAttribute('data-path')||'',name:el.getAttribute('data-name')||''};openInvoicePreview(slug,item)}});root.querySelectorAll('[data-tent]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'',el.getAttribute('data-tent')||'')}});root.querySelectorAll('[data-tent-undo]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();assignTentative(el.getAttribute('data-slug')||'',el.getAttribute('data-code')||'','')}})}
 function loadPoMatchDoc(doc){var box=doc&&doc.po_matches;if(!box||typeof box!=='object'){PO_MATCHES={proposals:[],confirmations:[]};return}PO_MATCHES={proposals:Array.isArray(box.proposals)?box.proposals:[],confirmations:Array.isArray(box.confirmations)?box.confirmations:[],pos:Array.isArray(box.pos)?box.pos:null}}
@@ -9425,7 +9868,7 @@ function poRemainModel(slug){return committedMatchPos(slug).map(function(po){var
 function proposalButtons(slug,p){if(!p||p.label!=='proposed'||!p.po_id)return '';var decision=poDecision(slug,p.invoice_id);if(decision){var stored=decision.po_id||p.po_id;return '<button type="button" data-po-undo="1" data-slug="'+esc(slug)+'" data-invoice="'+esc(p.invoice_id)+'" data-po="'+esc(stored)+'">Undo</button>'}return '<button type="button" data-po-confirm="1" data-slug="'+esc(slug)+'" data-invoice="'+esc(p.invoice_id)+'" data-po="'+esc(p.po_id)+'">Confirm</button><button type="button" data-po-reject="1" data-slug="'+esc(slug)+'" data-invoice="'+esc(p.invoice_id)+'" data-po="'+esc(p.po_id)+'">Reject</button>'}
 function committedPoHtml(slug){if(typeof moneyReady==='function'&&!moneyReady())return '';var rows=poRemainModel(slug);var none=poProposals(slug).filter(function(p){return p&&p.label==='no_match'});var loose=poProposals(slug).filter(function(p){if(!p||p.label!=='proposed'||!p.po_id)return false;return !rows.some(function(r){return r.id===String(p.po_id)})});if(!rows.length&&!none.length&&!loose.length)return '';function proposedText(n){n=+n||0;if(n<=0)return '';return n===1?'1 proposed':(n+' proposed')}var body=rows.map(function(row){var extra='';poProposals(slug).forEach(function(p){if(String(p.po_id)!==row.id||p.label!=='proposed')return;var buttons=proposalButtons(slug,p);if(!buttons)return;extra+='<div class="small mut">'+esc(p.why||'')+'</div>'+buttons});var count=proposedText(row.proposed);return '<div class="ll-row" data-po-id="'+esc(row.id)+'"><b>'+esc(row.id+(row.vendor?' · '+row.vendor:''))+'</b><div class="small">PO amount '+esc(row.amountText)+'</div><div class="small">Invoiced '+esc(row.invoicedText)+'</div><div class="small">Remaining '+esc(row.remainingText)+'</div>'+(count?'<div class="small mut">'+esc(count)+'</div>':'')+extra+'</div>'}).join('');var looseBody=loose.map(function(p){return '<div class="ll-row"><b>'+esc(p.vendor||p.invoice_id||'Invoice')+'</b><div class="small mut">'+esc(p.why||'')+'</div>'+proposalButtons(slug,p)+'</div>'}).join('');var noneBody=none.map(function(p){return '<div class="ll-row"><b>'+esc(p.vendor||'Invoice')+'</b><div class="small mut">'+esc(p.why||'No PO match')+'</div></div>'}).join('');return '<section class="po-remain" data-po-remain="1"><h3 class="pgh">Committed purchase orders</h3>'+body+(looseBody?'<h3 class="pgh">Proposed matches</h3>'+looseBody:'')+(noneBody?'<h3 class="pgh">No PO match</h3>'+noneBody:'')+'</section>'}
 function assignPoMatch(slug,invoiceId,poId,decision){if(typeof moneyReady==='function'&&!moneyReady())return;if(!slug||!invoiceId||!poId)return;var prev=(PO_MATCHES.confirmations||[]).slice();var next=(PO_MATCHES.confirmations||[]).filter(function(c){return !(c&&c.slug===slug&&String(c.invoice_id)===String(invoiceId))});if(decision!=='undo'){var at=new Date().toISOString().slice(0,16).replace('T',' ');next.push({slug:slug,invoice_id:invoiceId,po_id:poId,decision:decision,by:'',at:at})}PO_MATCHES.confirmations=next;postPoMatch({slug:slug,invoice_id:invoiceId,po_id:poId,decision:decision},prev);refreshMoneyViews()}
-function postPoMatch(row,prev){try{if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;var roll=function(){PO_MATCHES.confirmations=prev||[];try{refreshMoneyViews()}catch(err){}};fetch('/api/money/po-match',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(row)}).then(function(r){var ct=r.headers.get('content-type')||'';if(ct.indexOf('json')<0){roll();return}return r.json().then(function(j){if(!j||j.ok===false){roll();return}if(Array.isArray(j.confirmations))PO_MATCHES.confirmations=j.confirmations;try{refreshMoneyViews()}catch(err){}})}).catch(function(){roll()})}catch(e){}}
+function postPoMatch(row,prev){try{if(typeof featureOn==='function'&&!featureOn('money'))return;if(!/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname))return;if(typeof moneyReady==='function'&&!moneyReady())return;var roll=function(){PO_MATCHES.confirmations=prev||[];try{refreshMoneyViews()}catch(err){}};fetch('/api/money/po-match',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(row)}).then(function(r){var ct=r.headers.get('content-type')||'';if(ct.indexOf('json')<0){roll();return}return r.json().then(function(j){if(!j||j.ok===false){roll();return}if(Array.isArray(j.confirmations))PO_MATCHES.confirmations=j.confirmations;try{refreshMoneyViews()}catch(err){}})}).catch(function(){roll()})}catch(e){}}
 function bindPoMatches(root){if(!root)return;root.querySelectorAll('[data-po-confirm],[data-po-reject],[data-po-undo]').forEach(function(el){el.onclick=function(ev){ev.preventDefault();ev.stopPropagation();var decision=el.hasAttribute('data-po-undo')?'undo':(el.hasAttribute('data-po-confirm')?'confirmed':'rejected');assignPoMatch(el.getAttribute('data-slug')||'',el.getAttribute('data-invoice')||'',el.getAttribute('data-po')||'',decision)}})}
 
 /* Bid tracker: one tile per job, then that job's trade packages. Amounts come from the private money file. */
@@ -10360,6 +10803,10 @@ function renderPlanIndex() {
   document.title = "Harswells · Plan Room";
 }
 function injectMainNav() {
+  if (typeof featureOn === "function" && !featureOn("plan_room")) {
+    document.querySelectorAll("[data-hws-plans]").forEach((el) => el.remove());
+    return;
+  }
   let on = false;
   try { const p = parseHash(); on = p.page === "plans" || p.mod === "plans"; } catch (e) { on = false; }
   const dnav = document.querySelector("nav.dnav");
@@ -10389,6 +10836,11 @@ function injectMainNav() {
   }
 }
 function injectJobChrome() {
+  if (typeof featureOn === "function" && !featureOn("plan_room")) {
+    document.querySelectorAll("[data-hws-plans],[data-hws-takeoffs],.hws-planbtn").forEach((el) => el.remove());
+    injectMainNav();
+    return;
+  }
   const row = document.querySelector(".jh .jrow");
   if (row && !row.querySelector(".hws-planbtn")) {
     const a = document.createElement("a");
@@ -10440,7 +10892,14 @@ parseHash = function () {
 };
 const _hwsRenderHub = renderHub;
 renderHub = function (p) {
-  if (p && p.page === "plans") { renderPlanIndex(); return; }
+  if (p && p.page === "plans") {
+    if (typeof featureOn === "function" && !featureOn("plan_room")) {
+      hubShell("plans", typeof notEnabledHtml === "function" ? notEnabledHtml() : '<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>');
+      return;
+    }
+    renderPlanIndex();
+    return;
+  }
   _hwsRenderHub(p);
   injectMainNav();
 };
@@ -10460,6 +10919,7 @@ openMore = function () {
   _hwsOpenMore();
   const list = document.querySelector(".modal .mlist");
   if (!list || !J) return;
+  if (typeof featureOn === "function" && !featureOn("plan_room")) return;
   if (!list.querySelector("[data-hws-plans]")) {
     const a = document.createElement("a");
     a.setAttribute("href", modHref("plans"));
@@ -11130,7 +11590,8 @@ async function loadFiles(M, slug, gen, cached) {
         const root = (j.root || filesRoot() || "").replace(/\/$/, "");
         const folder = j.folder || fileFolder(slug);
         const base = root && folder ? root + "/" + folder : root;
-        const live = fileVisible((j.files || []).map((e) => fileNorm(e, base)).filter(Boolean), fileWho());
+        let live = fileVisible((j.files || []).map((e) => fileNorm(e, base)).filter(Boolean), fileWho());
+        if (typeof featureOn === "function" && !featureOn("photos")) live = live.filter((e) => !fileImageName(e && (e.name || e.rel)));
         if (live.length || j.error) { entries = live; source = "box"; }
       }
     }
@@ -11292,7 +11753,20 @@ function openSheet(slug, entry, images, index) {
   view.addEventListener("click", (e) => { if (e.target === view) view.remove(); });
   load();
 }
+function fileImageName(name) {
+  return /\.(png|jpe?g|gif|webp|heic|tiff?|bmp)$/i.test(String(name || ""));
+}
+function filePhotosOff(entry) {
+  if (typeof featureOn !== "function" || featureOn("photos")) return false;
+  const name = (entry && (entry.name || entry.rel || entry.path)) || "";
+  return fileImageName(name) || (entry && (entry.kind === "image" || entry.tag === "image"));
+}
 async function fileLoadBytes(slug, entry) {
+  if (filePhotosOff(entry)) {
+    const err = new Error("not enabled");
+    err.code = "disabled";
+    throw err;
+  }
   const key = (entry.path || entry.rel || entry.name);
   try {
     if (fileOnBox() && entry.rel) {
@@ -11528,6 +12002,7 @@ function fileMountImageTag(stage, offline, bytes, blobType) {
   });
 }
 async function fileFetchThumb(slug, entry) {
+  if (filePhotosOff(entry) || (typeof featureOn === "function" && !featureOn("photos"))) return null;
   try {
     if (fileOnBox() && entry && entry.rel) {
       const r = await fetch("/api/files/" + encodeURIComponent(slug) + "/thumb?rel=" + encodeURIComponent(entry.rel), { credentials: "same-origin" });
@@ -13712,9 +14187,9 @@ function selDeadlineJobs(){if(!DATA||!DATA.jobs)return [];const out=[];
  out.sort(function(a,b){return b.overdue-a.overdue||b.week-a.week||(a.name<b.name?-1:(a.name>b.name?1:0))});return out}
 function selJobTile(r,label){const badge=r.overdue?'<span class="bbadge">'+r.overdue+'</span>':'';
  return `<a class="bjobt seljobt" href="${jobHref(r.slug,'selections')}"><span class="bjobtop"><span class="bjobname">${esc(label||r.name||'Job')}</span>${badge}</span><span class="bmeta">${esc(selRollupLine(r))}</span></a>`}
-function selectionHomeCard(){const jobs=selDeadlineJobs();if(!jobs.length)return '';
+function selectionHomeCard(){if(typeof featureOn==='function'&&!featureOn('selections'))return '';const jobs=selDeadlineJobs();if(!jobs.length)return '';
  return `<section class="seldeadhome" aria-label="Selection deadlines"><h2 class="bid-h2">Selection deadlines</h2><div class="bid-board">${jobs.map(r=>selJobTile(r)).join('')}</div></section>`}
-function selectionJobAlert(){if(!J)return '';if(typeof curMod==='function'&&curMod()==='selections')return '';
+function selectionJobAlert(){if(typeof featureOn==='function'&&!featureOn('selections'))return '';if(!J)return '';if(typeof curMod==='function'&&curMod()==='selections')return '';
  const r=selJobRollup(J);const line=selRollupLine(r);if(!line)return '';return selJobTile(r,'Selection deadlines')}
 function selectionRollupHtml(slug){const job=(DATA.jobs||{})[slug]||{};const sum=job.selection_summary||{};
  const see=typeof moneyReady==='function'?moneyReady():(typeof canSeeMoney==='function'&&canSeeMoney());
@@ -13726,7 +14201,7 @@ function selectionRollupHtml(slug){const job=(DATA.jobs||{})[slug]||{};const sum
  const diff=+roll.difference||0;const word=diff>0?'Over':(diff<0?'Under':'Even');
  return `<div class="selroll"><div class="small"><b>Allowance</b> ${fmt$(roll.allowance)} · <b>Selected</b> ${fmt$(roll.selected)} · <b>${word}</b> ${fmt$(Math.abs(diff))}</div>${counts}</div>`}
 function selOnBox(){return /^(127\.0\.0\.1|localhost)$/.test(location.hostname)}
-function selPost(slug,tail,body){if(!selOnBox())return;fetch('/api/job/'+slug+'/'+tail,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(j&&j.ok===false)toast(j.error||'Not saved')}).catch(()=>{})}
+function selPost(slug,tail,body){if(typeof featureOn==='function'&&!featureOn('selections'))return;if(!selOnBox())return;fetch('/api/job/'+slug+'/'+tail,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).then(j=>{if(j&&j.ok===false)toast(j.error||'Not saved')}).catch(()=>{})}
 function selRecordPick(slug,id,optionId){const s=selFind(slug,id);if(!s){toast('Selection not found');return}
  const stage=selStage(s);if(stage==='Approved'||stage==='Ordered'||stage==='Installed'){toast('This selection is already '+stage);return}
  const who=(STORE&&STORE.who&&STORE.who())||'';const at=new Date().toISOString().slice(0,10);
@@ -13739,7 +14214,7 @@ function selAddComment(slug,id,text){text=String(text||'').trim();if(!text)retur
  const s=selFind(slug,id);if(s){(s.comments=s.comments||[]).push({at:at,who:who,text:text})}
  const b=selBoard();(b.comments[id]=b.comments[id]||[]).push({at:at,who:who,text:text,slug:slug});selSaveBoard(b);
  selPost(slug,'selection-note',{id:id,text:text,who:who});toast('Comment saved')}
-function selDraft(slug,id,kind){if(!selOnBox()){toast('Drafts are saved on the office hub.');return}
+function selDraft(slug,id,kind){if(typeof featureOn==='function'&&!featureOn('selections'))return;if(!selOnBox()){toast('Drafts are saved on the office hub.');return}
  const who=(STORE&&STORE.who&&STORE.who())||'';
  fetch('/api/job/'+slug+'/selection-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,kind:kind,who:who})}).then(r=>r.json()).then(j=>{
   if(!j||j.ok===false)toast((j&&j.error)||'Could not save the draft');
@@ -13797,7 +14272,12 @@ function itemsForClient(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};
   return {id:s.id||'',title:s.title||s.choice||'Selection',location:s.location||'',category:s.category||'',stage:stage,
    deadline:String(s.deadline||'').slice(0,10),detail:detail,client_visible:true,
    options:(s.options||[]).filter(o=>o&&o.title).map(o=>({id:o.id||'',title:o.title}))}})}
-function renderClientSelections(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||null;
+function renderClientSelections(slug){
+ if(typeof featureOn==='function'&&(!featureOn('client_portal')||!featureOn('selections'))){
+  if(typeof hubShell==='function')hubShell('home',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>');
+  return;
+ }
+ const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||null;
  if(!job){if(typeof hubShell==='function')hubShell('home','<div class="none">This job is not on this phone.</div>');return}
  const items=itemsForClient(slug);const priced=selClientOn(slug);
  const cards=items.map(it=>{const opts=(it.options||[]).map(o=>`<button type="button" class="selcard" data-cpick="${esc(it.id)}" data-opt="${esc(o.id)}"><span class="pbody"><span class="pt">${esc(o.title)}</span><span class="ps">Choose this</span></span></button>`).join('');
@@ -13826,6 +14306,729 @@ window.HWSSelections={
  weekEnd:selWeekEnd,
  phoenixToday:selPhoenixToday,
  alerts(slug){const job=(DATA&&DATA.jobs&&DATA.jobs[slug])||{};return selAlerts(job.selections||[],selToday(job))}
+};
+
+/* Property info for one job. Providers and labels come from the company config.
+   Empty fields stay off the view. Account numbers stay off a guest or client view. */
+'use strict';
+function propertyCompany() {
+  return typeof companyDoc === 'function' ? companyDoc() : ((DATA && DATA.common && DATA.common.company) || {});
+}
+function propertySpecs() {
+  const prop = propertyCompany().property || {};
+  return (prop.utilities || []).filter(function (row) { return row && row.id; });
+}
+function propertyRecord(job) {
+  const saved = job && job.property && typeof job.property === 'object' ? job.property : {};
+  const sizes = Object.assign({
+    lot_sqft: null, house_sqft: null, ramada_sqft: null, casita_sqft: null, bedrooms: null, bathrooms: null
+  }, saved.sizes || {});
+  ['lot_sqft', 'house_sqft', 'ramada_sqft', 'casita_sqft', 'bedrooms', 'bathrooms'].forEach(function (key) {
+    if (sizes[key] != null && sizes[key] !== '') return;
+    const bags = [job || {}, (job && job.info) || {}, (job && job.sizes) || {}];
+    const aliases = {
+      lot_sqft: ['lot_sqft', 'lot_sq_ft', 'lot_sf'],
+      house_sqft: ['house_sqft', 'house_sq_ft', 'livable_sqft', 'livable', 'sqft'],
+      ramada_sqft: ['ramada_sqft', 'ramada_sq_ft'],
+      casita_sqft: ['casita_sqft', 'casita_sq_ft'],
+      bedrooms: ['bedrooms', 'beds'],
+      bathrooms: ['bathrooms', 'baths']
+    }[key];
+    for (let i = 0; i < bags.length && (sizes[key] == null || sizes[key] === ''); i++) {
+      aliases.forEach(function (name) {
+        if (sizes[key] == null && bags[i][name] != null && bags[i][name] !== '') sizes[key] = bags[i][name];
+      });
+    }
+  });
+  let address = saved.address || '';
+  if (!address && job) address = job.address || '';
+  return {
+    schema: 'harswells.property.v1',
+    company_id: saved.company_id || (propertyCompany().company_id || ''),
+    address: address,
+    utilities: Object.assign({}, saved.utilities || {}),
+    sizes: sizes
+  };
+}
+function propertyNum(value) {
+  if (value == null || value === '') return null;
+  const n = +String(value).replace(/,/g, '');
+  return isFinite(n) ? n : null;
+}
+function propertySq(value) {
+  const n = propertyNum(value);
+  if (n == null) return '';
+  return Math.round(n).toLocaleString('en-US') + ' sq ft';
+}
+function propertyBath(value) {
+  const n = propertyNum(value);
+  if (n == null) return '';
+  if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
+  return (Math.round(n * 10) / 10).toFixed(1);
+}
+function propertyProviderLabel(spec, row) {
+  row = row || {};
+  const id = row.provider || '';
+  if (!id) return '';
+  if (id === 'other' && row.provider_other) return row.provider_other;
+  const list = spec && spec.providers || [];
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === id) return list[i].label || id;
+  }
+  return id;
+}
+function propertyImageName(name) {
+  return /\.(png|jpe?g|gif|webp|heic|tiff?|bmp)$/i.test(String(name || ''));
+}
+function propertyDollarName(text) {
+  return /\$\s?\d/.test(String(text || ''));
+}
+function propertyPhotosOn(who) {
+  return typeof featureOn !== 'function' || featureOn('photos', who);
+}
+function propertyShownFiles(row, see, who) {
+  const locked = !!(row && row.account);
+  return ((row && row.attachments) || []).filter(function (item) {
+    if (!item || !item.name) return false;
+    if (!propertyPhotosOn(who) && propertyImageName(item.name)) return false;
+    if (!see && (locked || item.client_visible !== true)) return false;
+    if (!see && (propertyDollarName(item.name) || propertyDollarName(item.rel))) return false;
+    return true;
+  });
+}
+function propertyFilled(job, who) {
+  const rec = propertyRecord(job);
+  const see = typeof canSeePropertyRefs !== 'function' || canSeePropertyRefs(who, job);
+  const utils = [];
+  propertySpecs().forEach(function (spec) {
+    const row = rec.utilities[spec.id] || {};
+    const bits = [];
+    const label = propertyProviderLabel(spec, row);
+    if (label) bits.push(['Provider', label]);
+    if (row.supplier) bits.push(['Supplier', row.supplier]);
+    if (row.septic_provider) bits.push(['Septic provider', row.septic_provider]);
+    if (see && row.account) bits.push(['Account', row.account]);
+    if (row.notes) bits.push(['Notes', row.notes]);
+    const files = propertyShownFiles(row, see, who);
+    if (bits.length || files.length) utils.push({id: spec.id, title: spec.label || spec.id, bits: bits, files: files, locked: !!row.account});
+  });
+  const sizeLabels = {
+    lot_sqft: 'Lot', house_sqft: 'House', ramada_sqft: 'Ramada', casita_sqft: 'Casita',
+    bedrooms: 'Bedrooms', bathrooms: 'Bathrooms'
+  };
+  const sizes = [];
+  ['lot_sqft', 'house_sqft', 'ramada_sqft', 'casita_sqft', 'bedrooms', 'bathrooms'].forEach(function (key) {
+    const val = rec.sizes[key];
+    if (val == null || val === '') return;
+    if (key === 'bedrooms') sizes.push([sizeLabels[key], String(propertyNum(val))]);
+    else if (key === 'bathrooms') sizes.push([sizeLabels[key], propertyBath(val)]);
+    else sizes.push([sizeLabels[key], propertySq(val)]);
+  });
+  return {address: rec.address || '', utilities: utils, sizes: sizes, record: rec};
+}
+function propertyFileRow(job, util, item) {
+  const see = typeof canSeePropertyRefs !== 'function' || canSeePropertyRefs(undefined, job);
+  const edit = typeof canEditProperty === 'function' && canEditProperty(job);
+  const locked = !!util.locked;
+  const actions = ['<button type="button" data-act="view" data-util="' + esc(util.id) + '" data-id="' + esc(item.id) + '">View</button>'];
+  if (see && !locked) {
+    actions.push('<label class="prop-vis"><input type="checkbox" data-act="visible" data-util="' + esc(util.id) + '" data-id="' + esc(item.id) + '"' + (item.client_visible === true ? ' checked' : '') + '> Client</label>');
+  }
+  if (edit) {
+    actions.push('<button type="button" data-act="rename" data-util="' + esc(util.id) + '" data-id="' + esc(item.id) + '">Rename</button>');
+    actions.push('<button type="button" data-act="remove" data-util="' + esc(util.id) + '" data-id="' + esc(item.id) + '">Remove</button>');
+  }
+  const rename = edit ? '<span class="prop-rename" hidden><input class="prop-rename-input" value="' + esc(item.name) + '" autocomplete="off"><button type="button" data-act="rename-save" data-util="' + esc(util.id) + '" data-id="' + esc(item.id) + '">Save name</button></span>' : '';
+  const note = locked && see ? '<small class="mut">Hub only</small>' : '';
+  return '<li class="prop-file-row" data-file="' + esc(item.id) + '"><span class="prop-file-name">' + esc(item.name) + note + '</span>' + rename + '<span class="prop-file-actions">' + actions.join('') + '</span></li>';
+}
+function propertyJobFiles(slug) {
+  let entries = [];
+  if (typeof fileOfficeEntries === 'function') {
+    try { entries = fileOfficeEntries(slug) || []; } catch (e) { entries = []; }
+  }
+  return entries.filter(function (entry) {
+    if (!entry || entry.tag === 'folder' || !entry.rel) return false;
+    const rel = String(entry.rel);
+    if (rel.indexOf('..') >= 0 || rel.indexOf('Property/Utilities/') === 0) return false;
+    if (entry.money) return false;
+    if (typeof fileIsMoney === 'function' && fileIsMoney(rel)) return false;
+    if (!propertyPhotosOn() && propertyImageName(entry.name || rel)) return false;
+    return true;
+  });
+}
+function propertyFilesHtml(job, util) {
+  const edit = typeof canEditProperty === 'function' && canEditProperty(job);
+  const files = util.files || [];
+  if (!files.length && !edit) return '';
+  const rows = files.map(function (item) { return propertyFileRow(job, util, item); }).join('');
+  let tools = '';
+  if (edit) {
+    const picks = propertyJobFiles(job && job.slug);
+    const list = picks.length ? picks.map(function (entry) {
+      return '<li><button type="button" data-act="pick" data-util="' + esc(util.id) + '" data-rel="' + esc(entry.rel) + '" data-name="' + esc(entry.name || '') + '">' + esc(entry.name || entry.rel) + '</button></li>';
+    }).join('') : '<li class="hint">No job files to attach.</li>';
+    tools = '<div class="prop-file-tools"><button type="button" data-act="upload" data-util="' + esc(util.id) + '">Upload</button><button type="button" data-act="attach" data-util="' + esc(util.id) + '">Attach existing</button><input class="prop-upload" data-util="' + esc(util.id) + '" type="file" hidden><ul class="prop-pick" data-util="' + esc(util.id) + '" hidden>' + list + '</ul></div>';
+  }
+  return '<div class="prop-files" data-util="' + esc(util.id) + '"><h5>Attachments</h5><ul>' + rows + '</ul>' + tools + '</div>';
+}
+function propertyViewHtml(job) {
+  const view = propertyFilled(job);
+  const blocks = [];
+  if (view.address) blocks.push('<p class="prop-addr">' + esc(view.address) + '</p>');
+  if (view.utilities.length) {
+    blocks.push('<h3>Utilities</h3>' + view.utilities.map(function (util) {
+      const bits = util.bits.map(function (bit) {
+        return '<div><dt>' + esc(bit[0]) + '</dt><dd>' + esc(bit[1]) + '</dd></div>';
+      }).join('');
+      return '<section class="prop-block"><h4>' + esc(util.title) + '</h4>' + (bits ? '<dl>' + bits + '</dl>' : '') + propertyFilesHtml(job, util) + '</section>';
+    }).join(''));
+  }
+  if (view.sizes.length) {
+    blocks.push('<h3>Size</h3><dl class="prop-sizes">' + view.sizes.map(function (bit) {
+      return '<div><dt>' + esc(bit[0]) + '</dt><dd>' + esc(bit[1]) + '</dd></div>';
+    }).join('') + '</dl>');
+  }
+  if (!blocks.length) blocks.push('<p class="hint">Nothing on file for this property yet.</p>');
+  return blocks.join('');
+}
+function propertyField(label, inner) {
+  return '<label class="prop-field"><span>' + esc(label) + '</span>' + inner + '</label>';
+}
+function propertyEditHtml(job) {
+  const rec = propertyRecord(job);
+  const see = typeof canSeePropertyRefs !== 'function' || canSeePropertyRefs(undefined, job);
+  const specs = propertySpecs();
+  const utilHtml = specs.map(function (spec) {
+    const row = rec.utilities[spec.id] || {};
+    const providers = spec.providers || [];
+    let provider = '';
+    if (spec.free_provider) {
+      provider = propertyField(spec.label + ' provider', '<input name="' + spec.id + '_provider" value="' + esc(row.provider || '') + '" autocomplete="off">');
+    } else if (providers.length) {
+      const opts = '<option value="">Select</option>' + providers.map(function (item) {
+        return '<option value="' + esc(item.id) + '"' + (row.provider === item.id ? ' selected' : '') + '>' + esc(item.label || item.id) + '</option>';
+      }).join('');
+      provider = propertyField(spec.label, '<select name="' + spec.id + '_provider">' + opts + '</select>');
+    }
+    const other = spec.allow_other ? propertyField('Other name', '<input name="' + spec.id + '_other" value="' + esc(row.provider_other || '') + '" autocomplete="off">') : '';
+    const supplier = spec.supplier_when ? propertyField('Supplier', '<input name="' + spec.id + '_supplier" value="' + esc(row.supplier || '') + '" autocomplete="organization">') : '';
+    const septic = spec.provider_when ? propertyField('Septic provider', '<input name="' + spec.id + '_septic" value="' + esc(row.septic_provider || '') + '" autocomplete="organization">') : '';
+    const account = spec.account ? propertyField('Account', '<input name="' + spec.id + '_account" value="' + esc(row.account || '') + '" autocomplete="off" inputmode="text">') + (see ? '<label class="prop-clear"><input type="checkbox" name="' + spec.id + '_clear_account" value="1"> Clear account</label>' : '') : '';
+    const notes = propertyField('Notes', '<textarea name="' + spec.id + '_notes" rows="2">' + esc(row.notes || '') + '</textarea>');
+    return '<fieldset class="prop-set"><legend>' + esc(spec.label || spec.id) + '</legend>' + provider + other + supplier + septic + account + notes + '</fieldset>';
+  }).join('');
+  const size = function (key, label, mode) {
+    const val = rec.sizes[key];
+    const shown = val == null || val === '' ? '' : String(val);
+    return propertyField(label, '<input name="size_' + key + '" value="' + esc(shown) + '" inputmode="' + mode + '" autocomplete="off">');
+  };
+  return '<form id="propform" class="prop-form">' +
+    propertyField('Address', '<input name="address" value="' + esc(rec.address || '') + '" autocomplete="street-address">') +
+    utilHtml +
+    '<fieldset class="prop-set"><legend>Size</legend>' +
+    size('lot_sqft', 'Lot sq ft', 'decimal') +
+    size('house_sqft', 'House sq ft', 'decimal') +
+    size('ramada_sqft', 'Ramada sq ft', 'decimal') +
+    size('casita_sqft', 'Casita sq ft', 'decimal') +
+    size('bedrooms', 'Bedrooms', 'numeric') +
+    size('bathrooms', 'Bathrooms', 'decimal') +
+    '</fieldset><div class="mbtns"><button class="pri" type="submit">Save property info</button><button type="button" id="prop-cancel">Cancel</button></div></form>';
+}
+function propertyReadForm(form, job) {
+  const fd = new FormData(form);
+  const rec = propertyRecord(job);
+  rec.address = String(fd.get('address') || '').trim();
+  rec.company_id = propertyCompany().company_id || rec.company_id || '';
+  propertySpecs().forEach(function (spec) {
+    const row = {
+      provider: String(fd.get(spec.id + '_provider') || '').trim(),
+      provider_other: String(fd.get(spec.id + '_other') || '').trim(),
+      supplier: String(fd.get(spec.id + '_supplier') || '').trim(),
+      septic_provider: String(fd.get(spec.id + '_septic') || '').trim(),
+      account: String(fd.get(spec.id + '_account') || '').trim(),
+      notes: String(fd.get(spec.id + '_notes') || '').trim()
+    };
+    if (fd.get(spec.id + '_clear_account')) row.clear_account = true;
+    if (!spec.allow_other || row.provider !== 'other') row.provider_other = '';
+    if (spec.supplier_when && row.provider !== spec.supplier_when) row.supplier = '';
+    if (spec.provider_when && row.provider !== spec.provider_when) row.septic_provider = '';
+    if (spec.notes_when && row.provider !== spec.notes_when) row.notes = '';
+    if (!spec.account) row.account = '';
+    const prev = rec.utilities[spec.id] || {};
+    const atts = (prev.attachments || []).filter(function (item) {
+      return item && item.id && item.name;
+    }).map(function (item) {
+      const copy = {
+        id: item.id,
+        name: item.name,
+        rel: item.rel || '',
+        client_visible: item.client_visible === true && !row.account && !propertyDollarName(item.name) && !propertyDollarName(item.rel)
+      };
+      return copy;
+    });
+    if (atts.length) row.attachments = atts;
+    rec.utilities[spec.id] = row;
+  });
+  ['lot_sqft', 'house_sqft', 'ramada_sqft', 'casita_sqft', 'bedrooms', 'bathrooms'].forEach(function (key) {
+    const raw = String(fd.get('size_' + key) || '').trim();
+    rec.sizes[key] = raw === '' ? null : raw;
+  });
+  return rec;
+}
+function propertyDropAccounts(rec) {
+  if (!rec || typeof rec !== 'object') return rec;
+  const utils = rec.utilities;
+  if (!utils || typeof utils !== 'object' || Array.isArray(utils)) return rec;
+  Object.keys(utils).forEach(function (uid) {
+    const row = utils[uid];
+    if (!row || typeof row !== 'object') return;
+    delete row.account;
+    delete row.ref;
+    delete row.reference;
+  });
+  return rec;
+}
+const PROPERTY_LOCAL_VER = 2;
+function propertyLocalKey(slug) {
+  return 'hws-property-v' + PROPERTY_LOCAL_VER + ':' + slug;
+}
+function propertyKeyMatches(key, slug) {
+  if (!key || key.indexOf('hws-property') !== 0) return false;
+  if (!slug) return true;
+  return key === 'hws-property:' + slug || key.slice(key.lastIndexOf(':') + 1) === slug;
+}
+function propertyPurgeLocal(slug) {
+  try {
+    const drop = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!propertyKeyMatches(key, slug)) continue;
+      if (slug && key === propertyLocalKey(slug)) continue;
+      drop.push(key);
+    }
+    drop.forEach(function (key) { localStorage.removeItem(key); });
+  } catch (e) {}
+}
+function propertyOnWho(next) {
+  next = String(next || '').replace(/\s+/g, ' ').trim();
+  let prev = '';
+  try { prev = String(localStorage.getItem('hws-who') || '').replace(/\s+/g, ' ').trim(); } catch (e) {}
+  if (prev !== next) propertyPurgeLocal();
+}
+function propertyDollar(text) {
+  if (typeof propertyDollarName === 'function') return propertyDollarName(text);
+  return /\$\s?\d/.test(String(text || ''));
+}
+function propertyClientRecord(rec) {
+  let copy = rec;
+  try { copy = JSON.parse(JSON.stringify(rec)); } catch (e) { copy = rec; }
+  const utils = copy && copy.utilities;
+  if (!utils || typeof utils !== 'object' || Array.isArray(utils)) return propertyDropAccounts(copy);
+  Object.keys(utils).forEach(function (uid) {
+    const row = utils[uid];
+    if (!row || typeof row !== 'object') return;
+    const locked = !!(row.account || row.ref || row.reference);
+    delete row.account;
+    delete row.ref;
+    delete row.reference;
+    delete row.clear_account;
+    const files = (row.attachments || []).filter(function (item) {
+      if (!item || !item.name) return false;
+      if (locked || item.client_visible !== true) return false;
+      if (propertyDollar(item.name) || propertyDollar(item.rel)) return false;
+      return true;
+    }).map(function (item) {
+      return {id: item.id, name: item.name, rel: item.rel || '', client_visible: true};
+    });
+    if (files.length) row.attachments = files;
+    else delete row.attachments;
+  });
+  return copy;
+}
+function propertyPublicRecord(rec) {
+  return propertyClientRecord(rec);
+}
+function propertyStore(slug, rec) {
+  if (DATA && DATA.jobs && DATA.jobs[slug]) DATA.jobs[slug].property = rec;
+  if (typeof rememberPropertyRecord === 'function') rememberPropertyRecord(slug, rec);
+  try {
+    propertyPurgeLocal(slug);
+    localStorage.setItem(propertyLocalKey(slug), JSON.stringify(propertyClientRecord(rec)));
+  } catch (e) {}
+  if (typeof J !== 'undefined' && J && J.slug === slug) J.property = rec;
+  try {
+    if (typeof STORE !== 'undefined' && STORE && STORE.getJob) {
+      const cached = STORE.getJob(slug);
+      if (cached) cached.property = rec;
+    }
+  } catch (e) {}
+}
+function propertyHub() {
+  const hub = window.HWS_CONFIG && HWS_CONFIG.hubUrl;
+  if (!hub) return '';
+  return String(hub).replace(/\/$/, '');
+}
+function propertySave(slug, rec) {
+  propertyStore(slug, rec);
+  const hub = propertyHub();
+  if (hub) {
+    fetch(hub + '/api/job/' + encodeURIComponent(slug) + '/property', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(rec)
+    }).catch(function () {});
+  }
+}
+function propertyFetchMember(slug, job) {
+  const hub = propertyHub();
+  if (!hub || !slug) return Promise.resolve(null);
+  if (typeof canSeePropertyRefs === 'function' && !canSeePropertyRefs(undefined, job)) return Promise.resolve(null);
+  return fetch(hub + '/api/job/' + encodeURIComponent(slug) + '/property', {
+    method: 'GET',
+    credentials: 'include',
+    cache: 'no-store',
+    headers: {'Cache-Control': 'no-store'}
+  }).then(function (res) {
+    if (!res || !res.ok) return null;
+    return res.json();
+  }).then(function (data) {
+    const rec = data && data.property;
+    if (!rec || typeof rec !== 'object') return null;
+    return rec;
+  }).catch(function () { return null; });
+}
+function propertyApplyMember(slug, rec) {
+  if (!rec || !slug) return;
+  if (DATA && DATA.jobs && DATA.jobs[slug]) DATA.jobs[slug].property = rec;
+  if (typeof rememberPropertyRecord === 'function') rememberPropertyRecord(slug, rec);
+  if (typeof J !== 'undefined' && J && J.slug === slug) J.property = rec;
+  try {
+    if (typeof STORE !== 'undefined' && STORE && STORE.invalidate) STORE.invalidate();
+  } catch (e) {}
+}
+function propertyFillAccounts(root, rec) {
+  if (!root || !rec) return;
+  const utils = rec.utilities || {};
+  propertySpecs().forEach(function (spec) {
+    if (!spec.account) return;
+    const input = root.querySelector('[name="' + spec.id + '_account"]');
+    const value = String((utils[spec.id] || {}).account || '');
+    if (input && !String(input.value || '').trim() && value) input.value = value;
+  });
+}
+function propertySafeName(name) {
+  name = String(name || '').split(/[/\\]/).pop().replace(/[\u0000-\u001f]/g, '').replace(/\.\./g, '').trim();
+  if (!name || name === '.' || name === '..') throw new Error('file name is required');
+  if (name.length > 120) name = name.slice(0, 120);
+  return name;
+}
+function propertyNewId() {
+  const bytes = new Uint8Array(4);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes);
+  else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  let hex = '';
+  for (let i = 0; i < bytes.length; i++) hex += ('0' + bytes[i].toString(16)).slice(-2);
+  return 'a' + hex;
+}
+function propertyUniqueName(atts, name, ignoreId) {
+  const used = {};
+  (atts || []).forEach(function (item) {
+    if (!ignoreId || item.id !== ignoreId) used[item.name] = true;
+  });
+  if (!used[name]) return name;
+  const dot = name.lastIndexOf('.');
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : '';
+  for (let n = 2; n < 52; n++) {
+    const candidate = base + ' (' + n + ')' + ext;
+    if (!used[candidate]) return candidate;
+  }
+  throw new Error('file name is already used');
+}
+function propertyCopyRec(job) {
+  const rec = propertyRecord(job);
+  propertySpecs().forEach(function (spec) {
+    const row = Object.assign({}, rec.utilities[spec.id] || {});
+    row.attachments = (row.attachments || []).map(function (item) { return Object.assign({}, item); });
+    rec.utilities[spec.id] = row;
+  });
+  return rec;
+}
+function propertyPostOp(slug, body) {
+  const hub = propertyHub();
+  if (!hub) return;
+  const payload = {
+    op: body.op,
+    utility: body.utility,
+    id: body.id || '',
+    name: body.name || '',
+    rel: body.rel || '',
+    client_visible: body.client_visible === true
+  };
+  if (body.data_b64) payload.data_b64 = body.data_b64;
+  fetch(hub + '/api/job/' + encodeURIComponent(slug) + '/property', {
+    method: 'POST', credentials: 'include',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function (res) { return res.json(); }).then(function (data) {
+    if (data && data.ok && data.property) propertyStore(slug, data.property);
+  }).catch(function () {});
+}
+function propertyApplyFile(job, body) {
+  const spec = propertySpecs().filter(function (row) { return row.id === body.utility; })[0];
+  if (!spec) throw new Error('unknown utility');
+  const edit = typeof canEditProperty === 'function' && canEditProperty(job);
+  const see = typeof canSeePropertyRefs !== 'function' || canSeePropertyRefs(undefined, job);
+  const op = body.op;
+  if (op === 'upload' || op === 'attach' || op === 'rename' || op === 'remove') {
+    if (!edit) throw new Error('only an owner or a project manager can edit property info');
+  } else if (op === 'visible') {
+    if (!see) throw new Error('only a hub member can change who sees a file');
+  } else throw new Error('unknown file action');
+  const rec = propertyCopyRec(job);
+  const row = rec.utilities[spec.id];
+  let atts = row.attachments || [];
+  const locked = !!String(row.account || '').trim();
+  function find(id) {
+    for (let i = 0; i < atts.length; i++) if (atts[i].id === id) return atts[i];
+    throw new Error('file is not on this utility');
+  }
+  if (op === 'upload' || op === 'attach') {
+    let name = propertySafeName(body.name);
+    if (propertyImageName(name) && !propertyPhotosOn()) throw new Error('photos are not enabled');
+    if (op === 'attach') {
+      const rel = String(body.rel || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+      if (!rel || rel.split('/').indexOf('..') >= 0) throw new Error('file is not in this job folder');
+      if (rel.indexOf('Property/Utilities/') === 0) throw new Error('that file stays off property info');
+      if (typeof fileIsMoney === 'function' && fileIsMoney(rel)) throw new Error('that file stays off property info');
+    }
+    if (op === 'upload' && !body.data_b64) throw new Error('file is empty or too large');
+    name = propertyUniqueName(atts, name);
+    atts.push({
+      id: propertyNewId(),
+      name: name,
+      rel: 'Property/Utilities/' + spec.id + '/' + name,
+      client_visible: false
+    });
+  } else if (op === 'rename') {
+    const item = find(body.id);
+    let name = propertySafeName(body.name);
+    if (propertyImageName(name) && !propertyPhotosOn()) throw new Error('photos are not enabled');
+    name = propertyUniqueName(atts, name, item.id);
+    item.name = name;
+    item.rel = 'Property/Utilities/' + spec.id + '/' + name;
+    if (locked || propertyDollarName(name)) item.client_visible = false;
+  } else if (op === 'remove') {
+    find(body.id);
+    atts = atts.filter(function (item) { return item.id !== body.id; });
+  } else {
+    const item = find(body.id);
+    if (locked) throw new Error('a file on an account stays with the hub');
+    if (propertyImageName(item.name) && !propertyPhotosOn()) throw new Error('photos are not enabled');
+    if (body.client_visible === true && (propertyDollarName(item.name) || propertyDollarName(item.rel))) {
+      throw new Error('a file name with an amount stays with the hub');
+    }
+    item.client_visible = body.client_visible === true;
+  }
+  if (atts.length) row.attachments = atts;
+  else delete row.attachments;
+  propertyStore(job.slug, rec);
+  propertyPostOp(job.slug, body);
+  return rec;
+}
+function propertyReadUpload(file) {
+  return new Promise(function (resolve, reject) {
+    if (!file || !file.size || file.size > 8 * 1024 * 1024) {
+      reject(new Error('file is empty or too large'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = function () { reject(new Error('file is empty or too large')); };
+    reader.onload = function () {
+      const text = String(reader.result || '');
+      const comma = text.indexOf(',');
+      const b64 = comma >= 0 ? text.slice(comma + 1) : '';
+      if (!b64) reject(new Error('file is empty or too large'));
+      else resolve(b64);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function propertyBind(root, job, M) {
+  function refresh(msg) {
+    mProperty(M);
+    if (msg && typeof toast === 'function') toast(msg);
+  }
+  root.addEventListener('click', function (ev) {
+    const btn = ev.target.closest('[data-act]');
+    if (!btn || btn.getAttribute('data-act') === 'visible') return;
+    const act = btn.getAttribute('data-act');
+    const uid = btn.getAttribute('data-util');
+    if (act === 'upload') {
+      const input = root.querySelector('input.prop-upload[data-util="' + uid + '"]');
+      if (input) input.click();
+      return;
+    }
+    if (act === 'attach') {
+      const panel = root.querySelector('ul.prop-pick[data-util="' + uid + '"]');
+      if (panel) panel.hidden = !panel.hidden;
+      return;
+    }
+    if (act === 'rename') {
+      const line = btn.closest('.prop-file-row');
+      const box = line && line.querySelector('.prop-rename');
+      const name = line && line.querySelector('.prop-file-name');
+      if (box) box.hidden = false;
+      if (name) name.hidden = true;
+      return;
+    }
+    if (act === 'view') {
+      const row = (propertyRecord(job).utilities[uid] || {});
+      const item = (row.attachments || []).filter(function (file) { return file.id === btn.getAttribute('data-id'); })[0];
+      if (!item) return;
+      if (window.HWSFiles && HWSFiles.open) HWSFiles.open(job.slug, item.rel || '', null, {path: '', name: item.name || 'File'});
+      else if (typeof toast === 'function') toast(item.name || 'File');
+      return;
+    }
+    try {
+      if (act === 'rename-save') {
+        const input = btn.parentNode.querySelector('input');
+        propertyApplyFile(job, {op: 'rename', utility: uid, id: btn.getAttribute('data-id'), name: input ? input.value : ''});
+      } else if (act === 'remove') {
+        propertyApplyFile(job, {op: 'remove', utility: uid, id: btn.getAttribute('data-id')});
+      } else if (act === 'pick') {
+        propertyApplyFile(job, {op: 'attach', utility: uid, rel: btn.getAttribute('data-rel'), name: btn.getAttribute('data-name')});
+      } else return;
+      refresh('File updated');
+    } catch (err) {
+      if (typeof toast === 'function') toast(err.message || 'Not saved');
+    }
+  });
+  root.querySelectorAll('input.prop-upload').forEach(function (input) {
+    input.addEventListener('change', function () {
+      const file = input.files && input.files[0];
+      propertyReadUpload(file).then(function (b64) {
+        propertyApplyFile(job, {op: 'upload', utility: input.getAttribute('data-util'), name: file.name, data_b64: b64});
+        refresh('File added');
+      }).catch(function (err) {
+        if (typeof toast === 'function') toast(err.message || 'Not saved');
+      });
+    });
+  });
+  root.querySelectorAll('input[data-act=visible]').forEach(function (box) {
+    box.addEventListener('change', function () {
+      try {
+        propertyApplyFile(job, {
+          op: 'visible',
+          utility: box.getAttribute('data-util'),
+          id: box.getAttribute('data-id'),
+          client_visible: box.checked
+        });
+      } catch (err) {
+        box.checked = !box.checked;
+        if (typeof toast === 'function') toast(err.message || 'Not saved');
+      }
+    });
+  });
+}
+function propertyLoadLocal(job) {
+  if (!job || !job.slug) return job;
+  try {
+    propertyPurgeLocal(job.slug);
+    const raw = localStorage.getItem(propertyLocalKey(job.slug));
+    if (!raw) return job;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return job;
+    propertyDropAccounts(saved);
+    const base = job.property || {};
+    const baseUtils = base.utilities && typeof base.utilities === 'object' && !Array.isArray(base.utilities) ? base.utilities : {};
+    const merged = Object.assign({}, base, saved);
+    if (saved.utilities && typeof saved.utilities === 'object' && !Array.isArray(saved.utilities)) {
+      const utils = {};
+      const ids = {};
+      Object.keys(baseUtils).forEach(function (id) { ids[id] = true; });
+      Object.keys(saved.utilities).forEach(function (id) { ids[id] = true; });
+      Object.keys(ids).forEach(function (uid) {
+        const prior = baseUtils[uid] || {};
+        const incoming = saved.utilities[uid] || {};
+        const row = Object.assign({}, prior, incoming);
+        delete row.account;
+        delete row.ref;
+        delete row.reference;
+        if (prior.account) row.account = prior.account;
+        if (prior.ref) row.ref = prior.ref;
+        if (prior.reference) row.reference = prior.reference;
+        const files = (prior.attachments || []).filter(function (item) { return item && item.name; }).map(function (item) {
+          return Object.assign({}, item);
+        });
+        if (files.length) row.attachments = files;
+        else delete row.attachments;
+        utils[uid] = row;
+      });
+      merged.utilities = utils;
+    } else {
+      propertyDropAccounts(merged);
+      if (base.utilities) merged.utilities = base.utilities;
+    }
+    job.property = merged;
+  } catch (e) {}
+  return job;
+}
+function mProperty(M) {
+  const job = propertyLoadLocal(J);
+  const edit = typeof canEditProperty === 'function' && canEditProperty(job);
+  const editing = edit && M.dataset.editing === '1';
+  const body = editing ? propertyEditHtml(job) : propertyViewHtml(job);
+  const btn = edit && !editing ? '<button type="button" class="pri" id="prop-edit">Edit</button>' : '';
+  M.innerHTML = '<div class="prop-page" data-property="1"><h2>Property info</h2>' + body + btn + '</div>';
+  propertyBind(M.querySelector('[data-property]'), job, M);
+  const open = document.getElementById('prop-edit');
+  if (open) open.onclick = function () { M.dataset.editing = '1'; mProperty(M); };
+  const cancel = document.getElementById('prop-cancel');
+  if (cancel) cancel.onclick = function () { M.dataset.editing = ''; mProperty(M); };
+  const form = document.getElementById('propform');
+  if (form) form.onsubmit = function (ev) {
+    ev.preventDefault();
+    try {
+      const rec = propertyReadForm(form, job);
+      propertySave(job.slug, rec);
+      M.dataset.editing = '';
+      mProperty(M);
+      if (typeof toast === 'function') toast('Property info saved');
+    } catch (err) {
+      if (typeof toast === 'function') toast(err.message || 'Not saved');
+    }
+  };
+  propertyAskMember(M, job);
+}
+function propertyAskMember(M, job) {
+  if (!M || !job || !job.slug || !propertyHub()) return;
+  const see = typeof canSeePropertyRefs !== 'function' || canSeePropertyRefs(undefined, job);
+  if (!see) return;
+  const who = typeof currentWhoName === 'function' ? currentWhoName() : '';
+  if (who && M.dataset.memberFor === who) return;
+  if (M.dataset.memberPending === '1') return;
+  M.dataset.memberPending = '1';
+  const slug = job.slug;
+  propertyFetchMember(slug, job).then(function (rec) {
+    M.dataset.memberPending = '';
+    if (!rec) return;
+    const now = typeof currentWhoName === 'function' ? currentWhoName() : '';
+    if (now !== who) return;
+    if (typeof canSeePropertyRefs === 'function' && !canSeePropertyRefs(undefined, job)) return;
+    M.dataset.memberFor = who;
+    propertyApplyMember(slug, rec);
+    if (job) job.property = rec;
+    if (M.dataset.editing === '1') propertyFillAccounts(M, rec);
+    else mProperty(M);
+  });
+}
+window.HWSProperty = {
+  record: propertyRecord,
+  filled: propertyFilled,
+  viewHtml: propertyViewHtml,
+  save: propertySave
 };
 
 /* DWG/DXF preview. The viewer module is imported only when a drawing opens.
@@ -13999,10 +15202,10 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}).join('')||emptyState('No jobs match','')}</div>${typeof warrantyFold==='function'?warrantyFold('jobs',warranty):''}</div></div></main>`+gnavHtml('jobs');
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
 /* ---------- boot ---------- */
-function route(){closeModal();if(!DATA)return;const p=parseHash();
+function route(){document.querySelectorAll('.toast').forEach(function(x){x.remove()});closeModal();if(!DATA)return;if(typeof applyFeatureStrip==='function')applyFeatureStrip();const p=parseHash();
  if(p.slug){if(!DATA.jobs[p.slug]){location.hash='#/';return}if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0)}
  else if(p.page=='jobs'){J=null;L=STORE.getList();renderList()}
- else if(p.page=='client'&&typeof renderClientSelections==='function'){J=null;L=null;renderClientSelections(p.sub)}
+ else if(p.page=='client'&&typeof renderClientSelections==='function'){J=null;L=null;if(typeof featureOn==='function'&&!featureOn('client_portal')){if(typeof showNotEnabled==='function')showNotEnabled('home');else if(typeof hubShell==='function')hubShell('home','<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else renderClientSelections(p.sub)}
  else{J=null;L=null;renderHub(p)}}
 window.addEventListener('hashchange',route);
 let lastPhone=isPhone();window.addEventListener('resize',()=>{const p=isPhone();if(p!==lastPhone){lastPhone=p;if(!modalEl)route()}});
@@ -14037,7 +15240,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();if(STORE&&!STORE.who()&&SY.A&&SY.A.who)STORE.setWho(SY.A.who());if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
+  await syncBoot();openStore();if(STORE&&!STORE.who()&&SY.A&&SY.A.who)STORE.setWho(SY.A.who());if(typeof loadCompanyOverride==='function')loadCompanyOverride();if(typeof applyFeatureStrip==='function')applyFeatureStrip();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 </script>
