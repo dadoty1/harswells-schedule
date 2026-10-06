@@ -149,7 +149,7 @@ export function installPlanChrome() {
   }
 
   var toolsBtn = document.getElementById("hws-tools");
-  var narrow = window.matchMedia("(max-width: 800px)");
+  var narrow = window.matchMedia("(max-width: 1100px)");
   function toolsOpen() {
     return !!(toolsBtn && toolsBtn.getAttribute("aria-pressed") === "true");
   }

@@ -22,6 +22,6 @@ npm install
 npm run build
 ```
 
-The Vite build was copied here. Asset URLs are relative. `demo/sample-finish-plan.pdf`, `demo/hws-tile-demo.json`, and `demo/hws-auto-sample.json` stay in this folder for tests. The Pages build does not copy `demo/`.
+The Vite build was copied here. Asset URLs are relative. `demo/sample-finish-plan.pdf`, `demo/hws-tile-demo.json`, and `demo/hws-auto-sample.json` stay in this folder for tests. The Pages build copies `demo/sample-finish-plan.pdf` (plus the tiny orient and permit samples) so the viewer opens without Dropbox. Takeoff JSON and CAD samples stay in the repo.
 
 `?sample=1` does not upload to Dropbox. A signed-in job PDF saves `harswells.planroom.v1` to `<Plans>/_takeoffs/<pdf path>.json`.

@@ -89,10 +89,10 @@ body.hws-tools-off .mpdf-toolbar {
   overflow: hidden;
   border: 0 !important;
 }
-@media (max-width: 800px) {
+@media (max-width: 1366px) {
   .mpdf-toolbar {
     flex-wrap: nowrap !important;
-    max-height: none !important;
+    max-height: 64px !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
@@ -102,6 +102,13 @@ body.hws-tools-off .mpdf-toolbar {
   }
   .mpdf-tb-spacer {
     flex: 0 0 8px !important;
+  }
+}
+@media (min-width: 761px) and (max-width: 1366px) {
+  .mpdf-tb-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    height: 44px !important;
   }
 }
 /* Rotate page (PR #51) after chrome.js moves it into #hws-rotate-slot. */
