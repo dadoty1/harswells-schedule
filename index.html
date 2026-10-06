@@ -506,6 +506,15 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
  #hws-update{bottom:calc(86px + env(safe-area-inset-bottom))}
  body.has-tabs{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 }
+#chg,#demoreset,button#chg,button#demoreset,body.hubp .banner #syncbar button#demoreset{min-height:44px;min-width:44px;padding:10px 14px;box-sizing:border-box;line-height:22px}
+.inv-page{padding:16px;max-width:720px;margin:0 auto}
+.inv-page h1{margin:0 0 8px}
+.inv-tag{color:#667085;margin:0 0 8px}
+.inv-disc{color:#667085;font-size:14px;margin-top:12px}
+.inv-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.inv-kpis div{border:1px solid var(--line);border-radius:12px;padding:16px;min-height:88px;background:#fff}
+.inv-kpis b{display:block;margin-bottom:6px}
+.inv-sel{padding-left:18px}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -1021,7 +1030,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'be6bc1d6ff',built:'10/5/2026 9:46 PM AZ'};
+const HWS_BUILD={version:'12f20bfb53',built:'10/5/2026 10:44 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -4135,7 +4144,7 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
  function get(slug){return cache[slug]||build(slug)}
  const S={KEY,persist,version,
   saveError:()=>lastSaveErr,
-  who,setWho(n){const next=String(n||'').trim().slice(0,60);try{if(typeof propertyOnWho==='function')propertyOnWho(next)}catch(e){}try{localStorage.setItem('hws-who',next)}catch(e){}},
+  who,setWho(n){const next=String(n||'').trim().slice(0,60);try{if(typeof propertyOnWho==='function')propertyOnWho(next)}catch(e){}try{localStorage.setItem('hws-who',next)}catch(e){}try{if(typeof window.HWS_SCOPE_SYNC==='function')window.HWS_SCOPE_SYNC(next)}catch(e){}},
   invalidate(){Object.keys(cache).forEach(function(k){delete cache[k]})},
   getJob(slug){const c=get(slug);return c?c.J:null},
   edit(slug,ops){const c=get(slug);const strip=op=>{op=E.clone(op);const wipe=o=>{if(!o||typeof o!='object')return;['amount','unit_price','total','extended_cost','deposit_paid','paid_to_date'].forEach(k=>delete o[k])};wipe(op);wipe(op.bid);wipe(op.order);wipe(op.fields);wipe(op.note);if(op.note){wipe(op.note.draft);wipe(op.note.alert);}return op};
@@ -5119,12 +5128,48 @@ function findPerson(who) {
   return hits.length === 1 ? hits[0] : null;
 }
 const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1};
+function homeRolesTable() {
+  try { return (typeof DATA !== 'undefined' && DATA && DATA.common && DATA.common.home_roles) || {}; }
+  catch (e) { return {}; }
+}
+function matchRoleTable(table, who) {
+  if (!table || !who) return '';
+  const blob = String(who);
+  const keys = Object.keys(table).sort(function (a, b) { return String(b).length - String(a).length; });
+  for (let i = 0; i < keys.length; i++) {
+    const name = String(keys[i]).trim();
+    if (!name) continue;
+    const re = new RegExp('\\b' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+    if (re.test(blob)) return String(table[keys[i]] || '').trim().toLowerCase();
+  }
+  return '';
+}
+function sessionOwner(who) {
+  who = String(who || '').replace(/\s+/g, ' ').trim();
+  if (!who) return false;
+  const signed = String(currentWhoName() || '').replace(/\s+/g, ' ').trim();
+  if (!signed || signed.toLowerCase() !== who.toLowerCase()) return false;
+  try { return typeof attIsOwner === 'function' && !!attIsOwner(); }
+  catch (e) { return false; }
+}
 function roleOf(who) {
   who = String(who == null ? currentWhoName() : who).replace(/\s+/g, ' ').trim();
   if (!who) return 'guest';
   const person = findPerson(who);
-  const role = String(person && person.role || '').trim().toLowerCase();
-  return HWS_ROLES[role] ? role : 'guest';
+  if (person) {
+    const role = String(person.role || '').trim().toLowerCase();
+    return HWS_ROLES[role] ? role : 'guest';
+  }
+  const raw = matchRoleTable(homeRolesTable(), who);
+  if (raw === 'customer' || raw === 'investor') return 'guest';
+  if (raw === 'owner') return 'owner';
+  if (raw === 'pm' || raw === 'lead' || raw === 'office') return 'pm';
+  if (raw === 'field') return 'field';
+  if (raw === 'member') return 'member';
+  if (raw === 'client') return 'client';
+  if (raw === 'guest') return 'guest';
+  if (sessionOwner(who)) return 'owner';
+  return 'guest';
 }
 function isOwner(who) { return roleOf(who) === 'owner'; }
 function featureOn(id, who) {
@@ -5413,6 +5458,85 @@ window.HWSFeatures = {
   notEnabledHtml: notEnabledHtml,
   render: renderFeatures
 };
+
+/* Role scope for the sample hub. The server already filtered DATA.
+   These checks keep a typed hash from drawing a job that was not in that file. */
+function scopeBlock() {
+  const common = (typeof DATA !== 'undefined' && DATA && DATA.common) || {};
+  return common.viewer_scope || null;
+}
+function scopeKind() {
+  const block = scopeBlock();
+  return (block && block.kind) || 'guest';
+}
+function jobAllowed(slug) {
+  const block = scopeBlock();
+  if (!block || !block.jobs) return true;
+  return block.jobs.indexOf(slug) >= 0;
+}
+function hidesContacts() {
+  const block = scopeBlock();
+  return !!(block && block.contacts === false);
+}
+function hidesIntake() {
+  const block = scopeBlock();
+  return !!(block && block.intake === false);
+}
+function chatExternalOn() {
+  try { return localStorage.getItem('hws-chat-external') === '1'; } catch (e) { return false; }
+}
+function chatNavOn() {
+  const block = scopeBlock();
+  if (block && block.chat === false) return chatExternalOn();
+  return true;
+}
+function knownMod(mod) {
+  const known = {
+    schedule: 1, selections: 1, bids: 1, pos: 1, cos: 1, budget: 1, money: 1,
+    logs: 1, messages: 1, todos: 1, rfis: 1, specs: 1, conflicts: 1, whodid: 1,
+    files: 1, property: 1, plans: 1, slack: 1, takeoffs: 1, exports: 1, history: 1, settings: 1
+  };
+  return !mod || !!known[mod];
+}
+function knownHubPage(page) {
+  if (!page || page === 'home' || page === 'job' || page === 'client' || page === 'plans') return true;
+  return typeof HUB_PAGES !== 'undefined' && HUB_PAGES.indexOf(page) >= 0;
+}
+function notFoundHtml() {
+  return '<div class="panel"><h3>Not found <span class="mut small">no module</span></h3><div class="pb"><p>This page is not found.</p></div></div>';
+}
+function notAvailableHtml() {
+  return '<div class="feature-off" data-unavailable="1"><h1>Not available</h1><p>This is not available.</p></div>';
+}
+function showUnavailable() {
+  const html = notAvailableHtml();
+  if (typeof hubShell === 'function') hubShell('home', html);
+  else {
+    const root = document.getElementById('root');
+    if (root) root.innerHTML = html;
+  }
+}
+function showNotEnabledPage() {
+  const html = typeof notEnabledHtml === 'function' ? notEnabledHtml() : '<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>';
+  if (typeof hubShell === 'function') hubShell('home', html);
+  else {
+    const root = document.getElementById('root');
+    if (root) root.innerHTML = html;
+  }
+}
+function chatToggleHtml() {
+  if (scopeKind() !== 'owner') return '';
+  const on = chatExternalOn();
+  return '<label class="cb" style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="chat-ext"' + (on ? ' checked' : '') + '> Show Chat for guest, client, and investor</label>';
+}
+function bindChatToggle(root) {
+  const box = root && root.querySelector ? root.querySelector('#chat-ext') : null;
+  if (!box) return;
+  box.onchange = function () {
+    try { localStorage.setItem('hws-chat-external', box.checked ? '1' : '0'); } catch (e) {}
+    if (typeof toast === 'function') toast(box.checked ? 'Chat is on for guest, client, and investor' : 'Chat is off for guest, client, and investor');
+  };
+}
 
 /* Walkthrough photos. Location is read once per photo while a walkthrough is open.
    Bytes stay on this phone until Dropbox returns a matching content hash.
@@ -6171,6 +6295,31 @@ window.HWSFeatures = {
     }
     const who = ctx.who != null ? String(ctx.who) : currentWho();
     if (!who) return "signed-out";
+    let blocked = false;
+    try {
+      if (typeof findPerson === "function") {
+        const person = findPerson(who);
+        const locked = String(person && person.role || "").toLowerCase();
+        if (locked === "client" || locked === "guest" || locked === "customer" || locked === "investor") blocked = true;
+      }
+    } catch (e) { blocked = false; }
+    if (!blocked) {
+      let home = "";
+      try {
+        const table = (typeof DATA !== "undefined" && DATA && DATA.common && DATA.common.home_roles) || {};
+        const keys = Object.keys(table).sort((a, b) => String(b).length - String(a).length);
+        for (let i = 0; i < keys.length && !home; i++) {
+          const name = String(keys[i]).trim();
+          if (!name) continue;
+          if (new RegExp("\\b" + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(who)) home = String(table[keys[i]] || "").toLowerCase();
+        }
+      } catch (e) { home = ""; }
+      if (home === "customer" || home === "investor" || home === "guest") return "non-member";
+      if (home === "client") return "client";
+      if (home === "field") return "field";
+      if (home === "owner") return "owner";
+      if (home === "office") return "office";
+    }
     let roles = {};
     try { roles = (typeof DATA !== "undefined" && DATA && DATA.common && DATA.common.roles) || {}; } catch (e) { roles = {}; }
     const key = Object.keys(roles).find(k => String(k).toLowerCase() === who.toLowerCase());
@@ -7301,12 +7450,39 @@ window.HWSFeatures = {
   const PROJECTS = "/Harswells Team Folder/Harswells Projects";
   const INDEX_ROOT = "/Harswells Team Folder/Harswells Live Schedule/data/notes";
   const OK_ROLE = {field: 1, office: 1, owner: 1, pm: 1, member: 1, staff: 1};
+  const BLOCK_ROLE = {customer: 1, investor: 1, client: 1, guest: 1};
   function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]; }); }
   function currentWho() { try { if (typeof STORE !== "undefined" && STORE && STORE.who) return STORE.who() || ""; return localStorage.getItem("hws-who") || ""; } catch (e) { return ""; } }
   function stamp() { const d = new Date(Date.now() - 7 * 3600e3), p = function (n) { return String(n).padStart(2, "0"); }; return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate()) + " " + p(d.getUTCHours()) + ":" + p(d.getUTCMinutes()) + ":" + p(d.getUTCSeconds()); }
+  function homeRolesRaw(who) {
+    try {
+      const table = (typeof DATA !== "undefined" && DATA && DATA.common && DATA.common.home_roles) || {};
+      const blob = String(who || "");
+      const keys = Object.keys(table).sort(function (a, b) { return String(b).length - String(a).length; });
+      for (let i = 0; i < keys.length; i++) {
+        const name = String(keys[i]).trim();
+        if (!name) continue;
+        if (new RegExp("\\b" + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(blob)) return String(table[keys[i]] || "").trim().toLowerCase();
+      }
+    } catch (e) {}
+    return "";
+  }
   function noteAllowed(role) {
-    if (role != null && role !== "") return !!OK_ROLE[String(role).toLowerCase()];
+    if (role != null && role !== "") {
+      const given = String(role).toLowerCase();
+      if (BLOCK_ROLE[given]) return false;
+      return !!OK_ROLE[given];
+    }
+    let named = null;
+    try { if (typeof findPerson === "function") named = findPerson(currentWho()); } catch (e) { named = null; }
+    const raw = named ? "" : homeRolesRaw(currentWho());
+    if (BLOCK_ROLE[raw]) return false;
     const roles = [];
+    if (raw) roles.push(raw);
+    if (!named) {
+      try { if (typeof homeRole === "function") roles.push(homeRole()); } catch (e) {}
+      try { if (typeof attIsOwner === "function" && attIsOwner()) roles.push("owner"); } catch (e) {}
+    }
     try { if (typeof roleOf === "function") roles.push(roleOf()); } catch (e) {}
     try { if (typeof photoRole === "function") roles.push(photoRole()); } catch (e) {}
     try { if (typeof root.photoRole === "function") roles.push(root.photoRole()); } catch (e) {}
@@ -7855,8 +8031,7 @@ const coarse=window.matchMedia?matchMedia('(pointer: coarse)').matches:false;
 function jobHref(slug,mod){return '#/job/'+slug+'/'+(mod||'schedule')}
 function homeHref(){return '#/'}
 function modHref(mod){return '#/job/'+J.slug+'/'+mod}
-function knownHubPage(pg){if(!pg||pg==='home')return true;return typeof HUB_PAGES!=='undefined'&&HUB_PAGES.indexOf(pg)>=0}
-function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule',focus};if(p[0]==='client'&&p[1])return {slug:null,page:'client',sub:decodeURIComponent(p[1]),focus:''};const pg=(p[0]||'home').split('?')[0];if(!knownHubPage(pg))return {slug:null,page:'missing',sub:p[1]||'',focus:'',missing:true,asked:pg};return {slug:null,page:pg,sub:p[1]||'',focus:''}}
+function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||'schedule',focus,page:'job'};if(p[0]==='client'&&p[1])return {slug:null,page:'client',sub:decodeURIComponent(p[1]),focus:''};const pg=(p[0]||'home').split('?')[0]||'home';return {slug:null,page:pg,sub:p[1]||'',focus:''}}
 function curMod(){return parseHash().mod||'schedule'}
 /* ---------- calendar helpers (job workday calendar) ---------- */
 function isWd(s){const c=J.cal||{};const d=new Date(dP(s)).getUTCDay();return (d>=1&&d<=5||(c.saturday&&d==6))&&!(c.holidays||{})[s]}
@@ -7920,7 +8095,7 @@ function moveJobStage(toWarranty){if(typeof canSeeMoney!=='function'||!canSeeMon
  J=STORE.setSettings(J.slug,{info:info},summary);renderJob();toast(summary);if(typeof liveSaved==='function')liveSaved(J.slug)}
 function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>'+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
  if(typeof HWSFeatures!=='undefined'&&HWSFeatures.stripJob)J=HWSFeatures.stripJob(J);
- EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(J.gates||[]).filter(g=>g.status!='done');
+ EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(typeof hidesIntake==='function'&&hidesIntake())?[]:(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
  const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${typeof noteButtonHtml==='function'?noteButtonHtml():''}${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span><a class="proplink" href="${modHref('property')}">Property info</a>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
@@ -7948,6 +8123,8 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const more=document.querySelector('[data-tab=more]');if(more)more.onclick=e=>{e.preventDefault();openMore()};
  const feat=typeof modFeature==='function'?modFeature(mod):'';
  if(feat&&typeof featureOn==='function'&&!featureOn(feat)){M.innerHTML=typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>'}
+ else if(typeof knownMod==='function'&&!knownMod(mod)){M.innerHTML=typeof notFoundHtml==='function'?notFoundHtml():'<div class="panel"><h3>Not found</h3><p>No module</p></div>'}
+ else if((mod==='messages'||mod==='slack')&&typeof hidesIntake==='function'&&hidesIntake()){M.innerHTML=typeof notAvailableHtml==='function'?notAvailableHtml():'<div class="panel"><h3>Not available</h3></div>'}
  else {const fn=MODFN()[mod];if(fn){try{fn(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}}else if(mod==='plans'||mod==='takeoffs'){M.innerHTML=''}else{M.innerHTML=unavailableHtml({title:"This part of the job isn't available yet",detail:'There is no '+mod+' page on this job.',backHref:jobHref(J.slug),backLabel:'Back to this job',altHref:'#/',altLabel:'Home'})}}
  const padlog=document.getElementById('padlog');if(padlog&&typeof logPhone==='function')logPhone(padlog,J.logs||[]);
  if(typeof photoMountJob==='function')photoMountJob(document.getElementById('photo-slot'));
@@ -8731,7 +8908,7 @@ function homeCanon(raw) {
   if (role === 'staff') return 'staff';
   if (role === 'pm' || role === 'lead' || role === 'office') return 'pm';
   if (role === 'field') return 'field';
-  if (role === 'guest' || role === 'client') return 'guest';
+  if (role === 'guest' || role === 'client' || role === 'customer' || role === 'investor') return 'guest';
   return '';
 }
 function homeEscapeRe(text) {
@@ -9043,6 +9220,7 @@ function homeCollect() {
   const jobs = {};
   if (typeof allTasks === 'function') {
     allTasks().forEach(function (x) {
+      if (typeof attActive === 'function' && !attActive(x.slug)) return;
       const t = x.t || {};
       if (t.done || t.status === 'done') return;
       const finish = t.finish || t.start;
@@ -9074,6 +9252,7 @@ function homeCollect() {
   });
   const jobMap = (DATA && DATA.jobs) || {};
   Object.keys(jobMap).forEach(function (slug) {
+    if (typeof attActive === 'function' && !attActive(slug)) return;
     let job = jobMap[slug];
     try { if (typeof STORE !== 'undefined' && STORE && STORE.getJob) job = STORE.getJob(slug) || job; } catch (e) {}
     const conf = (job && job.conflicts) || [];
@@ -9088,6 +9267,7 @@ function homeCollect() {
   });
   const bids = {};
   if (homeFeat('bids')) ((typeof H === 'function' ? H().bids : []) || []).forEach(function (b) {
+    if (typeof attActive === 'function' && b && b.slug && !attActive(b.slug)) return;
     const status = String(b.status || '').toLowerCase();
     if (status === 'received' || status === 'declined' || status === 'awarded') return;
     const past = !!(b.pastDue || (b.due && b.due < td));
@@ -9118,6 +9298,7 @@ function homeCollect() {
   const seenDelivery = {};
   ((typeof H === 'function' ? H().deliveries : []) || []).forEach(function (d) {
     if (!d || !d.date || d.date > td) return;
+    if (typeof attActive === 'function' && d.slug && !attActive(d.slug)) return;
     const key = (d.slug || d.job || '') + '|delivery';
     if (seenDelivery[key]) { seenDelivery[key].count += 1; if (d.date < td) seenDelivery[key].missed = true; return; }
     seenDelivery[key] = {
@@ -9131,6 +9312,7 @@ function homeCollect() {
   const fups = {};
   ((typeof H === 'function' ? H().fups : []) || []).forEach(function (f) {
     if (!f || !f.due || f.status === 'done' || f.due > we) return;
+    if (typeof attActive === 'function' && f.slug && !attActive(f.slug)) return;
     const key = (f.slug || f.job || '') + '|followup';
     const g = fups[key] || (fups[key] = {id:key, slug:f.slug, job:f.job || '', problem:'followup', count:0, missed:false, due:f.due, legacy:f.item || ''});
     g.count += 1;
@@ -9149,6 +9331,7 @@ function homeCollect() {
   });
   ((typeof H === 'function' ? H().orderby : []) || []).forEach(function (o) {
     if (!o) return;
+    if (typeof attActive === 'function' && o.slug && !attActive(o.slug)) return;
     const late = o.by && o.by < td;
     homePush(items, {
       id: (o.slug || '') + '|order|' + (o.ref || o.title || ''),
@@ -9161,6 +9344,7 @@ function homeCollect() {
   if (homeFeat('selections') && typeof selDeadlineJobs === 'function') {
     selDeadlineJobs().forEach(function (r) {
       if (!r || (!r.overdue && !r.week)) return;
+      if (typeof attActive === 'function' && r.slug && !attActive(r.slug)) return;
       homePush(items, {
         id: (r.slug || '') + '|selection', slug: r.slug, job: r.name || '', problem: 'selection',
         band: r.overdue ? 'due' : 'age', missed: r.overdue > 0, due: td, count: (r.overdue || 0) + (r.week || 0),
@@ -9168,7 +9352,10 @@ function homeCollect() {
       });
     });
   }
-  if (typeof noteHomeItems === "function") noteHomeItems().forEach(function (row) { homePush(items, row); });
+  if (typeof noteHomeItems === "function") noteHomeItems().forEach(function (row) {
+    if (typeof attActive === 'function' && row && row.slug && !attActive(row.slug)) return;
+    homePush(items, row);
+  });
   return items;
 }
 function homeItemsFor(role) {
@@ -9215,6 +9402,7 @@ function homeMyDayRows() {
     allTasks().forEach(function (x) {
       const t = x.t || {};
       if (t.done || t.status === 'done') return;
+      if (typeof attActive === 'function' && !attActive(x.slug)) return;
       if (!homeMine(x.slug, role)) return;
       const insp = t.milestone_type === 'inspection' || /inspect/i.test(t.task || '');
       if (t.start === td || (insp && (t.finish === td || t.start === td))) {
@@ -9224,6 +9412,7 @@ function homeMyDayRows() {
   }
   ((typeof H === 'function' ? H().deliveries : []) || []).forEach(function (d) {
     if (!d || d.date !== td || !homeMine(d.slug, role)) return;
+    if (typeof attActive === 'function' && d.slug && !attActive(d.slug)) return;
     rows.push({title: homePublicText(d.title || 'Delivery'), sub: d.job || '', href: '#/trackers/orders'});
   });
   return rows.slice(0, 6);
@@ -9468,7 +9657,8 @@ function renderPadFieldHome() {
     return `<a class="hrow" href="${esc(row.href)}"><span class="lb"><span class="lt">${esc(row.title)}</span>${row.sub ? `<span class="ls">${esc(row.sub)}</span>` : ''}</span></a>`;
   }).join('') || '<div class="none">Nothing else on the schedule today</div>';
   const when = typeof longDate === 'function' ? longDate(td) : td;
-  const body = `<div class="home-v3 pad-field"><div class="hello"><h1>Field</h1><div class="date">${esc(when || '')}</div></div><div class="home-split"><div class="home-col"><section class="home-sec" data-sec="jobs"><div class="home-sec-h"><h2>Today's jobs</h2><a href="#/jobs">All</a></div><div class="rows">${jobRows}</div></section><section class="home-sec" data-sec="schedule"><div class="home-sec-h"><h2>Schedule</h2><a href="#/trackers/today">Today</a></div><div class="rows">${sched}</div></section></div><div class="home-col"><section class="home-sec" data-sec="photos"><div class="home-sec-h"><h2>Photos</h2></div><div class="rows"><a class="hrow" href="#/files"><span class="lb"><span class="lt">Photos</span><span class="ls">Walkthroughs and job photos</span></span></a></div></section><section class="home-sec pad-qnote" data-sec="note" data-quick-note><div class="home-sec-h"><h2>Quick note</h2></div><button type="button" id="pad-qnote" data-quick-note-slot>Quick note</button></section></div></div></div>`;
+  const qnote = (typeof noteAllowed === 'function' && !noteAllowed()) ? '' : '<section class="home-sec pad-qnote" data-sec="note" data-quick-note><div class="home-sec-h"><h2>Quick note</h2></div><button type="button" id="pad-qnote" data-quick-note-slot>Quick note</button></section>';
+  const body = `<div class="home-v3 pad-field"><div class="hello"><h1>Field</h1><div class="date">${esc(when || '')}</div></div><div class="home-split"><div class="home-col"><section class="home-sec" data-sec="jobs"><div class="home-sec-h"><h2>Today's jobs</h2><a href="#/jobs">All</a></div><div class="rows">${jobRows}</div></section><section class="home-sec" data-sec="schedule"><div class="home-sec-h"><h2>Schedule</h2><a href="#/trackers/today">Today</a></div><div class="rows">${sched}</div></section></div><div class="home-col"><section class="home-sec" data-sec="photos"><div class="home-sec-h"><h2>Photos</h2></div><div class="rows"><a class="hrow" href="#/files"><span class="lb"><span class="lt">Photos</span><span class="ls">Walkthroughs and job photos</span></span></a></div></section>${qnote}</div></div></div>`;
   if (typeof hubShell === 'function') hubShell('home', body);
   if (typeof noteBindHome === 'function') noteBindHome(document.getElementById('root'));
   document.title = 'Harswells · Home';
@@ -9536,10 +9726,10 @@ function hubStats(){const h=H(),td=hubToday(),we=h.weekEnd||addD(td,7);const T=a
  const activeN=listed.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage))).length;
  return {td,we,overdue,today,week,high,bOpen,bWeek,bPast,bIn,toPlace,dl,dlWeek,fu,fuDue,jobs:activeN}}
 /* ---- shared chrome ---- */
-function hubNav(){const it=[['home','Home','#/'],['jobs','Jobs','#/jobs']];
- if(typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))it.push(['money','Money','#/money']);
- it.push(['trackers','Trackers','#/trackers'],['files','Files','#/files']);
- if(typeof featureOn==='function'&&featureOn('chat'))it.push(['chat','Chat','#/chat']);
+function hubNav(){if(typeof investorNav==='function'){const custom=investorNav();if(custom)return custom}
+ const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files']];
+ if(typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))it.splice(2,0,['money','Money','#/money']);
+ if((typeof featureOn==='function'&&featureOn('chat'))&&(typeof chatNavOn!=='function'||chatNavOn()))it.push(['chat','Chat','#/chat']);
  return it}
 function gnavHtml(page){const it=hubNav();
  return `<nav class="tabbar gtabs" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" data-g="${k}" class="${k==page?'on':''}" ${k==page?'aria-current="page"':''}>${ico(k)}<span>${l}</span></a>`).join('')}</nav>`}
@@ -9669,6 +9859,152 @@ function renderChat(){const sl=(companyLinks().flatMap(g=>g.items||[])).find(x=>
  hubShell('chat',unavailableHtml({title:"Team chat isn't available yet",detail:'Chat in the hub is not ready. The team still talks in Slack. Nothing is waiting in an inbox here.',extra:slack,backHref:'#/',backLabel:'Back to Home'}));document.title='Harswells · Chat'}
 function renderHub(p){const pg=p.page;if(p&&(p.missing||pg==='missing')){hubShell('missing',unavailableHtml({title:"This page doesn't exist yet",detail:'Nothing is published at this address.',backHref:'#/',backLabel:'Back to Home'}));const brand=(document.querySelector('.brand')||{}).textContent||'Hub';document.title=brand+' · Not found';window.scrollTo(0,0);return}if(pg=='settings'&&typeof renderFeatures==='function')renderFeatures();else if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='photos'&&typeof renderPhotosHub==='function')renderPhotosHub();else if(pg=='chat')renderChat();else if(pg=='home'||!pg)renderHome();else{hubShell('missing',unavailableHtml({title:"This page doesn't exist yet",detail:'Nothing is published at this address.',backHref:'#/',backLabel:'Back to Home'}));document.title='Not found'}window.scrollTo(0,0)}
 
+/* Investor view. Section 13: one invited job, no trade book, no intake,
+   and no dollar figures unless the owner approved the summary.
+   Phone: Overview, Progress, Money, Design, More.
+   Desktop: the same sections without a Money tab. */
+function investorNav() {
+  if (typeof scopeKind !== 'function' || scopeKind() !== 'investor') return null;
+  if (typeof isPhone === 'function' && isPhone()) {
+    return [
+      ['overview', 'Overview', '#/'],
+      ['progress', 'Progress', '#/progress'],
+      ['money', 'Money', '#/money'],
+      ['design', 'Design', '#/design'],
+      ['more', 'More', '#/more']
+    ];
+  }
+  return [
+    ['home', 'Home', '#/'],
+    ['jobs', 'Jobs', '#/jobs'],
+    ['trackers', 'Trackers', '#/trackers'],
+    ['files', 'Files', '#/files']
+  ];
+}
+function investorHandles(page) {
+  return page === 'home' || page === 'overview' || page === 'progress' || page === 'money' || page === 'design' || page === 'more';
+}
+function invShell(tab, html) {
+  const phone = typeof isPhone === 'function' && isPhone();
+  const page = phone ? tab : (tab === 'overview' ? 'home' : tab);
+  if (typeof hubShell === 'function') hubShell(page, '<div class="inv-page">' + html + '</div>');
+  else {
+    const root = document.getElementById('root');
+    if (root) root.innerHTML = html;
+  }
+  document.title = 'Investor · ' + (tab || 'Overview');
+}
+function invJob() {
+  const jobs = (DATA && DATA.jobs) || {};
+  const ids = Object.keys(jobs);
+  const slug = ids[0] || '';
+  const job = (slug && jobs[slug]) || {};
+  const info = job.info || {};
+  return {slug: slug, job: job, info: info};
+}
+function invSummary() {
+  const summary = DATA && DATA.common && DATA.common.investor_summary;
+  if (!summary || !summary.approved) return null;
+  return summary;
+}
+function invOverview() {
+  const row = invJob();
+  const job = row.job;
+  const info = row.info;
+  const name = job.name || 'This project';
+  const stage = info.status || job.stage || '';
+  const pct = job.pct == null ? '' : String(job.pct);
+  return '<h1>' + esc(name) + '</h1>'
+    + '<p class="inv-tag">Sample project</p>'
+    + (job.address ? '<p>' + esc(job.address) + '</p>' : '')
+    + '<p>' + (pct ? esc(pct) + '% complete' : 'Progress') + (stage ? ' · ' + esc(stage) : '') + '</p>'
+    + '<div class="inv-team"><b>Team</b><div>Project manager: ' + esc(info.pm || 'on file with the office') + '</div>'
+    + '<div>Client: ' + esc(info.client || 'on file with the office') + '</div></div>'
+    + '<p class="inv-disc">Sample project for an invited investor. Money sections stay locked until the owner approves them. This is not an offer to sell a security.</p>';
+}
+function invProgress() {
+  const row = invJob();
+  const job = row.job;
+  const info = row.info;
+  const pct = job.pct == null ? '' : String(job.pct);
+  return '<h1>Progress</h1><p>' + esc(job.name || 'This project') + '</p>'
+    + '<p class="inv-pct">' + (pct ? esc(pct) + '% complete' : 'Progress is on file') + '</p>'
+    + (info.status || job.stage ? '<p>' + esc(info.status || job.stage) + '</p>' : '')
+    + '<p class="inv-disc">Milestone detail stays with the office.</p>';
+}
+function invMoney() {
+  const phone = typeof isPhone === 'function' && isPhone();
+  const summary = invSummary();
+  if (!phone && !summary) {
+    return '<h1>Money</h1><p>Money is not on this screen.</p>';
+  }
+  if (summary && summary.kpis && summary.kpis.length) {
+    const tiles = summary.kpis.map(function (row) {
+      return '<div><b>' + esc(row.label || '') + '</b><span>' + esc(row.value == null ? '' : String(row.value)) + '</span></div>';
+    }).join('');
+    return '<h1>Money</h1><div class="inv-kpis">' + tiles + '</div><p class="inv-disc">Approved investor summary.</p>';
+  }
+  const tiles = ['Contract', 'Budget vs spent', 'Draws', 'Returns'].map(function (label) {
+    return '<div><b>' + label + '</b><span>Awaiting approval</span></div>';
+  }).join('');
+  return '<h1>Money</h1><div class="inv-kpis">' + tiles + '</div><p class="inv-disc">These sections stay locked until the owner approves them.</p>';
+}
+function invDesign() {
+  const row = invJob();
+  const sels = (row.job.selections || []).slice(0, 12);
+  const items = sels.map(function (sel) {
+    return '<li>' + esc(sel.title || sel.name || sel.id || 'Selection') + '</li>';
+  }).join('');
+  return '<h1>Design</h1><p>Read-only floor plans. Pricing is not on this page.</p>'
+    + (items ? '<ul class="inv-sel">' + items + '</ul>' : '<p>No design items have been shared yet.</p>')
+    + '<p class="inv-disc">A gallery of finishes shows here. Amounts stay off this page.</p>';
+}
+function invMore() {
+  const row = invJob();
+  const trades = (typeof wdTrades === 'function' && row.slug) ? wdTrades(row.slug) : [];
+  const team = trades.slice(0, 8).map(function (trade) {
+    return '<li>' + esc(trade.trade_label || trade.trade || 'Trade') + (trade.company ? ' · ' + esc(trade.company) : '') + '</li>';
+  }).join('');
+  return '<h1>More</h1>'
+    + '<p>' + esc((row.job && row.job.address) || '') + '</p>'
+    + '<h2>Photos</h2><p>No weekly photos have been shared yet.</p>'
+    + '<h2>Team</h2>' + (team ? '<ul>' + team + '</ul>' : '<p>The office team is on the overview.</p>')
+    + '<p class="inv-disc">Trade phone numbers and internal notes are not on this page.</p>';
+}
+function renderInvestorPage(page) {
+  const tab = page === 'home' || page === 'overview' ? 'overview' : page;
+  let html = invOverview();
+  if (tab === 'progress') html = invProgress();
+  else if (tab === 'money') html = invMoney();
+  else if (tab === 'design') html = invDesign();
+  else if (tab === 'more') html = invMore();
+  invShell(tab, html);
+}
+function renderInvestorJob(parsed) {
+  const mod = (parsed && parsed.mod) || 'schedule';
+  if (mod === 'messages' || mod === 'slack') {
+    if (typeof showUnavailable === 'function') showUnavailable();
+    return;
+  }
+  if (mod === 'schedule' || mod === 'todos' || mod === 'logs') {
+    renderInvestorPage('progress');
+    return;
+  }
+  if (mod === 'money' || mod === 'budget' || mod === 'cos' || mod === 'bids' || mod === 'pos') {
+    renderInvestorPage('money');
+    return;
+  }
+  if (mod === 'selections' || mod === 'plans' || mod === 'specs') {
+    renderInvestorPage('design');
+    return;
+  }
+  if (mod === 'whodid' || mod === 'property' || mod === 'files') {
+    renderInvestorPage('more');
+    return;
+  }
+  if (typeof showUnavailable === 'function') showUnavailable();
+}
+
 /* Attention screen (owner request 9/27 7:51 PM): ONE place for what needs attention today vs this week. Phone-first.
    Four parts, each drills down count -> list -> item (with actions on the same tap; no dead-end numbers, 7:52 PM):
      1. Today / This week   tasks starting, due or overdue, inspections, bids and follow-ups due; deliveries = info only
@@ -9706,7 +10042,7 @@ function attIsOwner(){try{const O=attOwn();if(!O.match)return false;const re=new
 function attFlag(slug,id){const v=attInfo(slug)['flag:'+(id||'job')];if(!v)return null;try{return JSON.parse(v)}catch(e){return {note:String(v)}}}
 function attFlags(){const out=[];attSlugs().forEach(slug=>{const i=attInfo(slug);Object.keys(i).forEach(k=>{if(k.startsWith('flag:')&&i[k]){let f;try{f=JSON.parse(i[k])}catch(e){f={note:i[k]}}out.push({slug,id:k.slice(5),f})}})});return out}
 /* ---- subs / links */
-function attSub(key){const a=AT();return a&&a.subs&&a.subs[key]||null}
+function attSub(key){const a=AT();const s=a&&a.subs&&a.subs[key]||null;if(!s||typeof hidesContacts!=='function'||!hidesContacts())return s;const c=Object.assign({},s);delete c.phone;delete c.email;return c}
 function attTaskLinks(slug,t){const a=AT();const L=[{type:'job',id:slug,label:(attJ(slug)||{}).name||slug}];
  ((a&&a.task_links&&a.task_links[slug]||{})[t.id]||[]).forEach(x=>L.push(x));
  ((a&&a.job_links&&a.job_links[slug])||[]).filter(x=>x.type!='job').forEach(x=>L.push(x));
@@ -10208,7 +10544,7 @@ function wdEmails(t){return (t.emails||[]).map(e=>String(e.address||'').trim()).
 function wdOwner(){const O=(typeof attOwn=='function')?attOwn():{};return {name:O.name||'',company:O.company||''}}
 function wdMsg(J,t){const O=wdOwner();const first=String(t.contact_name||'').split(/[ /;(]/)[0]||'';
  return `Hi${first?' '+first:''}, this is ${O.name||'the office'}${O.company?' with '+O.company:''} about ${J.name||''}${J.address?' ('+J.address+')':''}: a warranty/service question on the ${String(t.trade_label||t.trade||'work').toLowerCase()}.`}
-function wdBtns(J,t){const body=encodeURIComponent(wdMsg(J,t));const P=wdPhones(t),E=wdEmails(t);if(!P.length&&!E.length)return `<span class="nocontact">no contact on file</span>`;
+function wdBtns(J,t){if(typeof hidesContacts==='function'&&hidesContacts())return `<span class="nocontact">Contact the builder</span>`;const body=encodeURIComponent(wdMsg(J,t));const P=wdPhones(t),E=wdEmails(t);if(!P.length&&!E.length)return `<span class="nocontact">no contact on file</span>`;
  const ph=P.map(p=>`<div class="wdph"><span class="wdpl">${esc(p.label||'Phone')}<br><span class="mut">${esc(p.number)}</span></span><a class="abtn" href="sms:+${p.d}?&body=${body}">${ico('chat')}Text</a><a class="abtn" href="tel:+${p.d}">${ico('user')}Call</a></div>`).join('');
  const em=E.map(a=>`<a class="abtn" href="mailto:${esc(a)}?subject=${encodeURIComponent('Warranty / service: '+(J.name||'')+(J.address?' · '+J.address:'')+' · '+(t.trade_label||''))}&body=${body}" title="${esc(a)}">${ico('mail')}Email${E.length>1?' '+esc(a.split('@')[0]):''}</a>`).join('');
  return ph+(em?`<div class="wdem">${em}</div>`:'')+(!P.length?`<span class="nocontact">no phone on file</span>`:'')}
@@ -10234,7 +10570,7 @@ function wdImported(){const rows=(J&&J.warranty)||[];if(!rows.length)return '';
  return `<div class="panel" style="margin-top:12px"><h3>Warranty items <span class="mut small">${rows.length}</span></h3><div class="pb">${rows.map(w=>`<div class="it"><div class="bd"><div class="t">${esc(w.title||'')}</div><div class="s">${esc([w.trade,w.vendor,w.expiry,w.status].filter(Boolean).join(' · '))}</div>${w.terms?`<div class="small">${esc(w.terms)}</div>`:''}${window.HWSRelated?HWSRelated.html(w.links||[],{slug:J.slug}):''}</div></div>`).join('')}</div></div>`}
 /* Jobs tab: trade matches shown on the job card */
 function wdMatchHtml(slug,q){const m=wdMatches(slug,q);if(!m.length)return '';
- return `<div class="wdm">${m.slice(0,4).map(t=>`<div><b>${esc(t.trade_label||t.trade)}</b>: ${esc(t.company||'')}${t.contact_name?' · '+esc(t.contact_name):''}${wdPhones(t).length?' · '+esc(wdPhones(t)[0].number):''}</div>`).join('')}${m.length>4?`<div class="mut">+${m.length-4} more</div>`:''}</div>`}
+ return `<div class="wdm">${m.slice(0,4).map(t=>`<div><b>${esc(t.trade_label||t.trade)}</b>: ${esc(t.company||'')}${t.contact_name?' · '+esc(t.contact_name):''}${(typeof hidesContacts==='function'&&hidesContacts())||!wdPhones(t).length?'':' · '+esc(wdPhones(t)[0].number)}</div>`).join('')}${m.length>4?`<div class="mut">+${m.length-4} more</div>`:''}</div>`}
 
 /* Budget vs actual and the Preliminary selection status.
    Dollar amounts are read from the private money file only: window.__HWS_MONEY, a Dropbox
@@ -10280,7 +10616,7 @@ function moneyViewers(){return ((DATA&&DATA.common&&DATA.common.money_viewers)||
 function moneyHiddenNote(){return 'Amounts hidden, sign in as a hub member'}
 function cogsName(raw){raw=String(raw||'').trim();if(!raw)return '';const map=(DATA&&DATA.common&&DATA.common.adaptive_map)||{};
  if(map[raw])return map[raw];const hit=Object.keys(map).find(k=>String(map[k]).toLowerCase()===raw.toLowerCase());return hit?map[hit]:raw}
-function canSeeMoney(){const blob=[(STORE&&STORE.who)?STORE.who():'',(SY&&SY.A&&SY.A.describe)?SY.A.describe():''].join(' ');
+function canSeeMoney(){if(typeof scopeKind==='function'&&scopeKind()==='investor')return false;const blob=[(STORE&&STORE.who)?STORE.who():'',(SY&&SY.A&&SY.A.describe)?SY.A.describe():''].join(' ');
  return moneyViewers().some(n=>new RegExp('\\b'+String(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(blob))}
 /* Stage list comes from common.job_stages. A warranty group leaves the active lists. No job is named here. */
 function jobStages(){var rows=(DATA&&DATA.common&&DATA.common.job_stages)||[];return Array.isArray(rows)?rows:[]}
@@ -16841,6 +17177,7 @@ function openChanges(){if(!STORE||!DATA){toast('Sign in to Dropbox to load jobs'
  const co=J&&syncOn()?STORE.checkout(J.slug):null;const ls=J&&lockCache[J.slug];
  openModal(`<h2>My changes</h2>
  <label class="small">Your name <input id="whoin" value="${esc(STORE.who())}" placeholder="Your first name" style="width:160px" autocomplete="name"></label>
+ ${typeof chatToggleHtml==='function'?chatToggleHtml():''}
  <p class="small">${STORE.persist?`Saved in this browser (localStorage, key <code>${esc(STORE.KEY)}</code>).`:'<b class="red">This viewer blocks storage: edits are lost when you close it. Export them first.</b>'} <b>${n}</b> unsent edit${n==1?'':'s'}${eds.length?' in '+eds.length+' job'+(eds.length>1?'s':''):''}.</p>
  ${eds.length?`<div class="list">${eds.map(s=>`<div class="it"><div class="bd"><a href="${jobHref(s)}" data-close class="t">${esc(names[s]||s)}</a> <span class="small mut">${STORE.pending(s)} unsent</span></div><button class="small" data-rj="${esc(s)}">Reset job</button></div>`).join('')}</div>`:''}
  ${others.length?`<div class="note small">Edits from an older snapshot/version are still in this browser (${others.map(o=>o.n+' from '+esc(o.built||'?')).join(', ')}). <button class="small" id="adopt">Bring them over</button></div>`:''}
@@ -16855,7 +17192,7 @@ function openChanges(){if(!STORE||!DATA){toast('Sign in to Dropbox to load jobs'
  <div class="mbtns">${syncOn()||(SY.A&&SY.A.needsPermission())?`${SY.A&&SY.A.needsPermission()?'<button class="pri" id="sgrant">Allow folder access</button>':''}<button id="sdis">Disconnect ${esc(SY.A.label)}</button>`:`${HWSSync.FsaBackend().available()?'<button id="sfsa">Use a shared folder…</button>':''}<button id="sdbx">Sign in with Dropbox</button>`}</div>
  <p class="small mut">${MODE==='share'?'Shared folder works in desktop Chrome/Edge (pick the Dropbox-synced “Harswells Live Schedule/sync” folder). Dropbox sign-in from this file opens Dropbox in a new tab and asks you to paste the code it shows. On iPhone use the hosted app.':'Dropbox sign-in keeps your check-outs and change sets in the shared Dropbox folder (locks/ and changes/ folders).'}</p>`}
  <div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`}`,m=>{
-  const g=s=>m.querySelector(s);const b0=(id,f)=>{const x=g(id);if(x)x.onclick=f};g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};
+  const g=s=>m.querySelector(s);const b0=(id,f)=>{const x=g(id);if(x)x.onclick=f};g('#whoin').onchange=e=>{STORE.setWho(e.target.value);toast('Name saved')};if(typeof bindChatToggle==='function')bindChatToggle(m);
   g('#xc').onclick=exportChanges;g('#xj').onclick=exportJson;g('#imp').onchange=e=>{const f=e.target.files[0];if(f){closeModal();importFile(f)}};
   b0('#lvchk',()=>{LIVE&&LIVE.checkNow('button');toast('Checking for updates…')});
   g('#rst').onclick=()=>{if(STORE.live){if(confirm('Discard the edits on this device that have not been sent to Dropbox yet?')){STORE.reset();closeModal();safeRender();paintLive();toast('Unsent edits discarded')}return}
@@ -16916,9 +17253,22 @@ function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty">
  bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
 /* ---------- boot ---------- */
 function route(){document.querySelectorAll('.toast').forEach(function(x){x.remove()});closeModal();if(!DATA)return;if(typeof applyFeatureStrip==='function')applyFeatureStrip();const p=parseHash();
- if(p.slug){if(!DATA.jobs[p.slug]){location.hash='#/';return}if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0)}
- else if(p.page=='jobs'){J=null;L=STORE.getList();renderList()}
- else if(p.page=='client'&&typeof renderClientSelections==='function'){J=null;L=null;if(typeof featureOn==='function'&&!featureOn('client_portal')){if(typeof showNotEnabled==='function')showNotEnabled('home');else if(typeof hubShell==='function')hubShell('home','<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else renderClientSelections(p.sub)}
+ if(p.slug){
+  if(typeof jobAllowed==='function'&&!jobAllowed(p.slug)){if(typeof showUnavailable==='function')showUnavailable();return}
+  if(!DATA.jobs[p.slug]){location.hash='#/';return}
+  if(typeof scopeKind==='function'&&scopeKind()==='investor'&&typeof renderInvestorJob==='function'){J=null;L=null;renderInvestorJob(p);window.scrollTo(0,0);return}
+  if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0);return}
+ if(p.page==='client'){
+  J=null;L=null;
+  if(typeof jobAllowed==='function'&&!jobAllowed(p.sub)){if(typeof showUnavailable==='function')showUnavailable();return}
+  if(typeof scopeKind==='function'&&scopeKind()==='investor'&&typeof renderInvestorPage==='function'){renderInvestorPage('design');return}
+  if(typeof featureOn==='function'&&!featureOn('client_portal')){if(typeof showNotEnabled==='function')showNotEnabled('home');else if(typeof hubShell==='function')hubShell('home','<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}
+  else if(typeof renderClientSelections==='function')renderClientSelections(p.sub);
+  return}
+ if(p.page==='chat'&&typeof chatNavOn==='function'&&!chatNavOn()){if(typeof showUnavailable==='function')showUnavailable();return}
+ if(typeof scopeKind==='function'&&scopeKind()==='investor'&&typeof investorHandles==='function'&&investorHandles(p.page)){J=null;L=null;renderInvestorPage(p.page);return}
+ if(typeof knownHubPage==='function'&&!knownHubPage(p.page)){if(typeof showNotEnabledPage==='function')showNotEnabledPage();return}
+ if(p.page=='jobs'){J=null;L=STORE.getList();renderList()}
  else{J=null;L=null;renderHub(p)}}
 window.addEventListener('hashchange',route);
 let lastChrome=(isPhone()?'p':'')+'|'+(typeof padTier==='function'?padTier():'');window.addEventListener('resize',()=>{const k=(isPhone()?'p':'')+'|'+(typeof padTier==='function'?padTier():'');if(k!==lastChrome){lastChrome=k;if(!modalEl)route()}});
