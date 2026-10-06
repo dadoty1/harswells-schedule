@@ -11,7 +11,7 @@ The drawing viewer is [massing-pdf](https://github.com/MassingCloud/massing-pdf)
 | Commit date | 2026-08-16 |
 | Commit subject | Publish a landing page and a live demo to GitHub Pages |
 
-PDF.js (`pdfjs-dist` 6.1.200, Apache-2.0) is bundled with this build, including its worker. It is not loaded from a CDN.
+PDF.js (`pdfjs-dist` 6.4.299, Apache-2.0) is bundled with this build, including its worker. It is not loaded from a CDN.
 
 ## How this folder was built
 
