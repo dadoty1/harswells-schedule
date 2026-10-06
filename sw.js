@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='c32a8c2f49';
+const VERSION='be6bc1d6ff';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
@@ -19,8 +19,6 @@ async function copyData(fromName,dest){
   const reqs=await box.keys();
   for(let i=0;i<reqs.length;i++){
     if(!dataUrl(reqs[i].url))continue;
-    /* An entry with no viewer stamp was shared across roles. Do not copy it forward. */
-    if(reqs[i].url.indexOf('hws_viewer=')<0)continue;
     const res=await box.match(reqs[i]);
     if(res)await dest.put(reqs[i],res);
   }
@@ -48,73 +46,25 @@ self.addEventListener('activate',e=>{
     clients.forEach(c=>c.postMessage({type:'hws-shell',version:VERSION}));
   })());
 });
-let viewerKey='';
-function viewerStampValue(raw){
-  return String(raw||'').replace(/[^A-Za-z0-9_.:-]/g,'').slice(0,120);
-}
-function viewerStamp(req){
-  let header='';
-  try{header=req&&req.headers?req.headers.get('X-HWS-Viewer')||'':''}catch(err){}
-  return viewerStampValue(header||viewerKey||'');
-}
-function dataCacheRequest(req,stamp){
-  const clean=new URL(req.url);
-  clean.search='';
-  if(stamp)clean.searchParams.set('hws_viewer',stamp);
-  return new Request(clean.toString());
-}
-function stampIsMoney(stamp){return String(stamp||'').indexOf('money')===0}
-function moneyBearing(text){
-  if(!text)return false;
-  if(/\$\s?\d/.test(text))return true;
-  return /["'](?:amount|amt|price|price_each|allowance|low|estimate|quote|unit_price|extended_cost|original_budget|revised_budget|bid_amount|contract_price|contract_value|deposit_paid|paid_to_date|retainage_pct|original|revised|committed|actual|variance|projected|to_complete|preliminary|remaining|firm|deposit|invoice|difference|overage|approved_cos|invoiced|balance_to_finish|projected_cost|change_order|credit|refund|markup|profit|margin)["']\s*:\s*-?\d/.test(text);
-}
-async function clearDataEntries(){
-  const keys=await caches.keys();
-  await Promise.all(keys.map(async k=>{
-    if(!(k.startsWith('hws-data-')||k==='hws-data'))return;
-    const box=await caches.open(k);
-    const reqs=await box.keys();
-    await Promise.all(reqs.map(async r=>{if(dataUrl(r.url))await box.delete(r)}));
-  }));
-}
 self.addEventListener('message',e=>{
   const d=e.data;
   const t=d&&d.type;
   if(d==='skip-waiting'||t==='skip-waiting'||d==='SKIP_WAITING'||t==='SKIP_WAITING')self.skipWaiting();
-  if(t==='hws-viewer'){
-    const next=viewerStampValue(d.key);
-    const clear=!!d.clear;
-    /* The first note of a page load must not wipe the offline copy. */
-    if(clear||(viewerKey&&next&&next!==viewerKey))e.waitUntil(clearDataEntries());
-    if(next)viewerKey=next;
-    else if(clear)viewerKey='';
-  }
-  if(t==='hws-signout'){
-    viewerKey='';
-    e.waitUntil(clearDataEntries());
-  }
 });
 async function staleWhileRevalidate(req){
   const cache=await caches.open(DATA);
-  const stamp=viewerStamp(req);
-  const key=dataCacheRequest(req,stamp);
-  let cached=stamp?await cache.match(key):null;
-  if(cached&&!stampIsMoney(stamp)){
-    const peek=await cached.clone().text();
-    if(moneyBearing(peek))cached=null;
-  }
+  const clean=new URL(req.url);
+  clean.search='';
+  const key=new Request(clean.toString());
+  const cached=await cache.match(key);
   const revalidate=req.headers.get('X-HWS-Revalidate')==='1';
   const network=fetch(req).then(async res=>{
-    if(res&&res.ok&&stamp){
+    if(res&&res.ok){
       const headers=new Headers(res.headers);
       headers.set('X-HWS-Cache','fresh');
       headers.delete('X-HWS-Net');
-      const bodyText=await res.clone().text();
-      /* A money-bearing body is not stored for a guest stamp. */
-      if(!(moneyBearing(bodyText)&&!stampIsMoney(stamp))){
-        await cache.put(key,new Response(bodyText,{status:res.status,statusText:res.statusText,headers}));
-      }
+      const body=await res.clone().blob();
+      await cache.put(key,new Response(body,{status:res.status,statusText:res.statusText,headers}));
     }
     return res;
   }).catch(()=>null);

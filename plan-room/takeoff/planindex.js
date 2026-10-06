@@ -1033,142 +1033,10 @@
     return measure(p1, p2, unitsPerPoint) * uu;
   }
 
-  var PLAN_MONEY_WORD = {
-    allowance: 1, allowances: 1, quoted: 1, quote: 1, quotes: 1, bid: 1, bids: 1,
-    low: 1, high: 1, price: 1, prices: 1, cost: 1, costs: 1, budget: 1, budgets: 1,
-    total: 1, totals: 1, invoice: 1, invoices: 1, deposit: 1, deposits: 1,
-    fee: 1, fees: 1, retainage: 1, retainages: 1, contract: 1, contracts: 1,
-    amount: 1, amounts: 1, paid: 1, owe: 1, balance: 1, balances: 1, draw: 1, draws: 1,
-    dollars: 1, subtotal: 1, subtotals: 1, tax: 1, taxes: 1, payment: 1, payments: 1,
-    billing: 1, billings: 1, rate: 1, rates: 1,
-  };
-  var PLAN_FILLER = { for: 1, the: 1, a: 1, an: 1, of: 1, is: 1, was: 1, are: 1, at: 1, to: 1, on: 1 };
-  var PLAN_UNIT = /^\s*(?:sq\.?\s*ft|square\s+feet|square\s+foot|minutes|hours|hrs|hr|tiles|bricks|days|weeks|sf|lf|ft|ea|m|inches|inch|in(?!\s*[A-Za-z]))\b|^\s*%|^\s*[xX]\s*\d/i;
-  var PLAN_FT = /^\s*(?:ft|inches|inch|in)\b/i;
-  var PLAN_QTY = /^[\s\S]{0,180}?\bQty\s*:\s*\d{1,3}\s+rolls\b/i;
-  var PLAN_PROTECT = /\b\d{4}-\d{2}-\d{2}\b|\b\d{3}-\d{3}-\d{4}\b|\b[A-Za-z]{1,8}-\d{2,4}-\d+\b|\bPO-\d+\b|\(\d{3}\)\s*\d{3}-\d{4}|\b\d{1,2}:\d{2}(?::\d{2})?\b|#\s*(?:\d{1,3}(?:,\d{3})+|\d{1,3})(?:\.\d+)?(?!\d)|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},\s+\d{4}\b/gi;
-  var PLAN_NUM = /(?:\$|＄|€|£|¥|\bUSD)\s*-?\s*(?:\.\d+|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)|\b\d{1,3}(?:,\d{3})+(?:\.\d+)?|\b\d+(?:\.\d+)?/g;
-
-  function guestPlanSearch() {
-    return typeof canSeeMoney === "function" && !canSeeMoney();
-  }
-
-  function planMoneySized(token) {
-    var raw = String(token || "").replace(/,/g, "");
-    var m = raw.match(/^(\d+)(\.\d+)?$/);
-    if (!m) return false;
-    if (m[1].length >= 5) return true;
-    return !!(m[2] && m[1].length >= 4);
-  }
-
-  function planHashAmount(text, start, token) {
-    var i = start - 1;
-    while (i >= 0 && /\s/.test(text.charAt(i))) i--;
-    if (i < 0 || text.charAt(i) !== "#") return false;
-    if (i > 0 && text.charAt(i - 1) === "&") return false;
-    if (!/^\d+(?:\.\d+)?$/.test(token)) return false;
-    var next = text.charAt(start + token.length);
-    if (/[a-fA-F]/.test(next)) return false;
-    var whole = token.split(".")[0];
-    if (token.indexOf(".") >= 0) return whole.length >= 4;
-    if (whole.length === 3 || whole.length === 4 || whole.length === 6 || whole.length === 8) return false;
-    return whole.length >= 5;
-  }
-
-  function planWordsBefore(text, start, limit) {
-    var words = [];
-    var i = start - 1;
-    while (i >= 0 && words.length < limit) {
-      var ch = text.charAt(i);
-      if (/\s/.test(ch) || ch === ":" || ch === ";" || ch === ",") { i--; continue; }
-      if (ch === "." || ch === "\n") break;
-      if (/[A-Za-z]/.test(ch)) {
-        var j = i;
-        while (j >= 0 && /[A-Za-z0-9_]/.test(text.charAt(j))) j--;
-        var word = text.slice(j + 1, i + 1).toLowerCase();
-        i = j;
-        if (PLAN_FILLER[word]) continue;
-        words.push(word);
-        continue;
-      }
-      break;
-    }
-    return words;
-  }
-
-  function planMoneyNear(text, start, end) {
-    var before = planWordsBefore(text, start, 8);
-    for (var i = 0; i < before.length; i++) if (PLAN_MONEY_WORD[before[i]]) return true;
-    var after = text.slice(end);
-    var re = /[A-Za-z][A-Za-z0-9_]*/g;
-    var found = re.exec(after);
-    var n = 0;
-    while (found && n < 2) {
-      if (found.index > 48) break;
-      var word = found[0].toLowerCase();
-      if (!PLAN_FILLER[word]) {
-        n++;
-        if (PLAN_MONEY_WORD[word]) return true;
-      }
-      found = re.exec(after);
-    }
-    return false;
-  }
-
-  function planRedactNumber(text, start, end, token) {
-    if (/^(?:\$|＄|€|£|¥|USD)/i.test(token) || /(?:USD|[€£¥]|\$)\s*$/i.test(token)) return true;
-    var after = text.slice(end);
-    if (/^\s*rolls\b/i.test(after)) return !/^\d{1,3}$/.test(token);
-    if (planMoneySized(token) && PLAN_FT.test(after) && PLAN_QTY.test(after)) return true;
-    if (PLAN_UNIT.test(after) || /^\s*'?\s*[xX]\s*'?\s*\d/.test(after)) return false;
-    if (/[xX]\s*'?\s*$/.test(text.slice(Math.max(0, start - 8), start))) return false;
-    if (/\d(?:\.\d+)?\s*K$/i.test(token) || /\/(?:ea|sf|lf|hr)$/i.test(token)) return true;
-    if (planHashAmount(text, start, token)) return true;
-    if (/\bpermit\s*#?\s*$/i.test(text.slice(Math.max(0, start - 24), start))) return false;
-    if (/^\d{1,3}(?:,\d{3})+(?:\.\d+)?$/.test(token)) return true;
-    return planMoneyNear(text, start, end);
-  }
-
-  function planGuestText(text) {
-    text = String(text == null ? "" : text);
-    if (!text) return text;
-    var spans = [];
-    var protect = new RegExp(PLAN_PROTECT.source, "gi");
-    var pm;
-    while ((pm = protect.exec(text))) {
-      var from = pm.index;
-      var piece = pm[0];
-      var hashAt = piece.indexOf("#");
-      if (hashAt >= 0 && text.charAt(from + hashAt - 1) === "&") continue;
-      spans.push([from, from + piece.length]);
-    }
-    function covered(a, b) {
-      for (var i = 0; i < spans.length; i++) {
-        if (a < spans[i][1] && b > spans[i][0]) return true;
-      }
-      return false;
-    }
-    var note = "(amount on money page)";
-    var num = new RegExp(PLAN_NUM.source, "g");
-    var out = "";
-    var cursor = 0;
-    var match;
-    while ((match = num.exec(text))) {
-      var start = match.index;
-      var end = start + match[0].length;
-      if (covered(start, end)) continue;
-      if (!planRedactNumber(text, start, end, match[0])) continue;
-      out += text.slice(cursor, start) + note;
-      cursor = end;
-    }
-    return out + text.slice(cursor);
-  }
-
   function searchIndex(index, query) {
     var q = String(query || "").trim().toLowerCase();
     var hits = [];
     if (!q || !index || !index.pages) return hits;
-    var hideMoney = guestPlanSearch();
     index.pages.forEach(function (page) {
       var items = page.items || [];
       var hay = "";
@@ -1181,7 +1049,6 @@
         hay += s;
       });
       if (!hay) hay = page.text || "";
-      if (hideMoney) hay = planGuestText(hay);
       var lower = hay.toLowerCase();
       var from = 0;
       while (hits.length < 40) {
@@ -1206,16 +1073,10 @@
         var start = Math.max(0, at - 24);
         var end = Math.min(hay.length, at + q.length + 24);
         var snippet = stripControls(hay.slice(start, end)).replace(/\s+/g, " ").trim();
-        var sheet = stripControls(page.sheet || "").replace(/\s+/g, " ").trim();
-        var title = stripControls(page.title || "").replace(/\s+/g, " ").trim();
-        if (hideMoney) {
-          sheet = planGuestText(sheet);
-          title = planGuestText(title);
-        }
         hits.push({
           page: page.page,
-          sheet: sheet,
-          title: title,
+          sheet: stripControls(page.sheet || "").replace(/\s+/g, " ").trim(),
+          title: stripControls(page.title || "").replace(/\s+/g, " ").trim(),
           snippet: (start ? "…" : "") + snippet + (end < hay.length ? "…" : ""),
           box: box,
         });

@@ -13,7 +13,7 @@ export function installPlanChrome() {
 
   function jobHash() {
     var job = params.get("job") || "";
-    var hash = params.get("back") || (job ? "#/job/" + job + "/logs" : "#/plans");
+    var hash = params.get("back") || (job ? "#/job/" + job + "/plans" : "#/plans");
     if (hash.charAt(0) !== "#") hash = "#" + hash;
     return hash;
   }
