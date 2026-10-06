@@ -47,11 +47,26 @@ function check(name, ok, detail) {
   if (!ok) fail.push(line);
 }
 
+/* Private job names are never written in this public file. Supply them at run time:
+   HWS_PRIVATE_NAMES="Name One,Name Two" node tests/dead-ends.mjs
+   or an untracked tests/private-names.local.json (["Name One", ...]). Without either, the check is skipped. */
+function privateNames() {
+  let names = String(process.env.HWS_PRIVATE_NAMES || '').split(',');
+  const local = join(ROOT, 'tests', 'private-names.local.json');
+  if (existsSync(local)) { try { names = names.concat(JSON.parse(readFileSync(local, 'utf8'))); } catch (e) {} }
+  return names.map(function (n) { return String(n || '').trim(); }).filter(Boolean);
+}
+function nameRegex(names) {
+  return new RegExp(names.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'));
+}
+
 function privacyScan() {
   const files = ['index.html', 'demo/index.html'];
+  const names = privateNames();
   for (const file of files) {
     const text = readFileSync(join(ROOT, file), 'utf8');
-    check(file + ' has no Restrepo or Walker', !/Restrepo|Walker/.test(text));
+    if (names.length) check(file + ' has no private job name (' + names.length + ' from env/local fixture)', !nameRegex(names).test(text));
+    else console.log('skip  ' + file + ' private job names: set HWS_PRIVATE_NAMES or tests/private-names.local.json');
     check(file + ' has no dollar amount', !/\$\s?\d/.test(text));
     check(file + ' does not send photos at Files', !text.includes('Open a job folder to see them'));
     check(file + ' does not pretend mail is waiting', !text.includes('Slack and mail waiting to be filed'));
