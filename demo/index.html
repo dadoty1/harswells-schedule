@@ -1037,7 +1037,9 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 }
 .pad-field .pad-qnote button,.pad-field .home-sec-h a{min-height:44px;min-width:44px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center}
 
-.qsheet{display:flex;flex-direction:column;gap:8px}
+.qsheet{--qfoot:160px;display:flex;flex-direction:column;gap:8px;min-height:0}
+.qsheet .qbody{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding-bottom:calc(var(--qfoot) + env(safe-area-inset-bottom));scroll-padding-bottom:calc(var(--qfoot) + env(safe-area-inset-bottom))}
+.qsheet textarea{scroll-margin-bottom:calc(var(--qfoot) + env(safe-area-inset-bottom) + 16px)}
 .qsheet [hidden]{display:none !important}
 .qsheet h2{margin:0;font-size:1.15rem}
 .qsheet .qhead,.qsheet .qrow,.qsheet .qtools,.qsheet .qtags{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -1065,7 +1067,7 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .qsheet button.qhandle{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;margin:0;border:3px solid #2563eb;background:#fff;border-radius:10px;box-sizing:border-box;touch-action:none;pointer-events:auto;box-shadow:0 1px 4px rgba(16,24,40,.28);z-index:2}
 .qsheet canvas{display:block;width:100%;height:min(42vh,340px);min-height:220px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;touch-action:none;-ms-touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .qsheet button.on{background:#15233b;color:#fff}
-.qsheet .qfoot{position:sticky;bottom:0;z-index:3;background:#fff;display:flex;flex-direction:column;gap:8px;padding-top:8px;padding-bottom:max(8px, env(safe-area-inset-bottom));box-shadow:0 -10px 16px #fff}
+.qsheet .qfoot{position:sticky;bottom:0;z-index:3;flex:none;background:#fff;display:flex;flex-direction:column;gap:8px;padding-top:8px;padding-bottom:max(8px, env(safe-area-inset-bottom));box-shadow:0 -10px 16px #fff}
 .qsheet .qfoot .qroll,.qsheet .qfoot .qsave{width:100%}
 .qsheet .qsave{position:static;background:transparent;padding-top:0;z-index:auto}
 .qsheet .qroll{align-items:center}
@@ -1113,7 +1115,9 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .qtask input[type=checkbox]{width:22px;height:22px}
 .qtask input[type=text],.qtask input[type=date]{min-height:44px;flex:1 1 120px;font-size:16px}
 .qnote-layer{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-.qnote-layer .qsheet{background:#fff;width:min(720px,100%);max-height:calc(100dvh - 80px - env(safe-area-inset-bottom));overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom));padding-left:calc(16px + env(safe-area-inset-left));padding-right:calc(16px + env(safe-area-inset-right));border-radius:16px 16px 0 0}
+.qnote-layer .qsheet{background:#fff;width:min(720px,100%);max-height:calc(100dvh - 80px - env(safe-area-inset-bottom));overflow:hidden;padding:16px 16px calc(16px + env(safe-area-inset-bottom));padding-left:calc(16px + env(safe-area-inset-left));padding-right:calc(16px + env(safe-area-inset-right));border-radius:16px 16px 0 0}
+.modal:has(.qsheet){display:flex;flex-direction:column;overflow:hidden}
+.modal:has(.qsheet) .qsheet{flex:1 1 auto;min-height:0;overflow:hidden}
 @media(max-width:760px){
   .qnote-layer{align-items:flex-end}
   .qnote-layer .qsheet{margin-bottom:calc(8px + env(safe-area-inset-bottom))}
@@ -4613,6 +4617,18 @@ function sanitizeMarkup(raw){
  if(raw.board){const w=+raw.board.w,h=+raw.board.h;if(isFinite(w)&&isFinite(h)&&w>=1&&w<=20000&&h>=1&&h<=20000)board={w:Math.round(w),h:Math.round(h)}}
  const out={schema:'harswells.planroom.v1',pdf:String(raw.pdf||'').slice(0,180),annotations:marks,calibrations:[],sheets:[],author:String(raw.author||'').slice(0,80)};
  if(board)out.board=board;return out}
+function noteCreatedAt(n,ctx){
+ const raw=String((n&&(n.created_at||n.at||n.captured_at))||(ctx&&ctx.stamp)||'');
+ const m=raw.match(/(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
+ if(m){
+  let off='-07:00';
+  const tail=raw.match(/([+-]\d{2}:\d{2}|Z)$/);
+  if(tail)off=tail[1]==='Z'?'+00:00':tail[1];
+  return (m[1]+'T'+m[2]+':'+m[3]+':'+(m[4]||'00')+off).slice(0,40);
+ }
+ const d=new Date(Date.now()-7*3600e3),p=function(x){return String(x).padStart(2,'0')};
+ return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+'T'+p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())+'-07:00';
+}
 function applyQuickNotes(state,ops,ctx){
  ctx=ctx||{};
  const list=Array.isArray(state.notes)?state.notes.map(function(n){return Object.assign({},n)}):[];
@@ -4621,7 +4637,7 @@ function applyQuickNotes(state,ops,ctx){
  (ops||[]).forEach(function(op){
   const n=op&&op.note;if(!n||!n.id)return;
   const markup=sanitizeMarkup(n.markup);
-  if(have[n.id]){const image=String(n.image||'').slice(0,300);list.forEach(function(row){if(!row||row.id!==String(n.id))return;if(markup)row.markup=markup;if(image&&image!=='pending')row.image=image});return}
+  if(have[n.id]){const image=String(n.image||'').slice(0,800);list.forEach(function(row){if(!row||row.id!==String(n.id))return;if(markup)row.markup=markup;if(image&&image!=='pending')row.image=image;if(!row.created_at)row.created_at=noteCreatedAt(n.created_at?n:{at:row.at||n.at,captured_at:row.captured_at||n.captured_at},ctx)});return}
   const kind=n.kind==='question'?'question':'note';
   const ask=kind==='question'&&/^(pm|superintendent|office)$/.test(String(n.ask||''))?String(n.ask):'';
   if(kind==='question'&&!ask)throw new EditError('a question needs a person');
@@ -4634,7 +4650,7 @@ function applyQuickNotes(state,ops,ctx){
    draft=want==='rfi'?{type:'rfi',id:String(n.id),title:'Field question',question:text||'Field question',status:'draft',due:'',ask:askLab}:{type:'todo',title:(text||'Field question').slice(0,400),status:'open',assigned:askLab,due:String(n.at||ctx.stamp||'').slice(0,10),source:'DRAFT',priority:'',tags:'question',due_rule:'',related:''};
    alert={id:String(n.id),title:(text||'Field question').slice(0,120),ask:askLab,href:'#/job/'+String(n.slug||ctx.slug||'')+(want==='rfi'?'/rfis':'/todos')};
   }
-  const row={id:String(n.id),kind:kind,text:text,ask:ask,who:String(n.who||ctx.who||'').slice(0,80),at:String(n.at||ctx.stamp||'').slice(0,40),status:'open',image:String(n.image||'').slice(0,300),draft:draft,alert:alert};
+  const row={id:String(n.id),kind:kind,text:text,ask:ask,who:String(n.who||ctx.who||'').slice(0,80),at:String(n.at||ctx.stamp||'').slice(0,40),created_at:noteCreatedAt(n,ctx),status:'open',image:String(n.image||'').slice(0,800),draft:draft,alert:alert,slug:String(n.slug||ctx.slug||'').slice(0,80)};
   if(n.captured_at)row.captured_at=String(n.captured_at).slice(0,40);
   if(n.capture_source==='exif'||n.capture_source==='device')row.capture_source=n.capture_source;
   if(Array.isArray(n.photos))row.photos=n.photos.slice(0,12).map(function(p){return p&&{at:String(p.at||'').slice(0,40),source:p.source==='exif'?'exif':'device',name:String(p.name||'').slice(0,120)}}).filter(Boolean);
@@ -9516,6 +9532,18 @@ try {
   function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]; }); }
   function currentWho() { try { if (typeof STORE !== "undefined" && STORE && STORE.who) return STORE.who() || ""; return localStorage.getItem("hws-who") || ""; } catch (e) { return ""; } }
   function stamp() { const d = new Date(Date.now() - 7 * 3600e3), p = function (n) { return String(n).padStart(2, "0"); }; return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate()) + " " + p(d.getUTCHours()) + ":" + p(d.getUTCMinutes()) + ":" + p(d.getUTCSeconds()); }
+  function isoLocal(raw) {
+    const s = String(raw || "").trim();
+    const m = s.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
+    if (m) {
+      let off = "-07:00";
+      const tail = s.match(/([+-]\d{2}:\d{2}|Z)$/);
+      if (tail) off = tail[1] === "Z" ? "+00:00" : tail[1];
+      return (m[1] + "T" + m[2] + ":" + m[3] + ":" + (m[4] || "00") + off).slice(0, 40);
+    }
+    const d = new Date(Date.now() - 7 * 3600e3), p = function (n) { return String(n).padStart(2, "0"); };
+    return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate()) + "T" + p(d.getUTCHours()) + ":" + p(d.getUTCMinutes()) + ":" + p(d.getUTCSeconds()) + "-07:00";
+  }
   function homeRolesRaw(who) {
     try {
       const table = (typeof DATA !== "undefined" && DATA && DATA.common && DATA.common.home_roles) || {};
@@ -9562,12 +9590,14 @@ try {
     const ask = kind === "question" && ASKS.indexOf(String(raw.ask || "")) >= 0 ? String(raw.ask) : "";
     if (kind === "question" && !ask) throw new Error("a question needs a person");
     const text = String(raw.text || "").replace(/\s+/g, " ").trim().slice(0, 4000);
-    const image = String(raw.image || "").slice(0, 300);
+    const image = String(raw.image || "").slice(0, 800);
     if (!text && !image && !raw.hasArt) throw new Error("add a note, a sketch, or a photo");
+    const at = String(raw.at || "").slice(0, 40);
     const note = {
       id: String(raw.id || ("qn-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6))),
       kind: kind, ask: kind === "question" ? ask : "", text: text,
-      who: String(raw.who || "").slice(0, 80), at: String(raw.at || "").slice(0, 40),
+      who: String(raw.who || "").slice(0, 80), at: at,
+      created_at: isoLocal(raw.created_at || at || raw.captured_at),
       status: "open", image: image, slug: String(raw.slug || "").slice(0, 80)
     };
     if (raw.captured_at) note.captured_at = String(raw.captured_at).slice(0, 40);
@@ -10311,39 +10341,86 @@ try {
     const parent = parts.slice(0, -1).map(encodeURIComponent).join("/");
     return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(parts[parts.length - 1]) + "&role=work";
   }
-  function stillSrc(frame) {
-    const raw = String(frame || "").trim();
-    if (!raw || raw === "pending" || raw.indexOf("..") >= 0 || /[\\]/.test(raw)) return "";
-    if (/^https?:\/\//i.test(raw)) return raw;
-    if (typeof notePicDbx === "function" && notePicDbx(raw)) return "";  // BOX-ONLY 2026-10-06: a Dropbox path is not a URL (see ui_mods notePicLoad)
-    if (/^(?:\/)?(?:[^/]+\/)*[^/]+\.(jpe?g|png|webp|gif)$/i.test(raw)) return raw;
+  function pictureOnBox() {
+    const notes = root.HWSNotes;
+    if (notes && notes._pictureBox != null) return !!notes._pictureBox;
+    try {
+      const loc = root.location || (typeof location !== "undefined" ? location : null);
+      if (loc && loc.origin) return /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/i.test(loc.origin);
+    } catch (e) {}
+    return true;
+  }
+  function pictureSlug(slug) {
+    const given = String(slug || "").trim().toLowerCase();
+    if (given) return given;
+    try { if (typeof J !== "undefined" && J && J.slug) return String(J.slug).toLowerCase(); } catch (e) {}
     return "";
   }
-  function dbxPic(raw) {
-    raw = String(raw || "").trim();
-    return typeof notePicDbx === "function" && notePicDbx(raw) && raw.indexOf("..") < 0 && /\.(jpe?g|png|webp|gif)$/i.test(raw);
+  function storedPicture(raw) {
+    const s = String(raw || "").trim();
+    const m = s.match(/^\/api\/files\/([a-z0-9-]+)\/body\?path=(.*)$/i);
+    if (!m) return {slug: "", path: s};
+    let path = m[2];
+    try { path = decodeURIComponent(path.replace(/\+/g, "%20")); } catch (e) {}
+    return {slug: m[1], path: path};
   }
-  function pictureHtml(path) {
+  function pictureSrc(path, slug) {
     const raw = String(path || "").trim();
-    if (dbxPic(raw)) return '<a class="qnote-pic" href="#" target="_blank" rel="noopener" data-qnote-full="1">' + notePicTag(raw) + "</a>";
-    const src = stillSrc(raw);
+    if (!raw || raw === "pending" || raw.indexOf("..") >= 0 || /[\\]/.test(raw)) return "";
+    if (/^https?:\/\//i.test(raw)) {
+      if (/dropbox\.com\/home/i.test(raw)) return "";
+      return raw;
+    }
+    const stored = storedPicture(raw);
+    const filePath = stored.path;
+    if (!filePath || filePath === "pending" || filePath.indexOf("..") >= 0 || /[\\]/.test(filePath)) return "";
+    if (!/\.(jpe?g|png|webp|gif)(?:$|\?)/i.test(filePath)) return "";
+    const useSlug = pictureSlug(slug || stored.slug);
+    if (pictureOnBox()) {
+      if (!useSlug || !/^[a-z0-9-]+$/.test(useSlug)) return filePath.indexOf("/") < 0 ? filePath : "";
+      return "/api/files/" + useSlug + "/body?path=" + encodeURIComponent(filePath);
+    }
+    let signed = "";
+    const notes = root.HWSNotes;
+    if (notes && typeof notes._pictureSign === "function") {
+      try { signed = notes._pictureSign(filePath, useSlug) || ""; } catch (e) { signed = ""; }
+    }
+    if (!signed && root.HWSFiles && typeof root.HWSFiles.signedLink === "function") {
+      try { signed = root.HWSFiles.signedLink(filePath) || ""; } catch (e) { signed = ""; }
+    }
+    if (!signed && root.HWSFiles && typeof root.HWSFiles.signedDownload === "function") {
+      try {
+        root.HWSFiles.signedDownload(filePath).then(function (url) {
+          if (!url) return;
+          try { if (typeof notePaint === "function") notePaint(); } catch (e) {}
+          try { if (typeof renderJob === "function") renderJob(); } catch (e) {}
+        });
+      } catch (e) {}
+    }
+    if (signed && /^https?:\/\//i.test(signed) && !/dropbox\.com\/home/i.test(signed)) return signed;
+    return "";
+  }
+  function stillSrc(frame, slug) {
+    return pictureSrc(frame, slug);
+  }
+  function pictureHtml(path, slug) {
+    const src = stillSrc(path, slug);
     if (!src) return "";
-    const full = src;
-    return '<a class="qnote-pic" href="' + esc(full) + '" target="_blank" rel="noopener" data-qnote-full="1"><img alt="" src="' + esc(src) + '"></a>';
+    return '<a class="qnote-pic" href="' + esc(src) + '" target="_blank" rel="noopener" data-qnote-full="1"><img alt="" src="' + esc(src) + '"></a>';
   }
   function fileLink(path, label) {
     const href = dropboxHref(path);
     if (!href) return "";
     return '<a class="qnote-link" href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label) + "</a>";
   }
-  function fieldCard(note) {
+  function fieldCard(note, slug) {
     const when = cleanNote(note.at || note.captured_at || "");
     const who = cleanNote(note.who || "");
     const text = cleanNote(note.summary || note.text || "Field note");
     const stills = (note.stills || []).map(function (still) {
-      const src = stillSrc(still && still.frame);
+      const src = stillSrc(still && still.frame, slug || note.slug);
       const caption = cleanNote(((still && still.t) || "") + " " + ((still && (still.caption || still.said)) || "")).trim();
-      const img = src ? '<img src="' + esc(src) + '" alt="">' : (dbxPic(still && still.frame) ? notePicTag(String(still.frame).trim()) : "");
+      const img = src ? '<img src="' + esc(src) + '" alt="">' : "";
       return '<figure class="qnote-still">' + img + (caption ? "<figcaption>" + esc(caption) + "</figcaption>" : "") + "</figure>";
     }).join("");
     const tasks = (note.actions || []).map(function (task) {
@@ -10352,7 +10429,7 @@ try {
       return '<label class="qtask"><input type="checkbox" data-qnote-task="' + esc(task.id) + '"' + (done ? " checked" : "") + '><span>' + esc(cleanNote(task.text || "")) + '</span><input data-qnote-assign="' + esc(task.id) + '" type="text" placeholder="Assignee" value="' + esc(cleanNote(task.assignee || "")) + '"><input data-qnote-due="' + esc(task.id) + '" type="date" value="' + esc(String(task.due || "").slice(0, 10)) + '"></label>';
     }).join("");
     const transcript = cleanNote(note.transcript || "");
-    const pic = pictureHtml(note.image);
+    const pic = pictureHtml(note.image, slug || note.slug);
     return '<article class="qnote" data-qnote-id="' + esc(note.id) + '" data-qnote-status="' + (noteIsOpen(note) ? "open" : "done") + '">' +
       '<button type="button" class="qnote-open" data-qnote-open><div class="qnote-when">' + esc(when) + "</div>" +
       (who ? '<div class="small">' + esc(who) + "</div>" : "") +
@@ -10364,9 +10441,9 @@ try {
       tasks +
       "</div></article>";
   }
-  function plainCard(note) {
+  function plainCard(note, slug) {
     const when = v2On() && root.HWSFieldNote && (note.captured_at || note.at) ? root.HWSFieldNote.cardLabel(note.captured_at || note.at, note.capture_source || "device") : "";
-    const pic = pictureHtml(note.image);
+    const pic = pictureHtml(note.image, slug || note.slug);
     return '<div class="qitem" data-qnote-id="' + esc(note.id) + '"><button type="button" class="qitem-open"><span class="small mut">Note' + (note.who ? " · " + esc(note.who) : "") + "</span>" + (when ? '<span class="qcard-time">' + esc(when) + "</span>" : "") + '<span class="qcard-text">' + esc(cleanNote(note.text || "Sketch or photo")) + "</span></button>" + pic + "</div>";
   }
   function listHtml(job) {
@@ -10381,7 +10458,7 @@ try {
       return left < right ? 1 : -1;
     });
     const chips = '<div class="qfilters"><button type="button" data-qnote-filter="open"' + (filter === "open" ? ' class="on"' : "") + '>Open</button><button type="button" data-qnote-filter="done"' + (filter === "done" ? ' class="on"' : "") + ">Done</button></div>";
-    const body = rows.map(function (n) { return isFieldBoard(n) ? fieldCard(n) : plainCard(n); }).join("") || '<p class="small mut">No ' + filter + " notes.</p>";
+    const body = rows.map(function (n) { return isFieldBoard(n) ? fieldCard(n, job && job.slug) : plainCard(n, job && job.slug); }).join("") || '<p class="small mut">No ' + filter + " notes.</p>";
     return '<section class="qnotes qboard" data-qnote-list><h2 class="sh2">Notes</h2>' + chips + body + "</section>";
   }
   function taskEdit(noteId, taskId, fields) {
@@ -10485,7 +10562,7 @@ try {
     const job = esc(opts.job || "This job");
     const pick = opts.slug ? "" : ('<label class="qtext">Job<select data-qnote-job>' + jobChoices().map(function (j) { return '<option value="' + esc(j.slug) + '">' + esc(j.name) + "</option>"; }).join("") + "</select></label>");
     const swatch = function (hex, name) { return '<button type="button" data-qnote-color="' + hex + '" style="background:' + hex + '">' + name + "</button>"; };
-    return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qhead"><div><h2>Quick note</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
+    return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qbody"><div class="qhead"><div><h2>Quick note</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
       pick +
       '<div class="qtools"><button type="button" data-qnote-mode="sketch" class="on">Sketch</button><button type="button" data-qnote-mode="photo">Photo</button></div>' +
       '<div class="qrow" data-qnote-photo-tools hidden><button type="button" data-qnote-cam>Take photo</button><button type="button" data-qnote-file>Choose photo</button></div>' +
@@ -10509,8 +10586,25 @@ try {
       (v2On() && root.HWSFieldNote ? '<div class="qcards" data-qnote-cards></div>' : '') +
       '<div class="qtags"><button type="button" data-qnote-kind="note" class="on">Note</button><button type="button" data-qnote-kind="question">Question</button><label data-qnote-ask-wrap hidden>For <select data-qnote-ask><option value="">Choose</option><option value="pm">PM</option><option value="superintendent">Superintendent</option><option value="office">Office</option></select></label></div>' +
       (v2On() && root.HWSFieldNote ? root.HWSFieldNote.sheetExtras() : "") +
-      '<div class="qfoot"><div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div><p class="qroll-link" data-qnote-roll-link hidden></p>' +
+      '</div><div class="qfoot"><div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div><p class="qroll-link" data-qnote-roll-link hidden></p>' +
       '<div class="qrow qsave"><button type="button" class="pri" data-qnote-save>Save</button><span class="small" data-qnote-msg></span></div></div></div>';
+  }
+  function fitNoteSheet(host) {
+    const doc = root.document;
+    if (!doc || !host || !host.querySelector) return;
+    const sheet = host.getAttribute && host.getAttribute("data-qnote-sheet") != null ? host : host.querySelector("[data-qnote-sheet]");
+    if (!sheet) return;
+    const foot = sheet.querySelector(".qfoot");
+    const text = sheet.querySelector("[data-qnote-text]");
+    if (foot) sheet.style.setProperty("--qfoot", Math.ceil(foot.getBoundingClientRect().height) + "px");
+    const vv = root.visualViewport;
+    if (vv && vv.height) sheet.style.maxHeight = Math.max(280, Math.floor(vv.height - (vv.offsetTop || 0) - 12)) + "px";
+    if (!text || !doc.activeElement || doc.activeElement !== text) return;
+    const footTop = foot ? foot.getBoundingClientRect().top : (vv ? vv.height : 0);
+    const rect = text.getBoundingClientRect();
+    if (rect.bottom > footTop - 8 || rect.top < 8) {
+      try { text.scrollIntoView({block: "center"}); } catch (e) {}
+    }
   }
   function bindSheet(host, opts) {
     opts = opts || {};
@@ -11425,7 +11519,21 @@ try {
     syncInspect();
     syncHist();
     fit();
-    if (root.requestAnimationFrame) root.requestAnimationFrame(fit);
+    if (root.requestAnimationFrame) root.requestAnimationFrame(function () { fit(); fitNoteSheet(host); });
+    if (text) text.addEventListener("focus", function () { fitNoteSheet(host); try { text.scrollIntoView({block: "center"}); } catch (e) {} });
+    if (!root._qnoteFit) {
+      root._qnoteFit = function () {
+        const open = root.document && root.document.querySelector("[data-qnote-sheet]");
+        if (open) fitNoteSheet(open);
+      };
+      if (root.addEventListener) root.addEventListener("resize", root._qnoteFit);
+      if (root.visualViewport && root.visualViewport.addEventListener) root.visualViewport.addEventListener("resize", root._qnoteFit);
+    }
+    if (typeof root.ResizeObserver === "function") {
+      const foot = host.querySelector && host.querySelector(".qfoot");
+      if (foot) new root.ResizeObserver(function () { fitNoteSheet(host); }).observe(foot);
+    }
+    fitNoteSheet(host);
   }
   function notePaint() {
     const slot = document.getElementById("qnote-slot");
@@ -11494,7 +11602,7 @@ try {
     resolveClientFolder: resolveClientFolder, safeFolder: safeFolder, noteFilePayload: noteFilePayload,
     cameraRollPlan: cameraRollPlan, cameraRollPref: cameraRollPref, setCameraRollPref: setCameraRollPref, saveToCameraRoll: saveToCameraRoll,
     nextVersionName: nextVersionName, pairedName: pairedName, planroomDoc: planroomDoc, marksFromDrawing: marksFromDrawing, composeCopy: composeCopy,
-    noteAllowed: noteAllowed, pictureHtml: pictureHtml, stillSrc: stillSrc, v2On: v2On, acceptPointer: acceptPointer, fingerGesture: fingerGesture, strokeOutline: strokeOutline,
+    noteAllowed: noteAllowed, pictureHtml: pictureHtml, pictureSrc: pictureSrc, stillSrc: stillSrc, fitNoteSheet: fitNoteSheet, v2On: v2On, acceptPointer: acceptPointer, fingerGesture: fingerGesture, strokeOutline: strokeOutline,
     questionDraft: questionDraft, questionAlert: questionAlert, noteMeta: noteMeta,
     enqueueNote: enqueueNote, enqueueMarkup: enqueueMarkup,
     mapTouch: mapTouch, zoomAt: zoomAt, pinchView: pinchView, doubleTapZoom: doubleTapZoom, fitView: fitView,
@@ -11843,7 +11951,7 @@ try {
     });
   }
 
-  var STOP = { the: 1, project: 1, house: 1, home: 1, residence: 1, casita: 1, lot: 1, lots: 1, custom: 1, new: 1, and: 1, unit: 1, phase: 1, building: 1, remodel: 1, job: 1, jobs: 1, north: 1, south: 1, east: 1, west: 1, street: 1, avenue: 1, drive: 1, road: 1, lane: 1, court: 1, place: 1, manor: 1 };
+  var STOP = { the: 1, project: 1, house: 1, home: 1, residence: 1, casita: 1, lot: 1, lots: 1, custom: 1, new: 1, and: 1, unit: 1, phase: 1, building: 1, remodel: 1, job: 1, jobs: 1, north: 1, south: 1, east: 1, west: 1, street: 1, st: 1, avenue: 1, ave: 1, drive: 1, dr: 1, road: 1, rd: 1, lane: 1, ln: 1, way: 1, court: 1, ct: 1, place: 1, pl: 1, manor: 1, blvd: 1, boulevard: 1, pkwy: 1, parkway: 1, cir: 1, circle: 1, hwy: 1, highway: 1, trl: 1, trail: 1 };
 
   function words(s) {
     return String(s || '').match(/[A-Za-z][A-Za-z'’-]*/g) || [];
@@ -11889,22 +11997,29 @@ try {
     return '';
   }
 
+  /* Name fallback only. An explicit client/customer field is not filtered here. */
+  function heuristicWord(w) {
+    var low = String(w || '').toLowerCase();
+    if (!low || STOP[low] || low.length < 3) return false;
+    if (/^\d+$/.test(low)) return false;
+    if (low === 'nth' || /^(?:\d+)?(?:st|nd|rd|th)$/.test(low)) return false;
+    return true;
+  }
+
+  function heuristicWords(s) {
+    return words(s).filter(heuristicWord);
+  }
+
   function parenLast(name) {
     var m = String(name || '').match(/\(([^)]+)\)\s*$/);
     if (!m) return '';
-    var w = words(m[1]), i;
-    for (i = w.length - 1; i >= 0; i--) {
-      if (!STOP[w[i].toLowerCase()]) return w[i];
-    }
-    return '';
+    var w = heuristicWords(m[1]);
+    return w.length ? w[w.length - 1] : '';
   }
 
   function firstSurname(name) {
-    var w = words(name), i;
-    for (i = 0; i < w.length; i++) {
-      if (!STOP[w[i].toLowerCase()]) return w[i];
-    }
-    return '';
+    var w = heuristicWords(name);
+    return w.length ? w[0] : '';
   }
 
   function nameCandidates(name) {
@@ -11965,6 +12080,49 @@ try {
     return out;
   }
 
+  /* Office overhead stays listed and searchable. The Active grid hides it. */
+  function overhead(job) {
+    job = job || {};
+    var info = job.info || {};
+    if (/overhead/i.test(jobName(job))) return true;
+    function flagged(v) {
+      if (v === true || v === 1) return true;
+      var s = String(v == null ? '' : v).trim().toLowerCase();
+      return s === 'true' || s === 'yes' || s === '1' || s === 'internal' || s === 'overhead';
+    }
+    if (flagged(job.overhead) || flagged(info.overhead) || flagged(job.internal) || flagged(info.internal)) return true;
+    var kind = String(job.kind || info.kind || job.list_kind || info.list_kind || '').trim().toLowerCase();
+    return kind === 'internal' || kind === 'overhead';
+  }
+
+  /* One client's jobs in groups 1–3 share a header in the most active of those groups.
+     Each job keeps its own stage. Warranty and closed stay in their own groups. */
+  function pullClientsForward(byGroup, closed) {
+    var pool = [];
+    [1, 2, 3].forEach(function (g) { (byGroup[g] || []).forEach(function (job) { pool.push(job); }); });
+    if (pool.length < 2) return;
+    var labels = assignLabels(pool);
+    var members = {};
+    pool.forEach(function (job, i) {
+      var k = clientKey(labels[i]);
+      if (!k) return;
+      var g = group(job, closed);
+      if (!members[k]) members[k] = {jobs: [], min: g};
+      members[k].jobs.push(job);
+      if (g < members[k].min) members[k].min = g;
+    });
+    Object.keys(members).forEach(function (k) {
+      var block = members[k];
+      if (block.jobs.length < 2) return;
+      block.jobs.forEach(function (job) {
+        var g = group(job, closed);
+        if (g === block.min) return;
+        byGroup[g] = (byGroup[g] || []).filter(function (row) { return row !== job; });
+        (byGroup[block.min] = byGroup[block.min] || []).push(job);
+      });
+    });
+  }
+
   /* Status group, then explicit rank, then client blocks and job names alphabetically. */
   function arrange(jobs, opts) {
     opts = opts || {};
@@ -11974,6 +12132,7 @@ try {
       var g = group(job, closed);
       (byGroup[g] = byGroup[g] || []).push(job);
     });
+    pullClientsForward(byGroup, closed);
     var out = [];
     Object.keys(byGroup).map(Number).sort(function (a, b) { return a - b; }).forEach(function (g) {
       var ranked = {}, unranked = [];
@@ -12099,6 +12258,7 @@ try {
     activity: activity,
     rank: explicitRank,
     client: explicitClient,
+    overhead: overhead,
     prepare: prepare,
     sort: sortJobs,
     arrange: arrange,
@@ -12155,6 +12315,7 @@ function jobServiceOf(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.servic
  return jobIsClosed(j)?'warranty':'active'}
 function jobExcluded(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.excluded)return HWSJobOrder.excluded(j);return !!(j&&(j.exclude===true||j.exclude===1||(j.info&&(j.info.exclude===true||j.info.exclude===1))))}
 function jobListed(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.listed)return HWSJobOrder.listed(j);return !jobExcluded(j)}
+function jobOverhead(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.overhead)return !!HWSJobOrder.overhead(j);return !!(j&&/overhead/i.test(String(j.name||j.slug||'')))}
 function jobUnconfirmed(j){return typeof HWSJobOrder!=='undefined'&&HWSJobOrder.unconfirmed&&HWSJobOrder.unconfirmed(j)}
 function jobShowsUnconfirmed(j){return jobServiceOf(j)!=='active'&&jobUnconfirmed(j)}
 function jobUnconfirmedMark(j){return jobShowsUnconfirmed(j)?' <span class="junconf">unconfirmed</span>':''}
@@ -12205,7 +12366,7 @@ function jobPhoneRow(j,opts){opts=opts||{};const g=opts.group!=null?opts.group:j
  const phrase=(svc==='warranty'||svc==='concierge')?jobServicePhrase(j):'';
  const sub=svc==='active'?[esc(j.stage||'—')].concat(bits.map(x=>esc(x))).join(' · '):(phrase?jobStatusChip(j)+' '+esc(phrase):[jobStatusChip(j)].concat(bits.map(x=>esc(x))).join(' · '));
  return `<a class="jcard" data-group="${g}"${jobShowsUnconfirmed(j)?' data-unconfirmed="1"':''} href="${href}"${opts.extra||''}><h4>${esc(j.name||j.slug)}${pe?(' '+pe):''}</h4><div class="jsub">${sub}</div><span class="jside">${badge}</span></a>`}
-function splitJobLists(jobs){const active=[],service=[],closed=[];(jobs||[]).forEach(j=>{const s=jobServiceOf(j);if(s==='closed')closed.push(j);else if(s==='active')active.push(j);else if(jobOnWarrantyTab(j))service.push(j)});return {active:active,service:serviceRowsForViewer(service),closed:viewerSeesPast()?closedJobsAlpha(closed):[]}}
+function splitJobLists(jobs){const active=[],service=[],closed=[];(jobs||[]).forEach(j=>{const s=jobServiceOf(j);if(s==='closed')closed.push(j);else if(s==='active'){if(!jobOverhead(j))active.push(j)}else if(jobOnWarrantyTab(j))service.push(j)});return {active:active,service:serviceRowsForViewer(service),closed:viewerSeesPast()?closedJobsAlpha(closed):[]}}
 function warrantyGridHtml(rows){return jobBlockHtml(jobBlocks(rows),j=>jobPhoneRow(j,{extra:' data-close'}))||'<div class="none">No jobs</div>'}
 function jobMenuHtml(jobs){const split=splitJobLists((jobs||[]).filter(jobListed));
  const open=`<div class="jgrid" data-job-list="open">${jobBlockHtml(jobBlocks(split.active),j=>jobPhoneRow(j,{extra:' data-close'}))||'<div class="none">No jobs</div>'}</div>`;
@@ -12216,7 +12377,7 @@ function bindJobMenu(root){if(!root)return;const menu=root.querySelector('#job-m
   const open=menu.querySelector('[data-job-list=open]'),war=menu.querySelector('[data-job-list=warranty]');if(open)open.hidden=which!=='active';if(war)war.hidden=which!=='warranty'}})}
 function openJobMenu(){if(typeof openModal!=='function')return;const jobs=orderedJobs().filter(jobListed);openModal(jobMenuHtml(jobs),bindJobMenu)}
 function jobRailHtml(){let rows=orderedJobs();
- rows=rows.filter(j=>j&&jobListed(j)&&jobServiceOf(j)==='active'&&!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
+ rows=rows.filter(j=>j&&jobListed(j)&&jobServiceOf(j)==='active'&&!jobOverhead(j)&&!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
  const cur=J&&J.slug;
  const link=j=>`<a class="${j.slug===cur?'on':''}" href="${jobHref(j.slug)}"><span>${esc(j.name||j.slug)}</span></a>`;
  const body=jobBlockHtml(jobBlocks(rows),link);
@@ -12657,42 +12818,18 @@ function fieldNoteHref(path){
  return 'https://www.dropbox.com/home/'+parent+'?preview='+file+'&role=work';
 }
 function fieldNoteLinks(x){if(!isFieldNoteLog(x))return '';const bits=[];if(x.audio)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.audio))}" target="_blank" rel="noopener">Audio</a>`);if(x.video)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.video))}" target="_blank" rel="noopener">Video</a>`);if(x.pdf)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.pdf))}" target="_blank" rel="noopener">PDF</a>`);return bits.join('')}
-/* BOX-ONLY 2026-10-06 (Hub Admin): a note picture or still is saved as a Dropbox path ("/Sample Builders Team Folder/…/x.jpg").
-   That is not a URL (it 404s on the box and on Pages). It renders as <img data-hws-dbx> and loads through the box file
-   route /api/files/<slug>/body (same role gate as Files) or, off the box, the signed-in Dropbox download. A viewer the
-   route refuses gets no picture (the link is hidden), never a broken image. */
-function notePicDbx(raw){return /^\/[^/]/.test(String(raw||''))&&!/^\/(api|pwa|job|demo)\//.test(String(raw||''))}
-function notePicTag(raw){return `<img alt="" data-hws-dbx="${esc(raw)}">`}
-function notePicJob(path){
- const root=(typeof filesRoot==='function'?filesRoot():'').replace(/\/+$/,'');
- if(!root||path.indexOf(root+'/')!==0)return null;
- const rest=path.slice(root.length+1);const map=(typeof filesCommon==='function'?filesCommon().job_folders:null)||{};let best=null;
- Object.keys(map).forEach(function(slug){const f=String(map[slug]||'').replace(/^\/+|\/+$/g,'');if(f&&rest.indexOf(f+'/')===0&&(!best||f.length>best.f.length))best={slug:slug,f:f}});
- return best?{slug:best.slug,rel:rest.slice(best.f.length+1)}:null}
-async function notePicLoad(img){
- const path=img.getAttribute('data-hws-dbx');if(!path||img.getAttribute('data-hws-dbx-state'))return;img.setAttribute('data-hws-dbx-state','loading');
- let blob=null;
- try{if(typeof fileOnBox==='function'&&fileOnBox()){const j=notePicJob(path);if(j){const r=await fetch('/api/files/'+encodeURIComponent(j.slug)+'/body?rel='+encodeURIComponent(j.rel),{credentials:'same-origin'});const t=r.headers.get('Content-Type')||'';if(r.ok&&/^image\//.test(t))blob=await r.blob()}}}catch(e){}
- try{if(!blob&&typeof fileDownloadPath==='function'){const got=await fileDownloadPath(path);if(got&&got.bytes&&/^image\/|octet/.test(got.type||'image/'))blob=new Blob([got.bytes],{type:/^image\//.test(got.type||'')?got.type:'image/jpeg'})}}catch(e){}
- const a=img.closest('a');
- if(blob){const u=URL.createObjectURL(blob);img.src=u;if(a&&a.hasAttribute('data-qnote-full'))a.href=u;img.setAttribute('data-hws-dbx-state','ok')}
- else{img.setAttribute('data-hws-dbx-state','none');if(a&&a.hasAttribute('data-qnote-full'))a.hidden=true;else img.hidden=true}}
-function notePicScan(root){(root||document).querySelectorAll('img[data-hws-dbx]:not([data-hws-dbx-state])').forEach(function(img){notePicLoad(img)})}
-(function(){if(typeof window==='undefined'||window.__hwsNotePicObs||typeof MutationObserver!=='function')return;
- const obs=new MutationObserver(function(){notePicScan(document)});window.__hwsNotePicObs=obs;
- const go=function(){if(document.body){obs.observe(document.body,{childList:true,subtree:true});notePicScan(document)}};
- if(document.body)go();else document.addEventListener('DOMContentLoaded',go)})();
 function notePictureSrc(path){
+ if(window.HWSNotes&&typeof HWSNotes.pictureSrc==='function'){
+  const slug=(typeof J!=='undefined'&&J&&J.slug)||'';
+  return HWSNotes.pictureSrc(path, slug);
+ }
  const raw=String(path||'').trim();
  if(!raw||raw==='pending'||raw.indexOf('..')>=0||/[\\]/.test(raw))return '';
- if(/^https?:\/\//i.test(raw))return raw;
- if(notePicDbx(raw))return '';
+ if(/^https?:\/\//i.test(raw))return /dropbox\.com\/home/i.test(raw)?'':raw;
  if(/^(?:\/)?(?:[^/]+\/)*[^/]+\.(jpe?g|png|webp|gif)$/i.test(raw))return raw;
  return '';
 }
 function notePictureHtml(path){
- const raw0=String(path||'').trim();
- if(notePicDbx(raw0)&&/\.(jpe?g|png|webp|gif)$/i.test(raw0)&&raw0.indexOf('..')<0)return `<a class="qnote-pic qlogpic" href="#" target="_blank" rel="noopener" data-qnote-full="1">${notePicTag(raw0)}</a>`;
  const src=notePictureSrc(path);
  if(!src)return '';
  const href=src;
@@ -18685,6 +18822,30 @@ async function fileAuthHeaders() {
   else if (auth.root_ns) headers["Dropbox-API-Path-Root"] = JSON.stringify({ ".tag": "root", root: auth.root_ns });
   return headers;
 }
+const fileTempLinks = Object.create(null);
+function fileSignedLink(path) {
+  return fileTempLinks[String(path || "")] || "";
+}
+async function fileSignedDownload(path) {
+  const key = String(path || "");
+  if (!key || key.indexOf("..") >= 0) return "";
+  if (fileTempLinks[key]) return fileTempLinks[key];
+  const headers = await fileAuthHeaders();
+  if (!headers) return "";
+  const apiPath = key.charAt(0) === "/" ? key : ("/" + key);
+  const r = await fetch("https://api.dropboxapi.com/2/files/get_temporary_link", {
+    method: "POST", credentials: "omit",
+    headers: Object.assign({ "Content-Type": "application/json" }, headers),
+    body: JSON.stringify({ path: apiPath }),
+  });
+  if (!r.ok) return "";
+  let data = null;
+  try { data = await r.json(); } catch (e) { return ""; }
+  const link = data && data.link ? String(data.link) : "";
+  if (!/^https?:\/\//i.test(link) || /dropbox\.com\/home/i.test(link)) return "";
+  fileTempLinks[key] = link;
+  return link;
+}
 async function fileDownloadPath(path) {
   const headers = await fileAuthHeaders();
   if (!headers || !path) return null;
@@ -19658,6 +19819,8 @@ window.HWSFiles = {
   zipNames: fileZipNames,
   emailSummary: fileEmailSummary,
   planHref: filePlanHref,
+  signedLink: fileSignedLink,
+  signedDownload: fileSignedDownload,
   plansPath: filePlansPath,
   remember(slug, entries) { if (slug) fileBytes.set(slug, entries || []); },
   label: fileLabel,
@@ -23252,7 +23415,7 @@ function renderJobsList(container,opts){opts=opts||{};const host=jobsListHost(co
  const service=typeof serviceRowsForViewer==='function'?serviceRowsForViewer(warrantyRows):warrantyRows;
  const closedRows=prepared.filter(j=>svcOf(j)==='closed');
  const past=typeof viewerSeesPast==='function'&&viewerSeesPast()?(typeof closedJobsAlpha==='function'?closedJobsAlpha(closedRows):closedRows):[];
- const jobs=prepared.filter(j=>svcOf(j)==='active'&&(typeof HWSJobOrder!=='undefined'||!warrantyStageRow(j)));
+ const jobs=prepared.filter(j=>svcOf(j)==='active'&&(typeof HWSJobOrder!=='undefined'||!warrantyStageRow(j))&&!!(q||typeof jobOverhead!=='function'||!jobOverhead(j)));
  const requested=opts.tab!=null?String(opts.tab):(typeof parseHash==='function'?parseHash().sub:'');
  const statView=(requested==='overdue'||requested==='conflicts'||requested==='scheduled')?requested:'';
  const sub=requested==='open'||requested==='active'?'':requested;

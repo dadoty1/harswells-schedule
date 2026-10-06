@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='3db604cf6f';
+const VERSION='c32a8c2f49';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
