@@ -506,7 +506,7 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 #hws-ver,.hws-ver{margin:8px 12px 16px;font-size:12px;line-height:1.3;color:#667085;text-align:center}
 #hws-update{position:fixed;left:12px;right:12px;bottom:16px;z-index:70;min-height:44px;border:0;border-radius:12px;background:#15233b;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
 @media(max-width:760px){
- #hws-ver{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));z-index:61;margin:0;padding:1px 8px 2px;background:rgba(255,255,255,.94);pointer-events:none}
+ #hws-ver{position:static;left:auto;right:auto;bottom:auto;z-index:auto;margin:8px 12px calc(16px + env(safe-area-inset-bottom));padding:1px 8px 2px;background:transparent;pointer-events:none}
  #hws-update{bottom:calc(86px + env(safe-area-inset-bottom))}
  body.has-tabs{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 }
@@ -519,6 +519,45 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 .inv-kpis div{border:1px solid var(--line);border-radius:12px;padding:16px;min-height:88px;background:#fff}
 .inv-kpis b{display:block;margin-bottom:6px}
 .inv-sel{padding-left:18px}
+/* Phone job rows. Desktop and iPad keep the card grid (this block is width-gated). */
+.jmenu{display:none}
+.closed-fold{margin:12px 0;background:#fff;border:1px solid #dde3ec;border-radius:14px;overflow:hidden}
+.closed-fold>summary{min-height:44px;padding:12px 14px;font-weight:650;cursor:pointer;display:flex;align-items:center;gap:8px;list-style-position:inside}
+.closed-fold>summary span{color:var(--mut);font-weight:650}
+.jalert,.jwar{display:inline-flex;align-items:center;justify-content:center;min-width:22px;min-height:22px;padding:0 8px;border-radius:99px;font-size:13px;font-weight:700;line-height:1}
+.jalert{background:#fde4e2;color:#b42318}
+.jwar{background:#e8eefc;color:#1d3a8a}
+.chip.warranty{background:#e8eefc;color:#1d3a8a}
+.chip.concierge{background:#e7f6f2;color:#0f6e56}
+.chip.closed{background:#f2f4f7;color:#475467}
+.junconf{display:inline-block;margin-left:4px;font-size:11px;font-weight:650;line-height:1.2;color:#b54708;vertical-align:middle}
+.past-jobs{display:inline-flex;align-items:center;min-height:44px;margin:2px 12px 8px;padding:0;font-size:13px;font-weight:650;line-height:1.3;color:#667085;text-decoration:underline}
+.past-jobs-h{margin:0 12px 4px;font-size:13px;font-weight:650;line-height:1.3;color:#667085}
+.job-tabs{margin:8px 0 10px}
+.job-tabs a,.job-tabs button{flex:1;justify-content:center;min-height:44px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.job-tabs button{display:flex;align-items:center;border-radius:20px;background:#fff;border:1px solid #d7dde7;color:#344054;padding:0 16px}
+.job-tabs button.on{background:var(--navy,#15233b);border-color:var(--navy,#15233b);color:#fff}
+.jclosed-h{padding:10px 12px 4px;font-size:15px;font-weight:700;color:#344054}
+.jgrid>.jclient,.pad-jobs>.jclient{grid-column:1 / -1;display:flex;align-items:center;min-height:44px;margin:0;padding:8px 12px;font-size:17px;font-weight:700;line-height:1.25;color:#344054;background:#f4f6f9;box-sizing:border-box}
+@media(max-width:760px){
+ header.top #jsw{display:none!important}
+ header.top .jmenu{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:0 14px;font-size:16px;font-weight:700}
+ body.hubp header.top .jmenu{display:none}
+ .hub-jobs,.job-menu{max-width:100%;min-width:0;overflow-x:hidden}
+ .hub-jobs .pb{padding-left:0;padding-right:0}
+ .hub-jobs .jgrid,.job-menu .jgrid{display:flex;flex-direction:column;grid-template-columns:none;gap:0;width:100%;min-width:0;max-width:100%}
+ .hub-jobs .jclient,.job-menu .jclient{width:100%;max-width:100%;min-width:0;min-height:44px;font-size:17px;font-weight:700}
+ .hub-jobs .jcard,.job-menu .jcard{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name side" "sub side";align-items:center;column-gap:10px;row-gap:2px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;min-height:44px;padding:10px 12px;border-radius:0;border-left:0;border-right:0}
+ .hub-jobs .jcard h4,.job-menu .jcard h4{grid-area:name;margin:0;min-width:0;font-size:17px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .hub-jobs .jcard .jsub,.job-menu .jcard .jsub{grid-area:sub;min-width:0;font-size:15px;line-height:1.3;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .hub-jobs .jcard .chip.warranty,.job-menu .jcard .chip.warranty,.jh .chip.warranty,.hub-jobs .jcard .chip.concierge,.job-menu .jcard .chip.concierge,.jh .chip.concierge,.hub-jobs .jcard .chip.closed,.job-menu .jcard .chip.closed,.jh .chip.closed{font-size:15px;font-weight:650}
+ .hub-jobs .jcard .junconf,.job-menu .jcard .junconf,.jh .junconf{font-size:11px;font-weight:650}
+ .hub-jobs .past-jobs,.job-menu .past-jobs,.hub-jobs .past-jobs-h{min-height:44px;font-size:13px;font-weight:650}
+ .hub-jobs .job-tabs,.job-menu .job-tabs{width:100%;max-width:100%}
+ .hub-jobs .jcard .jside,.job-menu .jcard .jside{grid-area:side;justify-self:end}
+ .hub-jobs .closed-fold,.job-menu .closed-fold{margin:0;border-radius:0;border-left:0;border-right:0}
+ .closed-fold .jalert,.closed-fold .chip.overdue,.closed-fold .chip.high{display:none!important}
+}
 
 /* ---- Attention screen (9/27 8 PM): phone-first, 48px+ tap targets ---- */
 .attcard{background:#fff;border:1px solid #dde3ec;border-radius:16px;padding:10px 12px 12px;margin:0 0 14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
@@ -875,9 +914,17 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
  .home-split{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.9fr);gap:18px;align-items:start}
  .needs-card{padding:16px 16px 18px}
 }
+.myday-client,.myday-job{display:flex;align-items:center;min-height:44px;margin:0;padding:8px 12px;box-sizing:border-box;font-size:17px;font-weight:700;line-height:1.25;color:#344054}
+.myday-client{background:#f4f6f9}
+.myday-job{color:var(--ink);padding-bottom:0}
+.myday-job span,.myday-client span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows.myday>.myday-item{min-height:44px;box-sizing:border-box;width:100%;max-width:100%}
 @media(max-width:760px){
  .home-v3,.hub-home{max-width:100%}
  .hello .home-hello-row h1{font-size:23px}
+ .myday-client,.myday-job{font-size:17px;font-weight:700;min-height:44px}
+ .rows.myday{width:100%;max-width:100%}
+ .rows.myday>.myday-item{min-height:44px;width:100%}
 }
 
 /* iPad field layout. Phones stay on the max-width:760px rules.
@@ -1017,7 +1064,9 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .qsheet button.qhandle{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;margin:0;border:3px solid #2563eb;background:#fff;border-radius:10px;box-sizing:border-box;touch-action:none;pointer-events:auto;box-shadow:0 1px 4px rgba(16,24,40,.28);z-index:2}
 .qsheet canvas{display:block;width:100%;height:min(42vh,340px);min-height:220px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;touch-action:none;-ms-touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .qsheet button.on{background:#15233b;color:#fff}
-.qsheet .qsave{position:sticky;bottom:0;background:#fff;padding-top:8px;z-index:1}
+.qsheet .qfoot{position:sticky;bottom:0;z-index:3;background:#fff;display:flex;flex-direction:column;gap:8px;padding-top:8px;padding-bottom:max(8px, env(safe-area-inset-bottom));box-shadow:0 -10px 16px #fff}
+.qsheet .qfoot .qroll,.qsheet .qfoot .qsave{width:100%}
+.qsheet .qsave{position:static;background:transparent;padding-top:0;z-index:auto}
 .qsheet .qroll{align-items:center}
 .qsheet .qcheck{display:flex;align-items:center;gap:8px;min-height:44px;font-size:16px}
 .qsheet .qcheck input{width:22px;height:22px;flex:none}
@@ -1041,6 +1090,9 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .qcard-text{display:block;font-size:16px;margin-bottom:6px}
 .qnotes{margin:12px 0}
 .qitem{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:44px;padding:8px 0;border:0;border-bottom:1px solid #eaecf0;background:#fff;text-align:left;font-size:16px}
+.qitem-open{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:44px;padding:0;border:0;background:transparent;text-align:left;font-size:16px}
+.qnote-pic{display:block;width:100%;margin-top:6px}
+.qitem img,.qnote-pic img,.qlogpic img{display:block;width:100%;max-height:180px;object-fit:cover;border-radius:8px;background:#e4e7ec}
 .qboard{display:flex;flex-direction:column;gap:8px}
 .qfilters{display:flex;gap:8px;flex-wrap:wrap}
 .qfilters button{min-height:44px;min-width:44px;padding:8px 14px;font-size:16px}
@@ -1069,6 +1121,8 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
   .qnote-layer{align-items:center}
   .qnote-layer .qsheet{border-radius:16px;max-height:88vh;margin-bottom:0}
   .qsheet canvas{height:280px}
+  .qsheet .qfoot{flex-direction:row;align-items:center;flex-wrap:wrap}
+  .qsheet .qfoot .qsave{width:auto;margin-left:auto}
 }
 
 .feed-day { margin: 0 0 16px; }
@@ -1396,7 +1450,7 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
   body.phone-shell .phone-skel.short { width: 62%; }
   body.phone-shell .modal-bg.phone-sheet .modal { animation: phone-rise .28s ease; }
   body.phone-shell.has-tabs .slack-foot { bottom: calc(108px + env(safe-area-inset-bottom)); }
-  body.phone-shell #hws-ver { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  body.phone-shell #hws-ver { position: static; bottom: auto; margin: 8px 12px calc(16px + env(safe-area-inset-bottom)); }
   body.phone-shell #hws-update { bottom: calc(124px + env(safe-area-inset-bottom)); }
   body.phone-shell .toast { bottom: calc(124px + env(safe-area-inset-bottom)); }
 }
@@ -1572,7 +1626,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'ee26f50cf8',built:'10/6/2026 1:51 AM AZ'};
+const HWS_BUILD={version:'3db604cf6f',built:'10/6/2026 3:08 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -5876,11 +5930,11 @@ function findPerson(who) {
   }
   return hits.length === 1 ? hits[0] : null;
 }
-const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1, staff: 1, office: 1, investor: 1, sub: 1, trade: 1, super: 1, superintendent: 1};
+const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1, admin: 1, 'warranty coordinator': 1, staff: 1, office: 1, investor: 1, sub: 1, trade: 1, super: 1, superintendent: 1};
 const THREAD_MODS = {messages: 1, slack: 1};
 const CONTACT_PHONE = {phone: 1, phones: 1, tel: 1, sms: 1};
 const CONTACT_EMAIL = {email: 1, emails: 1, mailto: 1};
-const OFFICE_ROLES = {owner: 1, pm: 1, member: 1, staff: 1, office: 1, owner_money: 1};
+const OFFICE_ROLES = {owner: 1, pm: 1, member: 1, staff: 1, office: 1, owner_money: 1, admin: 1};
 const CREW_ROLES = {field: 1, super: 1, superintendent: 1};
 const TRADE_ROLES = {sub: 1, trade: 1};
 const THREAD_HIDDEN = {field: 1, guest: 1, client: 1, sub: 1, trade: 1, investor: 1};
@@ -6342,7 +6396,7 @@ function renderFeatures() {
     }).join('');
     return '<div class="feat-who"><div class="feat-who-line"><div><b>' + esc(person.name) + '</b> <span class="mut">' + esc(person.role || '') + '</span><div class="feat-sum">' + esc(featureOverrideText(person)) + '</div></div><button type="button" class="feat-edit">Edit</button></div><div class="feat-pflags" hidden>' + bits + '</div></div>';
   }).join('');
-  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form><h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form><h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
   if (typeof hubShell === 'function') hubShell('settings', body);
   else document.getElementById('root').innerHTML = body;
   const form = document.getElementById('featco');
@@ -10201,11 +10255,24 @@ try {
     return "https://www.dropbox.com/home/" + parent + "?preview=" + encodeURIComponent(parts[parts.length - 1]) + "&role=work";
   }
   function stillSrc(frame) {
-    const raw = String(frame || "");
-    if (!raw || raw.indexOf("..") >= 0 || /[\\]/.test(raw)) return "";
+    const raw = String(frame || "").trim();
+    if (!raw || raw === "pending" || raw.indexOf("..") >= 0 || /[\\]/.test(raw)) return "";
     if (/^https?:\/\//i.test(raw)) return raw;
-    if (/^[^/]+\.(jpe?g|png|webp)$/i.test(raw)) return raw;
+    if (typeof notePicDbx === "function" && notePicDbx(raw)) return "";  // BOX-ONLY 2026-10-06: a Dropbox path is not a URL (see ui_mods notePicLoad)
+    if (/^(?:\/)?(?:[^/]+\/)*[^/]+\.(jpe?g|png|webp|gif)$/i.test(raw)) return raw;
     return "";
+  }
+  function dbxPic(raw) {
+    raw = String(raw || "").trim();
+    return typeof notePicDbx === "function" && notePicDbx(raw) && raw.indexOf("..") < 0 && /\.(jpe?g|png|webp|gif)$/i.test(raw);
+  }
+  function pictureHtml(path) {
+    const raw = String(path || "").trim();
+    if (dbxPic(raw)) return '<a class="qnote-pic" href="#" target="_blank" rel="noopener" data-qnote-full="1">' + notePicTag(raw) + "</a>";
+    const src = stillSrc(raw);
+    if (!src) return "";
+    const full = src;
+    return '<a class="qnote-pic" href="' + esc(full) + '" target="_blank" rel="noopener" data-qnote-full="1"><img alt="" src="' + esc(src) + '"></a>';
   }
   function fileLink(path, label) {
     const href = dropboxHref(path);
@@ -10219,7 +10286,7 @@ try {
     const stills = (note.stills || []).map(function (still) {
       const src = stillSrc(still && still.frame);
       const caption = cleanNote(((still && still.t) || "") + " " + ((still && (still.caption || still.said)) || "")).trim();
-      const img = src ? '<img src="' + esc(src) + '" alt="">' : "";
+      const img = src ? '<img src="' + esc(src) + '" alt="">' : (dbxPic(still && still.frame) ? notePicTag(String(still.frame).trim()) : "");
       return '<figure class="qnote-still">' + img + (caption ? "<figcaption>" + esc(caption) + "</figcaption>" : "") + "</figure>";
     }).join("");
     const tasks = (note.actions || []).map(function (task) {
@@ -10228,10 +10295,11 @@ try {
       return '<label class="qtask"><input type="checkbox" data-qnote-task="' + esc(task.id) + '"' + (done ? " checked" : "") + '><span>' + esc(cleanNote(task.text || "")) + '</span><input data-qnote-assign="' + esc(task.id) + '" type="text" placeholder="Assignee" value="' + esc(cleanNote(task.assignee || "")) + '"><input data-qnote-due="' + esc(task.id) + '" type="date" value="' + esc(String(task.due || "").slice(0, 10)) + '"></label>';
     }).join("");
     const transcript = cleanNote(note.transcript || "");
+    const pic = pictureHtml(note.image);
     return '<article class="qnote" data-qnote-id="' + esc(note.id) + '" data-qnote-status="' + (noteIsOpen(note) ? "open" : "done") + '">' +
       '<button type="button" class="qnote-open" data-qnote-open><div class="qnote-when">' + esc(when) + "</div>" +
       (who ? '<div class="small">' + esc(who) + "</div>" : "") +
-      "<div>" + esc(text) + "</div></button>" +
+      "<div>" + esc(text) + "</div></button>" + pic +
       '<div class="qnote-body" hidden>' +
       '<div class="qnote-links">' + fileLink(note.audio, "Audio") + fileLink(note.video, "Video") + fileLink(note.pdf, "PDF") + "</div>" +
       (stills ? '<div class="qnote-stills">' + stills + "</div>" : "") +
@@ -10241,9 +10309,8 @@ try {
   }
   function plainCard(note) {
     const when = v2On() && root.HWSFieldNote && (note.captured_at || note.at) ? root.HWSFieldNote.cardLabel(note.captured_at || note.at, note.capture_source || "device") : "";
-    const src = stillSrc(note.image);
-    const pic = src ? '<img alt="" src="' + esc(src) + '">' : "";
-    return '<button type="button" class="qitem" data-qnote-id="' + esc(note.id) + '"><span class="small mut">Note' + (note.who ? " · " + esc(note.who) : "") + "</span>" + (when ? '<span class="qcard-time">' + esc(when) + "</span>" : "") + '<span class="qcard-text">' + esc(cleanNote(note.text || "Sketch or photo")) + "</span>" + pic + "</button>";
+    const pic = pictureHtml(note.image);
+    return '<div class="qitem" data-qnote-id="' + esc(note.id) + '"><button type="button" class="qitem-open"><span class="small mut">Note' + (note.who ? " · " + esc(note.who) : "") + "</span>" + (when ? '<span class="qcard-time">' + esc(when) + "</span>" : "") + '<span class="qcard-text">' + esc(cleanNote(note.text || "Sketch or photo")) + "</span></button>" + pic + "</div>";
   }
   function listHtml(job) {
     if (!noteAllowed()) return "";
@@ -10291,6 +10358,9 @@ try {
         noteFilter = btn.getAttribute("data-qnote-filter") === "done" ? "done" : "open";
         notePaint();
       };
+    });
+    host.querySelectorAll("[data-qnote-full]").forEach(function (link) {
+      link.onclick = function (ev) { ev.stopPropagation(); };
     });
     host.querySelectorAll("[data-qnote-open]").forEach(function (btn) {
       btn.onclick = function () {
@@ -10366,15 +10436,14 @@ try {
       '<div class="qimport" data-qnote-import-panel hidden><div class="qrow"><button type="button" data-qnote-import-phone>From this phone</button><button type="button" data-qnote-import-plans>Plan Room</button><button type="button" data-qnote-import-close>Close</button></div><p class="small mut" data-qnote-import-msg></p><div class="qpages" data-qnote-pages></div></div>' +
       '<div class="qconfirm" data-qnote-replace hidden><span>Replace this photo and clear the markup?</span><button type="button" data-qnote-replace-yes>Replace</button><button type="button" data-qnote-replace-no>Keep</button></div>' +
       '<div class="qmarkup" data-qnote-markup>' +
-      '<div class="qscroll"><button type="button" data-qnote-tool="ink" class="on">Pen</button><button type="button" data-qnote-tool="arrow">Arrow</button><button type="button" data-qnote-tool="box">Box</button><button type="button" data-qnote-tool="circle">Circle</button><button type="button" data-qnote-tool="text">Text</button><button type="button" data-qnote-tool="hand">Move</button><button type="button" data-qnote-tool="select">Select</button></div>' +
-      '<div class="qscroll qwrap"><button type="button" data-qnote-undo disabled>Undo</button><button type="button" data-qnote-redo disabled>Redo</button><button type="button" data-qnote-fit>Fit</button><span class="qzoom" data-qnote-zoom>Fit</span><button type="button" data-qnote-clear>Clear</button></div>' +
+      '<div class="qscroll qwrap"><button type="button" data-qnote-tool="ink" class="on">Pen</button><button type="button" data-qnote-tool="arrow">Arrow</button><button type="button" data-qnote-tool="box">Box</button><button type="button" data-qnote-tool="circle">Circle</button><button type="button" data-qnote-tool="text">Text</button><button type="button" data-qnote-tool="hand">Move</button><button type="button" data-qnote-tool="select">Select</button></div>' +
+      '<div class="qscroll qwrap"><button type="button" data-qnote-undo disabled>Undo</button><button type="button" data-qnote-redo disabled>Redo</button><button type="button" data-qnote-fit>Fit page</button><span class="qzoom" data-qnote-zoom>1×</span><button type="button" data-qnote-clear>Clear</button></div>' +
       '<div class="qconfirm" data-qnote-confirm hidden><span>Clear all markup on this photo?</span><button type="button" data-qnote-clear-yes>Clear</button><button type="button" data-qnote-clear-no>Keep</button></div></div>' +
       '<input data-qnote-cam-input type="file" accept="image/*" capture="environment" hidden><input data-qnote-file-input type="file" accept="image/*" hidden><input data-qnote-import-input type="file" accept="application/pdf,image/*" hidden>' +
       '<div data-qnote-draft><label class="qtext">Note<textarea data-qnote-text rows="3" placeholder="Type the note"></textarea></label>' +
       (v2On() && root.HWSFieldNote ? '<p class="small" data-qnote-draft-hint hidden>Edit the draft, then save.</p>' : '') +
       "</div>" +
       '<div class="qstage" data-qnote-stage><canvas data-qnote-pad></canvas></div>' +
-      '<div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div><p class="qroll-link" data-qnote-roll-link hidden></p>' +
       '<div class="qinspect" data-qnote-inspect hidden><div class="qscroll">' + swatch("#15233b", "Navy") + swatch("#b42318", "Red") + swatch("#b54708", "Amber") + swatch("#067647", "Green") + '</div><div class="qscroll"><button type="button" data-qnote-size="2">Thin</button><button type="button" data-qnote-size="5">Medium</button><button type="button" data-qnote-size="9">Thick</button><button type="button" data-qnote-delete>Delete</button></div><label class="qtext">Edit text<input data-qnote-edit-text placeholder="Edit text"></label></div>' +
       '<label class="qtext">Text on the photo<input data-qnote-label placeholder="Text on the photo"></label>' +
       '<div class="qrow"><button type="button" data-qnote-clear-text>Clear note</button></div>' +
@@ -10383,7 +10452,8 @@ try {
       (v2On() && root.HWSFieldNote ? '<div class="qcards" data-qnote-cards></div>' : '') +
       '<div class="qtags"><button type="button" data-qnote-kind="note" class="on">Note</button><button type="button" data-qnote-kind="question">Question</button><label data-qnote-ask-wrap hidden>For <select data-qnote-ask><option value="">Choose</option><option value="pm">PM</option><option value="superintendent">Superintendent</option><option value="office">Office</option></select></label></div>' +
       (v2On() && root.HWSFieldNote ? root.HWSFieldNote.sheetExtras() : "") +
-      '<div class="qrow qsave"><button type="button" class="pri" data-qnote-save>Save</button><span class="small" data-qnote-msg></span></div></div>';
+      '<div class="qfoot"><div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div><p class="qroll-link" data-qnote-roll-link hidden></p>' +
+      '<div class="qrow qsave"><button type="button" class="pri" data-qnote-save>Save</button><span class="small" data-qnote-msg></span></div></div></div>';
   }
   function bindSheet(host, opts) {
     opts = opts || {};
@@ -10475,7 +10545,7 @@ try {
       view.y = next.y;
       view.z = next.z;
       const lab = host.querySelector("[data-qnote-zoom]");
-      if (lab) lab.textContent = view.z > 1.05 ? (Math.round(view.z * 10) / 10) + "×" : "Fit";
+      if (lab) lab.textContent = (Math.round(view.z * 10) / 10) + "×";
       paint();
     }
     function paintInto(g, target, viewState, flat) {
@@ -11367,7 +11437,7 @@ try {
     resolveClientFolder: resolveClientFolder, safeFolder: safeFolder, noteFilePayload: noteFilePayload,
     cameraRollPlan: cameraRollPlan, cameraRollPref: cameraRollPref, setCameraRollPref: setCameraRollPref, saveToCameraRoll: saveToCameraRoll,
     nextVersionName: nextVersionName, pairedName: pairedName, planroomDoc: planroomDoc, marksFromDrawing: marksFromDrawing, composeCopy: composeCopy,
-    noteAllowed: noteAllowed, v2On: v2On, acceptPointer: acceptPointer, fingerGesture: fingerGesture, strokeOutline: strokeOutline,
+    noteAllowed: noteAllowed, pictureHtml: pictureHtml, stillSrc: stillSrc, v2On: v2On, acceptPointer: acceptPointer, fingerGesture: fingerGesture, strokeOutline: strokeOutline,
     questionDraft: questionDraft, questionAlert: questionAlert, noteMeta: noteMeta,
     enqueueNote: enqueueNote, enqueueMarkup: enqueueMarkup,
     mapTouch: mapTouch, zoomAt: zoomAt, pinchView: pinchView, doubleTapZoom: doubleTapZoom, fitView: fitView,
@@ -11383,6 +11453,604 @@ try {
   };
   if (typeof module !== "undefined" && module.exports) module.exports = root.HWSNotes;
 })(typeof window !== "undefined" ? window : globalThis);
+
+/* Job list order for the hub Jobs tab and the job menu.
+   Groups come from the stage text and status already on the job. Data files stay as they are.
+   1 active construction, 2 permitting / preconstruction, 3 bidding / leads / design (unknown stages too).
+   Warranty and Concierge jobs leave that list. service_status
+   (active | warranty | concierge | closed) wins when it is set. closed means finished and
+   past the 2-year service window, so it stays off the Warranty tab.
+   Otherwise a construction-closed job (common.closed_jobs, or a job.closed flag) is warranty,
+   and stage text that says concierge is concierge.
+   A bid-stage job stays active. The list is hub jobs plus past entries that are not excluded.
+   exclude:true is not listed, and neither is a quote, lead, or other catalog.
+   service_status_flag, or a service_status_source that contains FLAGGED or default, is
+   unconfirmed: the job still shows, with a small unconfirmed marker. It is not firm.
+   warranty_until is finish + 1 year. service_until is finish + 2 years.
+   Inside a group: an explicit numeric sort / list_sort / list_priority / priority on the job, then
+   alphabetical by job name. A client with more than one job in that group sits under one header.
+   My Day uses the same order: one header per job, items under it by time or due date.
+   The header is the client name, alphabetized among the other jobs; the jobs under it are alphabetical.
+   Client comes from the client or customer field. With neither, it is the shared last name in the job name.
+   There is no sort field on the store today. HWSJobOrder.setRank is the hook for the job list owner. */
+(function (root) {
+  'use strict';
+
+  var rankFn = null;
+
+  function num(v) {
+    if (v == null || typeof v === 'boolean') return null;
+    var s = String(v).trim();
+    if (!/^-?\d+(\.\d+)?$/.test(s)) return null;
+    return +s;
+  }
+
+  function norm(s) {
+    return String(s || '').toLowerCase().replace(/[_/]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  /* A saved status is the stage the list shows. It wins over the catalog stage text. */
+  function statusText(job) {
+    job = job || {};
+    var info = job.info || {};
+    return norm([info.status, job.status].filter(function (v) { return v != null && String(v).trim() !== ''; }).join(' '));
+  }
+
+  function closedList(closed) {
+    if (!closed) return [];
+    if (Array.isArray(closed)) return closed;
+    if (typeof closed === 'object') return Object.keys(closed).filter(function (k) { return closed[k]; });
+    return [];
+  }
+
+  function isClosed(job, closed) {
+    if (!job) return false;
+    if (job.closed === true || job.closed === 1) return true;
+    var slug = String(job.slug || '');
+    if (!slug) return false;
+    return closedList(closed).indexOf(slug) >= 0;
+  }
+
+  /* Group 1–3 from one piece of stage or status text. Unknown text is group 3. */
+  function classify(raw) {
+    if (!raw) return 3;
+    var inactive = /\binactive\b|\bon hold\b|\blost\b/.test(raw);
+    var t = raw.replace(/\bpre[\s-]*permits?\b/g, 'prepermit');
+    if (!inactive && /\b(active construction|in construction|under construction|building|rough[\s-]*in|punch|finishes|remodel|active)\b/.test(t)) return 1;
+    if (!inactive && /\bdemo done, start\b/.test(t)) return 1;
+    if (/\b(pre[\s-]*construction|about to start|contracted)\b/.test(t)) return 2;
+    if (/\b(bid|bidding|leads?|design|prepermit)\b/.test(t) && /\bpermit (approved|issued)\b/.test(t)) return 3;
+    if (/\bpermit/.test(t)) return 2;
+    if (/\b(bid|bidding|leads?|design|prepermit)\b/.test(t)) return 3;
+    return 3;
+  }
+
+  function explicitService(job) {
+    job = job || {};
+    var info = job.info || {};
+    var raw = [job.service_status, info.service_status];
+    var i, s;
+    for (i = 0; i < raw.length; i++) {
+      s = norm(raw[i]);
+      if (s === 'active' || s === 'warranty' || s === 'concierge' || s === 'closed') return s;
+    }
+    return '';
+  }
+
+  function serviceSource(job) {
+    job = job || {};
+    var info = job.info || {};
+    var raw = [job.service_status_source, info.service_status_source];
+    var i;
+    for (i = 0; i < raw.length; i++) {
+      if (raw[i] != null && String(raw[i]).trim() !== '') return String(raw[i]);
+    }
+    return '';
+  }
+
+  /* Quotes, leads, and other rows marked exclude:true are not jobs to list. */
+  function excluded(job) {
+    if (!job) return false;
+    var info = job.info || {};
+    return job.exclude === true || job.exclude === 1 || info.exclude === true || info.exclude === 1;
+  }
+
+  function readField(job, key) {
+    job = job || {};
+    var info = job.info || {};
+    if (job[key] != null && String(job[key]).trim() !== '') return job[key];
+    if (info[key] != null && String(info[key]).trim() !== '') return info[key];
+    return '';
+  }
+
+  /* A set service_status_flag means the finish date is uncertain. */
+  function serviceFlag(job) {
+    var v = readField(job, 'service_status_flag');
+    if (v === true || v === 1) return true;
+    if (v === false || v === 0 || v == null || v === '') return false;
+    return String(v).trim() !== '';
+  }
+
+  /* FLAGGED or default, or a service_status_flag, means the status is not firm. */
+  function unconfirmed(job) {
+    if (serviceFlag(job)) return true;
+    var src = norm(serviceSource(job));
+    return src.indexOf('flagged') >= 0 || src.indexOf('default') >= 0;
+  }
+
+  function isoDay(v) {
+    var m = String(v == null ? '' : v).match(/(\d{4})-(\d{2})-(\d{2})/);
+    return m ? (m[1] + '-' + m[2] + '-' + m[3]) : '';
+  }
+
+  function showDay(v) {
+    var d = isoDay(v);
+    if (!d) return String(v == null ? '' : v).trim();
+    var p = d.split('-');
+    return String(+p[1]) + '/' + String(+p[2]) + '/' + p[0].slice(2);
+  }
+
+  /* Warranty to <warranty_until> while that date is still ahead (including that day).
+     After it, and through service_until, Service to <service_until>. */
+  function serviceLine(job, today) {
+    var w = readField(job, 'warranty_until');
+    var s = readField(job, 'service_until');
+    var t = isoDay(today);
+    var wd = isoDay(w);
+    var sd = isoDay(s);
+    if (!t) {
+      if (wd) return 'Warranty to ' + showDay(w);
+      if (sd) return 'Service to ' + showDay(s);
+      return '';
+    }
+    if (wd && t <= wd) return 'Warranty to ' + showDay(w);
+    if (sd && t <= sd && (!wd || t > wd)) return 'Service to ' + showDay(s);
+    return '';
+  }
+
+  function flagged(v) {
+    return v === true || v === 1;
+  }
+
+  /* Task import labels are not a catalog. REAL / DRAFT / BUILDERTREND stay listable. */
+  var TASK_SRC = { real: 1, draft: 1, buildertrend: 1, tracker: 1, import: 1, imported: 1 };
+
+  function originBlob(job) {
+    var info = job.info || {};
+    var parts = [job.catalog, info.catalog, job.list_kind, info.list_kind, job.entry, info.entry, job.origin, info.origin, job.list, info.list];
+    var src = norm(job.source != null && String(job.source).trim() !== '' ? job.source : info.source);
+    if (src && !TASK_SRC[src]) parts.push(job.source != null && String(job.source).trim() !== '' ? job.source : info.source);
+    return norm(parts.filter(function (v) { return v != null && String(v).trim() !== ''; }).join(' '));
+  }
+
+  /* hub, past, or other. A row with no origin is a hub job (the current list). */
+  function catalogKind(job) {
+    if (!job) return '';
+    var info = job.info || {};
+    if (flagged(job.past) || flagged(info.past) || flagged(job.in_past_jobs) || flagged(info.in_past_jobs)) return 'past';
+    if (flagged(job.hub) || flagged(info.hub) || flagged(job.in_hub) || flagged(info.in_hub)) return 'hub';
+    if (job.in_past_jobs === false || job.in_past_jobs === 0 || info.in_past_jobs === false || info.in_past_jobs === 0) return 'hub';
+    var blob = originBlob(job);
+    if (!blob) return 'hub';
+    if (/\bpast(?:\s|-)*(?:index|jobs)?\b/.test(blob) || blob.indexOf('past jobs') >= 0) return 'past';
+    if (/\bhub\b/.test(blob) || /current(?:\s|-)*job/.test(blob)) return 'hub';
+    return 'other';
+  }
+
+  /* Hub jobs and non-excluded past entries. Quotes, leads, and exclude:true stay off the list. */
+  function listed(job) {
+    if (!job || excluded(job)) return false;
+    var kind = catalogKind(job);
+    return kind === 'hub' || kind === 'past';
+  }
+
+  function bidStage(job) {
+    var text = statusText(job) || norm(job && job.stage);
+    return /\b(bid|bidding|leads?)\b/.test(text);
+  }
+
+  /* active | warranty | concierge | closed. A bid stage stays active. Otherwise an explicit
+     service_status wins. closed is past the service window. A construction-closed job with
+     no service_status is warranty. Stage text that says concierge stays concierge. */
+  function serviceStatus(job, closed) {
+    if (bidStage(job)) return 'active';
+    var explicit = explicitService(job);
+    if (explicit) return explicit;
+    var text = statusText(job) || norm(job && job.stage);
+    if (/\bconcierge\b/.test(text)) return 'concierge';
+    if (isClosed(job, closed)) return 'warranty';
+    if (/\bwarranty\b/.test(text)) return 'warranty';
+    return 'active';
+  }
+
+  function roleSeesAll(roles) {
+    return (roles || []).some(function (role) {
+      var r = norm(role);
+      if (r === 'owner' || r === 'owner money' || r === 'admin') return true;
+      return r.indexOf('warranty') >= 0 && r.indexOf('coord') >= 0;
+    });
+  }
+
+  /* Past jobs (closed) are owner and admin only. A warranty coordinator does not see them. */
+  function roleSeesPast(roles) {
+    return (roles || []).some(function (role) {
+      var r = norm(role);
+      return r === 'owner' || r === 'owner money' || r === 'admin';
+    });
+  }
+
+  function onWarrantyTab(job, closed) {
+    var s = serviceStatus(job, closed);
+    return s === 'warranty' || s === 'concierge';
+  }
+
+  /* Warranty-tab visibility. No scoped list means the rows already in front of the viewer. */
+  function filterService(rows, viewer) {
+    viewer = viewer || {};
+    rows = rows || [];
+    if (roleSeesAll(viewer.roles)) return rows.slice();
+    if (viewer.customer) {
+      var only = String(viewer.job || '').toLowerCase();
+      return rows.filter(function (job) { return String(job && job.slug || '').toLowerCase() === only; });
+    }
+    if (Array.isArray(viewer.scoped)) {
+      var set = {};
+      viewer.scoped.forEach(function (slug) { set[String(slug).toLowerCase()] = 1; });
+      return rows.filter(function (job) { return set[String(job && job.slug || '').toLowerCase()]; });
+    }
+    return rows.slice();
+  }
+
+  /* Group 1–3 for active work. Warranty and concierge are group 4 so they leave the active list.
+     service_status closed is group 5: off the active list and off the Warranty tab.
+     A saved status wins; otherwise the stage text. Unknown stages are group 3. */
+  function group(job, closed) {
+    var svc = serviceStatus(job, closed);
+    if (svc === 'closed') return 5;
+    if (svc === 'warranty' || svc === 'concierge') return 4;
+    var status = statusText(job);
+    if (status) return classify(status);
+    return classify(norm(job && job.stage));
+  }
+
+  function pushDate(out, v) {
+    if (v == null || v === '') return;
+    if (Array.isArray(v)) { v.forEach(function (x) { pushDate(out, x); }); return; }
+    if (typeof v === 'object') {
+      ['date', 'at', 'ts', 'taken_at', 'taken', 'time', 'start', 'finish', 'last', 'created', 'actual_start', 'actual_finish'].forEach(function (k) {
+        if (v[k] != null && v[k] !== '') pushDate(out, v[k]);
+      });
+      return;
+    }
+    var m = String(v).match(/\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?)?/);
+    if (m) out.push(m[0]);
+  }
+
+  /* Latest log, photo, or task date. Empty when the job has none. */
+  function activity(job) {
+    var dates = [];
+    if (!job) return '';
+    pushDate(dates, job.logs);
+    pushDate(dates, job.photos);
+    pushDate(dates, job.activity);
+    if (Array.isArray(job.tasks)) pushDate(dates, job.tasks);
+    else {
+      pushDate(dates, job.finish);
+      pushDate(dates, job.start);
+    }
+    if (job.next) pushDate(dates, job.next.date || job.next);
+    dates.sort();
+    return dates.length ? dates[dates.length - 1] : '';
+  }
+
+  /* Numeric sort/priority on the job wins. Otherwise the setRank hook, if the owner added one. */
+  function explicitRank(job) {
+    if (!job) return null;
+    var keys = ['sort', 'list_sort', 'list_priority'];
+    var i, v, info = job.info || {};
+    for (i = 0; i < keys.length; i++) {
+      v = num(job[keys[i]]);
+      if (v != null) return v;
+      v = num(info[keys[i]]);
+      if (v != null) return v;
+    }
+    v = num(job.priority);
+    if (v != null) return v;
+    v = num(info.priority);
+    if (v != null) return v;
+    if (typeof rankFn === 'function') {
+      try { v = num(rankFn(job)); } catch (e) { v = null; }
+      if (v != null) return v;
+    }
+    return null;
+  }
+
+  function prepare(row, ctx) {
+    row = row || {};
+    ctx = ctx || {};
+    var full = (ctx.jobs && row.slug && ctx.jobs[row.slug]) || {};
+    var actMap = ctx.activity || {};
+    var info = full.info || row.info || {};
+    var tasks = Array.isArray(row.tasks) ? row.tasks : (Array.isArray(full.tasks) ? full.tasks : null);
+    var next = row.next || null;
+    if (!next && full.summary && Array.isArray(full.summary.next)) next = full.summary.next[0] || null;
+    return Object.assign({}, full, row, {
+      info: info,
+      status: info.status || row.status || '',
+      stage: row.stage || info.status || full.stage || '',
+      logs: row.logs || full.logs || null,
+      photos: row.photos || full.photos || null,
+      tasks: tasks,
+      activity: row.activity || actMap[row.slug] || full.activity || null,
+      next: next
+    });
+  }
+
+  var STOP = { the: 1, project: 1, house: 1, home: 1, residence: 1, casita: 1, lot: 1, lots: 1, custom: 1, new: 1, and: 1, unit: 1, phase: 1, building: 1, remodel: 1, job: 1, jobs: 1, north: 1, south: 1, east: 1, west: 1, street: 1, avenue: 1, drive: 1, road: 1, lane: 1, court: 1, place: 1, manor: 1 };
+
+  function words(s) {
+    return String(s || '').match(/[A-Za-z][A-Za-z'’-]*/g) || [];
+  }
+
+  function jobName(job) {
+    return String((job && (job.name || job.slug)) || '');
+  }
+
+  function cmpName(a, b) {
+    var na = jobName(a).toLowerCase(), nb = jobName(b).toLowerCase();
+    if (na < nb) return -1;
+    if (na > nb) return 1;
+    return String((a && a.slug) || '').localeCompare(String((b && b.slug) || ''));
+  }
+
+  function clientKey(label) {
+    return String(label || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  /* A person-style "Ada & Evan Sample" uses the last name. A two-word client name stays whole. */
+  function labelFromField(raw) {
+    var s = String(raw || '').trim().replace(/\s+/g, ' ');
+    if (!s) return '';
+    var w = words(s), i;
+    if (s.indexOf('&') >= 0 || w.length >= 3) {
+      for (i = w.length - 1; i >= 0; i--) {
+        if (!STOP[w[i].toLowerCase()]) return w[i];
+      }
+    }
+    return s;
+  }
+
+  function explicitClient(job) {
+    job = job || {};
+    var info = job.info || {};
+    var raw = [job.client, job.customer, info.client, info.customer];
+    var i, s;
+    for (i = 0; i < raw.length; i++) {
+      s = labelFromField(raw[i]);
+      if (s) return s;
+    }
+    return '';
+  }
+
+  function parenLast(name) {
+    var m = String(name || '').match(/\(([^)]+)\)\s*$/);
+    if (!m) return '';
+    var w = words(m[1]), i;
+    for (i = w.length - 1; i >= 0; i--) {
+      if (!STOP[w[i].toLowerCase()]) return w[i];
+    }
+    return '';
+  }
+
+  function firstSurname(name) {
+    var w = words(name), i;
+    for (i = 0; i < w.length; i++) {
+      if (!STOP[w[i].toLowerCase()]) return w[i];
+    }
+    return '';
+  }
+
+  function nameCandidates(name) {
+    var out = [], p = parenLast(name), f = firstSurname(name);
+    if (p) out.push(p);
+    if (f && clientKey(f) !== clientKey(p)) out.push(f);
+    return out;
+  }
+
+  /* Labels only when a client has 2+ jobs in this bucket. Singles sort by job name. */
+  function assignLabels(jobs) {
+    var labels = jobs.map(explicitClient);
+    var counts = {};
+    function addCount(label, n) {
+      var k = clientKey(label);
+      if (!k) return;
+      if (!counts[k]) counts[k] = { n: 0, label: label };
+      counts[k].n += n;
+      if (counts[k].label === counts[k].label.toLowerCase() && label !== label.toLowerCase()) counts[k].label = label;
+    }
+    labels.forEach(function (lb) { if (lb) addCount(lb, 1); });
+    var cand = jobs.map(function (job, i) { return labels[i] ? [] : nameCandidates(jobName(job)); });
+    cand.forEach(function (list) { list.forEach(function (token) { addCount(token, 1); }); });
+    jobs.forEach(function (job, i) {
+      if (labels[i]) return;
+      var list = cand[i], t;
+      for (t = 0; t < list.length; t++) {
+        var hit = counts[clientKey(list[t])];
+        if (hit && hit.n >= 2) { labels[i] = hit.label || list[t]; return; }
+      }
+    });
+    return labels;
+  }
+
+  function arrangeBucket(list) {
+    var labels = assignLabels(list);
+    var counts = {};
+    labels.forEach(function (lb) {
+      var k = clientKey(lb);
+      if (k) counts[k] = (counts[k] || 0) + 1;
+    });
+    var items = list.map(function (job, i) {
+      var lb = labels[i] || '';
+      var grouped = lb && counts[clientKey(lb)] >= 2;
+      return { job: job, label: grouped ? lb : '', sortAs: (grouped ? lb : jobName(job)).toLowerCase() };
+    });
+    items.sort(function (a, b) {
+      if (a.sortAs !== b.sortAs) return a.sortAs < b.sortAs ? -1 : 1;
+      return cmpName(a.job, b.job);
+    });
+    var out = [];
+    items.forEach(function (it) {
+      if (!it.label) { out.push({ kind: 'job', job: it.job }); return; }
+      var prev = out[out.length - 1];
+      if (prev && prev.kind === 'client' && clientKey(prev.label) === clientKey(it.label)) prev.jobs.push(it.job);
+      else out.push({ kind: 'client', label: it.label, jobs: [it.job] });
+    });
+    return out;
+  }
+
+  /* Status group, then explicit rank, then client blocks and job names alphabetically. */
+  function arrange(jobs, opts) {
+    opts = opts || {};
+    var closed = opts.closed || opts.closed_jobs || [];
+    var byGroup = {};
+    (jobs || []).forEach(function (job) {
+      var g = group(job, closed);
+      (byGroup[g] = byGroup[g] || []).push(job);
+    });
+    var out = [];
+    Object.keys(byGroup).map(Number).sort(function (a, b) { return a - b; }).forEach(function (g) {
+      var ranked = {}, unranked = [];
+      byGroup[g].forEach(function (job) {
+        var r = explicitRank(job);
+        if (r == null) unranked.push(job);
+        else (ranked[String(r)] = ranked[String(r)] || []).push(job);
+      });
+      Object.keys(ranked).sort(function (a, b) { return +a - +b; }).forEach(function (r) {
+        out = out.concat(arrangeBucket(ranked[r]));
+      });
+      out = out.concat(arrangeBucket(unranked));
+    });
+    return out;
+  }
+
+  function sortJobs(jobs, opts) {
+    var flat = [];
+    arrange(jobs, opts).forEach(function (block) {
+      if (block.kind === 'client') flat = flat.concat(block.jobs);
+      else flat.push(block.job);
+    });
+    return flat;
+  }
+
+  function list(rows, ctx) {
+    ctx = ctx || {};
+    var closed = ctx.closed || ctx.closed_jobs || [];
+    return sortJobs((rows || []).map(function (row) { return prepare(row, ctx); }), { closed: closed })
+      .filter(listed);
+  }
+
+  function setRank(fn) { rankFn = typeof fn === 'function' ? fn : null; }
+
+  /* Open warranty items, when the job already has that data. Null when it does not. */
+  function warrantyOpen(job) {
+    job = job || {};
+    var info = job.info || {};
+    var counts = job.counts || {};
+    var explicit = [job.warranty_open, job.open_warranty, counts.warranty_open, counts.warranty, info.warranty_open, info.open_warranty];
+    var i, n;
+    for (i = 0; i < explicit.length; i++) {
+      n = num(explicit[i]);
+      if (n != null) return n;
+    }
+    var rows = job.warranty;
+    if (!Array.isArray(rows)) return null;
+    var open = 0;
+    rows.forEach(function (item) {
+      if (item == null || item === '') return;
+      var status = String((item && item.status) || 'open').toLowerCase();
+      if (/\b(closed|complete|completed|done|cancelled|canceled|resolved|void)\b/.test(status)) return;
+      open++;
+    });
+    return open;
+  }
+
+  /* "2026-10-06 8:00" and "2026-10-06T8:00" sort as 08:00, before 14:00. A blank time sorts last. */
+  function dayKey(item) {
+    var raw = String(item && (item.when || item.due || item.date || item.time) || '').trim();
+    if (!raw) return '\uffff';
+    var m = raw.match(/^(\d{4}-\d{2}-\d{2})(?:[T ])(\d{1,2}):(\d{2})/);
+    if (m) return m[1] + ' ' + ('0' + m[2]).slice(-2) + ':' + m[3];
+    var c = raw.match(/^(\d{1,2}):(\d{2})$/);
+    if (c) return ('0' + c[1]).slice(-2) + ':' + c[2];
+    return raw;
+  }
+
+  /* Jobs that have items, in Active-list order. Items under a job sort by time or due date. */
+  function dayGroups(items, jobs, opts) {
+    var bySlug = {};
+    (items || []).forEach(function (item) {
+      var slug = String(item && item.slug || '').toLowerCase();
+      if (!slug) return;
+      (bySlug[slug] = bySlug[slug] || []).push(item);
+    });
+    Object.keys(bySlug).forEach(function (slug) {
+      bySlug[slug].sort(function (a, b) {
+        var wa = dayKey(a), wb = dayKey(b);
+        if (wa !== wb) return wa < wb ? -1 : 1;
+        return String(a.title || '').localeCompare(String(b.title || ''));
+      });
+    });
+    var used = {};
+    var present = [];
+    (jobs || []).forEach(function (job) {
+      var slug = String(job && job.slug || '').toLowerCase();
+      if (!slug || !bySlug[slug] || used[slug]) return;
+      used[slug] = 1;
+      present.push(job);
+    });
+    Object.keys(bySlug).forEach(function (slug) {
+      if (used[slug]) return;
+      var sample = bySlug[slug][0] || {};
+      present.push({slug: slug, name: sample.sub || sample.job || slug});
+    });
+    var out = [];
+    function pushJob(job) {
+      var slug = String(job && job.slug || '').toLowerCase();
+      out.push({kind: 'job', job: job, items: bySlug[slug] || []});
+    }
+    arrange(present, opts || {}).forEach(function (block) {
+      if (block.kind === 'client') {
+        out.push({kind: 'client', label: block.label});
+        block.jobs.forEach(pushJob);
+      } else pushJob(block.job);
+    });
+    return out;
+  }
+
+  root.HWSJobOrder = {
+    group: group,
+    serviceStatus: serviceStatus,
+    serviceSource: serviceSource,
+    serviceLine: serviceLine,
+    onWarrantyTab: onWarrantyTab,
+    excluded: excluded,
+    listed: listed,
+    unconfirmed: unconfirmed,
+    roleSeesAll: roleSeesAll,
+    roleSeesPast: roleSeesPast,
+    filterService: filterService,
+    activity: activity,
+    rank: explicitRank,
+    client: explicitClient,
+    prepare: prepare,
+    sort: sortJobs,
+    arrange: arrange,
+    dayGroups: dayGroups,
+    list: list,
+    setRank: setRank,
+    warrantyOpen: warrantyOpen
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
 
 /* Harswells job workspace, editable offline edition (share file + hosted PWA). Forked from app/ws.js (the live server UI is
    unchanged). Edits run through HWSEngine (same rules as the live server) and are stored by HWSStore; optional shared
@@ -11411,11 +12079,91 @@ function saveUi(){try{const o=Object.assign({},st);delete o._scroll;localStorage
 const mq=window.matchMedia?matchMedia('(max-width: 760px)'):{matches:false};const isPhone=()=>mq.matches;
 /* iPad CSS pixels, not a phone and not a wide desk. '' | 'pad' | 'split' | 'wide'. */
 function padTier(){if(isPhone()||!window.matchMedia||!matchMedia('(min-width:761px) and (max-width:1366px)').matches)return '';const w=window.innerWidth||document.documentElement.clientWidth||0;return w>=1100?'wide':(w>=1000?'split':'pad')}
-function jobRailHtml(){let rows=[];try{if(STORE&&STORE.getList){const L2=STORE.getList();if(L2&&L2.jobs)rows=L2.jobs}}catch(e){}
- if(!rows.length&&DATA&&DATA.list)rows=DATA.list.jobs||[];
- rows=rows.filter(j=>j&&!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
+function orderedJobs(){let rows=[];try{if(STORE&&STORE.getList){const L2=STORE.getList();if(L2&&L2.jobs)rows=L2.jobs.slice()}}catch(e){}
+ if(!rows.length&&DATA&&DATA.list)rows=(DATA.list.jobs||[]).slice();
+ if(!rows.length)rows=((DATA&&DATA.common&&DATA.common.all_jobs)||[]).slice();
+ if(typeof HWSJobOrder==='undefined'||!HWSJobOrder.list)return rows;
+ const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];
+ const jobs=(DATA&&DATA.jobs)||{};
+ const activity=(((DATA||{}).common||{}).attention||{}).activity||{};
+ return HWSJobOrder.list(rows,{jobs:jobs,activity:activity,closed:closed})}
+function jobGroupOf(j){const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];
+ if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.group)return HWSJobOrder.group(j,closed);
+ return j&&j.closed?4:3}
+function jobBlocks(jobs){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.arrange){const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];return HWSJobOrder.arrange(jobs||[],{closed:closed})}
+ return (jobs||[]).map(j=>({kind:'job',job:j}))}
+function jobBlockHtml(blocks,rowFn){return (blocks||[]).map(b=>{if(b.kind==='client')return `<div class="jclient" data-client="${esc(b.label)}">${esc(b.label)}</div>`+(b.jobs||[]).map(rowFn).join('');return rowFn(b.job)}).join('')}
+function jobIsClosed(j){return (typeof jobGroupOf==='function'?jobGroupOf(j):(j&&j.closed?4:3))===4}
+function jobServiceOf(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.serviceStatus){const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];return HWSJobOrder.serviceStatus(j,closed)}
+ return jobIsClosed(j)?'warranty':'active'}
+function jobExcluded(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.excluded)return HWSJobOrder.excluded(j);return !!(j&&(j.exclude===true||j.exclude===1||(j.info&&(j.info.exclude===true||j.info.exclude===1))))}
+function jobListed(j){if(typeof HWSJobOrder!=='undefined'&&HWSJobOrder.listed)return HWSJobOrder.listed(j);return !jobExcluded(j)}
+function jobUnconfirmed(j){return typeof HWSJobOrder!=='undefined'&&HWSJobOrder.unconfirmed&&HWSJobOrder.unconfirmed(j)}
+function jobShowsUnconfirmed(j){return jobServiceOf(j)!=='active'&&jobUnconfirmed(j)}
+function jobUnconfirmedMark(j){return jobShowsUnconfirmed(j)?' <span class="junconf">unconfirmed</span>':''}
+function jobShownStatus(j,fallback){const svc=jobServiceOf(j);if(svc==='concierge')return 'Concierge';if(svc==='warranty')return 'Warranty';if(svc==='closed')return 'Closed';return fallback!=null?fallback:((j&&j.stage)||'')}
+function jobStatusChip(j,fallback){const svc=jobServiceOf(j);const extra=jobUnconfirmedMark(j);
+ if(svc==='concierge')return chip('Concierge','concierge')+extra;if(svc==='warranty')return chip('Warranty','warranty')+extra;if(svc==='closed')return chip('Closed','closed')+extra;const label=fallback!=null?fallback:((j&&j.stage)||'—');return chip(label||'—','low')}
+function jobListToday(){return (typeof L!=='undefined'&&L&&L.today)||(DATA&&DATA.today)||(DATA&&DATA.list&&DATA.list.today)||''}
+function jobServicePhrase(j){const svc=jobServiceOf(j);if(svc!=='warranty'&&svc!=='concierge')return '';if(typeof HWSJobOrder==='undefined'||!HWSJobOrder.serviceLine)return '';return HWSJobOrder.serviceLine(j,jobListToday())}
+function viewerSeesPast(){return typeof HWSJobOrder!=='undefined'&&HWSJobOrder.roleSeesPast&&HWSJobOrder.roleSeesPast(viewerRoleStrings())}
+function pastJobsLink(extra){if(!viewerSeesPast())return '';return `<a class="past-jobs" href="#/jobs/closed"${extra||''}>Past jobs (closed)</a>`}
+function closedJobsAlpha(rows){return (rows||[]).slice().sort((a,b)=>String((a&&(a.name||a.slug))||'').localeCompare(String((b&&(b.name||b.slug))||''),undefined,{sensitivity:'base'}))}
+function jobOnWarrantyTab(j){const s=jobServiceOf(j);return s==='warranty'||s==='concierge'}
+function viewerRoleStrings(){const out=[];const who=typeof homeWho==='function'?String(homeWho()||'').trim():'';const common=(DATA&&DATA.common)||{};
+ [common.home_roles,common.roles].forEach(table=>{if(!table||!who)return;Object.keys(table).forEach(name=>{if(String(name).trim().toLowerCase()===who.toLowerCase())out.push(String(table[name]||''))})});
+ try{if(typeof findPerson==='function'){const p=findPerson(who);if(p&&p.role)out.push(p.role)}}catch(e){}
+ try{if(typeof homeRole==='function')out.push(homeRole())}catch(e){}
+ try{if(typeof roleOf==='function')out.push(roleOf(who||undefined))}catch(e){}
+ return out.filter(Boolean)}
+function viewerSeesAllService(){return typeof HWSJobOrder!=='undefined'&&HWSJobOrder.roleSeesAll&&HWSJobOrder.roleSeesAll(viewerRoleStrings())}
+function viewerIsCustomer(){if(viewerSeesAllService())return false;const roles=viewerRoleStrings().map(r=>String(r).toLowerCase());
+ if(roles.some(r=>r==='client'||r==='customer'))return true;
+ return roles.indexOf('guest')>=0&&typeof homeGuestSlug==='function'&&!!homeGuestSlug()}
+function serviceRowsForViewer(rows){rows=rows||[];if(typeof HWSJobOrder==='undefined'||!HWSJobOrder.filterService)return rows;
+ const roles=viewerRoleStrings();
+ if(viewerSeesAllService())return HWSJobOrder.filterService(rows,{roles:roles});
+ if(viewerIsCustomer())return HWSJobOrder.filterService(rows,{roles:roles,customer:true,job:typeof homeGuestSlug==='function'?homeGuestSlug():''});
+ const who=typeof homeWho==='function'?String(homeWho()||'').trim():'';
+ if(!who)return rows;
+ const pmScoped=typeof homePmOn==='function'&&homePmOn()&&typeof homeRole==='function'&&homeRole()==='pm';
+ const scoped=[];
+ rows.forEach(j=>{const pm=String((typeof homeAssigned==='function'?homeAssigned(j.slug):'')||j.pm||(j.info&&j.info.pm)||'').toLowerCase();
+  const client=String(j.client||(j.info&&(j.info.client||j.info.customer))||'').toLowerCase();const w=who.toLowerCase();
+  if(pmScoped){if(w&&pm.indexOf(w)>=0)scoped.push(j.slug);return}
+  if(w&&(pm.indexOf(w)>=0||(client&&client.indexOf(w)>=0)))scoped.push(j.slug)});
+ return HWSJobOrder.filterService(rows,{roles:roles,scoped:scoped})}
+function jobTabBar(which,asButtons){const on=which==='closed'?'warranty':which;const tabs=[['active','Active'],['warranty','Warranty']];
+ const item=(k,l)=>asButtons?`<button type="button" class="${k===on?'on':''}" data-job-tab="${k}" role="tab" aria-selected="${k===on?'true':'false'}">${l}</button>`:`<a href="${k==='warranty'?'#/jobs/warranty':'#/jobs'}" class="${k===on?'on':''}" data-job-tab="${k}" role="tab" aria-selected="${k===on?'true':'false'}">${l}</a>`;
+ return `<div class="seg2 job-tabs" role="tablist" aria-label="Job lists">${tabs.map(([k,l])=>item(k,l)).join('')}</div>`}
+function warrantyOpenCount(j){if(typeof HWSJobOrder==='undefined'||!HWSJobOrder.warrantyOpen)return null;const n=HWSJobOrder.warrantyOpen(j);return n>0?n:null}
+function jobPhoneRow(j,opts){opts=opts||{};const g=opts.group!=null?opts.group:jobGroupOf(j);const svc=jobServiceOf(j);const alerts=svc==='active'&&opts.alerts!==false;
+ const n=alerts?((+j.overdue||0)+(+j.high||0)):0;
+ const next=j.next&&j.next.task?('Next: '+md(j.next.date)+' '+j.next.task):'';
+ const bits=[];if(next)bits.push(next);if(opts.address!==false&&j.address)bits.push(j.address);if(alerts&&j.needs_slack)bits.push('no Slack channel yet');
+ const pe=opts.pending?chip(opts.pending+' unsent','medium'):'';
+ const wn=warrantyOpenCount(j);
+ const badge=(n?`<span class="jalert" aria-label="${n} overdue">${n}</span>`:'')+(wn?`<span class="jwar" aria-label="${wn} open warranty items">${wn} warranty</span>`:'');
+ const href=opts.href||jobHref(j.slug,opts.mod||'');
+ const phrase=(svc==='warranty'||svc==='concierge')?jobServicePhrase(j):'';
+ const sub=svc==='active'?[esc(j.stage||'—')].concat(bits.map(x=>esc(x))).join(' · '):(phrase?jobStatusChip(j)+' '+esc(phrase):[jobStatusChip(j)].concat(bits.map(x=>esc(x))).join(' · '));
+ return `<a class="jcard" data-group="${g}"${jobShowsUnconfirmed(j)?' data-unconfirmed="1"':''} href="${href}"${opts.extra||''}><h4>${esc(j.name||j.slug)}${pe?(' '+pe):''}</h4><div class="jsub">${sub}</div><span class="jside">${badge}</span></a>`}
+function splitJobLists(jobs){const active=[],service=[],closed=[];(jobs||[]).forEach(j=>{const s=jobServiceOf(j);if(s==='closed')closed.push(j);else if(s==='active')active.push(j);else if(jobOnWarrantyTab(j))service.push(j)});return {active:active,service:serviceRowsForViewer(service),closed:viewerSeesPast()?closedJobsAlpha(closed):[]}}
+function warrantyGridHtml(rows){return jobBlockHtml(jobBlocks(rows),j=>jobPhoneRow(j,{extra:' data-close'}))||'<div class="none">No jobs</div>'}
+function jobMenuHtml(jobs){const split=splitJobLists((jobs||[]).filter(jobListed));
+ const open=`<div class="jgrid" data-job-list="open">${jobBlockHtml(jobBlocks(split.active),j=>jobPhoneRow(j,{extra:' data-close'}))||'<div class="none">No jobs</div>'}</div>`;
+ const war=`<div data-job-list="warranty" hidden><div class="jgrid">${warrantyGridHtml(split.service)}</div>${pastJobsLink(' data-close')}</div>`;
+ return `<h2>Jobs</h2><div class="job-menu" id="job-menu">${jobTabBar('active',true)}${open}${war}</div>`}
+function bindJobMenu(root){if(!root)return;const menu=root.querySelector('#job-menu')||root;
+ menu.querySelectorAll('[data-job-tab]').forEach(btn=>{btn.onclick=()=>{const which=btn.getAttribute('data-job-tab');menu.querySelectorAll('[data-job-tab]').forEach(b=>{const on=b.getAttribute('data-job-tab')===which;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+  const open=menu.querySelector('[data-job-list=open]'),war=menu.querySelector('[data-job-list=warranty]');if(open)open.hidden=which!=='active';if(war)war.hidden=which!=='warranty'}})}
+function openJobMenu(){if(typeof openModal!=='function')return;const jobs=orderedJobs().filter(jobListed);openModal(jobMenuHtml(jobs),bindJobMenu)}
+function jobRailHtml(){let rows=orderedJobs();
+ rows=rows.filter(j=>j&&jobListed(j)&&jobServiceOf(j)==='active'&&!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
  const cur=J&&J.slug;
- return `<aside class="pad-jobs" aria-label="Jobs"><div class="pad-jobs-h">Jobs</div>${rows.map(j=>`<a class="${j.slug===cur?'on':''}" href="${jobHref(j.slug)}"><span>${esc(j.name||j.slug)}</span></a>`).join('')||'<div class="none">No jobs</div>'}</aside>`}
+ const link=j=>`<a class="${j.slug===cur?'on':''}" href="${jobHref(j.slug)}"><span>${esc(j.name||j.slug)}</span></a>`;
+ const body=jobBlockHtml(jobBlocks(rows),link);
+ return `<aside class="pad-jobs" aria-label="Jobs"><div class="pad-jobs-h">Jobs</div>${body||'<div class="none">No jobs</div>'}</aside>`}
 const coarse=window.matchMedia?matchMedia('(pointer: coarse)').matches:false;
 /* ---------- links (hash routing: #/ = all jobs, #/job/<slug>/<module>, #/client/<slug>) ---------- */
 const JOB_OPEN_MOD='logs';
@@ -11480,12 +12228,16 @@ function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
  const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
  return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
-function topHtml(page){const jobs=(DATA&&DATA.common&&DATA.common.all_jobs)||[];const n=STORE?STORE.pendingTotal():0;
+function topHtml(page){const jobs=orderedJobs();const n=STORE?STORE.pendingTotal():0;
+ const open=jobs.filter(j=>jobListed(j)&&jobServiceOf(j)==='active'),service=jobs.filter(j=>jobListed(j)&&jobOnWarrantyTab(j));
+ const opt=j=>`<option value="${esc(j.slug)}" ${J&&J.slug==j.slug?'selected':''}>${esc(j.name||j.slug)}</option>`;
+ const picker=jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${open.map(opt).join('')}${service.length?`<optgroup label="Warranty">${service.map(opt).join('')}</optgroup>`:''}</select><button type="button" id="jmenu" class="hbtn jmenu" aria-haspopup="dialog" aria-label="Jobs menu">Jobs</button>`:'';
  return `<header class="top"><a class="brand" href="${homeHref()}" aria-label="Home">Harswells</a>${dnavHtml(page||(J?'jobs':'home'))}<span class="sp"></span>
- ${jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${jobs.map(x=>`<option value="${esc(x.slug)}" ${J&&J.slug==x.slug?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}
+ ${picker}
  <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
  <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe())+(STORE&&STORE.live?' · live':''):'saved in this browser'}</span></header>${bannerHtml()}`}
 function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value)};
+ const menu=$('#jmenu');if(menu)menu.onclick=e=>{e.preventDefault();openJobMenu()};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 function jobPhoneTabs(){const tabs=[];if(logTabOn())tabs.push(['logs','Job Logs']);tabs.push(['slack','Slack'],['todos','To-Dos'],['files','Files'],['jobinfo','Job Information']);
@@ -11528,7 +12280,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(typeof hidesIntake==='function'&&hidesIntake())?[]:(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
  const hc=(J.conflicts||[]).filter(x=>x.severity=='high').length;
- const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${typeof noteButtonHtml==='function'?noteButtonHtml():''}${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span><a class="proplink" href="${modHref('property')}">Property info</a>${chip(i.status||J.stage,'low')}<span class="hide-sm">${chip(J.kind)}</span>
+ const head=`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${typeof noteButtonHtml==='function'?noteButtonHtml():''}${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span><a class="proplink" href="${modHref('property')}">Property info</a>${jobStatusChip(J,i.status||J.stage)}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof stageMoveHtml==='function'?stageMoveHtml():''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div><div id="qnote-slot"></div>${typeof askBarHtml==='function'?askBarHtml(J.slug):''}</div>`;
@@ -11848,6 +12600,59 @@ function fieldNoteHref(path){
  return 'https://www.dropbox.com/home/'+parent+'?preview='+file+'&role=work';
 }
 function fieldNoteLinks(x){if(!isFieldNoteLog(x))return '';const bits=[];if(x.audio)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.audio))}" target="_blank" rel="noopener">Audio</a>`);if(x.video)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.video))}" target="_blank" rel="noopener">Video</a>`);if(x.pdf)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.pdf))}" target="_blank" rel="noopener">PDF</a>`);return bits.join('')}
+/* BOX-ONLY 2026-10-06 (Hub Admin): a note picture or still is saved as a Dropbox path ("/Harswells Team Folder/…/x.jpg").
+   That is not a URL (it 404s on the box and on Pages). It renders as <img data-hws-dbx> and loads through the box file
+   route /api/files/<slug>/body (same role gate as Files) or, off the box, the signed-in Dropbox download. A viewer the
+   route refuses gets no picture (the link is hidden), never a broken image. */
+function notePicDbx(raw){return /^\/[^/]/.test(String(raw||''))&&!/^\/(api|pwa|job|demo)\//.test(String(raw||''))}
+function notePicTag(raw){return `<img alt="" data-hws-dbx="${esc(raw)}">`}
+function notePicJob(path){
+ const root=(typeof filesRoot==='function'?filesRoot():'').replace(/\/+$/,'');
+ if(!root||path.indexOf(root+'/')!==0)return null;
+ const rest=path.slice(root.length+1);const map=(typeof filesCommon==='function'?filesCommon().job_folders:null)||{};let best=null;
+ Object.keys(map).forEach(function(slug){const f=String(map[slug]||'').replace(/^\/+|\/+$/g,'');if(f&&rest.indexOf(f+'/')===0&&(!best||f.length>best.f.length))best={slug:slug,f:f}});
+ return best?{slug:best.slug,rel:rest.slice(best.f.length+1)}:null}
+async function notePicLoad(img){
+ const path=img.getAttribute('data-hws-dbx');if(!path||img.getAttribute('data-hws-dbx-state'))return;img.setAttribute('data-hws-dbx-state','loading');
+ let blob=null;
+ try{if(typeof fileOnBox==='function'&&fileOnBox()){const j=notePicJob(path);if(j){const r=await fetch('/api/files/'+encodeURIComponent(j.slug)+'/body?rel='+encodeURIComponent(j.rel),{credentials:'same-origin'});const t=r.headers.get('Content-Type')||'';if(r.ok&&/^image\//.test(t))blob=await r.blob()}}}catch(e){}
+ try{if(!blob&&typeof fileDownloadPath==='function'){const got=await fileDownloadPath(path);if(got&&got.bytes&&/^image\/|octet/.test(got.type||'image/'))blob=new Blob([got.bytes],{type:/^image\//.test(got.type||'')?got.type:'image/jpeg'})}}catch(e){}
+ const a=img.closest('a');
+ if(blob){const u=URL.createObjectURL(blob);img.src=u;if(a&&a.hasAttribute('data-qnote-full'))a.href=u;img.setAttribute('data-hws-dbx-state','ok')}
+ else{img.setAttribute('data-hws-dbx-state','none');if(a&&a.hasAttribute('data-qnote-full'))a.hidden=true;else img.hidden=true}}
+function notePicScan(root){(root||document).querySelectorAll('img[data-hws-dbx]:not([data-hws-dbx-state])').forEach(function(img){notePicLoad(img)})}
+(function(){if(typeof window==='undefined'||window.__hwsNotePicObs||typeof MutationObserver!=='function')return;
+ const obs=new MutationObserver(function(){notePicScan(document)});window.__hwsNotePicObs=obs;
+ const go=function(){if(document.body){obs.observe(document.body,{childList:true,subtree:true});notePicScan(document)}};
+ if(document.body)go();else document.addEventListener('DOMContentLoaded',go)})();
+function notePictureSrc(path){
+ const raw=String(path||'').trim();
+ if(!raw||raw==='pending'||raw.indexOf('..')>=0||/[\\]/.test(raw))return '';
+ if(/^https?:\/\//i.test(raw))return raw;
+ if(notePicDbx(raw))return '';
+ if(/^(?:\/)?(?:[^/]+\/)*[^/]+\.(jpe?g|png|webp|gif)$/i.test(raw))return raw;
+ return '';
+}
+function notePictureHtml(path){
+ const raw0=String(path||'').trim();
+ if(notePicDbx(raw0)&&/\.(jpe?g|png|webp|gif)$/i.test(raw0)&&raw0.indexOf('..')<0)return `<a class="qnote-pic qlogpic" href="#" target="_blank" rel="noopener" data-qnote-full="1">${notePicTag(raw0)}</a>`;
+ const src=notePictureSrc(path);
+ if(!src)return '';
+ const href=src;
+ return `<a class="qnote-pic qlogpic" href="${esc(href)}" target="_blank" rel="noopener" data-qnote-full="1"><img alt="" src="${esc(src)}"></a>`;
+}
+function logPicturePath(x){
+ if(!x)return '';
+ if(x.image)return x.image;
+ if(Array.isArray(x.stills)&&x.stills[0]&&x.stills[0].frame)return x.stills[0].frame;
+ const ref=String(x.ref||'');
+ if(!ref)return '';
+ let pools=[];
+ try{const job=typeof J!=='undefined'?J:null;if(job)pools=[job.field_notes||[],job.notes||[]]}catch(e){pools=[]}
+ for(let p=0;p<pools.length;p++){const rows=pools[p];if(!Array.isArray(rows))continue;for(let i=0;i<rows.length;i++){if(rows[i]&&String(rows[i].id||'')===ref&&rows[i].image)return rows[i].image}}
+ return '';
+}
+function fieldNotePicture(x){if(!showLog(x))return '';return notePictureHtml(logPicturePath(x))}
 function logTodayAZ(){const d=new Date(Date.now()-7*3600e3),p=n=>String(n).padStart(2,'0');return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())}
 function logHubOpen(){let mode='share';try{if(typeof MODE!=='undefined'&&MODE)mode=MODE}catch(e){}return mode==='live'||mode==='pwa'}
 function logWriteAllowed(){
@@ -11937,7 +12742,8 @@ function logDesk(x){if(isTypedLog(x))return `<div class="it logtyped" data-log-i
  const src=teamUpdate?'':logShownSource(x);const srcHtml=src&&src!==head?`<div class="s">${esc(src)}</div>`:'';
  const open=teamUpdate?logEmailLink(x):fieldNoteLinks(x);
  const when=isFieldNoteLog(x)&&x.time?`<div class="s">${esc(x.time)}</div>`:'';
- return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${when}${extra}${open}${srcHtml}${typeof fileChip==='function'?fileChip(x):''}</div></div>`}
+ const pic=isFieldNoteLog(x)?fieldNotePicture(x):'';
+ return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${when}${extra}${pic}${open}${srcHtml}${typeof fileChip==='function'?fileChip(x):''}</div></div>`}
 function mLogs(M){const l=(J.logs||[]).filter(showLog);
  if(M&&M.id==='padlog'){logPhone(M,l);return}
  if(typeof isPhone==='function'&&isPhone()){logPhone(M,l);return}
@@ -11998,7 +12804,7 @@ function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
   const team=items.filter(x=>x.source!=='auto').map((x)=>isTypedLog(x)?logTypedBlock(x):isTeamEmailLog(x)
    ?`<div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logSummary(x))}</span>${logEmailLink(x)}</div>${typeof fileChip==='function'?fileChip(x):''}`
    :isFieldNoteLog(x)
-   ?`<div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span><span class="logwhen">${esc(x.time||'')}</span>${fieldNoteLinks(x)}</div>`
+   ?`<div class="logfield"><div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span><span class="logwhen">${esc(x.time||'')}</span>${fieldNoteLinks(x)}</div>${fieldNotePicture(x)}</div>`
    :`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span></button>${typeof fileChip==='function'?fileChip(x):''}`).join('');
   const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span>${typeof fileChip==='function'?fileChip(x):''}</div>`).join('');
   const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
@@ -12457,6 +13263,8 @@ function homeCanon(raw) {
   if (role === 'pm' || role === 'lead' || role === 'office') return 'pm';
   if (role === 'field') return 'field';
   if (role === 'guest' || role === 'client' || role === 'customer' || role === 'investor') return 'guest';
+  if (role === 'admin') return 'owner';
+  if (role === 'warranty coordinator' || role === 'warranty_coordinator' || role === 'warranty-coordinator') return 'staff';
   return '';
 }
 function homeEscapeRe(text) {
@@ -12963,6 +13771,25 @@ function homeMine(slug, role) {
   const only = homeGuestSlug();
   return !!only && homeSlug(slug) === only;
 }
+function homeClock(raw) {
+  const m = String(raw || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+  return m ? (('0' + m[1]).slice(-2) + ':' + m[2]) : '';
+}
+function homeDay(value) {
+  return String(value || '').slice(0, 10);
+}
+/* The schedule engine keeps start, finish, and notes. A clock can sit on time, or in notes as HH:MM. */
+function homeTaskWhen(t) {
+  const start = String((t && t.start) || '');
+  const finish = String((t && t.finish) || '');
+  const day = homeDay(start) || homeDay(finish);
+  const embedded = (start + ' ' + finish).match(/[T ](\d{1,2}:\d{2})/);
+  const clock = homeClock(t && t.time) || homeClock(t && t.start_time) || homeClock(t && t.notes) || (embedded ? homeClock(embedded[1]) : '');
+  if (day && clock) return day + ' ' + clock;
+  const due = homeDay(finish);
+  if (day && due && day !== due) return day + ' ' + due;
+  return day;
+}
 function homeMyDayRows() {
   const td = (typeof hubToday === 'function') ? hubToday() : homeAzDay();
   const role = homeRole();
@@ -12975,17 +13802,85 @@ function homeMyDayRows() {
       if (typeof attActive === 'function' && !attActive(x.slug)) return;
       if (!homeMine(x.slug, role)) return;
       const insp = t.milestone_type === 'inspection' || /inspect/i.test(t.task || '');
-      if (t.start === td || (insp && (t.finish === td || t.start === td))) {
-        rows.push({title: homePublicText(t.task || 'Scheduled item'), sub: x.job || '', href: typeof jobHref === 'function' ? jobHref(x.slug) : '#/trackers/today'});
+      const startDay = homeDay(t.start);
+      const finishDay = homeDay(t.finish);
+      if (startDay === td || (insp && (finishDay === td || startDay === td))) {
+        rows.push({
+          title: homePublicText(t.task || 'Scheduled item'),
+          sub: x.job || '',
+          slug: x.slug || '',
+          when: homeTaskWhen(t),
+          href: typeof jobHref === 'function' ? jobHref(x.slug) : '#/trackers/today'
+        });
       }
     });
   }
   ((typeof H === 'function' ? H().deliveries : []) || []).forEach(function (d) {
     if (!d || d.date !== td || !homeMine(d.slug, role)) return;
     if (typeof attActive === 'function' && d.slug && !attActive(d.slug)) return;
-    rows.push({title: homePublicText(d.title || 'Delivery'), sub: d.job || '', href: '#/trackers/orders'});
+    rows.push({
+      title: homePublicText(d.title || 'Delivery'),
+      sub: d.job || '',
+      slug: d.slug || '',
+      when: [d.date || '', d.time || ''].filter(Boolean).join(' '),
+      href: '#/trackers/orders'
+    });
   });
-  return rows.slice(0, 6);
+  return rows;
+}
+function homeMyDayJobs(rows) {
+  const listed = typeof listedJobRows === 'function' ? listedJobRows() : [];
+  const by = {};
+  listed.forEach(function (job) { if (job && job.slug) by[String(job.slug).toLowerCase()] = job; });
+  const seen = {};
+  const jobs = [];
+  (rows || []).forEach(function (row) {
+    const slug = String(row.slug || '').toLowerCase();
+    if (!slug || seen[slug]) return;
+    seen[slug] = 1;
+    const known = by[slug];
+    const full = (typeof DATA !== 'undefined' && DATA && DATA.jobs && DATA.jobs[row.slug]) || {};
+    if (known) jobs.push(Object.assign({}, full, known, {name: known.name || row.sub || full.name || slug}));
+    else jobs.push(Object.assign({}, full, {slug: row.slug || slug, name: row.sub || full.name || slug, stage: full.stage || ''}));
+  });
+  return jobs;
+}
+function homeMyDayGroups(rows) {
+  rows = rows || homeMyDayRows();
+  const jobs = homeMyDayJobs(rows);
+  if (typeof HWSJobOrder !== 'undefined' && HWSJobOrder.dayGroups) {
+    const closed = (typeof DATA !== 'undefined' && DATA && DATA.common && DATA.common.closed_jobs) || [];
+    return HWSJobOrder.dayGroups(rows, jobs, {closed: closed});
+  }
+  const by = {};
+  rows.forEach(function (row) {
+    const slug = String(row.slug || '').toLowerCase();
+    if (!slug) return;
+    (by[slug] = by[slug] || []).push(row);
+  });
+  const named = {};
+  jobs.forEach(function (job) { named[String(job.slug).toLowerCase()] = job; });
+  return Object.keys(by).map(function (slug) {
+    const items = by[slug].slice().sort(function (a, b) {
+      const wa = String(a.when || '\uffff'), wb = String(b.when || '\uffff');
+      if (wa !== wb) return wa < wb ? -1 : 1;
+      return String(a.title || '').localeCompare(String(b.title || ''));
+    });
+    const job = named[slug] || {slug: slug, name: (items[0] && items[0].sub) || slug};
+    return {kind: 'job', job: job, items: items};
+  }).sort(function (a, b) { return String(a.job.name || '').localeCompare(String(b.job.name || '')); });
+}
+function homeMyDayBody(emptyText) {
+  const groups = homeMyDayGroups();
+  if (!groups.length) return '<div class="none">' + esc(emptyText || 'Nothing else on the calendar today') + '</div>';
+  return groups.map(function (block) {
+    if (block.kind === 'client') return '<div class="myday-client"><span>' + esc(block.label) + '</span></div>';
+    const name = (block.job && (block.job.name || block.job.slug)) || '';
+    const items = (block.items || []).map(function (row) {
+      return '<a class="hrow myday-item" href="' + esc(row.href) + '"><span class="lb"><span class="lt">' + esc(row.title) + '</span></span></a>';
+    }).join('');
+    return '<h3 class="myday-job"><span>' + esc(name) + '</span></h3>' + items;
+  }).join('');
 }
 function homeSection(kind, inner) {
   if (!inner) return '';
@@ -13005,11 +13900,12 @@ function homeNeedsHtml(shown, all) {
   return `<section class="home-sec needs-card" data-sec="needs" aria-label="Needs you today"><div class="home-sec-h"><h2>Needs you today</h2>${see}</div>${sub}<div class="needs-list">${rows}</div>${go}${attn}</section>`;
 }
 function homeMyDayHtml() {
-  const rows = homeMyDayRows();
-  const body = rows.map(function (row) {
-    return `<a class="hrow" href="${esc(row.href)}"><span class="lb"><span class="lt">${esc(row.title)}</span>${row.sub ? `<span class="ls">${esc(row.sub)}</span>` : ''}</span></a>`;
-  }).join('') || '<div class="none">Nothing else on the calendar today</div>';
-  return `<section class="home-sec" data-sec="my_day"><div class="home-sec-h"><h2>My day</h2><a href="#/trackers/today">Today</a></div><div class="rows">${body}</div></section>`;
+  return `<section class="home-sec" data-sec="my_day"><div class="home-sec-h"><h2>My day</h2><a href="#/trackers/today">Today</a></div><div class="rows myday">${homeMyDayBody('Nothing else on the calendar today')}</div></section>`;
+}
+function homeShownStatus(j) {
+  if (typeof jobShownStatus === 'function') return jobShownStatus(j);
+  if (typeof jobIsClosed === 'function' && jobIsClosed(j)) return 'Warranty';
+  return (j && j.stage) || '';
 }
 function homeJobsHtml(role) {
   let rows = typeof listedJobRows === 'function' ? listedJobRows() : [];
@@ -13023,7 +13919,7 @@ function homeJobsHtml(role) {
   rows = rows.filter(function (j) { return !(typeof isWarrantyStage === 'function' && isWarrantyStage(j && j.stage)); });
   const shown = rows.slice(0, role === 'field' ? 1 : 3);
   const body = shown.map(function (j) {
-    const sub = homePublicText([j.stage, j.address].filter(Boolean).join(' · '));
+    const sub = homePublicText([homeShownStatus(j), j.address].filter(Boolean).join(' · '));
     const href = typeof jobHref === 'function' ? jobHref(j.slug) : '#/jobs';
     return `<a class="hrow" href="${esc(href)}"><span class="lb"><span class="lt">${esc(j.name || '')}</span>${sub ? `<span class="ls">${esc(sub)}</span>` : ''}</span></a>`;
   }).join('') || '<div class="none">No jobs yet</div>';
@@ -13224,11 +14120,9 @@ function renderPadFieldHome() {
   });
   const jobRows = jobs.slice(0, 8).map(function (j) {
     const href = typeof jobHref === 'function' ? jobHref(j.slug) : '#/jobs';
-    return `<a class="hrow" href="${esc(href)}"><span class="lb"><span class="lt">${esc(j.name || '')}</span><span class="ls">${esc(j.stage || 'Schedule')}</span></span></a>`;
+    return `<a class="hrow" href="${esc(href)}"><span class="lb"><span class="lt">${esc(j.name || '')}</span><span class="ls">${esc(homeShownStatus(j) || 'Schedule')}</span></span></a>`;
   }).join('') || '<div class="none">No jobs today</div>';
-  const sched = homeMyDayRows().map(function (row) {
-    return `<a class="hrow" href="${esc(row.href)}"><span class="lb"><span class="lt">${esc(row.title)}</span>${row.sub ? `<span class="ls">${esc(row.sub)}</span>` : ''}</span></a>`;
-  }).join('') || '<div class="none">Nothing else on the schedule today</div>';
+  const sched = homeMyDayBody('Nothing else on the schedule today');
   const when = typeof longDate === 'function' ? longDate(td) : td;
   const ask = typeof askBoxHtml === 'function' ? askBoxHtml('') : '';
   const qnote = (typeof noteAllowed === 'function' && !noteAllowed()) ? '' : '<section class="home-sec pad-qnote" data-sec="note" data-quick-note><div class="home-sec-h"><h2>Quick note</h2></div><button type="button" id="pad-qnote" data-quick-note-slot>Quick note</button></section>';
@@ -13665,7 +14559,9 @@ const CHAT_SEED=[
  {id:'seed-7',who:'Sam Super',text:'Scroll this thread on the phone. The input stays above the tab bar.',time:'10:44 AM'},
  {id:'seed-8',who:'Alex Morgan',text:'Send a note here when the grout color is confirmed.',time:'11:05 AM'}
 ];
-function chatLoad(){try{const saved=JSON.parse(localStorage.getItem(CHAT_KEY)||'null');if(saved&&Array.isArray(saved.rows)&&saved.rows.length)return saved.rows}catch(e){}return CHAT_SEED.map(function(row){return Object.assign({},row)})}
+function chatDemo(){try{return !!(window.HWS_DEMO)}catch(e){return false}}
+function chatSeeded(row){return !!(row&&String(row.id||'').indexOf('seed-')===0)}
+function chatLoad(){try{const saved=JSON.parse(localStorage.getItem(CHAT_KEY)||'null');if(saved&&Array.isArray(saved.rows)&&saved.rows.length){const rows=saved.rows.filter(function(row){return row&&(chatDemo()||!chatSeeded(row))});if(rows.length)return rows}}catch(e){}if(!chatDemo())return [];return CHAT_SEED.map(function(row){return Object.assign({},row)})}
 function chatSave(rows){try{localStorage.setItem(CHAT_KEY,JSON.stringify({v:1,rows:rows}))}catch(e){}}
 function chatWho(){try{if(typeof STORE!=='undefined'&&STORE&&STORE.who){const w=STORE.who();if(w)return w}}catch(e){}try{return localStorage.getItem('hws-who')||'You'}catch(e2){return 'You'}}
 function chatLine(row,mine){return `<article class="hub-chat-line${mine?' me':''}" data-chat-id="${esc(row.id)}"><b>${esc(row.who||'Team')}</b><p>${esc(row.text||'')}</p></article>`}
@@ -13693,7 +14589,7 @@ function chatBind(root){const log=root.querySelector('.hub-chat-log');const form
   if(ta)ta.value='';chatFitFoot(form)}}
 function renderChat(){if(typeof chatNavOn==='function'&&!chatNavOn()){if(typeof showUnavailable==='function')showUnavailable();return}
  const who=chatWho();const rows=chatLoad();
- const body=rows.map(function(row){return chatLine(row,who&&String(row.who||'').toLowerCase()===String(who).toLowerCase())}).join('');
+ const body=rows.length?rows.map(function(row){return chatLine(row,who&&String(row.who||'').toLowerCase()===String(who).toLowerCase())}).join(''):'<p class="hub-chat-empty">No messages yet</p>';
  hubShell('chat',`<div class="hub-chat" data-chat="1"><h1 class="hub-chat-title">Chat</h1><div class="hub-chat-log" tabindex="0">${body}</div><form class="hub-chat-foot"><textarea rows="1" aria-label="Message" placeholder="Message the team" enterkeyhint="send"></textarea><button type="submit" class="pri">Send</button></form></div>`);
  document.title='Harswells · Chat';const root=document.querySelector('.hub-chat');if(root)chatBind(root)}
 function renderHub(p){const pg=p.page;if(pg=='approvals'&&typeof renderApprovals==='function')renderApprovals();else if(pg=='meeting'&&typeof renderMeeting==='function')renderMeeting(p.sub);else if(pg=='digest'&&typeof renderDigest==='function')renderDigest(p.sub);else if(pg=='settings'&&typeof renderFeatures==='function')renderFeatures();else if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof hubMoneyBlocked==='function'&&hubMoneyBlocked()){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else if(pg=='bidroom'&&typeof renderBidRoom==='function')renderBidRoom(p);else renderHome();window.scrollTo(0,0)}
@@ -14045,7 +14941,8 @@ function attPeople(slug){const a=(AT().assigned||{})[slug]||{};const pm=attInfo(
  if((a.vendors||[]).length){h+=`<h3 class="sh3">Suppliers (orders)</h3>`;a.vendors.forEach(v=>h+=row(v.name,v.sub,`${v.trade} · ${v.item}`))}
  return h}
 function attOpenJob(slug,kind){const J=attJ(slug);if(!J)return;const D=attDrift(slug);const L=attLast(slug);const own=attIsOwner();const jfl=attFlag(slug,'job');
- let h=`<div class="asheet"><div class="ahead"><div class="small mut">${esc(J.stage||'')}${J.address?' · '+esc(J.address):''}</div><h2>${esc(J.name)}</h2></div>
+ const shown=typeof jobShownStatus==='function'?jobShownStatus(J):(J.stage||'');
+ let h=`<div class="asheet"><div class="ahead"><div class="small mut">${esc(shown)}${J.address?' · '+esc(J.address):''}</div><h2>${esc(J.name)}</h2></div>
  <div class="aacts"><a class="abtn pri" href="${jobHref(slug)}">${ico('jobs')}Open job</a><button class="abtn ${jfl?'on':''}" id="aJFlag">⚑ ${jfl?'Flagged':'Flag job'}</button><a class="abtn" href="#/attention/today?job=${esc(slug)}">${ico('cal')}Today</a></div>
  ${jfl?`<div class="aflagnote">⚑ ${esc(jfl.note||'Flagged')}</div>`:''}`;
  if(kind=='drift'||kind=='quiet'||kind=='assigned'){
@@ -22255,43 +23152,90 @@ async function doRelease(slug){const co=STORE.checkout(slug);if(STORE.pending(sl
  busy(true);try{await SY.locks.release(slug,co)}catch(e){if(e.name!='ConflictError'){toast('Could not release: '+e.message);busy(false);return}}STORE.setCheckout(slug,null);lockCache[slug]={state:'free',at:Date.now()};if(J&&J.slug==slug)renderJob();toast('Check-out cancelled');busy(false)}
 let busyN=0;function busy(on){busyN+=on?1:-1;document.body.classList.toggle('busy',busyN>0)}
 /* ---------- landing (all jobs) ---------- */
-function jobCardHtml(j,q){const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';return `<a class="jcard" href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${chip(j.stage||'—','low')}</span></div>
- <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct}%</span></div>
- <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${j.closed?chip('closed','low'):''}${j.overdue?chip(j.overdue+' overdue','overdue'):''} ${j.high?chip(j.high+' high','high'):''}</span></div>
+function jobListPrepared(rows){if(typeof HWSJobOrder==='undefined'||!HWSJobOrder.list)return (rows||[]).slice();
+ const closed=(DATA&&DATA.common&&DATA.common.closed_jobs)||[];
+ const jobs=(DATA&&DATA.jobs)||{};
+ const activity=(((DATA||{}).common||{}).attention||{}).activity||{};
+ return HWSJobOrder.list(rows||[],{jobs:jobs,activity:activity,closed:closed})}
+function jobDeskCard(j,q){const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';
+ const g=typeof jobGroupOf==='function'?jobGroupOf(j):3;const alerts=typeof jobServiceOf==='function'?jobServiceOf(j)==='active':(g!==4&&!j.closed);
+ const wn=typeof warrantyOpenCount==='function'?warrantyOpenCount(j):null;
+ const phrase=typeof jobServicePhrase==='function'?jobServicePhrase(j):'';
+ return `<a class="jcard" data-group="${g}"${typeof jobShowsUnconfirmed==='function'&&jobShowsUnconfirmed(j)?' data-unconfirmed="1"':''} href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}><h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${typeof jobStatusChip==='function'?jobStatusChip(j):chip(j.stage||'—','low')}${phrase?(' '+esc(phrase)):''}</span></div>
+ <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct||0}%</span></div>
+ <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${alerts&&j.overdue?chip(j.overdue+' overdue','overdue'):''} ${alerts&&j.high?chip(j.high+' high','high'):''}${wn?`<span class="jwar" aria-label="${wn} open warranty items">${wn} warranty</span>`:''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}
+function jobListCard(j,q){const pe=STORE&&STORE.pending?STORE.pending(j.slug):0;const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';
+ if(typeof isPhone==='function'&&isPhone()&&typeof jobPhoneRow==='function')return jobPhoneRow(j,{pending:pe,href:jobHref(j.slug,wm?'whodid':''),extra:wm?` data-wdq="${esc(st.lq||'')}"`:''});
+ return jobDeskCard(j,q)}
+function jobCardsHtml(rows,q){const blocks=typeof jobBlocks==='function'?jobBlocks(rows):(rows||[]).map(j=>({kind:'job',job:j}));
+ const row=j=>jobListCard(j,q);return typeof jobBlockHtml==='function'?jobBlockHtml(blocks,row):rows.map(row).join('')}
+function jobCardsPlain(rows,q){return (rows||[]).map(j=>jobListCard(j,q)).join('')}
+function closedJobsFold(rows,q){if(!rows.length)return '';const open=(typeof st!=='undefined'&&st&&st.lq)?' open':'';
+ const label=typeof closedSectionLabel==='function'?closedSectionLabel():'Warranty';
+ return `<details class="closed-fold" data-closed-section="jobs"${open}><summary>${label} <span>${rows.length}</span></summary><div class="jgrid">${jobCardsHtml(rows,q)}</div></details>`}
 function statCard(href,name,on,red,n,label,sub){return `<a class="lcard${red?' red':''}" data-stat="${name}" href="${href}"${on?' aria-current="page"':''}><div class="n">${n}</div><div class="b">${label}</div><div class="small mut">${sub}</div></a>`}
-function renderList(){if(!L){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data yet.</b></div>';bindTop();return}const q=(st.lq||'').toLowerCase();const wds=s=>typeof wdSearchText=='function'?wdSearchText(s):'';
- const hit=j=>!q||(j.name+' '+j.address+' '+j.stage+' '+(j.search||'')+' '+wds(j.slug)).toLowerCase().includes(q);
- const rows=L.jobs||[];const matched=rows.filter(hit);
+/* Active | Warranty list. The phone shell mounts this into its Jobs tab.
+   renderJobsList(container, opts). opts.embed paints only the list. opts.page paints the
+   whole Jobs page. opts.tab is active, warranty, or closed. With no opts, #root is the page
+   and any other element gets the list. HWSJobs.render and renderPhoneJobs are the same call.
+   Stat cards link to the overdue, conflict, and scheduled views. */
+function jobsListHost(container){if(!container)return document.getElementById('root');if(container.nodeType===1)return container;if(typeof container==='string')return document.querySelector(container);return document.getElementById('root')}
+function renderJobsList(container,opts){opts=opts||{};const host=jobsListHost(container);if(!host)return;if(!L&&typeof STORE!=='undefined'&&STORE&&STORE.getList){try{L=STORE.getList()}catch(e){}}
+ const embed=opts.page===true?false:(opts.embed===true||host.id!=='root');
+ if(!L){host.innerHTML=embed?'<div class="empty" data-jobs-list="1"><b>No data yet.</b></div>':(topHtml()+'<div class="empty"><b>No data yet.</b></div>');if(!embed)bindTop();return}
+ const q=String(opts.query!=null?opts.query:(st.lq||'')).toLowerCase();const wds=s=>typeof wdSearchText=='function'?wdSearchText(s):'';const matched=L.jobs.filter(j=>!q||(j.name+' '+j.address+' '+j.stage+' '+(j.search||'')+' '+wds(j.slug)).toLowerCase().includes(q));
  const cards=(typeof HWSHubCards!=='undefined')?HWSHubCards:null;
- const stat=cards?cards.stats(rows):null;
- const counted=stat?stat.counted:rows.filter(j=>!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
- const hi=stat?stat.high:counted.reduce((a,j)=>a+(+j.high||0),0),od=stat?stat.overdue:counted.reduce((a,j)=>a+(+j.overdue||0),0);
- const jobN=stat?stat.jobs:counted.length,schedN=stat?stat.scheduled:counted.filter(j=>j.start||j.finish||j.tasks).length;
- const sub=(typeof parseHash==='function'?(parseHash().sub||''):'');
- const view=(sub==='overdue'||sub==='conflicts'||sub==='scheduled')?sub:'active';
- const gate=j=>cards?cards.jobGate(j):true;
- const warranty=matched.filter(j=>gate(j)&&(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
- const activeJobs=matched.filter(j=>cards?cards.jobCounted(j):!(typeof isWarrantyStage==='function'&&isWarrantyStage(j.stage)));
- const datedJobs=matched.filter(j=>cards?(cards.jobCounted(j)&&cards.jobDated(j)):!!(j.start||j.finish||j.tasks));
- const link=typeof hrow==='function'?hrow:(href,title,sub)=>`<a class="hrow" href="${href}"><span class="lb"><span class="lt">${title}</span>${sub?`<span class="ls">${sub}</span>`:''}</span></a>`;
- let listHtml;
- if(view==='overdue'){const groups=cards?cards.overdueGroups(matched,L.today):[];
-  listHtml=groups.map(g=>`<h2 class="sh2" data-overdue-job="${esc(g.slug)}">${esc(g.name)} <span>${g.count}</span></h2><div class="rows">${g.items.map(it=>link(it.href,esc(it.title),esc(g.name))).join('')}</div>`).join('')||emptyState('No overdue tasks','');}
- else if(view==='conflicts'){const groups=cards?cards.conflictGroups(matched):[];
-  listHtml=groups.map(g=>`<h2 class="sh2" data-conflict-job="${esc(g.slug)}">${esc(g.name)} <span>${g.count}</span></h2><div class="rows">${g.items.map(it=>link(it.href,esc(it.title),esc(g.name))).join('')}</div>`).join('')||emptyState('No high conflicts','');}
- else{const pastPhone=view==='active'&&typeof phoneOn==='function'&&phoneOn()&&cards?matched.filter(j=>cards.jobFoldClosed(j)):[];
-  const jobs=(view==='scheduled'?datedJobs:activeJobs).concat(pastPhone);
-  listHtml=`<div class="jgrid">${jobs.map(j=>jobCardHtml(j,q)).join('')||emptyState(view==='scheduled'?'No dated work':'No jobs match','')}</div>${view==='active'&&typeof warrantyFold==='function'?warrantyFold('jobs',warranty):''}`}
- const titles={active:'Job workspaces',scheduled:'Jobs with a schedule',overdue:'Overdue tasks',conflicts:'High conflicts'};
- document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
- $('#root').innerHTML=topHtml('jobs')+`<main class="main hub-jobs" data-jobs-view="${view}" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div><div class="lcards">
- ${statCard('#/jobs/active','jobs',view==='active',false,jobN,'Jobs','each has its own schedule workspace')}
- ${statCard('#/jobs/overdue','overdue',view==='overdue',true,od,'Overdue tasks','not complete, past finish')}
- ${statCard('#/jobs/conflicts','conflicts',view==='conflicts',true,hi,'High conflicts','across all jobs')}
- ${statCard('#/jobs/scheduled','scheduled',view==='scheduled',false,schedN,'Jobs with a schedule','dated work on the hub')}</div>
- <div class="panel"><h3>${titles[view]} <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(st.lq||'')}"></h3><div class="pb">${listHtml}</div></div></main>`+gnavHtml('jobs');
- bindTop();document.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=$('#lq');if(lq)lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;renderList();const n=$('#lq');if(!n)return;n.focus();try{n.setSelectionRange(p,p)}catch(_){}};document.title='Harswells · Job workspaces'}
+ const hide=j=>cards&&cards.jobHidden&&cards.jobHidden(j);
+ const prepared=jobListPrepared(matched).filter(j=>(typeof jobListed!=='function'||jobListed(j))&&!hide(j));
+ const svcOf=j=>typeof jobServiceOf==='function'?jobServiceOf(j):(j&&j.closed?'warranty':'active');
+ const warrantyStageRow=j=>typeof isWarrantyStage==='function'&&(isWarrantyStage(j&&j.stage)||isWarrantyStage(j&&j.status));
+ const onServiceTab=j=>(typeof HWSJobOrder!=='undefined'&&typeof jobOnWarrantyTab==='function')?jobOnWarrantyTab(j):(svcOf(j)==='warranty'||svcOf(j)==='concierge'||warrantyStageRow(j));
+ const warrantyRows=prepared.filter(onServiceTab);
+ const service=typeof serviceRowsForViewer==='function'?serviceRowsForViewer(warrantyRows):warrantyRows;
+ const closedRows=prepared.filter(j=>svcOf(j)==='closed');
+ const past=typeof viewerSeesPast==='function'&&viewerSeesPast()?(typeof closedJobsAlpha==='function'?closedJobsAlpha(closedRows):closedRows):[];
+ const jobs=prepared.filter(j=>svcOf(j)==='active'&&(typeof HWSJobOrder!=='undefined'||!warrantyStageRow(j)));
+ const requested=opts.tab!=null?String(opts.tab):(typeof parseHash==='function'?parseHash().sub:'');
+ const statView=(requested==='overdue'||requested==='conflicts'||requested==='scheduled')?requested:'';
+ const sub=requested==='open'||requested==='active'?'':requested;
+ const showClosed=!statView&&sub==='closed'&&typeof viewerSeesPast==='function'&&viewerSeesPast();
+ const mode=showClosed?'closed':((!statView&&(sub==='warranty'||sub==='closed'))?'warranty':'active');
+ const view=statView||mode;
+ const shown=mode==='closed'?past:(mode==='warranty'?service:jobs);
+ const stat=cards?cards.stats((L.jobs||[]).filter(j=>(typeof jobListed!=='function'||jobListed(j))&&!hide(j))):null;
+ const activeAll=stat?stat.counted:(L.jobs||[]).filter(j=>(typeof jobListed!=='function'||jobListed(j))&&(typeof jobServiceOf!=='function'||jobServiceOf(j)==='active')&&!hide(j));
+ const hi=stat?stat.high:activeAll.reduce((a,j)=>a+(+j.high||0),0),od=stat?stat.overdue:activeAll.reduce((a,j)=>a+(+j.overdue||0),0);
+ const jobN=stat?stat.jobs:activeAll.length,schedN=stat?stat.scheduled:(L.jobs||[]).filter(j=>j.tasks).length;
+ const rowLink=(href,title,subtext)=>`<a class="hrow" href="${href}"><span class="lb"><span class="lt">${title}</span>${subtext?`<span class="ls">${subtext}</span>`:''}</span></a>`;
+ let listHtml, panelTitle;
+ if(statView==='overdue'){const groups=cards?cards.overdueGroups(prepared,L.today):[];
+  listHtml=groups.map(g=>`<h2 class="sh2" data-overdue-job="${esc(g.slug)}">${esc(g.name)} <span>${g.count}</span></h2><div class="rows">${g.items.map(it=>rowLink(it.href,esc(it.title),esc(g.name))).join('')}</div>`).join('')||emptyState('No overdue tasks','');
+  panelTitle='Overdue tasks'}
+ else if(statView==='conflicts'){const groups=cards?cards.conflictGroups(prepared):[];
+  listHtml=groups.map(g=>`<h2 class="sh2" data-conflict-job="${esc(g.slug)}">${esc(g.name)} <span>${g.count}</span></h2><div class="rows">${g.items.map(it=>rowLink(it.href,esc(it.title),esc(g.name))).join('')}</div>`).join('')||emptyState('No high conflicts','');
+  panelTitle='High conflicts'}
+ else if(statView==='scheduled'){const dated=prepared.filter(j=>(cards?cards.jobCounted(j)&&cards.jobDated(j):(svcOf(j)==='active'&&(j.start||j.finish||j.tasks))));
+  listHtml=`<div class="jgrid" data-job-list="open">${jobCardsHtml(dated,q)||emptyState('No dated work','')}</div>`;
+  panelTitle='Jobs with a schedule'}
+ else{listHtml=(mode==='closed'?jobCardsPlain(shown,q):jobCardsHtml(shown,q))||emptyState(mode==='closed'?'No past jobs':(mode==='warranty'?'No warranty jobs':'No jobs match'),'');
+  panelTitle='Job workspaces'}
+ const tabs=!statView&&typeof jobTabBar==='function'?jobTabBar(mode):'';
+ const pastLink=!statView&&mode==='warranty'&&typeof pastJobsLink==='function'?pastJobsLink():'';
+ const pastHead=!statView&&mode==='closed'?'<div class="past-jobs-h">Past jobs (closed)</div>':'';
+ const grid=statView?listHtml:`${pastHead}<div class="jgrid" data-job-list="${mode==='closed'?'closed':(mode==='warranty'?'warranty':'open')}">${listHtml}</div>${pastLink}`;
+ const panel=`<div class="panel"><h3>${panelTitle} <span class="mut small">status date ${mdy(L.today)}</span><span class="sp"></span><input type="search" id="lq" placeholder="Find a job or trade (e.g. plumb)" value="${esc(opts.query!=null?opts.query:(st.lq||''))}"></h3><div class="pb">${tabs}${grid}</div></div>`;
+ const counts=`<div class="lcards">${statCard('#/jobs/active','jobs',view==='active',false,jobN,'Jobs','each has its own schedule workspace')}
+ ${statCard('#/jobs/overdue','overdue',view==='overdue',true,od,'Overdue tasks','not complete, past finish')}${statCard('#/jobs/conflicts','conflicts',view==='conflicts',true,hi,'High conflicts','across all jobs')}
+ ${statCard('#/jobs/scheduled','scheduled',view==='scheduled',false,schedN,'Jobs with a schedule','dated work on the hub')}</div>`;
+ if(embed){host.innerHTML=`<div class="hub-jobs jobs-embed" data-jobs-list="1" data-jobs-view="${view}"><h1>Jobs</h1>${counts}${panel}</div>`}
+ else{document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
+  host.innerHTML=topHtml('jobs')+`<main class="main hub-jobs" data-jobs-list="1" data-jobs-view="${view}" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div>${counts}
+ ${panel}</main>`+gnavHtml('jobs');bindTop();document.title='Harswells · Job workspaces'}
+ host.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=host.querySelector('#lq');if(lq)lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;if(embed)renderJobsList(host,opts);else renderList();const n=(embed?host:document).querySelector('#lq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}}
+function renderList(){renderJobsList(document.getElementById('root'),{page:true})}
+function renderPhoneJobs(container,opts){return renderJobsList(container,opts)}
+if(typeof window!=='undefined'){window.renderJobsList=renderJobsList;window.renderPhoneJobs=renderPhoneJobs;window.HWSJobs={render:renderJobsList}}
 /* ---------- boot ---------- */
 function route(){document.querySelectorAll('.toast').forEach(function(x){x.remove()});closeModal();if(!DATA)return;if(typeof applyFeatureStrip==='function')applyFeatureStrip();const p=parseHash();
  try{
@@ -22673,7 +23617,7 @@ function phoneStripJobName(row, name) {
   else sub.remove();
 }
 function phoneGroupHost(host, selector) {
-  if (!host || host.querySelector(':scope > .phone-jobhead')) return;
+  if (!host || host.querySelector(':scope > .phone-jobhead') || host.querySelector(':scope > .myday-job')) return;
   const rows = Array.prototype.filter.call(host.children, function (el) { return el.matches && el.matches(selector); });
   if (!rows.length) return;
   const groups = [];
