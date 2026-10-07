@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='0dece2ca1e';
+const VERSION='5cd0cf3c19';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
@@ -306,8 +306,44 @@ async function postScan(url, body){
   payload.statusCode=res.status;
   return payload;
 }
+async function uploadWalkItem(db, item){
+  if(!item||item.holdForPower||item.state==='done'||item.state==='failed'||!item.blob||!item.slug) return;
+  if(item.state==='uploading'&&item.touched&&(Date.now()-Number(item.touched))<20000) return;
+  item.state='uploading';
+  item.touched=Date.now();
+  await scanPut(db, item);
+  const base=self.registration.scope.replace(/\/$/,'');
+  const bytes=new Uint8Array(await item.blob.arrayBuffer());
+  const slug=encodeURIComponent(item.slug);
+  let id=item.uploadId||'';
+  if(!id){
+    const started=await postScan(base+'/api/job/'+slug+'/field-note/video/uploads',{
+      size:bytes.length, content_type:item.content_type||'', filename:item.filename||'walk.mp4',
+      mode:item.mode||'video', blurb:item.blurb||'', lat:item.lat, lon:item.lon
+    });
+    if(!started.id) throw new Error(started.error||'could not start');
+    id=started.id; item.uploadId=id;
+    await scanPut(db, item);
+  }
+  let offset=Math.max(0, Number(item.sent||0));
+  const chunk=256*1024;
+  while(offset<bytes.length){
+    const part=bytes.subarray(offset, Math.min(bytes.length, offset+chunk));
+    const result=await postScan(base+'/api/job/'+slug+'/field-note/video/uploads/'+id,{offset:offset, data_b64:scanB64(part)});
+    if(result.statusCode===409||result.error==='resume'){ offset=Number(result.offset||offset); continue; }
+    if(!result.ok) throw new Error(result.error||'chunk failed');
+    offset=Number(result.offset); item.sent=offset; item.touched=Date.now();
+    await scanPut(db, item);
+  }
+  const done=await postScan(base+'/api/job/'+slug+'/field-note/video/uploads/'+id+'/complete',{blurb:item.blurb||'', lat:item.lat, lon:item.lon});
+  if(!done.ok&&!done.job) throw new Error(done.error||'not confirmed');
+  item.state='done';
+  await scanPut(db, item);
+}
 async function uploadScanItem(db, item){
-  if(!item||item.holdForPower||item.state==='done'||item.state==='failed'||!item.blob) return;
+  if(!item||item.state==='done'||item.state==='failed'||!item.blob) return;
+  if(item.kind==='walk') return uploadWalkItem(db, item);
+  if(item.holdForPower) return;
   const base=self.registration.scope.replace(/\/$/,'');
   const bytes=new Uint8Array(await item.blob.arrayBuffer());
   const digest=await crypto.subtle.digest('SHA-256', bytes);

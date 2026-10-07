@@ -1333,7 +1333,13 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .wedit{width:96px;min-height:32px;font-size:16px}
 .wman{font-size:11px;font-weight:700;color:#8e8e93}
 .logwx{margin-top:4px;color:#3a3a3c;font-size:13px;line-height:1.3}
+.logcompose .logsave{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .logcompose button.pri{min-height:44px;min-width:88px;font-size:16px;align-self:flex-start}
+.logcompose button.logyest{align-self:center;min-height:44px;min-width:44px;padding:0 12px;font-size:15px;font-weight:600;background:#F2F2F7;color:#1c1c1e;border:0;border-radius:12px}
+.loghistory{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.loghistory h3{margin:4px 0 0;font-size:13px;font-weight:700}
+.loghistory .loghist{min-height:44px;min-width:44px;padding:0 12px;font-size:15px;font-weight:600;background:transparent;color:#1c1c1e;border:0;text-align:left}
+.loghistory p{margin:0;font-size:15px;line-height:1.35}
 .logattach{display:flex;gap:6px}
 .logpick{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:44px;padding:6px 2px;border-radius:12px;background:#F2F2F7;color:#007AFF;font-size:10px;font-weight:600;line-height:1.15;text-align:center}
 .logpick svg{width:22px;height:22px;display:block}
@@ -1624,6 +1630,28 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
     flex: none;
     min-width: 72px;
   }
+  body.phone-shell a.phone-walk {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: none;
+    height: 48px;
+    min-height: 48px;
+    min-width: 44px;
+    margin: 0 0 10px;
+    padding: 0 12px;
+    border-radius: 16px;
+    border: 1px solid #e4e4e7;
+    background: #fff;
+    color: #1c1c1e;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+  body.phone-shell .phone-ask a.phone-walk { margin: 0; }
   body.phone-shell .phone-draft { margin: 0 0 10px; color: #101014; }
   body.phone-shell .modal-bg.phone-sheet {
     background: rgba(0, 0, 0, .4);
@@ -2033,7 +2061,11 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
   body.phone-shell .logpick + .logpick{border-left:0.5px solid rgba(60,60,67,.29)}
   body.phone-shell .logpick:active{background:rgba(0,0,0,.08)}
   body.phone-shell .logthumbs{padding:8px 12px 0}
-  body.phone-shell .logcompose button.pri{margin:8px 12px 12px;align-self:stretch}
+  body.phone-shell .logcompose .logsave{padding:8px 12px 12px;gap:8px}
+  body.phone-shell .logcompose .logsave button.pri{margin:0;flex:1 1 auto;align-self:stretch}
+  body.phone-shell .logcompose button.logyest{flex:0 0 auto;align-self:center;min-height:44px;min-width:44px;padding:0 12px;font-size:15px;font-weight:600;background:#F2F2F7;color:#1c1c1e;border:0;border-radius:12px}
+  body.phone-shell .loghistory{padding:0 12px 8px}
+  body.phone-shell .loghistory .loghist{min-height:44px;font-size:15px}
   body.phone-shell .panel > h3 button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px}
   body.phone-shell .log-lead{padding:0 2px}
   body.phone-shell button.pri,
@@ -2173,7 +2205,8 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
   body.phone-shell .phone-card,
   body.phone-shell .phone-mod,
   body.phone-shell .phone-row button,
-  body.phone-shell .phone-ask input { background: #1c1c1e; border-color: #2c2c2e; color: #f5f5f7; }
+  body.phone-shell .phone-ask input,
+  body.phone-shell a.phone-walk { background: #1c1c1e; border-color: #2c2c2e; color: #f5f5f7; }
   body.phone-shell .phone-action-group,
   body.phone-shell .phone-action-cancel,
   body.phone-shell .phone-cap-panel:not([hidden]) { background: #1c1c1e; }
@@ -2684,6 +2717,30 @@ body.has-tabs .ask-float{bottom:calc(76px + env(safe-area-inset-bottom))}
   object-fit: cover;
   background: #e5e5ea;
 }
+.walk-card {
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #fff;
+  color: #101014;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .06);
+}
+.walk-card h3 { margin: 0 0 8px; font-size: 17px; }
+.walk-card video, .walk-card .walk-thumb {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  border-radius: 12px;
+  background: #1c1c1e;
+  object-fit: cover;
+}
+.walk-card video {
+  min-height: 168px;
+  margin-top: 8px;
+}
+.walk-kept, .walk-meta, [data-walk-status] { margin: 8px 0 0; font-size: 14px; line-height: 1.35; }
+.walk-meta { color: #3a3a3c; }
+[data-phone-walks] { display: inline-flex; align-items: center; min-height: 44px; }
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Harswells schedule</h2><p>Loading&hellip;</p>
@@ -2704,7 +2761,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'0dece2ca1e',built:'10/6/2026 5:22 PM AZ'};
+const HWS_BUILD={version:'5cd0cf3c19',built:'10/7/2026 11:13 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -2720,8 +2777,9 @@ function signedIn(){try{return !!(window.HWSSync&&HWSSync.DropboxBackend().ready
    drop one key and leave the other; don't make that look like a first-time setup. */
 function adoptSignedIn(){if(okSource(cfg)||!signedIn())return;cfg={source:'dropbox-api'};saveCfg();
  try{HWSSync.LS.set('hws-sync-kind','dropbox')}catch(e){}}
-function canLoad(){if(DEV&&cfg.source=='same-origin')return true;return cfg.source=='dropbox-api'&&signedIn()}
-function needsSignIn(){return !data&&!W.preview&&!W.demo&&!canLoad()}
+function hostedMode(){return !!window.HWS_HOSTED}
+function canLoad(){if(hostedMode())return true;if(DEV&&cfg.source=='same-origin')return true;return cfg.source=='dropbox-api'&&signedIn()}
+function needsSignIn(){if(hostedMode())return false;return !data&&!W.preview&&!W.demo&&!canLoad()}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction(STORE).objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 function sourceUrl(){if(DEV&&cfg.source=='same-origin')return new URL('data/data.json',location.href).toString();return null}
@@ -2749,6 +2807,66 @@ function hwsNoteViewer(){
 }
 try{window.hwsViewerKey=hwsViewerKey;window.hwsNoteViewer=hwsNoteViewer}catch(e){}
 function fmtTime(ms){if(!ms)return 'never';const d=new Date(ms);return d.toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Phoenix'})+' AZ'}
+function pagesIdentity(value){
+ const text=String(value||'').replace(/\s+/g,' ').trim();
+ if(!text)return '';
+ if(text.indexOf('@')>=0&&text.indexOf(' ')<0&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(text))return text.toLowerCase();
+ const parts=text.split(' ');
+ if(parts.length<2||parts.some(function(part){return part.length<2}))return '';
+ return text.toLowerCase();
+}
+function pagesDropboxName(){
+ try{
+  const described=String(HWSSync.DropboxBackend().describe()||'');
+  const matched=described.match(/\u00b7\s*([^()]+?)(?:\s*\(|$)/);
+  return matched?String(matched[1]||'').trim():'';
+ }catch(e){return ''}
+}
+function pagesDropboxDisplayName(){
+ try{
+  const auth=JSON.parse(localStorage.getItem('hws-dbx-auth')||'null');
+  return auth&&auth.name?String(auth.name).replace(/\s+/g,' ').trim():'';
+ }catch(e){return ''}
+}
+function pagesRememberName(){
+ const name=pagesDropboxDisplayName();
+ if(!name)return '';
+ const full=name.slice(0,60);
+ try{localStorage.setItem('hws-who',full)}catch(e){}
+ try{if(window.STORE&&STORE.setWho)STORE.setWho(full)}catch(e2){}
+ return full;
+}
+try{pagesRememberName()}catch(e){}
+function pagesApplyScope(doc){
+ if(!doc||typeof doc!=='object'||!doc.jobs)return doc;
+ const scope=doc.common&&doc.common.viewer_scope;
+ if(!scope){
+  doc.jobs={};
+  if(doc.list&&Array.isArray(doc.list.jobs))doc.list.jobs=[];
+  return doc;
+ }
+ if(!Array.isArray(scope.jobs))return doc;
+ const allow={};
+ scope.jobs.forEach(function(slug){allow[String(slug)]=1});
+ Object.keys(doc.jobs).forEach(function(slug){if(!allow[slug])delete doc.jobs[slug]});
+ if(doc.list&&Array.isArray(doc.list.jobs))doc.list.jobs=doc.list.jobs.filter(function(row){return row&&allow[String(row.slug)]});
+ return doc;
+}
+function pagesViewerPath(dataPath){
+ let name='';
+ try{name=pagesIdentity(pagesRememberName())}catch(e){}
+ if(!name){try{if(window.HWS_VIEWER&&HWS_VIEWER.name)name=pagesIdentity(HWS_VIEWER.name)}catch(e1){}}
+ if(!name){try{name=pagesIdentity(localStorage.getItem('hws-who')||'')}catch(e2){}}
+ if(!name)name=pagesIdentity(pagesDropboxName());
+ if(!name)return '';
+ const key=name.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
+ if(!key)return '';
+ const dir=String(dataPath||'').replace(/\/[^/]*$/,'');
+ const path=dir+'/viewers/'+key+'.json';
+ if(!path||path===String(dataPath||''))return '';
+ return path;
+}
+try{window.pagesViewerPath=pagesViewerPath}catch(e){}
 function check(d){if(!d||d.schema!==2||!d.jobs||!d.list)throw new Error('Unexpected data format');
  if(!Object.keys(d.jobs).length)throw new Error('The schedule data file in Dropbox has no jobs yet (placeholder). Ask the office to publish the schedule data, then tap Sync now.');return d}
 const NOACC='Your Dropbox account can\u2019t see the Harswells schedule data (Harswells Team Folder \u203a Harswells Live Schedule). Sign in with your Harswells Dropbox account, or ask the office to give you access to the Harswells Team Folder.';
@@ -2762,13 +2880,44 @@ function isAuthErr(e){if(!e)return false;if(e.name==='AuthError')return true;
  return /expired_access_token|invalid_access_token|invalid_grant|insufficient_scope|missing_scope|no_permission|insufficient_permissions|\bHTTP 401\b|\bHTTP 403\b|sign-in expired/i.test(String(e.message||''))}
 function isNetErr(e){if(!e||isAuthErr(e))return false;const m=String(e.message||'');
  return m==='offline'||/failed to fetch|network|offline|load failed/i.test(m)}
+function rememberViewer(name, role, money){
+ const full=String(name||'').replace(/\s+/g,' ').trim().slice(0,60);
+ const kind=String(role||'').trim().toLowerCase();
+ if(kind){try{window.HWS_VIEWER={role:kind, name:full, money:!!money}}catch(e){}}
+ if(!full)return '';
+ try{localStorage.setItem('hws-who', full)}catch(e2){}
+ try{if(window.STORE&&STORE.setWho)STORE.setWho(full)}catch(e3){}
+ return full;
+}
+function adoptScopeRole(doc){
+ const scope=doc&&doc.common&&doc.common.viewer_scope;
+ const kind=scope&&scope.kind?String(scope.kind).trim().toLowerCase():'';
+ if(!kind)return;
+ let have='';
+ try{have=window.HWS_VIEWER&&HWS_VIEWER.role?String(HWS_VIEWER.role):''}catch(e){}
+ if(have)return;
+ const name=(window.HWS_VIEWER&&HWS_VIEWER.name)||pagesDropboxDisplayName()||'';
+ rememberViewer(name, kind, scope.money);
+}
 async function viewerSession(){
  try{
-  if(window.HWS_HOSTED&&window.HWS_VIEWER&&HWS_VIEWER.role)return {hosted:true, role:String(HWS_VIEWER.role)};
+  if(window.HWS_HOSTED&&window.HWS_VIEWER&&HWS_VIEWER.role){
+   rememberViewer(HWS_VIEWER.name, HWS_VIEWER.role, HWS_VIEWER.money);
+   try{
+    if(typeof askMount==='function')askMount();
+    if(typeof phoneMountHubAsk==='function')phoneMountHubAsk();
+   }catch(e){}
+   return {hosted:true, role:String(HWS_VIEWER.role)};
+  }
   const r=await fetch('/api/me',{credentials:'same-origin',cache:'no-store'});
   if(r.status===401||r.status===409||r.ok){
    if(!r.ok)return {hosted:true, role:''};
    const j=await r.json();
+   rememberViewer(j.name, j.role, j.money);
+   try{
+    if(typeof askMount==='function')askMount();
+    if(typeof phoneMountHubAsk==='function')phoneMountHubAsk();
+   }catch(e){}
    return {hosted:true, role:String(j.role||'')};
   }
   return {hosted:!!window.HWS_HOSTED, role:''};
@@ -2776,7 +2925,7 @@ async function viewerSession(){
 }
 function hostedLoader(role){
  if(role==='investor')return '/api/investor';
- if(role==='owner'||role==='office'||role==='pm'||role==='field'||role==='client'||role==='guest'||role==='sub')return '/api/store.json';
+ if(role==='owner'||role==='office'||role==='pm'||role==='field'||role==='client'||role==='guest'||role==='sub'||role==='super'||role==='warranty'||role==='accounting'||role==='draftsman'||role==='inventory')return '/api/store.json';
  return '';
 }
 function clientLoader(role){
@@ -2793,6 +2942,7 @@ async function fetchData(){
   if(!r.ok)throw new Error('HTTP '+r.status);
   const d=await r.json();
   if(!d||typeof d!=='object')throw new Error('Unexpected data format');
+  adoptScopeRole(d);
   return d;
  }
  const via=clientLoader(session.role);
@@ -2801,14 +2951,19 @@ async function fetchData(){
   if(!r.ok)throw new Error('HTTP '+r.status);
   const d=await r.json();
   if(!d||typeof d!=='object')throw new Error('Unexpected data format');
+  adoptScopeRole(d);
   return d;
  }
- if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');let r;
-  /* 3.6 MB: download only when the Dropbox rev changed (one small get_metadata call otherwise) */
-  if(data&&dataRev){try{const m=await A.metaAbs(HWSSync.CFG.dropbox.dataPath);if(m&&m.rev===dataRev)return {same:true}}catch(e){if(isAuthErr(e))throw e}}
-  try{r=await A.readAbs(HWSSync.CFG.dropbox.dataPath)}catch(e){if(isAuthErr(e))throw e;if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root/.test(e.message))throw new Error(NOACC);throw e}
-  if(!r){const dir=HWSSync.CFG.dropbox.dataPath.replace(/\/[^\/]*$/,'');let seen=false;try{seen=await A.existsAbs(dir)}catch(e){if(isAuthErr(e))throw e}
-   throw new Error(seen?'The schedule data file hasn\u2019t been published to Dropbox yet. Ask the office to publish the schedule data, then tap Sync now.':NOACC)}let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}check(d);d.__rev=r.rev||null;return d}
+ if(cfg.source=='dropbox-api'){const A=HWSSync.DropboxBackend();if(!A.ready())throw new Error('Sign in with Dropbox first');
+  const viewerPath=pagesViewerPath(HWSSync.CFG.dropbox.dataPath);
+  if(!viewerPath)throw new Error('Sign in with your full name to load your jobs');
+  let r;
+  /* Download this person's file only. The office data.json is a shell and is not a fallback. */
+  if(data&&dataRev){try{const m=await A.metaAbs(viewerPath);if(m&&m.rev===dataRev)return {same:true}}catch(e){if(isAuthErr(e))throw e}}
+  try{r=await A.readAbs(viewerPath)}catch(e){if(isAuthErr(e))throw e;if(/HTTP 4(03|22)|path_root|no_permission|restricted|invalid_root|not_found/.test(e.message))throw new Error(NOACC);throw e}
+  if(!r)throw new Error('No schedule is published for this sign-in.');
+  let d;try{d=JSON.parse(r.text)}catch(e){throw new Error('The schedule data file in Dropbox is not valid JSON')}
+  pagesApplyScope(d);adoptScopeRole(d);check(d);d.__rev=r.rev||null;return d}
  const url=sourceUrl();if(!url)throw new Error('setup');
  try{hwsNoteViewer()}catch(e){}
  const headers={'X-HWS-Revalidate':'1'};
@@ -2818,6 +2973,7 @@ async function fetchData(){
  const stale=r.headers.get('X-HWS-Cache')==='stale';
  const netFail=r.headers.get('X-HWS-Net')==='0';
  const txt=await r.text();let d;try{d=JSON.parse(txt)}catch(e){throw new Error('The local data file is not JSON')}
+ pagesApplyScope(d);adoptScopeRole(d);
  return {doc:check(d),stale,netFail}}
 /* force skips the browser-offline short circuit (Retry now, resume, the 60s poll).
    A stored hws-net value never skips a call: that flag used to freeze the hub after one blip. */
@@ -2966,7 +3122,7 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
   if(window.HWSOffline&&!await HWSOffline.sessionOk())await HWSOffline.gate();
   if(window.HWSOffline){try{const c=await HWSOffline.loadCopy();if(c&&c.data&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt||null;dataRev=c.rev||null}}catch(e){}}
   else if(cfg.source){try{const c=await idbGet('data');if(c&&c.data&&c.src===srcKey()&&c.data.jobs&&Object.keys(c.data.jobs).length){data=c.data;syncedAt=c.syncedAt;dataRev=c.rev||null}}catch(e){}}
-  if(data||sourceUrl()||(cfg.source=='dropbox-api'&&signedIn())){try{await sync(true)}catch(e){}}
+  if(data||sourceUrl()||canLoad()){try{await sync(true)}catch(e){}}
   else if(needsSignIn()){lastErr=null;paint()}
   else if(!data&&(!navigator.onLine||down())){lastErr='Offline, no saved copy on this phone yet';paint()}
   try{hwsNoteViewer()}catch(e){}
@@ -2982,8 +3138,11 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
   if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))} <button type="button" class="small" id="retry">Retry now</button></span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
   if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
   return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="syn">Sync now</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`},
- errorHtml(e){const setup=!data;const ask=setup&&!canLoad();const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();
-  const msg=(e&&e.message&&e.message!='setup')?e.message:(lastErr&&lastErr.indexOf('Offline')<0?lastErr:'');
+ errorHtml(e){const setup=!data;const msg=(e&&e.message&&e.message!='setup')?e.message:(lastErr&&lastErr.indexOf('Offline')<0?lastErr:'');
+  if(hostedMode())return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Could not load schedule':'Could not load'}</h3><div class="pb">
+  ${msg?`<div class="note">${esc2(msg)}</div>`:''}<p>Jobs load from your Harswells account on this site after you sign in. Dropbox is not used on the hosted phone shell.</p>
+  <p><button class="pri" type="button" id="syn">Try again</button></p></div></div>`;
+  const ask=setup&&!canLoad();const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();
   return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${ask?NEED:(setup?'Connect your schedule data':'Could not load')}</h3><div class="pb">
   ${msg?`<div class="note">${esc2(msg)}</div>`:''}<p>${ask?'Load the Harswells job schedules from the company Dropbox. Nothing is stored in the app until you do.':'This app shows and edits the Harswells job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.'}</p>
   <form id="srcf" action="#/" method="get">${dbxOk?`<p><button class="pri load-dbx" type="button">${ask||HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Harswells schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
@@ -5720,6 +5879,9 @@ function applyJobLogs(state,ops,ctx){
  const stamp=String(ctx.stamp||'').slice(0,40);
  const day=function(v){const s=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:String(ctx.today||stamp||'').slice(0,10)};
  const clean=function(v){return String(v||'').replace(/\$\s*\d[\d,]*(?:\.\d+)?/g,' ').replace(/\b\d[\d,]*(?:\.\d+)?\s*dollars?\b/gi,' ').replace(/\s+/g,' ').trim().slice(0,4000)};
+ const v2=!!(ctx.daily_log_v2===true||(typeof DATA!=='undefined'&&DATA&&DATA.common&&DATA.common.daily_log_v2===true));
+ const fold=function(old,neu){old=String(old||'').trim();neu=String(neu||'').trim();if(!neu)return old;if(!old||neu===old)return old||neu;if(old.indexOf(neu)>=0)return old;if(neu.indexOf(old)>=0)return neu;return old+'\n'+neu};
+ const dayId=function(slug,when){return 'tl-'+String(slug||'').toLowerCase().replace(/[^a-z0-9-]/g,'')+'-'+String(when||'').slice(0,10)};
  const fileRefs=function(list){
   if(!Array.isArray(list))return [];
   const out=[];
@@ -5765,6 +5927,25 @@ function applyJobLogs(state,ops,ctx){
  (ops||[]).forEach(function(op){
   if(!op||op.op!=='job_log')return;
   const action=op.action==='edit'||op.action==='delete'?op.action:'add';
+  if(v2&&action!=='delete'){
+   const when=day(op.date);
+   const id=dayId(ctx.slug,when);
+   const text=clean(op.text);
+   if(!text)throw new EditError('add some text');
+   let row=by[id]||list.filter(function(n){return n&&n.source==='Hub (typed)'&&String(n.date||'').slice(0,10)===when})[0];
+   if(!row){
+    row={id:id,date:when,title:text,text:text,summary:text,source:'Hub (typed)',who:who,author:who,time:stamp,ref:''};
+    list.push(row);by[id]=row;
+   }else{
+    const folded=fold(row.text||row.title||'',text);
+    row.id=id;row.date=when;row.text=folded;row.title=folded;row.summary=folded;row.source='Hub (typed)';
+    if(!row.who){row.who=who;row.author=who}
+    by[id]=row;
+   }
+   stampRow(row,op);
+   msgs.push('job log');
+   return;
+  }
   const id=String(op.id||'').trim();
   if(!/^[A-Za-z0-9_-]{1,40}$/.test(id))throw new EditError('log not found');
   if(action==='add'){
@@ -6091,6 +6272,8 @@ function create(o){const data=o.data,version=o.version,extra=o.extra||data.extra
   getList(){const L=Object.assign({},data.list,{built:data.built});L.jobs=data.list.jobs.map(row=>{const r=rec.jobs[row.slug];if(!r||(!r.remote.length&&!r.log.some(e=>!e.undone)&&!((r.live||{}).entries||[]).length))return row;const J=S.getJob(row.slug);return J?E.listRow(J,row):row});return L},
   pending(slug){return pendingCount(rec.jobs[slug])},
   pendingTotal(){return Object.keys(rec.jobs).reduce((a,s)=>a+S.pending(s),0)},
+  /* A note the server already stored is no longer an unsent edit. */
+  dropOps(slug, pred){const r=rec.jobs[slug];if(!r||!Array.isArray(r.log)||typeof pred!=='function')return 0;const next=r.log.filter(e=>!(e&&e.kind==='edit'&&Array.isArray(e.ops)&&e.ops.length&&e.ops.every(pred)));const n=r.log.length-next.length;if(!n)return 0;r.log=next;save();delete cache[slug];return n},
   editedJobs(){return Object.keys(rec.jobs).filter(s=>S.pending(s)||rec.jobs[s].remote.length)},
   diff(slug){const b=baseOf(slug);const c=get(slug);const o={};b.rows.forEach(r=>o[r.id]=r);const n={};c.state.rows.forEach(r=>n[r.id]=r);
    const out={added:[],deleted:[],changed:[]};c.state.rows.forEach(r=>{if(!o[r.id]){out.added.push(r);return}E.FIELDS.forEach(f=>{if(f=='phase')return;if(String(o[r.id][f])!==String(r[f]))out.changed.push({id:r.id,task:r.task,field:f,before:o[r.id][f],after:r[f]})})});
@@ -7063,7 +7246,7 @@ function findPerson(who) {
   }
   return hits.length === 1 ? hits[0] : null;
 }
-const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1, admin: 1, 'warranty coordinator': 1, staff: 1, office: 1, investor: 1, sub: 1, trade: 1, super: 1, superintendent: 1};
+const HWS_ROLES = {owner: 1, pm: 1, member: 1, field: 1, client: 1, guest: 1, admin: 1, 'warranty coordinator': 1, warranty: 1, accounting: 1, draftsman: 1, inventory: 1, staff: 1, office: 1, investor: 1, sub: 1, trade: 1, super: 1, superintendent: 1};
 const THREAD_MODS = {messages: 1, slack: 1};
 const CONTACT_PHONE = {phone: 1, phones: 1, tel: 1, sms: 1};
 const CONTACT_EMAIL = {email: 1, emails: 1, mailto: 1};
@@ -7075,6 +7258,43 @@ function homeRolesTable() {
   try { return (typeof DATA !== 'undefined' && DATA && DATA.common && DATA.common.home_roles) || {}; }
   catch (e) { return {}; }
 }
+function ownerFull(value) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  if (text.indexOf('@') >= 0 && text.indexOf(' ') < 0 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(text)) return text.toLowerCase();
+  const parts = text.split(' ');
+  if (parts.length < 2 || parts.some(function (part) { return part.length < 2; })) return '';
+  return text.toLowerCase();
+}
+function ownerCatchAll(pattern) {
+  const text = String(pattern || '').trim();
+  if (!text || text === '.*' || text === '.+' || text === '*' || text === '^.*$' || text === '^.*' || text === '.*$') return true;
+  try {
+    const compiled = new RegExp(text, 'i');
+    const probes = ['a', 'zz', 'qx'];
+    let hits = 0;
+    probes.forEach(function (probe) { if (compiled.test(probe)) hits += 1; });
+    return hits >= 2;
+  } catch (e) { return true; }
+}
+function ownerLiteral(pattern) {
+  let text = String(pattern || '').trim();
+  if (text.charAt(0) === '^') text = text.slice(1);
+  if (text.charAt(text.length - 1) === '$') text = text.slice(0, -1);
+  text = text.replace(/\\ /g, ' ').replace(/\s+/g, ' ').trim();
+  if (/[.+*?|()\[\]{}\\]/.test(text)) return '';
+  return text;
+}
+function ownerIdentityHit(pattern, blob) {
+  if (ownerCatchAll(pattern)) return false;
+  const literal = ownerLiteral(pattern);
+  const want = ownerFull(literal);
+  if (!want) return false;
+  const text = String(blob || '');
+  if (ownerFull(text) === want) return true;
+  const escaped = literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp('(^|[^A-Za-z0-9])' + escaped + '([^A-Za-z0-9]|$)', 'i').test(text);
+}
 function matchRoleTable(table, who) {
   if (!table || !who) return '';
   const blob = String(who);
@@ -7082,8 +7302,14 @@ function matchRoleTable(table, who) {
   for (let i = 0; i < keys.length; i++) {
     const name = String(keys[i]).trim();
     if (!name) continue;
+    const role = String(table[keys[i]] || '').trim().toLowerCase();
+    if (role === 'owner' || role === 'owner_money' || role === 'partner' || role === 'admin') {
+      if (ownerIdentityHit(name, blob)) return role;
+      continue;
+    }
+    if (ownerCatchAll(name)) continue;
     const re = new RegExp('\\b' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
-    if (re.test(blob)) return String(table[keys[i]] || '').trim().toLowerCase();
+    if (re.test(blob)) return role;
   }
   return '';
 }
@@ -7095,13 +7321,44 @@ function sessionOwner(who) {
   try { return typeof attIsOwner === 'function' && !!attIsOwner(); }
   catch (e) { return false; }
 }
+function canonHostedRole(raw) {
+  var role = String(raw || '').trim().toLowerCase();
+  if (role === 'warranty coordinator' || role === 'warranty desk') return 'warranty';
+  return role;
+}
 function roleOf(who) {
+  var explicit = who != null && String(who).trim() !== '';
   who = String(who == null ? currentWhoName() : who).replace(/\s+/g, ' ').trim();
+  try {
+    var viewer = window.HWS_VIEWER;
+    if (viewer && viewer.role) {
+      var mine = String(viewer.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      var asked = who.toLowerCase();
+      // roleOf() with no name is the signed-in person. A company-file guest
+      // must not replace that membership, including a sub.
+      if (!explicit || !mine || asked === mine) {
+        var hosted = canonHostedRole(viewer.role);
+        if (HWS_ROLES[hosted]) return hosted;
+      }
+    }
+  } catch (e) {}
+  if (!explicit) {
+    try {
+      var block = typeof scopeBlock === 'function' ? scopeBlock() : null;
+      if (block && block.kind) {
+        var kind = canonHostedRole(block.kind);
+        if (HWS_ROLES[kind]) return kind;
+      }
+    } catch (e2) {}
+  }
   if (!who) return 'guest';
   const person = findPerson(who);
   if (person) {
     const role = String(person.role || '').trim().toLowerCase();
-    return HWS_ROLES[role] ? role : 'guest';
+    const named = HWS_ROLES[role] ? role : '';
+    if (named === 'owner' && !ownerFull(_personName(person))) {
+      /* A first name on the people list does not make this sign-in the owner. */
+    } else if (named) return named;
   }
   const raw = matchRoleTable(homeRolesTable(), who);
   if (raw === 'customer' || raw === 'investor') return 'guest';
@@ -7110,6 +7367,8 @@ function roleOf(who) {
   if (raw === 'field') return 'field';
   if (raw === 'member') return 'member';
   if (raw === 'client') return 'client';
+  if (raw === 'sub' || raw === 'trade') return 'sub';
+  if (raw === 'super' || raw === 'superintendent') return 'super';
   if (raw === 'guest') return 'guest';
   if (sessionOwner(who)) return 'owner';
   return 'guest';
@@ -7689,11 +7948,16 @@ function scopeBlock() {
 }
 function scopeKind() {
   const block = scopeBlock();
-  return (block && block.kind) || 'guest';
+  if (block && block.kind) return block.kind;
+  try {
+    if (window.HWS_VIEWER && HWS_VIEWER.role) return String(HWS_VIEWER.role);
+  } catch (e) {}
+  return 'guest';
 }
 function jobAllowed(slug) {
   const block = scopeBlock();
-  if (!block || !block.jobs) return true;
+  // null jobs means every job (owner, office). An empty list means none.
+  if (!block || block.jobs == null) return true;
   return block.jobs.indexOf(slug) >= 0;
 }
 function jobsEmptyText(fallback) {
@@ -11469,6 +11733,9 @@ try {
   function pictureSrc(path, slug) {
     const raw = String(path || "").trim();
     if (!raw || raw === "pending" || raw.indexOf("..") >= 0 || /[\\]/.test(raw)) return "";
+    /* A hosted page can use the gated /api/ route. Pages has no server, so that
+       same src has to become a signed Dropbox link. */
+    if (raw.indexOf("/api/") === 0 && pictureOnBox()) return raw;
     if (/^https?:\/\//i.test(raw)) {
       if (/dropbox\.com\/home/i.test(raw)) return "";
       return raw;
@@ -11590,10 +11857,10 @@ try {
   }
   function transcriptLines(note) {
     if (note && Array.isArray(note.lines) && note.lines.length) return note.lines.map(function (row) {
-      return {t: row && row.t || "", note: row && (row.note || row.said) || "", frame: row && row.frame || ""};
+      return {t: row && row.t || "", note: row && (row.note || row.said) || "", frame: row && (row.play || row.frame) || ""};
     });
     return (note && note.stills || []).map(function (row) {
-      return {t: row && row.t || "", note: row && (row.said || row.caption) || "", frame: row && row.frame || ""};
+      return {t: row && row.t || "", note: row && (row.said || row.caption) || "", frame: row && (row.play || row.frame) || ""};
     });
   }
   function noteTranscriptHtml(note, slug) {
@@ -11651,6 +11918,25 @@ try {
     const href = dropboxHref(path);
     if (!href) return "";
     return '<a class="qnote-link" href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label) + "</a>";
+  }
+  function fieldDetailHtml(note, slug) {
+    if (!note) return "";
+    const useSlug = slug || note.slug;
+    const stills = (note.stills || []).map(function (still) {
+      const src = stillSrc(still && still.frame, useSlug);
+      const caption = cleanNote(((still && still.t) || "") + " " + ((still && (still.caption || still.said)) || "")).trim();
+      const img = src ? '<img src="' + esc(src) + '" alt="">' : "";
+      if (!caption && !img) return "";
+      return '<figure class="qnote-still">' + img + (caption ? "<figcaption>" + esc(caption) + "</figcaption>" : "") + "</figure>";
+    }).join("");
+    const tasks = (note.actions || []).map(function (task) {
+      if (!task || !task.id) return "";
+      const done = task.status === "done";
+      return '<label class="qtask"><input type="checkbox" data-qnote-task="' + esc(task.id) + '"' + (done ? " checked" : "") + '><span>' + esc(cleanNote(task.text || "")) + '</span><input data-qnote-assign="' + esc(task.id) + '" type="text" placeholder="Assignee" value="' + esc(cleanNote(task.assignee || "")) + '"><input data-qnote-due="' + esc(task.id) + '" type="date" value="' + esc(String(task.due || "").slice(0, 10)) + '"></label>';
+    }).join("");
+    const links = fileLink(note.audio, "Audio") + fileLink(note.video, "Video") + fileLink(note.pdf, "PDF");
+    const stillBlock = stills ? '<div class="qnote-stills">' + stills + "</div>" : "";
+    return (links ? '<div class="qnote-links">' + links + "</div>" : "") + stillBlock + tasks;
   }
   function fieldCard(note, slug) {
     const when = cleanNote(note.at || note.captured_at || "");
@@ -12637,6 +12923,10 @@ try {
         pollVideo: opts.pollVideo || hooks.pollVideo
       });
     }
+    if (opts.note && text) {
+      const body = savedText(opts.note);
+      if (body) text.value = body;
+    }
     function chosenJob() {
       const sel = host.querySelector("[data-qnote-job]");
       if (sel && sel.value) {
@@ -12784,9 +13074,18 @@ try {
         }).catch(function () { showPending(); });
         return;
       }
+      rememberSaved(note);
       commitHub(note);
       if (hasArt) flatBlob().then(function (blob) { return rollAfter(blob); }).catch(function () {});
       done(false);
+      if (!hasArt && note.slug) {
+        const send = opts.postFile || postNoteFile;
+        send(note.slug, note, "", doc).then(function (res) {
+          const data = res && res.data;
+          if (!(res && res.ok && data && data.ok !== false) || data.pending) return;
+          acceptServerNote(note);
+        }).catch(function () {});
+      }
     }
     syncInspect();
     syncHist();
@@ -12862,9 +13161,64 @@ try {
       });
     }
   }
+  const savedNotes = {};
+  function rememberSaved(note) {
+    if (note && note.id) savedNotes[note.id] = note;
+  }
+  function savedText(note) {
+    if (!note) return "";
+    if (note.text) return String(note.text);
+    const marks = note.markup && note.markup.annotations;
+    if (!marks || !marks.length) return "";
+    for (let i = 0; i < marks.length; i++) {
+      if (marks[i] && marks[i].kind === "text" && marks[i].text) return String(marks[i].text);
+    }
+    return "";
+  }
+  function hubLogRow(note) {
+    const when = String((note && (note.created_at || note.at)) || "");
+    const body = String((note && (note.text || note.summary)) || "Field note").replace(/\s+/g, " ").trim();
+    const title = (body.split("\n")[0] || "Field note").slice(0, 120);
+    return {
+      date: when.slice(0, 10),
+      time: when.length >= 16 ? when.slice(11, 16) : "",
+      title: title,
+      text: (body || title).slice(0, 500),
+      source: "Field Note",
+      src: "field_note",
+      ref: String((note && note.id) || "").slice(0, 40),
+      who: String((note && note.who) || "").slice(0, 80)
+    };
+  }
+  function acceptServerNote(note) {
+    if (!note || !note.id || !note.slug) return;
+    try {
+      const job = (typeof DATA !== "undefined" && DATA && DATA.jobs) ? DATA.jobs[note.slug] : null;
+      if (job) {
+        const notes = Array.isArray(job.notes) ? job.notes : [];
+        if (!notes.some(function (row) { return row && row.id === note.id; })) job.notes = notes.concat([note]);
+        if (note.kind !== "question") {
+          const logs = Array.isArray(job.logs) ? job.logs : [];
+          if (!logs.some(function (row) { return row && String(row.ref || "") === String(note.id); })) job.logs = logs.concat([hubLogRow(note)]);
+        }
+      }
+    } catch (e) {}
+    try {
+      if (typeof STORE !== "undefined" && STORE && STORE.dropOps) {
+        STORE.dropOps(note.slug, function (op) {
+          return op && op.op === "quick_note" && op.note && String(op.note.id) === String(note.id);
+        });
+      }
+      if (typeof STORE !== "undefined" && STORE && STORE.invalidate) STORE.invalidate();
+      if (typeof STORE !== "undefined" && STORE && STORE.getJob && typeof J !== "undefined" && J && J.slug === note.slug) J = STORE.getJob(note.slug);
+    } catch (e2) {}
+    if (typeof renderJob === "function") { try { renderJob(); } catch (err) {} }
+  }
   function openSavedNote(note) {
     if (!note || !note.id) return;
-    const saved = Object.assign({}, note);
+    const kept = savedNotes[note.id] || note;
+    const saved = Object.assign({}, kept);
+    if (!saved.text) saved.text = savedText(kept);
     if (saved.kind !== "question") saved.kind = saved.kind || "note";
     if (noteHasFile(saved) && !saved.markup) { openNoteDetail(saved); return; }
     noteOpen(saved);
@@ -12912,6 +13266,7 @@ try {
   root.noteButtonHtml = noteButtonHtml;
   root.noteSummaryHtml = noteSummaryHtml;
   root.noteTranscriptHtml = noteTranscriptHtml;
+  root.fieldDetailHtml = fieldDetailHtml;
   root.bindTranscript = bindTranscript;
   root.openSavedNote = openSavedNote;
   root.noteFieldHomeHtml = noteFieldHomeHtml;
@@ -12938,7 +13293,7 @@ try {
     drawingFromMarkup: drawingFromMarkup, markupDoc: markupDoc, separateSave: separateSave, reopenDrawing: reopenDrawing,
     MAX_ZOOM: MAX_ZOOM, HIT_PX: HIT_PX,
     sheetHtml: sheetHtml, bindSheet: bindSheet, listHtml: listHtml, bindList: bindList, questionsFor: questionsFor,
-    noteSummaryHtml: noteSummaryHtml, noteTranscriptHtml: noteTranscriptHtml, bindTranscript: bindTranscript,
+    noteSummaryHtml: noteSummaryHtml, noteTranscriptHtml: noteTranscriptHtml, fieldDetailHtml: fieldDetailHtml, bindTranscript: bindTranscript,
     openSavedNote: openSavedNote,
     noteQuestionRows: noteQuestionRows, noteTodoRows: noteTodoRows, noteHomeItems: noteHomeItems
   };
@@ -13980,7 +14335,7 @@ function wdCount(a,b){if(!a||!b||b<a)return 0;let n=0;for(let s=a;s<=b;s=addD(s,
 function syncOn(){return !!(SY.A&&SY.A.ready())}
 /* live mode = hosted app signed in to Dropbox: every edit saves to the shared Dropbox right away (live.js), no check-out */
 function liveOn(){return MODE!=='share'&&SY.kind=='dropbox'&&syncOn()&&HWSSync.CFG.live!==false&&!!window.HWSLive}
-function canEditJob(){if(!J||!STORE)return false;if(liveOn())return true;if(syncOn()){const co=STORE.checkout(J.slug);return !!(co&&co.kind==SY.kind)}return true}
+function canEditJob(){if(!J||!STORE)return false;const block=typeof scopeBlock==='function'?scopeBlock():null;if(block&&block.schedule==='read')return false;if(liveOn())return true;if(syncOn()){const co=STORE.checkout(J.slug);return !!(co&&co.kind==SY.kind)}return true}
 function edit(ops,okMsg){if(!canEditJob()){needCheckout();return}
  try{const r=STORE.edit(J.slug,ops);J=r.J;renderJob();toast(okMsg||r.result.summary);liveSaved(J.slug)}catch(e){toast('Not saved: '+e.message);renderJob()}}
 function undo(){if(!J)return;if(!canEditJob()){needCheckout();return}try{const r=STORE.undo(J.slug);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}}
@@ -14005,7 +14360,7 @@ function topHtml(page){const jobs=orderedJobs();const n=STORE?STORE.pendingTotal
  ${picker}
  <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
  <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe())+(STORE&&STORE.live?' · live':''):'saved in this browser'}</span></header>${bannerHtml()}`}
-function bindTop(){const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value)};
+function bindTop(){if(window.hwsMountAccount)window.hwsMountAccount();const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value)};
  const menu=$('#jmenu');if(menu)menu.onclick=e=>{e.preventDefault();openJobMenu()};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
@@ -14400,9 +14755,15 @@ function fieldNoteHref(path){
 }
 function fieldNoteLinks(x){if(!isFieldNoteLog(x))return '';const bits=[];if(x.audio)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.audio))}" target="_blank" rel="noopener">Audio</a>`);if(x.video)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.video))}" target="_blank" rel="noopener">Video</a>`);if(x.pdf)bits.push(`<a class="qloglink" href="${esc(fieldNoteHref(x.pdf))}" target="_blank" rel="noopener">PDF</a>`);return bits.join('')}
 function logNoteBtn(x){if(!isFieldNoteLog(x))return '';const id=String((x&&(x.ref||x.id))||'');if(!id)return '';return `<button type="button" class="msgopen" data-log-note="${esc(id)}">Open</button>`}
-function logNoteRecord(id){const pools=[];try{const job=typeof J!=='undefined'?J:null;if(job){pools.push(job.notes||[]);pools.push(job.field_notes||[])}}catch(e){}for(let p=0;p<pools.length;p++){const rows=pools[p];if(!Array.isArray(rows))continue;for(let i=0;i<rows.length;i++){if(rows[i]&&String(rows[i].id)===String(id))return rows[i]}}const row=((typeof J!=='undefined'&&J&&J.logs)||[]).filter(function(x){return x&&(String(x.ref||'')===String(id)||String(x.id||'')===String(id))})[0]||{};return {id:id,kind:'note',slug:(typeof J!=='undefined'&&J&&J.slug)||'',text:row.text||row.title||row.summary||'',summary:row.summary||'',image:row.image,pdf:row.pdf,audio:row.audio,video:row.video,transcript:row.transcript,stills:row.stills,lines:row.lines,ai_summary:row.ai_summary,markup:row.markup}}
+function logNoteRecord(id){const pools=[];try{const job=typeof J!=='undefined'?J:null;if(job){pools.push(job.notes||[]);pools.push(job.field_notes||[])}}catch(e){}for(let p=0;p<pools.length;p++){const rows=pools[p];if(!Array.isArray(rows))continue;for(let i=0;i<rows.length;i++){if(rows[i]&&String(rows[i].id)===String(id))return rows[i]}}const row=((typeof J!=='undefined'&&J&&J.logs)||[]).filter(function(x){return x&&(String(x.ref||'')===String(id)||String(x.id||'')===String(id))})[0]||{};return {id:id,kind:'note',slug:(typeof J!=='undefined'&&J&&J.slug)||'',text:row.text||row.title||row.summary||'',summary:row.summary||'',image:row.image,pdf:row.pdf,audio:row.audio,video:row.video,transcript:row.transcript,stills:row.stills,lines:row.lines,actions:row.actions,ai_summary:row.ai_summary,markup:row.markup}}
+function fieldNoteDetail(x){if(!isFieldNoteLog(x))return '';const id=String((x&&(x.ref||x.id))||'');const found=id?logNoteRecord(id):null;const note=Object.assign({}, found||{}, x||{});if(found&&Array.isArray(found.actions)&&found.actions.length)note.actions=found.actions;if(!(x&&x.stills&&x.stills.length)&&found&&Array.isArray(found.stills))note.stills=found.stills;const slug=(typeof J!=='undefined'&&J&&J.slug)||note.slug||'';const draw=typeof fieldDetailHtml==='function'?fieldDetailHtml:(window.HWSNotes&&HWSNotes.fieldDetailHtml);try{return draw?draw(note, slug):''}catch(e){return ''}}
 function fieldNoteBody(x){if(!isFieldNoteLog(x))return '';const note=x&&x.ai_summary?x:logNoteRecord((x&&(x.ref||x.id))||'');const summary=typeof noteSummaryHtml==='function'?noteSummaryHtml(note.ai_summary?note:x):'';const spoken=typeof noteTranscriptHtml==='function'?noteTranscriptHtml(note.transcript||note.audio||note.lines?note:x,(typeof J!=='undefined'&&J&&J.slug)||''):'';return summary+spoken}
-function bindLogNotes(M){if(!M)return;M.querySelectorAll('[data-log-note]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();const note=logNoteRecord(b.getAttribute('data-log-note'));if(typeof openSavedNote==='function')openSavedNote(note)}});if(typeof bindTranscript==='function')bindTranscript(M)}
+function isWalkLog(x){return !!(x&&(x.walkthrough||x.play||(isFieldNoteLog(x)&&x.video)))}
+function walkPoster(x){const stills=(x&&x.stills)||[];for(let i=0;i<stills.length;i++){const frame=stills[i]&&(stills[i].play||stills[i].frame)||'';if(String(frame).indexOf('/api/')===0||/^https?:/i.test(frame))return String(frame)}if(x&&x.image&&(String(x.image).indexOf('/api/')===0||/^https?:/i.test(x.image)))return String(x.image);return ''}
+function walkCardHtml(x){if(!isWalkLog(x))return '';const id=String((x&&(x.ref||x.id))||'');const card=id.indexOf('walk-')===0?id:('walk-'+(id||'note'));const play=String((x&&x.play)||'');const poster=walkPoster(x);const when=[x.date,x.time].filter(Boolean).join(' ');const who=x.who||'';const loc=(x.lat!=null&&x.lon!=null&&x.lat!==''&&x.lon!=='')?(x.lat+', '+x.lon):'';const thumb=poster?`<img class="walk-thumb" alt="Walkthrough still" src="${esc(poster)}">`:'';const video=play?`<video class="walk-player" controls playsinline preload="none" data-walk-src="${esc(play)}" data-walk-video></video>`:'';const meta=[when,who,loc].filter(Boolean).join(' · ');const blurb=String(x.summary||x.text||'').split('\n')[0];const spoken=x.transcript?`<p class="walk-transcript">${esc(x.transcript)}</p>`:'';return `<article class="walk-card" id="${esc(card)}" data-walk-card="1"><h3>Walkthrough</h3>${thumb}${video}<p class="walk-kept">Kept with this job.</p>${meta?`<p class="walk-meta">${esc(meta)}</p>`:''}${blurb?`<p class="walk-summary-line">${esc(blurb)}</p>`:''}${spoken}${fieldNoteBody(x)}${isFieldNoteLog(x)?fieldNoteLinks(x)+logNoteBtn(x):''}${isFieldNoteLog(x)?fieldNotePicture(x):''}${fieldNoteDetail(x)}</article>`}
+function armWalkVideo(video){if(!video)return;const src=video.getAttribute('data-walk-src')||'';if(!src||video.getAttribute('src'))return;video.src=src}
+function focusWalkCard(M){if(!M)return;let focus='';try{focus=String((parseHash().focus)||'')}catch(e){focus=''}if(!focus)return;const parts=focus.split('@');const id=parts[0];const stamp=parts[1]||'';if(!id)return;const card=M.querySelector('[id="'+id.replace(/"/g,'')+'"]');if(!card)return;try{card.scrollIntoView({block:'start'})}catch(e2){}const video=card.querySelector('video');if(!video||!stamp)return;armWalkVideo(video);const bits=stamp.split(':');const sec=(+bits[0]||0)*60+(+bits[1]||0);const seek=function(){try{video.currentTime=sec}catch(e3){}};if(video.readyState>=1)seek();else video.addEventListener('loadedmetadata',seek,{once:true})}
+function bindLogNotes(M){if(!M)return;M.querySelectorAll('[data-log-note]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();const note=logNoteRecord(b.getAttribute('data-log-note'));if(typeof openSavedNote==='function')openSavedNote(note)}});M.querySelectorAll('video[data-walk-src]').forEach(function(video){video.addEventListener('play',function(){armWalkVideo(video)})});if(typeof bindTranscript==='function')bindTranscript(M)}
 function notePictureSrc(path){
  if(window.HWSNotes&&typeof HWSNotes.pictureSrc==='function'){
   const slug=(typeof J!=='undefined'&&J&&J.slug)||'';
@@ -14434,9 +14795,23 @@ function logPicturePath(x){
 function fieldNotePicture(x){if(!showLog(x))return '';return notePictureHtml(logPicturePath(x))}
 function logTodayAZ(){const d=new Date(Date.now()-7*3600e3),p=n=>String(n).padStart(2,'0');return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())}
 function logHubOpen(){let mode='share';try{if(typeof MODE!=='undefined'&&MODE)mode=MODE}catch(e){}return mode==='live'||mode==='pwa'}
+function logV2(){try{return !!(typeof DATA!=='undefined'&&DATA&&DATA.common&&DATA.common.daily_log_v2===true)}catch(e){return false}}
+function logDayId(slug,day){return 'tl-'+String(slug||'').toLowerCase().replace(/[^a-z0-9-]/g,'')+'-'+String(day||'').slice(0,10)}
+function logYesterday(day){if(typeof addD==='function')return addD(day,-1);const d=new Date(String(day||'')+'T12:00:00Z');if(isNaN(d.getTime()))return '';d.setUTCDate(d.getUTCDate()-1);const p=n=>String(n).padStart(2,'0');return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())}
+function logSessionRole(){
+ try{
+  if(window.HWS_VIEWER&&HWS_VIEWER.role)return String(HWS_VIEWER.role).trim().toLowerCase();
+ }catch(e){}
+ return '';
+}
 function logWriteAllowed(){
  const ok={owner:1,office:1,pm:1,field:1,staff:1,member:1,admin:1,administrator:1,super:1,superintendent:1,accounting:1,sub:1,crew:1};
  const block={guest:1,investor:1,client:1,customer:1,warranty:1};
+ const session=logSessionRole();
+ if(session){
+  if(block[session])return false;
+  if(ok[session])return true;
+ }
  const blockKind=typeof scopeBlock==='function'?scopeBlock():null;
  if(blockKind&&blockKind.kind){
   const kind=String(blockKind.kind).toLowerCase();
@@ -14452,7 +14827,20 @@ function logWriteAllowed(){
 let logEditId='',logEditDate='',logEditText='';
 function isTypedLog(x){return !!(x&&x.source==='Hub (typed)')}
 function logMine(x){let who='';try{who=(typeof STORE!=='undefined'&&STORE&&STORE.who&&STORE.who())||''}catch(e){}const author=String((x&&(x.who||x.author))||'');return !!(who&&author&&who.toLowerCase()===author.toLowerCase())}
-function logTypedMeta(x){const bits=[];if(x&&x.pending)bits.push('Pending approval');bits.push('Hub (typed)',String((x&&(x.who||x.author))||'').trim(),String((x&&x.time)||'').trim());return bits.filter(Boolean).join(' · ')}
+function logPublicName(name){const s=String(name||'').trim();if(!s||s.indexOf('@')>=0||/^user:/i.test(s))return '';return s}
+function logPublicWhen(ts){
+ const s=String(ts||'').trim();
+ if(!/^\d{4}-\d{2}-\d{2}T/.test(s))return s;
+ const when=new Date(s);
+ if(isNaN(when.getTime()))return '';
+ try{
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Phoenix',weekday:'short',month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true}).formatToParts(when);
+  const get=function(type){const hit=parts.filter(function(p){return p.type===type})[0];return hit?hit.value:''};
+  const clock=get('weekday')+' '+get('month')+'/'+get('day')+', '+get('hour')+':'+get('minute')+' '+(get('dayPeriod')||'').toUpperCase()+' AZ';
+  return /^\d{4}-\d{2}-\d{2}T/.test(clock)?'':clock;
+ }catch(e){return ''}
+}
+function logTypedMeta(x){const bits=[];if(x&&x.pending)bits.push('Pending approval');bits.push('Hub (typed)',logPublicName((x&&(x.who||x.author))||''),String((x&&x.time)||'').trim());return bits.filter(Boolean).join(' · ')}
 function logTypedActs(x){if(!logMine(x)||!logHubOpen()||!logWriteAllowed()||!x.id)return '';return `<div class="logacts"><button type="button" class="msgopen" data-log-open="${esc(x.id)}">Open</button><button type="button" class="fchip" data-log-edit="${esc(x.id)}">Edit</button><button type="button" class="fchip" data-log-del="${esc(x.id)}">Delete</button></div>`}
 function logSavedFiles(x){const files=Array.isArray(x&&x.files)?x.files:[];if(!files.length)return '';return '<div class="logfiles">'+files.map(function(f){const kind=f&&f.kind==='pdf'?'PDF':(f&&f.kind==='photo'?'Photo':'File');return '<span class="logfile">'+esc(kind)+' '+esc((f&&f.name)||'')+'</span>'}).join('')+'</div>'}
 function logAt(x){if(!window.HWSLocate||typeof HWSLocate.atTagHtml!=='function')return '';const name=(x&&(x.at_job||(x.location&&x.location.job_name)))||'';return name?HWSLocate.atTagHtml(name,x):''}
@@ -14694,34 +15082,68 @@ function logComposeHtml(mode){
  if(!logWriteAllowed())return '';
  const open=mode?(mode==='live'||mode==='pwa'):logHubOpen();
  if(!open)return '<p class="log-static" data-log-static>open the live hub to add a log</p>';
- const day=logEditId?(logEditDate||logTodayAZ()):logTodayAZ();
- const text=logEditId?logEditText:'';
+ const day=logEditId?(logEditDate||logTodayAZ()):(logEditDate||logTodayAZ());
+ const text=logEditId||logV2()?logEditText:'';
+ const yest=logV2()?'<button type="button" class="logyest" data-log-yesterday>Copy yesterday</button>':'';
+ const hist=logV2()?'<div class="loghistory" data-log-history></div>':'';
  return '<form class="logcompose" data-log-compose>'+
   '<label class="logdate">Date <input type="date" id="logdate" value="'+esc(day)+'" aria-label="Log date"></label>'+
   '<div class="logweather" data-log-weather>'+logWeatherInner()+'</div>'+
   '<textarea id="logtext" rows="3" placeholder="What happened today?" aria-label="What happened today?" enterkeyhint="done">'+esc(text)+'</textarea>'+
+  '<div class="logsave"><button type="submit" class="pri">Save</button>'+yest+'</div>'+
+  hist+
   '<div class="logattach" data-log-attach>'+
   '<label class="logpick">'+LOG_PICK_IC.camera+'<span>Camera</span><input type="file" accept="image/*" capture="environment" data-log-pick="camera" aria-label="Camera"></label>'+
   '<label class="logpick">'+LOG_PICK_IC.library+'<span>Photo Library</span><input type="file" accept="image/*" multiple data-log-pick="library" aria-label="Photo Library"></label>'+
   '<label class="logpick">'+LOG_PICK_IC.files+'<span>Files</span><input type="file" accept=".pdf,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.csv" multiple data-log-pick="files" aria-label="Files"></label>'+
-  '</div><div class="logthumbs" data-log-thumbs></div><button type="submit" class="pri">Save</button></form>';
+  '</div><div class="logthumbs" data-log-thumbs></div></form>';
 }
 function logGrow(ta){if(!ta)return;ta.style.height='auto';const next=Math.min(220,Math.max(44,ta.scrollHeight||44));ta.style.height=next+'px'}
 function logPaint(){if(typeof renderJob==='function'){renderJob();return}const M=document.getElementById('mod');if(M&&typeof mLogs==='function')mLogs(M)}
+function logFail(slug,keep,message){
+ try{const undone=STORE.undo(slug);if(undone&&undone.J)J=undone.J}catch(e){}
+ logEditId=keep.id||'';logEditDate=keep.date||'';logEditText=keep.text||'';logFiles=keep.files||[];logWeather=keep.weather||null;
+ logPaint();
+ if(typeof toast==='function')toast(message||'Not saved');
+}
 function logApply(op){
  if(!J||typeof STORE==='undefined'||!STORE||!STORE.edit){if(typeof toast==='function')toast('Not saved');return}
+ const v2=logV2();
+ const keep={id:logEditId,date:op.date||logEditDate,text:op.text||'',files:logFiles.slice(),weather:logWeather};
  try{const res=STORE.edit(J.slug,[op]);if(res&&res.J)J=res.J;if(typeof liveSaved==='function')liveSaved(J.slug)}
  catch(e){if(typeof toast==='function')toast('Not saved: '+e.message);logPaint();return}
- logEditId='';logEditDate='';logEditText='';logFiles=[];
+ if(!v2){logEditId='';logEditDate='';logEditText='';logFiles=[];logWeather=null}
  if(typeof navigator!=='undefined'&&navigator.onLine===false&&!op.weather&&op.action!=='delete')logWeatherPending.push(op.id);
- logWeather=null;
- logPaint();
+ if(!v2)logPaint();
  if(!logHubOpen()||typeof fetch!=='function'||!J||!J.slug)return;
  const slug=J.slug;
  fetch('/api/job/'+encodeURIComponent(slug)+'/edit',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({ops:[op]})}).then(function(r){return r.json().catch(function(){return {}}).then(function(body){return {ok:r.ok,status:r.status,body:body||{}}})}).then(function(ans){
-  if(ans.status===403){try{const undone=STORE.undo(slug);if(undone&&undone.J)J=undone.J}catch(e){}if(typeof toast==='function')toast((ans.body&&ans.body.error)||'Not allowed');logPaint();return}
   const result=ans.body&&ans.body.result;
   const pending=!!(result&&(result.pending||/pending approval/i.test(result.summary||'')));
+  const saved=ans.status>=200&&ans.status<300&&!(ans.body&&ans.body.ok===false)&&!pending;
+  if(v2){
+   if(!saved){
+    if(pending){
+     try{
+      const mark={op:'job_log',action:'edit',id:op.id,date:op.date,text:op.text,pending:true};
+      if(op.files)mark.files=op.files;
+      if(op.weather)mark.weather=op.weather;
+      if(op.location)mark.location=op.location;
+      const marked=STORE.edit(slug,[mark]);
+      if(marked&&marked.J)J=marked.J;
+     }catch(e){}
+     if(typeof toast==='function')toast('Waiting for approval');
+     logEditId='';logEditDate='';logEditText='';logFiles=[];logWeather=null;logPaint();
+     return;
+    }
+    logFail(slug,keep,(ans.body&&ans.body.error)||('Not saved'+(ans.status?' ('+ans.status+')':'')));
+    return;
+   }
+   logEditId='';logEditDate='';logEditText='';logFiles=[];logWeather=null;logPaint();
+   if(typeof toast==='function')toast('Log saved');
+   return;
+  }
+  if(ans.status===403){try{const undone=STORE.undo(slug);if(undone&&undone.J)J=undone.J}catch(e){}if(typeof toast==='function')toast((ans.body&&ans.body.error)||'Not allowed');logPaint();return}
   if(pending){
    try{
     const mark={op:'job_log',action:'edit',id:op.id,date:op.date,text:op.text,pending:true};
@@ -14737,7 +15159,10 @@ function logApply(op){
   }
   if(ans.body&&ans.body.ok===false&&ans.status&&ans.status!==404){if(typeof toast==='function')toast(ans.body.error||'Not saved');return}
   if(typeof toast==='function')toast('Log saved');
- }).catch(function(){if(typeof navigator!=='undefined'&&navigator.onLine===false&&typeof toast==='function')toast('Saved on this phone. It sends when you are back online.')});
+ }).catch(function(){
+  if(v2){logFail(slug,keep,'Not saved');return}
+  if(typeof navigator!=='undefined'&&navigator.onLine===false&&typeof toast==='function')toast('Saved on this phone. It sends when you are back online.');
+ });
 }
 function logSave(form){
  if(!logWriteAllowed()||!logHubOpen())return;
@@ -14746,7 +15171,7 @@ function logSave(form){
  const date=dateEl&&dateEl.value?dateEl.value:logTodayAZ();
  const text=textEl?textEl.value:'';
  if(!String(text||'').trim()){if(typeof toast==='function')toast('Add some text');return}
- const id=logEditId||('tl-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+ const id=logV2()?logDayId(J&&J.slug,date):(logEditId||('tl-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)));
  const action=logEditId?'edit':'add';
  const op={op:'job_log',action:action,id:id,date:date,text:text};
  delete op.who;delete op.author;
@@ -14755,6 +15180,56 @@ function logSave(form){
  if(logWeather&&(logWeatherHas(logWeather)||logWeather.source==='manual'))op.weather=logWeatherCopy(logWeather);
  if(window.HWSLocate&&typeof HWSLocate.attachOp==='function')HWSLocate.attachOp(op);
  logApply(op);
+}
+function logOpenDay(date){
+ if(!logV2()||!J)return;
+ const day=String(date||'').slice(0,10);
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(day))return;
+ const row=(J.logs||[]).filter(function(x){return isTypedLog(x)&&String(x.date||'').slice(0,10)===day})[0];
+ logEditId=row?String(row.id):logDayId(J.slug,day);
+ logEditDate=day;
+ logEditText=row?String(row.text||row.title||''):'';
+ logFiles=row?logKeptFiles(row):[];
+ logWeather=row&&row.weather?logWeatherCopy(row.weather):null;
+ logPaint();
+ const ta=document.getElementById('logtext');
+ if(ta)ta.focus();
+}
+function logCopyYesterday(){
+ const dateEl=document.querySelector('#logdate');
+ const day=dateEl&&dateEl.value?dateEl.value:logTodayAZ();
+ const prev=logYesterday(day);
+ const row=(J&&J.logs||[]).filter(function(x){return isTypedLog(x)&&String(x.date||'').slice(0,10)===prev})[0];
+ const text=row?String(row.text||row.title||'').trim():'';
+ if(!text){if(typeof toast==='function')toast('Nothing to copy from yesterday');return}
+ const ta=document.querySelector('#logtext');
+ if(ta){ta.value=text;logGrow(ta);ta.focus()}
+ logEditText=text;
+}
+function logLoadHistory(){
+ const host=document.querySelector('[data-log-history]');
+ if(!host||!logV2()||!J||!J.slug||typeof fetch!=='function')return;
+ const dateEl=document.querySelector('#logdate');
+ const day=dateEl&&dateEl.value?dateEl.value:logTodayAZ();
+ fetch('/api/job/'+encodeURIComponent(J.slug)+'/log-history?date='+encodeURIComponent(day),{credentials:'same-origin'}).then(function(r){return r.json().catch(function(){return {}})}).then(function(data){
+  const rows=data&&Array.isArray(data.history)?data.history:[];
+  host.innerHTML=rows.length?'<h3>History</h3>'+rows.map(function(h){
+   return '<button type="button" class="loghist" data-log-day="'+esc(h.day||day)+'">'+esc(logPublicName(h.actor)||'Someone')+' · '+esc(logPublicWhen(h.ts)||'')+'</button><p>'+esc(h.text||'')+'</p>';
+  }).join(''):'';
+  host.querySelectorAll('[data-log-day]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();logOpenDay(b.getAttribute('data-log-day'))}});
+ }).catch(function(){});
+}
+let logFocusTaken=false;
+function logTakeFocus(){
+ if(!logV2()||logFocusTaken)return;
+ logFocusTaken=true;
+ let focus='';
+ try{if(typeof parseHash==='function')focus=String((parseHash().focus)||'')}catch(e){}
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(focus))return;
+ const row=(J&&J.logs||[]).filter(function(x){return isTypedLog(x)&&String(x.date||'').slice(0,10)===focus})[0];
+ logEditId=row?String(row.id):logDayId(J.slug,focus);
+ logEditDate=focus;
+ logEditText=row?String(row.text||row.title||''):'';
 }
 function logStartEdit(id){
  const row=(J&&J.logs||[]).filter(function(x){return x&&String(x.id)===String(id)})[0];
@@ -14781,27 +15256,33 @@ function bindLogCompose(M){
  if(form)form.onsubmit=function(ev){ev.preventDefault();logSave(form)};
  form&&form.querySelectorAll('[data-log-pick]').forEach(function(input){input.addEventListener('change',function(){logTakeFiles(input)})});
  const dateEl=form&&form.querySelector('#logdate');
- if(dateEl)dateEl.addEventListener('change',function(){if(!logWeather||logWeather.source!=='manual'){logWeather=null;logPaintWeather();logWeatherLoad()}});
+ if(dateEl)dateEl.addEventListener('change',function(){if(!logWeather||logWeather.source!=='manual'){logWeather=null;logPaintWeather();logWeatherLoad()}if(logV2())logLoadHistory()});
+ const yest=form&&form.querySelector('[data-log-yesterday]');
+ if(yest)yest.onclick=function(ev){ev.preventDefault();logCopyYesterday()};
  logBindWeather(form&&form.querySelector('[data-log-weather]'));
  logPaintThumbs();
  logWeatherLoad();
+ logLoadHistory();
+ M.querySelectorAll('[data-log-day]').forEach(function(b){if(b.closest&&b.closest('[data-log-history]'))return;b.onclick=function(ev){if(ev.target.closest&&ev.target.closest('a,button,input,textarea,label'))return;logOpenDay(b.getAttribute('data-log-day'))};b.onkeydown=function(ev){if(ev.key==='Enter'){ev.preventDefault();logOpenDay(b.getAttribute('data-log-day'))}}});
  M.querySelectorAll('[data-log-open],[data-log-edit]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();logStartEdit(b.getAttribute('data-log-open')||b.getAttribute('data-log-edit'))}});
  M.querySelectorAll('[data-log-del]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();logDelete(b.getAttribute('data-log-del'))}});
 }
-function logDesk(x){if(isTypedLog(x))return `<div class="it logtyped" data-log-id="${esc(x.id||'')}"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.text||x.title||'')}</div>${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div></div>`;const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
+function logDayAttr(x){if(!logV2())return '';const day=String((x&&x.date)||'').slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(day))return '';return ' data-log-day="'+esc(day)+'" tabindex="0" role="link"'}
+function logDesk(x){if(isTypedLog(x))return `<div class="it logtyped" data-log-id="${esc(x.id||'')}"${logDayAttr(x)}><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.text||x.title||'')}</div>${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div></div>`;const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
  const teamUpdate=isTeamEmailLog(x);
  const head=teamUpdate?logSummary(x):(x.title||x.text||'');
  const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(teamUpdate?'':(x.text&&x.text!==head?`<div class="s">${esc(x.text)}</div>`:'')));
  const src=teamUpdate?'':logShownSource(x);const srcHtml=src&&src!==head?`<div class="s">${esc(src)}</div>`:'';
- const open=teamUpdate?logEmailLink(x):(fieldNoteLinks(x)+logNoteBtn(x));
+ const open=teamUpdate?logEmailLink(x):(isWalkLog(x)?'':(fieldNoteLinks(x)+logNoteBtn(x)));
  const when=isFieldNoteLog(x)&&x.time?`<div class="s">${esc(x.time)}</div>`:'';
  const pic=isFieldNoteLog(x)?fieldNotePicture(x):'';
  const summed=isFieldNoteLog(x)?fieldNoteBody(x):'';
- return `<div class="it"><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${when}${extra}${summed}${pic}${open}${srcHtml}${typeof fileChip==='function'?fileChip(x):''}</div></div>`}
-function mLogs(M){const l=(J.logs||[]).filter(showLog);
+ if(isWalkLog(x))return `<div class="it"${logDayAttr(x)}>${walkCardHtml(x)}</div>`;
+ return `<div class="it"${logDayAttr(x)}><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(head)}</div>${when}${extra}${summed}${pic}${open}${srcHtml}${typeof fileChip==='function'?fileChip(x):''}</div></div>`}
+function mLogs(M){logTakeFocus();const l=(J.logs||[]).filter(showLog);
  if(M&&M.id==='padlog'){logPhone(M,l);return}
  if(typeof isPhone==='function'&&isPhone()){logPhone(M,l);return}
- M.innerHTML=panel('Job Logs','Summaries of the day. Message text stays out of this list.',(typeof dustLogBadgeHtml==='function'?dustLogBadgeHtml():'')+logComposeHtml()+`<div class="list">${l.map(logDesk).join('')||emptyState('No job logs yet','')}</div>`,csvBtn('logs','csv-mini'));bindCsv(M);bindLogCompose(M);bindLogNotes(M)}
+ M.innerHTML=panel('Job Logs','Summaries of the day. Message text stays out of this list.',(typeof dustLogBadgeHtml==='function'?dustLogBadgeHtml():'')+logComposeHtml()+`<div class="list">${l.map(logDesk).join('')||emptyState('No job logs yet','')}</div>`,csvBtn('logs','csv-mini'));bindCsv(M);bindLogCompose(M);bindLogNotes(M);focusWalkCard(M)}
 function asList(v){if(Array.isArray(v))return v;if(v==null||v==='')return [];try{const x=typeof v==='string'?JSON.parse(v):v;return Array.isArray(x)?x:[]}catch(e){return []}}
 const MSG_IC={slack:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
  email:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
@@ -14846,23 +15327,24 @@ function logSourcesBlock(items){const groups=items.filter(x=>!x.pending&&asList(
  const body=groups.map(x=>`<div class="logsrcgrp"><div class="logsrctitle">${esc(x.title||x.text||'')}</div>${asList(x.sources).map(logSourceRow).join('')}</div>`).join('');
  return `<details class="logsources"><summary>Sources <span class="mut">${n}</span></summary>${body}</details>`}
 function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
- const rows=l.filter(x=>{if(f==='auto'&&x.source!=='auto')return false;if(f==='team'&&x.source==='auto')return false;if(month&&String(x.date||'').slice(0,7)!==month)return false;return true});
+ const rows=l.filter(x=>{if(f==='walk'&&!isWalkLog(x))return false;if(f==='auto'&&x.source!=='auto')return false;if(f==='team'&&x.source==='auto')return false;if(month&&String(x.date||'').slice(0,7)!==month)return false;return true});
  const by={},order=[];rows.forEach(x=>{const d=String(x.date||'').slice(0,10)||'undated';if(!by[d]){by[d]=[];order.push(d)}by[d].push(x)});
  order.sort((a,b)=>a<b?1:-1);
  order.forEach(d=>by[d].sort((a,b)=>{const ta=a.source==='auto'?1:0,tb=b.source==='auto'?1:0;if(ta!==tb)return ta-tb;return String(a.time||'').localeCompare(String(b.time||''))}));
  const months=[...new Set(l.map(x=>String(x.date||'').slice(0,7)).filter(m=>/^\d{4}-\d{2}$/.test(m)))].sort((a,b)=>a<b?1:-1);
- const chips=[['all','All'],['auto','Auto'],['team','Team']].map(([k,lab])=>`<button type="button" class="fchip ${f===k?'on':''}" data-lf="${k}">${lab}</button>`).join('');
+ const chips=[['all','All'],['walk','Walkthroughs'],['auto','Auto'],['team','Team']].map(([k,lab])=>`<button type="button" class="fchip ${f===k?'on':''}" data-lf="${k}">${lab}</button>`).join('');
  const jump=`<label class="logjump"><span class="mut small">Month</span> <select id="logmonth" aria-label="Jump to month"><option value="">All months</option>${months.map(m=>`<option value="${esc(m)}" ${month===m?'selected':''}>${esc((MON[+m.slice(5)-1]||m)+' '+m.slice(0,4))}</option>`).join('')}</select></label>`;
  const cards=order.map(d=>{const items=by[d];const counts=logDayCounts(items);
   const countChips=Object.entries(logShownCounts(counts)).map(([k,n])=>`<span class="dchip">${n} ${esc(LOG_SRC_NAME[k]||k)}</span>`).join('');
-  const team=items.filter(x=>x.source!=='auto').map((x)=>isTypedLog(x)?logTypedBlock(x):isTeamEmailLog(x)
+  const team=items.filter(x=>x.source!=='auto').map((x)=>isTypedLog(x)?logTypedBlock(x):isWalkLog(x)?walkCardHtml(x):isTeamEmailLog(x)
    ?`<div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logSummary(x))}</span>${logEmailLink(x)}</div>${typeof fileChip==='function'?fileChip(x):''}`
    :isFieldNoteLog(x)
    ?`<div class="logfield"><div class="logline">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span><span class="logwhen">${esc(x.time||'')}</span>${fieldNoteLinks(x)}${logNoteBtn(x)}</div>${fieldNoteBody(x)}${fieldNotePicture(x)}</div>`
    :`<button type="button" class="logline" data-day="${esc(d)}" data-i="${items.indexOf(x)}">${logIco(logKind(x))}<span class="logtxt">${esc(logLine(x))}</span></button>${typeof fileChip==='function'?fileChip(x):''}`).join('');
   const bullets=items.filter(x=>x.source==='auto').map(x=>`<div class="logbullet${x.pending?' logpending':''}"><span class="logtxt">${esc(x.title||x.text||'')}</span>${typeof fileChip==='function'?fileChip(x):''}</div>`).join('');
   const head=d==='undated'?'Undated':esc(dow(d)+' '+mdy(d));
-  return `<article class="logcard" id="log-${esc(d)}"><div class="loghead"><h2>${head}</h2><div class="logcounts">${countChips}</div></div><div class="loglines">${team}${bullets}</div>${logSourcesBlock(items)}</article>`}).join('')||emptyState('No job logs yet','');
+  const dayAttr=/^\d{4}-\d{2}-\d{2}$/.test(d)&&logV2()?' data-log-day="'+esc(d)+'" tabindex="0" role="link"':'';
+  return `<article class="logcard" id="log-${esc(d)}"${dayAttr}><div class="loghead"><h2>${head}</h2><div class="logcounts">${countChips}</div></div><div class="loglines">${team}${bullets}</div>${logSourcesBlock(items)}</article>`}).join('')||emptyState('No job logs yet','');
  M.innerHTML=panel('Job Logs','',(typeof dustLogBadgeHtml==='function'?dustLogBadgeHtml():'')+logComposeHtml()+'<p class="log-lead" data-log-summary>Short summary of the day. Sources stay collapsed and do not show the message text.</p>'+`<div class="fbar"><div class="chips">${chips}</div>${jump}</div><div class="loglist">${cards}</div>`,csvBtn('logs','csv-mini'));
  if(window.HWSLocate&&typeof HWSLocate.fillWho==='function')HWSLocate.fillWho(M.querySelector('.loglist')||M,J&&J.slug);
  bindCsv(M);
@@ -14870,7 +15352,7 @@ function logPhone(M,l){const f=st.logF||'all';const month=st.logMonth||'';
  const sel=M.querySelector('#logmonth');if(sel)sel.onchange=()=>{st.logMonth=sel.value;saveUi();mLogs(M);const first=M.querySelector('.logcard');if(first)first.scrollIntoView({block:'start'})};
  M.querySelectorAll('.logline').forEach(b=>b.onclick=()=>{const row=(by[b.dataset.day]||[])[+b.dataset.i];if(row)logOpen(row)});
  M.querySelectorAll('[data-logsrc]').forEach(b=>b.onclick=()=>logOpen({src:b.dataset.logsrc,ref:b.dataset.logref,source:b.dataset.logsrc}));
- bindLogCompose(M);bindLogNotes(M)}
+ bindLogCompose(M);bindLogNotes(M);focusWalkCard(M)}
 function mMsgs(M){const l=J.messages||[];
  if(typeof isPhone==='function'&&isPhone()){const f=st.msgF||'all';const showSys=!!st.msgSys;const sys=l.filter(isSystemMsg);
   const rows=l.filter(i=>(showSys||!isSystemMsg(i))&&msgPass(i,f)).slice().sort((a,b)=>String(a.time||'')<String(b.time||'')?1:-1);
@@ -15325,13 +15807,55 @@ function homeCanon(raw) {
 function homeEscapeRe(text) {
   return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+function ownerFull(value) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  if (text.indexOf('@') >= 0 && text.indexOf(' ') < 0 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(text)) return text.toLowerCase();
+  const parts = text.split(' ');
+  if (parts.length < 2 || parts.some(function (part) { return part.length < 2; })) return '';
+  return text.toLowerCase();
+}
+function ownerCatchAll(pattern) {
+  const text = String(pattern || '').trim();
+  if (!text || text === '.*' || text === '.+' || text === '*' || text === '^.*$' || text === '^.*' || text === '.*$') return true;
+  try {
+    const compiled = new RegExp(text, 'i');
+    const probes = ['a', 'zz', 'qx'];
+    let hits = 0;
+    probes.forEach(function (probe) { if (compiled.test(probe)) hits += 1; });
+    return hits >= 2;
+  } catch (e) { return true; }
+}
+function ownerLiteral(pattern) {
+  let text = String(pattern || '').trim();
+  if (text.charAt(0) === '^') text = text.slice(1);
+  if (text.charAt(text.length - 1) === '$') text = text.slice(0, -1);
+  text = text.replace(/\\ /g, ' ').replace(/\s+/g, ' ').trim();
+  if (/[.+*?|()\[\]{}\\]/.test(text)) return '';
+  return text;
+}
+function ownerIdentityHit(pattern, blob) {
+  if (ownerCatchAll(pattern)) return false;
+  const literal = ownerLiteral(pattern);
+  const want = ownerFull(literal);
+  if (!want) return false;
+  const text = String(blob || '');
+  if (ownerFull(text) === want) return true;
+  return new RegExp('(^|[^A-Za-z0-9])' + homeEscapeRe(literal) + '([^A-Za-z0-9]|$)', 'i').test(text);
+}
 function homeMatch(table, blob) {
   if (!table || !blob) return '';
   const keys = Object.keys(table).sort(function (a, b) { return String(b).length - String(a).length; });
   for (let i = 0; i < keys.length; i++) {
     const name = String(keys[i]).trim();
     if (!name) continue;
-    if (new RegExp('\\b' + homeEscapeRe(name) + '\\b', 'i').test(blob)) return table[keys[i]];
+    const role = table[keys[i]];
+    if (homeCanon(role) === 'owner' || homeCanon(role) === 'owner_money') {
+      if (ownerIdentityHit(name, blob)) return role;
+      continue;
+    }
+    if (ownerCatchAll(name)) continue;
+    if (new RegExp('\\b' + homeEscapeRe(name) + '\\b', 'i').test(blob)) return role;
   }
   return '';
 }
@@ -15350,11 +15874,26 @@ function homeLookup(table, who) {
   const key = Object.keys(table).find(function (k) { return String(k).trim().toLowerCase() === low; });
   return key ? table[key] : '';
 }
+function homeSessionRole() {
+  try {
+    var viewer = window.HWS_VIEWER;
+    if (!viewer || !viewer.role) return '';
+    var mine = String(viewer.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    var who = String(homeWho() || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (who && mine && who !== mine) return '';
+    var hosted = String(viewer.role).trim().toLowerCase();
+    if (hosted === 'warranty coordinator' || hosted === 'warranty desk') return 'warranty';
+    if (typeof HWS_ROLES !== 'undefined' && HWS_ROLES[hosted]) return hosted;
+    return hosted;
+  } catch (e) { return ''; }
+}
 function homeRole() {
   const blob = homeViewerBlob();
   const common = (typeof DATA !== 'undefined' && DATA && DATA.common) || {};
   const named = homeCanon(homeMatch(common.home_roles, blob) || homeMatch(common.roles, blob) || homeLookup(common.roles, homeWho()));
   if (named) return named;
+  const session = homeSessionRole();
+  if (session) return session;
   let photo = '';
   if (typeof photoRole === 'function') { try { photo = photoRole() || ''; } catch (e) { photo = ''; } }
   if (photo === 'field') return 'field';
@@ -16198,8 +16737,8 @@ var HWSHome = {
 if (typeof window !== 'undefined') window.HWSHome = HWSHome;
 
 /* Ask the hub. A question goes to the office hub, which searches local indexes
-   and answers from the hits this person is allowed to see. The bubble is for
-   the internal team. Each reply links only to a real hub record. */
+   and answers from the hits the owner is allowed to see. The bubble is the
+   owner only. Each reply links only to a real hub record. */
 function askEsc(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
     return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[ch];
@@ -16243,7 +16782,10 @@ function askMatchRole(table, who) {
       if (hit) return String(hit).trim().toLowerCase();
     } catch (e2) {}
   }
-  return String(askRoleValue(askLookup(table, who)) || '').trim().toLowerCase();
+  const raw = String(askRoleValue(askLookup(table, who)) || '').trim().toLowerCase();
+  if ((raw === 'owner' || raw === 'owner_money' || raw === 'partner' || raw === 'admin')
+      && typeof ownerIdentityHit === 'function' && !ownerIdentityHit(who, who)) return '';
+  return raw;
 }
 function askResolvedRoles() {
   const who = String(askWho() || '').replace(/\s+/g, ' ').trim();
@@ -16260,6 +16802,9 @@ function askResolvedRoles() {
   }
   try { if (typeof roleOf === 'function') roles.push(roleOf()); } catch (e2) {}
   try { if (typeof homeRole === 'function') roles.push(homeRole()); } catch (e3) {}
+  try {
+    if (typeof window !== 'undefined' && window.HWS_VIEWER && window.HWS_VIEWER.role) roles.push(window.HWS_VIEWER.role);
+  } catch (e4) {}
   if (!roles.length) {
     const access = askRoleValue(askLookup(common.ask_access, who));
     if (access) roles.push(access);
@@ -16269,13 +16814,15 @@ function askResolvedRoles() {
 function askCanon(raw) {
   const role = String(raw || '').trim().toLowerCase();
   if (role === 'owner' || role === 'owner_money' || role === 'partner') return 'owner';
-  if (role === 'admin') return 'admin';
-  if (role === 'pm' || role === 'lead') return 'pm';
-  if (role === 'member') return 'member';
-  if (role === 'office' || role === 'staff') return 'office';
   return '';
 }
 function askInternal(role) {
+  if (!arguments.length) {
+    try {
+      const block = (typeof DATA !== 'undefined' && DATA && DATA.common && DATA.common.viewer_scope) || null;
+      if (block && block.ask === false) return false;
+    } catch (e) {}
+  }
   const roles = arguments.length ? [role] : askResolvedRoles();
   return roles.some(function (item) { return askCanon(item) !== ''; });
 }
@@ -16321,6 +16868,7 @@ function askFloatHtml(job) {
   return `<div id="ask-float" class="ask-float"><div class="ask-panel" id="ask-panel"><div class="ask-panel-h"><span class="ask-panel-title">Ask the hub</span><button type="button" class="ask-close" aria-label="Close">Close</button></div>${askBoxHtml(job)}</div><button type="button" class="ask-bubble" aria-label="Ask the hub" aria-expanded="false">${askBubbleSvg()}</button></div>`;
 }
 var ASK_TIMEOUT_MS = 4000;
+var ASK_LLM_TIMEOUT_MS = 30000;
 var ASK_OFFLINE_NOTE = "AI answers aren't connected on this device yet. Showing matching results.";
 var ASK_EMPTY_NOTE = "Nothing in your jobs matches that.";
 var ASK_LOCAL_SOURCES = [
@@ -16333,14 +16881,29 @@ var ASK_LOCAL_SOURCES = [
   {key:'notes', type:'note', label:'Notes', mod:'logs', title:['title', 'text', 'note'], text:['title', 'text', 'note'], date:['date', 'at', 'time']},
   {key:'field_notes', type:'note', label:'Notes', mod:'logs', title:['title', 'text', 'summary'], text:['title', 'text', 'summary', 'transcript'], date:['date', 'at', 'time']}
 ];
+function askIsOwner() {
+  try {
+    return askResolvedRoles().some(function (item) { return askCanon(item) === 'owner'; });
+  } catch (e) { return false; }
+}
 function askTimeoutMs() {
+  if (askIsOwner()) {
+    let ms = ASK_LLM_TIMEOUT_MS;
+    try {
+      if (typeof window !== 'undefined' && window.ASK_LLM_TIMEOUT_MS) {
+        const n = +window.ASK_LLM_TIMEOUT_MS;
+        if (n > 0) ms = n;
+      }
+    } catch (e) {}
+    return ms;
+  }
   let ms = ASK_TIMEOUT_MS;
   try {
     if (typeof window !== 'undefined' && window.ASK_TIMEOUT_MS) {
       const n = +window.ASK_TIMEOUT_MS;
       if (n > 0) ms = n;
     }
-  } catch (e) {}
+  } catch (e2) {}
   return ms;
 }
 function askMoneyHidden() {
@@ -16406,7 +16969,15 @@ function askLocalSearch(q, jobSlug) {
         }
         title = title.slice(0, 140);
         if (!title) return;
-        const href = '#/job/' + id + '/' + src.mod;
+        let href = '#/job/' + id + '/' + src.mod;
+        if ((src.key === 'logs' || src.key === 'field_notes' || src.key === 'notes') && (row.walkthrough || row.play || row.video)) {
+          const ref = String(row.ref || row.id || '');
+          const stamp = String(row.t || '');
+          if (ref) {
+            const focus = (ref.indexOf('walk-') === 0 ? ref : 'walk-' + ref) + (stamp ? '@' + stamp : '');
+            href = '#/job/' + id + '/logs/' + focus;
+          }
+        }
         if (!askRealHref(href)) return;
         if (!groups[src.label]) {
           groups[src.label] = {type: src.type, label: src.label, hits: []};
@@ -16453,13 +17024,19 @@ function askPayloadFailed(payload) {
   if (payload.error) return true;
   return false;
 }
+function askLinkLabel(href, label) {
+  const stamp = String(href || '').split('@')[1] || '';
+  label = label || 'Walkthrough';
+  if (!/^\d{2}:\d{2}$/.test(stamp) || String(label).indexOf(stamp) >= 0) return label;
+  return stamp + ' · ' + label;
+}
 function askResultHtml(payload) {
   payload = payload || {};
   const answer = payload.answer ? `<p class="ask-answer">${askEsc(payload.answer)}</p>` : '';
   const chips = (payload.chips || []).map(function (chip) {
     const href = askRealHref(chip.href);
     if (!href) return '';
-    return `<a class="ask-chip" data-ask-chip="${askEsc(chip.type || '')}" href="${askEsc(href)}">${askEsc(chip.label || chip.type || 'Source')}</a>`;
+    return `<a class="ask-chip" data-ask-chip="${askEsc(chip.type || '')}" href="${askEsc(href)}">${askEsc(askLinkLabel(href, chip.label || chip.type || 'Source'))}</a>`;
   }).join('');
   const chipRow = chips ? `<div class="ask-chips">${chips}</div>` : '';
   const groups = (payload.groups || []).map(function (group) {
@@ -16467,7 +17044,7 @@ function askResultHtml(payload) {
       const href = askRealHref(hit.href);
       if (!href) return '';
       const when = hit.date ? `<span class="ask-when">${askEsc(String(hit.date).slice(5).replace('-', '/').replace(/^0/, '').replace('/0', '/'))}</span>` : '';
-      return `<a class="ask-row" href="${askEsc(href)}"><span class="ask-kind">${askEsc(hit.label || hit.type || '')}</span><span class="ask-title">${askEsc(hit.title || hit.snippet || '')}</span>${when}</a>`;
+      return `<a class="ask-row" href="${askEsc(href)}"><span class="ask-kind">${askEsc(askLinkLabel(href, hit.label || hit.type || ''))}</span><span class="ask-title">${askEsc(hit.title || hit.snippet || '')}</span>${when}</a>`;
     }).join('');
     if (!rows) return '';
     return `<section class="ask-group"><h3>${askEsc(group.label || group.type || '')}</h3><div class="ask-rows">${rows}</div></section>`;
@@ -16501,7 +17078,10 @@ function askBind(root) {
         settled = true;
         thread.innerHTML = you + askOfflineHtml(q, job);
       }
-      thread.innerHTML = you + '<p class="ask-wait">Looking…</p>';
+      const wait = askIsOwner()
+        ? '<p class="ask-wait" data-ask-thinking="1">Thinking…</p>'
+        : '<p class="ask-wait">Looking…</p>';
+      thread.innerHTML = you + wait;
       const url = '/api/ask?q=' + encodeURIComponent(q) + (job ? '&job=' + encodeURIComponent(job) : '');
       let ctrl = null;
       try { if (typeof AbortController === 'function') ctrl = new AbortController(); } catch (e) { ctrl = null; }
@@ -16588,6 +17168,9 @@ if (typeof window !== 'undefined') {
   window.askOfflineHtml = askOfflineHtml;
   window.ASK_OFFLINE_NOTE = ASK_OFFLINE_NOTE;
   window.ASK_TIMEOUT_MS = ASK_TIMEOUT_MS;
+  window.ASK_LLM_TIMEOUT_MS = ASK_LLM_TIMEOUT_MS;
+  window.askTimeoutMs = askTimeoutMs;
+  window.askIsOwner = askIsOwner;
 }
 
 /* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
@@ -17001,7 +17584,7 @@ function attActive(slug){const J=attJ(slug)||{};const s=String(attInfo(slug).sta
  return slug!='general'&&!/complet|closeout|overhead|company/i.test(stage)}
 function attOwn(){return (AT()&&AT().owner)||{}}
 function attSig(){return attOwn().name||''}
-function attIsOwner(){try{const O=attOwn();if(!O.match)return false;const re=new RegExp(O.match,'i');const d=(SY&&SY.A&&SY.A.describe)?SY.A.describe():'';const w=STORE&&STORE.who?STORE.who():'';return re.test(d)||re.test(w)}catch(e){return false}}
+function attIsOwner(){try{const O=attOwn();if(!O||!O.match)return false;const d=(SY&&SY.A&&SY.A.describe)?SY.A.describe():'';const w=STORE&&STORE.who?STORE.who():'';if(typeof ownerIdentityHit!=='function')return false;return ownerIdentityHit(O.match,w)||ownerIdentityHit(O.match,d)}catch(e){return false}}
 /* ---- flags: job settings info 'flag:<taskId>' / 'flag:job' = JSON {note,by,at}; '' = cleared (history + undo like any settings change) */
 function attFlag(slug,id){const v=attInfo(slug)['flag:'+(id||'job')];if(!v)return null;try{return JSON.parse(v)}catch(e){return {note:String(v)}}}
 function attFlags(){const out=[];attSlugs().forEach(slug=>{const i=attInfo(slug);Object.keys(i).forEach(k=>{if(k.startsWith('flag:')&&i[k]){let f;try{f=JSON.parse(i[k])}catch(e){f={note:i[k]}}out.push({slug,id:k.slice(5),f})}})});return out}
@@ -17272,7 +17855,8 @@ window.HWSPos=(function(E){
  function meta(ctx){return (ctx&&ctx.poMeta)||((typeof DATA!=='undefined'&&DATA.common&&DATA.common.po_meta)||{})}
  function roles(ctx){return (ctx&&ctx.poRoles)||((typeof DATA!=='undefined'&&DATA.common&&DATA.common.po_roles)||{})}
  function person(who){return !BOT[String(who||'').trim().toLowerCase()]}
- function roleOk(who,kind,ctx){return (roles(ctx)[kind]||[]).some(function(r){try{return new RegExp(r.match,'i').test(who||'')}catch(e){return false}})}
+ function catchAll(pattern){const text=String(pattern||'').trim();if(!text||text==='.*'||text==='.+'||text==='*'||text==='^.*$'||text==='^.*'||text==='.*$')return true;try{const re=new RegExp(text,'i');let n=0;['a','zz','qx'].forEach(function(p){if(re.test(p))n++});return n>=2}catch(e){return true}}
+ function roleOk(who,kind,ctx){return (roles(ctx)[kind]||[]).some(function(r){const pattern=r&&r.match;if(catchAll(pattern))return false;if(kind==='award')return typeof ownerIdentityHit==='function'&&ownerIdentityHit(pattern,who||'');try{return new RegExp(pattern,'i').test(who||'')}catch(e){return false}})}
  function tradeCode(text,ctx){
   const m=meta(ctx), raw=String(text||'').trim().toUpperCase(), words=m.trade_words||[], known=m.trade_adaptive||{};
   if(known[raw]) return raw;
@@ -20728,6 +21312,40 @@ function fileSortNodes(nodes, mode) {
   copy.forEach((n) => { if (n.children) n.children = fileSortNodes(n.children, mode); });
   return copy;
 }
+function fileHubEntries(slug) {
+  let job = null;
+  try { if (typeof J !== "undefined" && J && J.slug === slug) job = J; } catch (e) { job = null; }
+  if (!job && typeof DATA !== "undefined" && DATA && DATA.jobs) job = DATA.jobs[slug];
+  if (!job) return [];
+  const out = [];
+  const seen = {};
+  function add(id, title, text, when) {
+    const key = String(id || title || "");
+    if (!key || seen[key]) return;
+    const label = String(title || text || "").replace(/\s+/g, " ").trim().slice(0, 140);
+    if (!label) return;
+    seen[key] = 1;
+    out.push({
+      name: label,
+      rel: "hub-note/" + key.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 48),
+      label: label,
+      text: String(text || ""),
+      hint: "Daily log",
+      tag: "log",
+      href: "#/job/" + slug + "/logs",
+      modified: String(when || "").slice(0, 10)
+    });
+  }
+  (job.logs || []).forEach(function (row) {
+    if (!row) return;
+    add(row.ref || row.id || row.title, row.title || row.text, [row.title, row.text, row.transcript, row.summary].filter(Boolean).join(" "), row.date);
+  });
+  (job.notes || []).concat(job.field_notes || []).forEach(function (row) {
+    if (!row || row.kind === "question") return;
+    add(row.id, row.text || row.summary || row.title, [row.text, row.summary, row.transcript, row.title].filter(Boolean).join(" "), row.at || row.created_at || row.date);
+  });
+  return out;
+}
 function fileSearch(entries, query) {
   const words = String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return entries || [];
@@ -21009,9 +21627,11 @@ function fileRowsHtml(nodes, depth) {
     const open = !!fileUI.open[n.rel];
     const label = fileLabel(n.label || n.name);
     const chev = folder ? '<button type="button" class="fchev" data-fchev aria-expanded="' + (open ? "true" : "false") + '" aria-label="' + (open ? "Collapse folder" : "Expand folder") + '">›</button>' : '<span class="fchev" aria-hidden="true"></span>';
-    const sub = folder ? ((n.children || []).length + " items") : "";
+    const sub = n.hint ? String(n.hint) : (folder ? ((n.children || []).length + " items") : "");
     const kids = folder && open ? '<div class="fkids" style="padding-left:12px">' + fileRowsHtml(fileShownNodes(n.children || []), depth + 1) + "</div>" : "";
-    return '<div class="fnode">' + chev + '<button type="button" class="frow" data-frel="' + fileAttr(n.rel) + '" data-ftag="' + (folder ? "folder" : "file") + '"><span class="fic">' + fileIcon(kind) + '</span><span class="fmeta"><span class="fn">' + esc(label) + '</span>' + (sub ? '<span class="fs">' + esc(sub) + "</span>" : "") + '</span><span class="fwhen">' + esc(fileWhen(n.modified)) + "</span></button></div>" + kids;
+    const tag = n.tag === "log" ? "log" : (folder ? "folder" : "file");
+    const href = n.href ? ' data-fhref="' + fileAttr(n.href) + '"' : "";
+    return '<div class="fnode">' + chev + '<button type="button" class="frow" data-frel="' + fileAttr(n.rel) + '" data-ftag="' + tag + '"' + href + '><span class="fic">' + fileIcon(kind) + '</span><span class="fmeta"><span class="fn">' + esc(label) + '</span>' + (sub ? '<span class="fs">' + esc(sub) + "</span>" : "") + '</span><span class="fwhen">' + esc(fileWhen(n.modified)) + "</span></button></div>" + kids;
   }).join("");
 }
 
@@ -21067,7 +21687,7 @@ function drawFiles(M, slug, entries, source) {
   sortKids(tree);
   let body;
   if (q.trim()) {
-    const hits = fileSortNodes(fileSearch(entries, q).map((e) => Object.assign({}, e, { children: null })), fileUI.sort);
+    const hits = fileSortNodes(fileSearch(entries.concat(fileHubEntries(slug)), q).map((e) => Object.assign({}, e, { children: null })), fileUI.sort);
     body = hits.length ? fileRowsHtml(fileShownNodes(hits), 0) : '<div class="fempty">No files match that search.</div>';
   } else {
     const node = fileNode(tree, fileUI.path);
@@ -21097,6 +21717,11 @@ function drawFiles(M, slug, entries, source) {
   });
   M.querySelectorAll("[data-frel]").forEach((b) => b.onclick = () => {
     const rel = b.getAttribute("data-frel") || "";
+    if (b.getAttribute("data-ftag") === "log") {
+      const href = b.getAttribute("data-fhref") || "";
+      if (href) location.hash = href;
+      return;
+    }
     if (b.getAttribute("data-ftag") === "folder") { fileUI.path = rel; fileUI.open[rel] = true; drawFiles(M, slug, entries, source); return; }
     fileOpen(slug, rel, entries);
   });
@@ -25847,7 +26472,7 @@ async function boot(){try{
   if(MODE==='share'){const el=document.getElementById('hws-data');DATA=JSON.parse(el.textContent);el.textContent='';}
   else{await WSData.init();WSData.onUpdate=dataUpdated;DATA=WSData.data();
    if(!DATA){$('#root').innerHTML=topHtml()+`<div class="main">${WSData.errorHtml({message:'setup'})}</div>`;WSData.bind();await syncBoot();return}}
-  await syncBoot();openStore();if(STORE&&!STORE.who()&&SY.A&&SY.A.who)STORE.setWho(SY.A.who());if(typeof loadCompanyOverride==='function')loadCompanyOverride();if(typeof applyFeatureStrip==='function')applyFeatureStrip();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
+  await syncBoot();openStore();if(STORE){var sessionName='';try{sessionName=(window.HWS_VIEWER&&HWS_VIEWER.name)||localStorage.getItem('hws-who')||''}catch(e){}if(sessionName)STORE.setWho(String(sessionName).trim().slice(0,60));else if(SY.A&&SY.A.who)STORE.setWho(SY.A.who())}if(typeof loadCompanyOverride==='function')loadCompanyOverride();if(typeof applyFeatureStrip==='function')applyFeatureStrip();if(window.HWSOffline)HWSOffline.restoreView();route();if(typeof loadMoneyFile==='function')loadMoneyFile();startLive();
  }catch(e){console.error(e);$('#root').innerHTML='<div class="empty"><b>Could not start the app.</b>'+esc(e.message)+'</div>'}}
 if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 
@@ -28689,36 +29314,54 @@ function mDust(M) {
       el.setAttribute("data-walk-fallback", "1");
       el.removeAttribute("data-walk-live");
     }
+    function hasVideoTrack(next) {
+      try {
+        const tracks = next && next.getVideoTracks ? next.getVideoTracks() : [];
+        return !!(tracks && tracks.length);
+      } catch (e) { return false; }
+    }
     function openCamera() {
       if (closed) return;
       const media = root.navigator && root.navigator.mediaDevices && root.navigator.mediaDevices.getUserMedia;
       if (!media) { showFile(); return; }
-      let opened;
-      try {
-        opened = media.call(root.navigator.mediaDevices, {video: {facingMode: {ideal: "environment"}}, audio: false});
-      } catch (e) {
-        release();
-        showFile();
-        return;
-      }
-      Promise.resolve(opened).then(function (next) {
-        if (closed || !next) { if (next && next.getTracks) next.getTracks().forEach(function (track) { try { track.stop(); } catch (err) {} }); return; }
-        release();
-        stream = next;
-        useFile = false;
-        if (fallback) fallback.hidden = true;
-        if (video) {
-          video.hidden = false;
-          try { video.srcObject = next; } catch (e2) {}
-          const play = video.play && video.play();
-          if (play && play.catch) play.catch(function () {});
+      const prefs = [
+        {video: {facingMode: {ideal: "environment"}}, audio: true},
+        {video: {facingMode: {ideal: "environment"}}, audio: false}
+      ];
+      function tryOpen(index) {
+        if (closed) return;
+        if (index >= prefs.length) { showFile(); return; }
+        let opened;
+        try {
+          opened = media.call(root.navigator.mediaDevices, prefs[index]);
+        } catch (e) {
+          tryOpen(index + 1);
+          return;
         }
-        el.setAttribute("data-walk-live", "1");
-        el.removeAttribute("data-walk-fallback");
-      }).catch(function () {
-        release();
-        showFile();
-      });
+        Promise.resolve(opened).then(function (next) {
+          if (closed || !next || !hasVideoTrack(next)) {
+            if (next && next.getTracks) next.getTracks().forEach(function (track) { try { track.stop(); } catch (err) {} });
+            if (!closed) tryOpen(index + 1);
+            return;
+          }
+          release();
+          stream = next;
+          useFile = false;
+          if (fallback) fallback.hidden = true;
+          if (video) {
+            video.hidden = false;
+            video.muted = true;
+            try { video.srcObject = next; } catch (e2) {}
+            const play = video.play && video.play();
+            if (play && play.catch) play.catch(function () {});
+          }
+          el.setAttribute("data-walk-live", "1");
+          el.removeAttribute("data-walk-fallback");
+        }).catch(function () {
+          if (!closed) tryOpen(index + 1);
+        });
+      }
+      tryOpen(0);
     }
     function frameBlob() {
       const canvas = root.document.createElement("canvas");
@@ -28746,6 +29389,144 @@ function mDust(M) {
         resolve(new Blob([], {type: "image/jpeg"}));
       });
       return {url: url, blobPromise: blobPromise};
+    }
+    function walkExt(blob, mode) {
+      const ctype = (blob && blob.type) || "";
+      if (ctype.indexOf("webm") >= 0) return "webm";
+      if (ctype.indexOf("quicktime") >= 0 || ctype.indexOf("mov") >= 0) return "mov";
+      if (mode !== "video") {
+        if (ctype.indexOf("wav") >= 0) return "wav";
+        if (ctype.indexOf("mpeg") >= 0 || ctype.indexOf("mp3") >= 0) return "mp3";
+        return "m4a";
+      }
+      return "mp4";
+    }
+    function b64Bytes(bytes) {
+      let text = "";
+      const step = 0x8000;
+      for (let i = 0; i < bytes.length; i += step) text += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+      return btoa(text);
+    }
+    function openWalkDb() {
+      return new Promise(function (resolve, reject) {
+        if (!root.indexedDB) { reject(new Error("no db")); return; }
+        const req = root.indexedDB.open("hws-scan-uploads", 1);
+        req.onupgradeneeded = function () {
+          if (!req.result.objectStoreNames.contains("items")) req.result.createObjectStore("items", {keyPath: "id"});
+        };
+        req.onsuccess = function () { resolve(req.result); };
+        req.onerror = function () { reject(req.error); };
+      });
+    }
+    function putWalk(db, rec) {
+      return new Promise(function (resolve, reject) {
+        const tx = db.transaction("items", "readwrite");
+        tx.objectStore("items").put(rec);
+        tx.oncomplete = function () { resolve(); };
+        tx.onerror = function () { reject(tx.error); };
+      });
+    }
+    function postWalk(url, body) {
+      return fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body || {})
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (payload) {
+          payload = payload || {};
+          payload.statusCode = res.status;
+          return payload;
+        });
+      });
+    }
+    function uploadWalkInPage(rec) {
+      if (!rec || !rec.blob || !rec.slug || !root.fetch) return Promise.resolve();
+      rec.state = "uploading";
+      rec.touched = Date.now();
+      const slug = encodeURIComponent(rec.slug);
+      const base = "/api/job/" + slug + "/field-note/video/uploads";
+      return rec.blob.arrayBuffer().then(function (buf) {
+        const bytes = new Uint8Array(buf);
+        return postWalk(base, {
+          size: bytes.length,
+          content_type: rec.content_type || "",
+          filename: rec.filename || "walk.mp4",
+          mode: rec.mode || "video",
+          blurb: rec.blurb || "",
+          lat: rec.lat,
+          lon: rec.lon
+        }).then(function (started) {
+          if (!started.id) throw new Error(started.error || "could not start");
+          rec.uploadId = started.id;
+          const chunk = started.chunk_size || (256 * 1024);
+          let offset = 0;
+          function next() {
+            if (offset >= bytes.length) {
+              return postWalk(base + "/" + started.id + "/complete", {blurb: rec.blurb || "", lat: rec.lat, lon: rec.lon});
+            }
+            const part = bytes.subarray(offset, Math.min(bytes.length, offset + chunk));
+            return postWalk(base + "/" + started.id, {offset: offset, data_b64: b64Bytes(part)}).then(function (result) {
+              if (result.statusCode === 409 || result.error === "resume") { offset = Number(result.offset || offset); return next(); }
+              if (!result.ok) throw new Error(result.error || "chunk failed");
+              offset = Number(result.offset);
+              rec.sent = offset;
+              rec.touched = Date.now();
+              return next();
+            });
+          }
+          return next();
+        });
+      }).then(function () {
+        rec.state = "done";
+        const status = el.querySelector("[data-walk-status]");
+        if (status) status.textContent = "Saved on this job. It is in the daily log.";
+      }).catch(function () {
+        rec.state = "queued";
+        rec.touched = 0;
+      });
+    }
+    function queueWalkBlob(shot, blob, mode) {
+      if (!shot || !blob || shot._walkQueued) return;
+      shot._walkQueued = true;
+      const ext = walkExt(blob, mode);
+      const total = (blob.size || 0);
+      const rec = {
+        id: "walk-" + shot.id,
+        kind: "walk",
+        local_id: shot.id,
+        slug: job.slug,
+        blob: blob,
+        filename: "walk." + ext,
+        content_type: blob.type || (mode === "video" ? "video/" + ext : "audio/" + ext),
+        mode: mode,
+        blurb: shot.note || "",
+        lat: shot.fix && shot.fix.lat,
+        lon: shot.fix && shot.fix.lon,
+        who: opts.who || "",
+        state: "queued",
+        touched: 0,
+        sent: 0,
+        holdForPower: holds(1, total, root.DATA)
+      };
+      const kick = function () {
+        try {
+          const sw = root.navigator && root.navigator.serviceWorker && root.navigator.serviceWorker.controller;
+          if (sw && sw.postMessage) sw.postMessage({type: "hws-scan-sync"});
+        } catch (e) {}
+        if (!rec.holdForPower) uploadWalkInPage(rec);
+      };
+      if (!root.indexedDB) { kick(); return; }
+      openWalkDb().then(function (db) {
+        return putWalk(db, rec).then(function () {
+          rec.state = "uploading";
+          rec.touched = Date.now();
+          return putWalk(db, rec);
+        }).then(function () {
+          try { db.close(); } catch (e2) {}
+          kick();
+        });
+      }).catch(function () { kick(); });
     }
     function enqueue(shot, bytes) {
       const total = shots.reduce(function (sum, row) { return sum + ((row.blob && row.blob.size) || (row.bytes && row.bytes.length) || 0); }, 0);
@@ -28778,8 +29559,9 @@ function mDust(M) {
       row.room = "";
       row.tag = "";
       row.bytes = bytes ? bytes.length : (row.bytes || 0);
+      if (shot.kind === "video" && shot.blob) queueWalkBlob(shot, shot.blob, "video");
       const photos = root.HWSPhotos;
-      if (!shot.sent && bytes && photos && typeof photos.browserQueue === "function") {
+      if (shot.kind !== "video" && !shot.sent && bytes && photos && typeof photos.browserQueue === "function") {
         try {
           const q = photos.browserQueue();
           if (q && q.enqueue) {
@@ -28882,7 +29664,14 @@ function mDust(M) {
       root.document.removeEventListener("visibilitychange", onHide);
       root.removeEventListener("pagehide", release);
       const text = summary(shots, job.name);
-      el.innerHTML = '<section class="walk-summary" data-walk-summary><h2>' + esc(text) + "</h2></section>";
+      const videos = shots.filter(function (shot) { return shot && shot.kind === "video"; }).length;
+      const status = videos
+        ? '<p data-walk-status>Saving the walkthrough on this job. It stays in the daily log. The upload continues in the background if the phone locks.</p>'
+        : "";
+      el.innerHTML = '<section class="walk-summary" data-walk-summary><h2>' + esc(text) + "</h2>" + status + "</section>";
+      shots.forEach(function (shot) {
+        if (shot && shot.kind === "video" && shot.blob) queueWalkBlob(shot, shot.blob, "video");
+      });
       if (typeof opts.onDone === "function") opts.onDone(shots.slice(), text, job);
     }
     el.addEventListener("click", function (event) {
@@ -28919,6 +29708,7 @@ function mDust(M) {
             shot.voice = new Blob(chunks, {type: rec.mimeType || "audio/webm"});
             const row = (root.__HWS_WALK_QUEUE || []).filter(function (item) { return item.id === shot.id; })[0];
             if (row) row.voice = true;
+            if (shot.kind !== "video") queueWalkBlob(shot, shot.voice, "voice");
             voiceRec = null;
           };
           try { rec.start(); voiceRec = rec; }
@@ -29989,7 +30779,9 @@ function phoneFinishWalk(shots, text) {
 function phonePaintSavedPhotos(M, slug) {
   if (!M || !phoneSavedPhotos || phoneSavedPhotos.slug !== slug) return;
   const rows = (phoneSavedPhotos.shots || []).slice().sort(function (a, b) { return (Number(a.at) || 0) - (Number(b.at) || 0); });
-  let html = '<section data-phone-photos data-walk-summary><h2>' + esc(phoneSavedPhotos.summary || '') + '</h2>';
+  const hasVideo = rows.some(function (shot) { return shot && shot.kind === 'video'; });
+  let html = '<section data-phone-photos data-walk-summary><h2>' + esc(phoneSavedPhotos.summary || '') + '</h2>' +
+    (hasVideo ? '<p data-walk-status>Saving the walkthrough on this job. It stays in the daily log. The upload continues in the background if the phone locks.</p>' : '');
   rows.forEach(function (shot) {
     const media = shot.kind === 'video'
       ? '<span class="walk-vid">Video</span>'
@@ -30311,6 +31103,107 @@ function phoneLiftClosedJobs() {
   fold.appendChild(box);
   if (grid.parentNode) grid.parentNode.appendChild(fold);
 }
+function phoneHosted() {
+  try { return !!(window.HWS_HOSTED || (window.HWS_VIEWER && window.HWS_VIEWER.role)); } catch (e) { return false; }
+}
+function phoneAskAllowed() {
+  try { return typeof askInternal === 'function' && !!askInternal(); } catch (e) { return false; }
+}
+function phoneWalkHref() {
+  let slug = '';
+  try { slug = (typeof J !== 'undefined' && J && J.slug) || ''; } catch (e) { slug = ''; }
+  slug = String(slug).replace(/[^a-z0-9\-]/g, '');
+  return slug ? '#/job/' + slug + '/logs' : '';
+}
+function phoneWalkLink(href) {
+  if (!href) return '';
+  return '<a class="phone-walk" data-phone-walks href="' + href + '">Walkthroughs</a>';
+}
+function phoneAskFormHtml(href) {
+  return '<form class="phone-ask" data-phone-ask action="#"><input type="text" name="q" placeholder="Ask about this job…" aria-label="Ask about this job" autocomplete="off" enterkeyhint="search">' + phoneWalkLink(href) + '<button type="submit">Ask</button></form><div class="phone-draft" data-phone-draft hidden></div>';
+}
+function phonePlaceAsk(bar, html) {
+  const holder = document.createElement('div');
+  holder.innerHTML = html;
+  const grid = bar.querySelector('[data-phone-grid]');
+  const before = grid || null;
+  while (holder.firstChild) bar.insertBefore(holder.firstChild, before);
+}
+function phoneSyncJobAsk() {
+  const bar = document.querySelector('[data-phone-job]');
+  if (!bar) return;
+  const href = phoneWalkHref();
+  const form = bar.querySelector('[data-phone-ask]');
+  const draft = bar.querySelector('[data-phone-draft]');
+  if (!phoneAskAllowed()) {
+    if (form) form.remove();
+    if (draft) draft.remove();
+    if (href && !bar.querySelector('[data-phone-walks]')) phonePlaceAsk(bar, phoneWalkLink(href));
+    return;
+  }
+  const stray = bar.querySelector(':scope > [data-phone-walks]');
+  if (stray) stray.remove();
+  if (form) {
+    if (href && !form.querySelector('[data-phone-walks]')) {
+      const button = form.querySelector('button');
+      const holder = document.createElement('div');
+      holder.innerHTML = phoneWalkLink(href);
+      form.insertBefore(holder.firstChild, button || null);
+    }
+    return;
+  }
+  phonePlaceAsk(bar, phoneAskFormHtml(href));
+}
+function phoneMountHubAsk() {
+  phoneSyncJobAsk();
+  if (!phoneOn() || !phoneHosted()) return;
+  const host = document.querySelector('.home-v3');
+  if (!host) return;
+  const injected = host.querySelector('[data-phone-ask-home]');
+  if (!phoneAskAllowed()) {
+    if (injected && injected.parentNode) injected.parentNode.removeChild(injected);
+    return;
+  }
+  if (host.querySelector('[data-ask-root]')) {
+    if (typeof askBind === 'function') askBind(host);
+    if (injected && injected.parentNode) injected.parentNode.removeChild(injected);
+    return;
+  }
+  if (typeof askBoxHtml !== 'function' || injected) return;
+  const box = document.createElement('div');
+  box.setAttribute('data-phone-ask-home', '1');
+  box.innerHTML = askBoxHtml('');
+  host.insertBefore(box, host.firstChild);
+  if (typeof askBind === 'function') askBind(box);
+}
+function phoneAskHub(text, slug, out) {
+  if (out) {
+    out.hidden = false;
+    const wait = (typeof askIsOwner === 'function' && askIsOwner()) ? 'Thinking…' : 'Looking…';
+    out.innerHTML = '<p class="ask-wait" data-ask-thinking="1">' + wait + '</p>';
+  }
+  const url = '/api/ask?q=' + encodeURIComponent(text) + (slug ? '&job=' + encodeURIComponent(slug) : '');
+  let ctrl = null;
+  try { if (typeof AbortController === 'function') ctrl = new AbortController(); } catch (e) { ctrl = null; }
+  const ms = (typeof askTimeoutMs === 'function') ? askTimeoutMs() : 30000;
+  const timer = setTimeout(function () { if (ctrl) { try { ctrl.abort(); } catch (e2) {} } }, ms);
+  const req = fetch(url, {credentials: 'same-origin', signal: ctrl ? ctrl.signal : undefined});
+  Promise.resolve(req).then(function (res) {
+    if (!res || res.ok === false || (typeof res.status === 'number' && (res.status < 200 || res.status >= 300))) throw new Error('ask');
+    return res.json();
+  }).then(function (payload) {
+    clearTimeout(timer);
+    if (!payload || payload.ok === false || payload.error) throw new Error('ask');
+    if (!out) return;
+    out.hidden = false;
+    out.innerHTML = (typeof askResultHtml === 'function') ? askResultHtml(payload) : '';
+  }).catch(function () {
+    clearTimeout(timer);
+    if (!out) return;
+    out.hidden = false;
+    out.innerHTML = (typeof askOfflineHtml === 'function') ? askOfflineHtml(text, slug) : '';
+  });
+}
 function phoneAsk(form) {
   const input = form.querySelector('input');
   const text = input ? String(input.value || '').trim() : '';
@@ -30323,6 +31216,7 @@ function phoneAsk(form) {
   if (!text) { show('Add a question first.'); return; }
   let slug = '';
   try { slug = (typeof J !== 'undefined' && J && J.slug) || ''; } catch (e) { slug = ''; }
+  if (phoneHosted() && typeof fetch === 'function') { phoneAskHub(text, slug, out); return; }
   let hook = null;
   if (typeof fieldAiDraft === 'function') hook = fieldAiDraft;
   else if (typeof askAboutJob === 'function') hook = askAboutJob;
@@ -30347,7 +31241,8 @@ function phoneJobChrome() {
   const bar = document.createElement('div');
   bar.className = 'phone-jobbar';
   bar.setAttribute('data-phone-job', '1');
-  bar.innerHTML = '<form class="phone-ask" data-phone-ask action="#"><input type="text" name="q" placeholder="Ask about this job…" aria-label="Ask about this job" autocomplete="off" enterkeyhint="done"><button type="submit">Draft</button></form><div class="phone-draft" data-phone-draft hidden></div>' + phoneGridHtml();
+  const walkHref = phoneWalkHref();
+  bar.innerHTML = (phoneAskAllowed() ? phoneAskFormHtml(walkHref) : phoneWalkLink(walkHref)) + phoneGridHtml();
   const tabs = root.querySelector('nav.jtabs');
   const mod = document.getElementById('mod');
   if (tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
@@ -30357,6 +31252,15 @@ function phoneBind() {
   if (phoneBind.done || typeof document === 'undefined') return;
   phoneBind.done = true;
   document.addEventListener('click', function (e) {
+    const walks = e.target && e.target.closest ? e.target.closest('[data-phone-walks]') : null;
+    if (walks) {
+      e.preventDefault();
+      try { if (typeof st !== 'undefined') { st.logF = 'walk'; if (typeof saveUi === 'function') saveUi(); } } catch (err) {}
+      const dest = walks.getAttribute('href') || '';
+      if (location.hash === dest) { if (typeof route === 'function') route(); }
+      else location.hash = dest;
+      return;
+    }
     const t = e.target && e.target.closest ? e.target.closest('[data-phone-capture],[data-phone-more],[data-phone-note],[data-phone-photo]') : null;
     if (!t) return;
     if (t.hasAttribute('data-phone-capture')) { e.preventDefault(); phoneOpenCapture(t.getAttribute('data-phone-focus') || ''); return; }
@@ -30389,6 +31293,7 @@ if (typeof renderHome === 'function') {
     if (!phoneOn()) return _phoneHome();
     phoneMark();
     _phoneHome();
+    phoneMountHubAsk();
     if (phoneFeedOptIn()) phoneMountFeed();
     phoneEnsureApprovals();
     phoneMaybeScanOnboarding();
