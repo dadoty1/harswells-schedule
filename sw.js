@@ -4,7 +4,7 @@
    intercepted. Private data.json is not in the shell: it is cached only
    after the page loads it (stale-while-revalidate) and is copied forward when the version changes. Opened plans and
    files live in hws-files, which is not wiped on deploy. Cross-origin calls and the demo path are ignored. */
-const VERSION='c32a8c2f49';
+const VERSION='0dece2ca1e';
 const DOC_NETWORK_FIRST=true;
 const SHELL='hws-shell-'+VERSION;
 const DATA='hws-data-'+VERSION;
@@ -94,6 +94,9 @@ self.addEventListener('message',e=>{
     viewerKey='';
     e.waitUntil(clearDataEntries());
   }
+  /* Same listener as sign-out. A second message listener would replace this one
+     in the privacy check, and sign-out would leave the data cache. */
+  if(t==='hws-scan-sync') e.waitUntil(uploadScanQueue());
 });
 async function staleWhileRevalidate(req){
   const cache=await caches.open(DATA);
@@ -262,4 +265,97 @@ self.addEventListener('fetch',e=>{
   });
   if(shell){e.respondWith(cacheFirst(req));return}
   e.respondWith(filesThenNet(req));
+});
+/* Scan photo queue. The page writes blobs into this database. Background Sync,
+   or a message when sync is missing, uploads them after the page is gone. */
+const SCAN_DB='hws-scan-uploads';
+function openScanDb(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(SCAN_DB,1);
+    req.onupgradeneeded=()=>{ if(!req.result.objectStoreNames.contains('items')) req.result.createObjectStore('items',{keyPath:'id'}); };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+function scanAll(db){
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('items','readonly');
+    const req=tx.objectStore('items').getAll();
+    req.onsuccess=()=>resolve(req.result||[]);
+    req.onerror=()=>reject(req.error);
+  });
+}
+function scanPut(db, rec){
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('items','readwrite');
+    const store=tx.objectStore('items');
+    if(rec.state==='done') store.delete(rec.id); else store.put(rec);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+function scanB64(bytes){
+  let text='';
+  const step=0x8000;
+  for(let i=0;i<bytes.length;i+=step) text+=String.fromCharCode.apply(null, bytes.subarray(i, i+step));
+  return btoa(text);
+}
+async function postScan(url, body){
+  const res=await fetch(url,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+  const payload=await res.json().catch(()=>({}));
+  payload.statusCode=res.status;
+  return payload;
+}
+async function uploadScanItem(db, item){
+  if(!item||item.holdForPower||item.state==='done'||item.state==='failed'||!item.blob) return;
+  const base=self.registration.scope.replace(/\/$/,'');
+  const bytes=new Uint8Array(await item.blob.arrayBuffer());
+  const digest=await crypto.subtle.digest('SHA-256', bytes);
+  const hash=Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  let id=item.uploadId||'';
+  if(!id){
+    const started=await postScan(base+'/api/photos/scan/uploads',{
+      local_id:item.local_id, sha256:hash, content_hash:hash, size:bytes.length,
+      captured_at:item.captured_at||'', destination:item.destination||'daily_log',
+      slug:item.slug||'', job_name:item.job_name||'', folder:item.folder||'',
+      filename:item.filename||'photo.jpg', lat:item.lat, lng:item.lng, override:item.override===true
+    });
+    if(!started.id) throw new Error(started.error||'could not start');
+    id=started.id; item.uploadId=id; item.state='uploading';
+    await scanPut(db, item);
+  }
+  let offset=Math.max(0, Number(item.sent||0));
+  const chunk=256*1024;
+  while(offset<bytes.length){
+    const part=bytes.subarray(offset, Math.min(bytes.length, offset+chunk));
+    const result=await postScan(base+'/api/photos/scan/uploads/'+id,{offset:offset, data_b64:scanB64(part)});
+    if(result.statusCode===409||result.error==='resume'){ offset=Number(result.offset||offset); continue; }
+    if(!result.ok) throw new Error(result.error||'chunk failed');
+    offset=Number(result.offset); item.sent=offset;
+    await scanPut(db, item);
+  }
+  const done=await postScan(base+'/api/photos/scan/uploads/'+id+'/complete',{});
+  if(!done.confirmed) throw new Error(done.error||'not confirmed');
+  item.state='done';
+  await scanPut(db, item);
+}
+async function uploadScanQueue(){
+  const db=await openScanDb();
+  const rows=await scanAll(db);
+  for(let i=0;i<rows.length;i++){
+    try{ await uploadScanItem(db, rows[i]); }
+    catch(e){
+      rows[i].state='retry';
+      rows[i].attempt=(rows[i].attempt||0)+1;
+      if(rows[i].attempt>5) rows[i].state='failed';
+      try{ await scanPut(db, rows[i]); }catch(err){}
+    }
+  }
+  db.close();
+  const clients=await self.clients.matchAll({type:'window'});
+  clients.forEach(c=>c.postMessage({type:'hws-scan-progress'}));
+}
+self.addEventListener('sync', event=>{
+  if(!event.tag||event.tag!=='hws-scan') return;
+  event.waitUntil(uploadScanQueue());
 });
