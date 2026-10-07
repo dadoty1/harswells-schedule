@@ -31299,11 +31299,56 @@ function phoneJobChrome() {
   bar.className = 'phone-jobbar';
   bar.setAttribute('data-phone-job', '1');
   const walkHref = phoneWalkHref();
-  bar.innerHTML = (phoneAskAllowed() ? phoneAskFormHtml(walkHref) : phoneWalkLink(walkHref)) + phoneGridHtml();
+  bar.innerHTML = phoneAskAllowed() ? phoneAskFormHtml(walkHref) : phoneWalkLink(walkHref);
   const tabs = root.querySelector('nav.jtabs');
   const mod = document.getElementById('mod');
   if (tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
   else if (mod && mod.parentNode) mod.parentNode.insertBefore(bar, mod);
+}
+function phoneClearTab(follow) {
+  if (!phoneOn()) return;
+  const bar = document.querySelector('.tabbar.phone-tabs');
+  const jobhead = document.querySelector('.jh');
+  const jobbar = document.querySelector('.phone-jobbar');
+  const tabs = document.querySelector('nav.jtabs');
+  const anchor = jobhead || jobbar || tabs;
+  if (!bar || !anchor || !anchor.parentNode) return;
+  const y = window.scrollY || 0;
+  window.scrollTo(0, 0);
+  let spacer = anchor.previousElementSibling;
+  if (!spacer || spacer.getAttribute('data-phone-clear') !== '1') {
+    spacer = document.createElement('div');
+    spacer.setAttribute('data-phone-clear', '1');
+    spacer.setAttribute('aria-hidden', 'true');
+    anchor.parentNode.insertBefore(spacer, anchor);
+  }
+  spacer.style.cssText = 'display:block;height:0;margin:0;padding:0;border:0';
+  void spacer.offsetHeight;
+  const br = bar.getBoundingClientRect();
+  if (br.height < 1) { window.scrollTo(0, y); if (!follow) requestAnimationFrame(function () { phoneClearTab(true); }); return; }
+  const sel = 'button, a[href], input, select, textarea, summary, .fchip';
+  const roots = [jobhead, jobbar, tabs, document.getElementById('mod')].filter(Boolean);
+  let topmost = null;
+  let hit = false;
+  roots.forEach(function (root) {
+    root.querySelectorAll(sel).forEach(function (el) {
+      if (bar.contains(el) || spacer.contains(el)) return;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return;
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 1 || rect.height < 1) return;
+      if (topmost === null || rect.top < topmost) topmost = rect.top;
+      const overlap = Math.min(rect.bottom, br.bottom) - Math.max(rect.top, br.top);
+      const width = Math.min(rect.right, br.right) - Math.max(rect.left, br.left);
+      if (overlap > 0 && width > 0) hit = true;
+    });
+  });
+  if (hit && topmost !== null) {
+    const shift = Math.ceil(br.bottom - topmost + 1);
+    if (shift > 0) spacer.style.height = shift + 'px';
+  }
+  window.scrollTo(0, y);
+  if (!follow) requestAnimationFrame(function () { phoneClearTab(true); });
 }
 function phoneBind() {
   if (phoneBind.done || typeof document === 'undefined') return;
@@ -31382,7 +31427,7 @@ if (typeof renderJob === 'function') {
   const _phoneJob = renderJob;
   renderJob = function () {
     _phoneJob();
-    if (phoneOn()) phoneJobChrome();
+    if (phoneOn()) { phoneJobChrome(); phoneClearTab(); }
     phoneMark();
   };
 }
