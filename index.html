@@ -353,6 +353,8 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 .soonc .bubble{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;background:linear-gradient(145deg,var(--navy),var(--navy3));color:#fff;display:flex;align-items:center;justify-content:center}.soonc .bubble .ico{width:34px;height:34px}
 .soonc h1{font-size:22px}.soonc p{color:#475467;font-size:15px;line-height:1.5;margin:10px 0 18px}
 .pbtn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 18px;border-radius:12px;background:var(--navy);color:#fff;font-weight:700;text-decoration:none!important}
+.unav-acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+.unav-acts .btn{min-height:46px;padding:0 16px;border-radius:12px}
 .gtabs{display:none}
 .backjobs{display:inline-flex;align-items:center;gap:2px;min-height:44px;margin:0 0 2px;font-weight:700;font-size:15px;color:var(--navy2);text-decoration:none!important}
 .backjobs:before{content:"\2039";font-size:22px;line-height:1;margin-right:2px}
@@ -6753,13 +6755,17 @@ async function loadCopy(){
   if(await sessionOk())return readCache();
   return null;
 }
+function viewGet(){try{return sessionStorage.getItem(VIEW_KEY)||''}catch(e){return ''}}
+function viewSet(v){try{sessionStorage.setItem(VIEW_KEY, v);return true}catch(e){return false}}
+/* Last page is remembered only for this tab. A new visit opens Home.
+   A reload in the same tab still returns to the page you had open. */
 function rememberView(){
   const h=location.hash||'#/';
   if(h.indexOf('setup=')>=0)return;
-  lsSet(VIEW_KEY, h);
+  viewSet(h);
 }
 function restoreView(){
-  const last=lsGet(VIEW_KEY)||'';
+  const last=viewGet();
   const h=location.hash||'';
   if((h===''||h==='#'||h==='#/'||h==='#/home')&&last&&last!=='#/'&&last!=='#'&&last!=='#/home'){
     location.hash=last;
@@ -6999,9 +7005,10 @@ window.HWSOffline={
 })();
 
 /* Company feature switches. Provider names are not in this file.
-   A missing flag stays on. Company off wins over a person. A person can be off
-   while the company stays on. Nav, home, and the editable home all use featureOn.
-   A feature that is off is omitted from the job object the screen reads. */
+   A missing flag stays on, except chat, home_inbox, and home_photos, which stay
+   off until the company turns them on. Company off wins over a person. A person
+   can be off while the company stays on. Nav, home, and the editable home all
+   use featureOn. A feature that is off is omitted from the job object the screen reads. */
 'use strict';
 const HWS_FEATURES = [
   ['money', 'Money'],
@@ -7011,9 +7018,22 @@ const HWS_FEATURES = [
   ['plan_room', 'Plan Room'],
   ['selections', 'Selections'],
   ['intake', 'Intake'],
-  ['project_feed', 'Project feed']
+  ['project_feed', 'Project feed'],
+  ['chat', 'Chat tab'],
+  ['home_inbox', 'Home inbox'],
+  ['home_photos', 'Home photos link']
 ];
 const HWS_FEATURE_IDS = HWS_FEATURES.map(function (row) { return row[0]; });
+/* These stay off until a company flag is explicitly true. A missing flag
+   still means on for every other feature. Chat, Home inbox, and the Home
+   photos link are dead ends until those pages are real. */
+const HWS_FEATURE_DEFAULT_OFF = {chat: 1, home_inbox: 1, home_photos: 1};
+function featureCompanyOn(id) {
+  const flags = companyDoc().features || {};
+  if (flags[id] === false) return false;
+  if (flags[id] === true) return true;
+  return !HWS_FEATURE_DEFAULT_OFF[id];
+}
 const HWS_JOB_KEYS = {
   money: ['budget', 'budget_index', 'budget_categories', 'budget_progress', 'budget_lines', 'money'],
   bids: ['bids'],
@@ -7280,8 +7300,7 @@ function hideJobThread(job) {
 }
 function featureOn(id, who) {
   if (HWS_FEATURE_IDS.indexOf(id) < 0) return true;
-  const flags = companyDoc().features || {};
-  if (flags[id] === false) return false;
+  if (typeof featureCompanyOn === 'function' && !featureCompanyOn(id)) return false;
   const person = findPerson(who == null ? currentWhoName() : who);
   if (person && person.features && person.features[id] === false) return false;
   return true;
@@ -7518,7 +7537,7 @@ function renderFeatures() {
   const doc = companyDoc();
   const flags = doc.features || {};
   const rows = HWS_FEATURES.map(function (row) {
-    const on = flags[row[0]] !== false;
+    const on = typeof featureCompanyOn === 'function' ? featureCompanyOn(row[0]) : flags[row[0]] !== false;
     return '<label class="feat-row"><span class="feat-label">' + esc(row[1]) + '</span><span class="feat-toggle"><input type="checkbox" class="feat-switch" data-feat="' + row[0] + '"' + (on ? ' checked' : '') + '><i aria-hidden="true"></i></span></label>';
   }).join('');
   const people = (doc.people || []).map(function (person) {
@@ -7538,7 +7557,7 @@ function renderFeatures() {
   const scanMax = scanCfg.unlimited || !scanCfg.photo_scan_max_days ? "" : String(scanCfg.photo_scan_max_days);
   const scanMb = scanCfg.photo_scan_cellular_mb || 500;
   const scanAdmin = '<h2>Scan photos</h2><p class="hint">Blank max range means a scan can go back to the start of the photo library. A number of days is the farthest this company allows. Daily Log, Capture, Dust Control, and imports under 500 items and under the cellular size upload on cellular right away. Blank cellular size uses 500 MB. The first-sign-in import stays off until the box is checked.</p><form id="scanadmin"><label>Max range in days<input name="max" inputmode="numeric" placeholder="Unlimited" value="' + esc(scanMax) + '"></label><label>Cellular size in MB<input name="cellular" inputmode="numeric" placeholder="500" value="' + esc(String(scanMb)) + '"></label><label class="feat-row"><span class="feat-label">Show the import on first sign-in</span><span class="feat-toggle"><input type="checkbox" name="onboarding"' + (scanCfg.photo_scan_onboarding ? " checked" : "") + '><i aria-hidden="true"></i></span></label><div class="mbtns"><button class="pri" type="submit">Save scan settings</button></div></form>';
-  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data. Chat, Home inbox, and the Home photos link stay off until you turn them on.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
   if (typeof hubShell === 'function') hubShell('settings', body);
   else document.getElementById('root').innerHTML = body;
   const scanForm = document.getElementById('scanadmin');
@@ -14102,7 +14121,7 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  if(typeof knownMod==='function'&&!knownMod(mod)){M.innerHTML=typeof notFoundHtml==='function'?notFoundHtml():'<div class="panel"><h3>Not found</h3><p>No module</p></div>'}
  else if(fieldMoneyOff||feedOff||(feat&&typeof featureOn==='function'&&!featureOn(feat))){M.innerHTML=typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>'}
  else if(threadOff||intakeOff){M.innerHTML=typeof notAvailableHtml==='function'?notAvailableHtml():'<div class="feature-off" data-unavailable="1"><h1>Not available</h1><p>This is not available.</p></div>'}
- else {try{(MODFN()[mod]||mSchedule)(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}}
+ else {const fn=MODFN()[mod];if(fn){try{fn(M)}catch(e){M.innerHTML='<pre>'+esc(e.stack)+'</pre>';console.warn(e)}}else if(mod==='plans'||mod==='takeoffs'){M.innerHTML=''}else{M.innerHTML=unavailableHtml({title:"This part of the job isn't available yet",detail:'There is no '+mod+' page on this job.',backHref:jobHref(J.slug),backLabel:'Back to this job',altHref:'#/',altLabel:'Home'})}}
  const padlog=document.getElementById('padlog');if(padlog&&typeof logPhone==='function')logPhone(padlog,J.logs||[]);
  if(typeof photoMountJob==='function')photoMountJob(document.getElementById('photo-slot'));
  if(typeof noteMountJob==='function')noteMountJob();
@@ -15393,7 +15412,8 @@ function homeCatalog(role, moneyOk) {
   role = HOME_DEFAULTS[role] ? role : 'guest';
   function keep(section) {
     if (section === 'money') return homeFeat('money');
-    if (section === 'photos') return homeFeat('photos');
+    if (section === 'photos') return homeFeat('photos') && homeFeat('home_photos');
+    if (section === 'inbox') return homeFeat('home_inbox');
     return true;
   }
   if (role === 'guest') return ['photos'].filter(keep);
@@ -15987,10 +16007,10 @@ function homeMoneyHtml() {
   return homeSection('money', `<div class="rows"><a class="hrow" href="#/money"><span class="lb"><span class="lt">Open the money page</span><span class="ls">Invoices, bills, and budget stay there</span></span></a></div>`);
 }
 function homePhotosHtml() {
-  return homeSection('photos', `<div class="rows"><a class="hrow" href="#/files"><span class="lb"><span class="lt">Latest photos and walkthroughs</span><span class="ls">Open a job folder to see them</span></span></a></div>`);
+  return homeSection('photos', `<div class="rows"><a class="hrow" href="#/photos"><span class="lb"><span class="lt">Photos</span><span class="ls">Not available as its own page yet</span></span></a></div>`);
 }
 function homeInboxHtml() {
-  return homeSection('inbox', `<div class="rows"><a class="hrow" href="#/chat"><span class="lb"><span class="lt">Slack and mail waiting to be filed</span><span class="ls">Nothing is sent from here</span></span></a></div>`);
+  return homeSection('inbox', `<div class="rows"><a class="hrow" href="#/chat"><span class="lb"><span class="lt">Team chat</span><span class="ls">Not available in the hub yet</span></span></a></div>`);
 }
 function homeBuyingHtml() {
   const sel = typeof selectionHomeCard === 'function' ? selectionHomeCard() : '';
@@ -16018,8 +16038,8 @@ function homeElseHtml(moneyOk) {
     ['#/trackers/orders', 'Orders', ''],
     ['#/trackers/fups', 'Follow-ups', ''],
     ['#/trackers/conflicts', 'Conflicts', ''],
-    homeFeat('photos') ? ['#/files', 'Photos', ''] : null,
-    ['#/chat', 'Inbox', ''],
+    (homeFeat('photos') && homeFeat('home_photos')) ? ['#/photos', 'Photos', ''] : null,
+    homeFeat('home_inbox') ? ['#/chat', 'Chat', ''] : null,
     ['#/trackers/today', 'Today', '']
   ].filter(Boolean);
   if (moneyOk && homeFeat('money')) links.push(['#/money', 'Money', '']);
@@ -16592,7 +16612,7 @@ if (typeof window !== 'undefined') {
 
 /* Harswells employee hub (9/27): Home dashboard, Jobs, Trackers, Files, Chat + the job "Files" module.
    The shell holds NO data: every name, count, link and date comes from data.json (common.hub, common.links, common.job_links). */
-const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money','settings','needs','approvals','meeting','digest','bidroom'];
+const HUB_PAGES=['home','jobs','trackers','files','chat','attention','money','settings','needs','approvals','meeting','digest','bidroom','photos'];
 const IC={home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
  jobs:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
  trackers:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>',
@@ -16651,7 +16671,7 @@ function hubNav(){if(typeof investorNav==='function'){const custom=investorNav()
  const it=[['home','Home','#/'],['jobs','Jobs','#/jobs'],['trackers','Trackers','#/trackers'],['files','Files','#/files']];
  if(typeof hubMoneyTab==='function'?hubMoneyTab():(typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money'))))it.splice(2,0,['money','Money','#/money']);
  it.push(['approvals','Approvals','#/approvals']);
- if(typeof chatNavOn!=='function'||chatNavOn())it.push(['chat','Chat','#/chat']);
+ if((typeof featureOn==='function'&&featureOn('chat'))&&(typeof chatNavOn!=='function'||chatNavOn()))it.push(['chat','Chat','#/chat']);
  return it}
 function gnavHtml(page){const it=hubNav();
  return `<nav class="tabbar gtabs" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" data-g="${k}" class="${k==page?'on':''}" ${k==page?'aria-current="page"':''}>${ico(k)}<span>${l}</span></a>`).join('')}</nav>`}
@@ -16820,7 +16840,9 @@ function renderChat(){if(typeof chatNavOn==='function'&&!chatNavOn()){if(typeof 
  const body=rows.length?rows.map(function(row){return chatLine(row,who&&String(row.who||'').toLowerCase()===String(who).toLowerCase())}).join(''):'<p class="hub-chat-empty">No messages yet</p>';
  hubShell('chat',`<div class="hub-chat" data-chat="1"><h1 class="hub-chat-title">Chat</h1><div class="hub-chat-log" tabindex="0">${body}</div><form class="hub-chat-foot"><textarea rows="1" aria-label="Message" placeholder="Message the team" enterkeyhint="send"></textarea><button type="submit" class="pri">Send</button></form></div>`);
  document.title='Harswells · Chat';const root=document.querySelector('.hub-chat');if(root)chatBind(root)}
-function renderHub(p){const pg=p.page;if(pg=='approvals'&&typeof renderApprovals==='function')renderApprovals();else if(pg=='meeting'&&typeof renderMeeting==='function')renderMeeting(p.sub);else if(pg=='digest'&&typeof renderDigest==='function')renderDigest(p.sub);else if(pg=='settings'&&typeof renderFeatures==='function')renderFeatures();else if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof hubMoneyBlocked==='function'&&hubMoneyBlocked()){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='chat')renderChat();else if(pg=='bidroom'&&typeof renderBidRoom==='function')renderBidRoom(p);else renderHome();window.scrollTo(0,0)}
+function unavailableHtml(o){o=o||{};const title=esc(o.title||"This page isn't available yet");const detail=esc(o.detail||"Nothing is published here yet.");const back=esc(o.backHref||'#/');const label=esc(o.backLabel||'Back to Home');const alt=o.altHref?`<a class="btn" href="${esc(o.altHref)}">${esc(o.altLabel||'Home')}</a>`:'';const extra=o.extra||'';return `<div class="soonc" data-unavailable="1"><h1>${title}</h1><p>${detail}</p><p class="unav-acts">${extra}<a class="pbtn" href="${back}">${label}</a>${alt}</p></div>`}
+function renderPhotosHub(){hubShell('photos',unavailableHtml({title:"Photos aren't available here yet",detail:'There is no photo library on Home. Walkthrough photos stay on the job for people who can take them.',backHref:'#/',backLabel:'Back to Home'}));const brand=(document.querySelector('.brand')||{}).textContent||'Hub';document.title=brand+' · Photos'}
+function renderHub(p){const pg=p.page;if(p&&(p.missing||pg==='missing')){hubShell('missing',unavailableHtml({title:"This page doesn't exist yet",detail:'Nothing is published at this address.',backHref:'#/',backLabel:'Back to Home'}));const brand=(document.querySelector('.brand')||{}).textContent||'Hub';document.title=brand+' · Not found';window.scrollTo(0,0);return}if(pg=='approvals'&&typeof renderApprovals==='function')renderApprovals();else if(pg=='meeting'&&typeof renderMeeting==='function')renderMeeting(p.sub);else if(pg=='digest'&&typeof renderDigest==='function')renderDigest(p.sub);else if(pg=='settings'&&typeof renderFeatures==='function')renderFeatures();else if(pg=='attention'&&typeof renderAttention=='function')renderAttention(p.sub);else if(pg=='money'&&typeof hubMoneyBlocked==='function'&&hubMoneyBlocked()){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof featureOn==='function'&&!featureOn('money')){hubShell('money',typeof notEnabledHtml==='function'?notEnabledHtml():'<div class="feature-off" data-feature-off="1"><h1>Not enabled</h1><p>This is not enabled.</p></div>')}else if(pg=='money'&&typeof renderMoney==='function')renderMoney();else if(pg=='needs'&&typeof renderNeedsAll==='function')renderNeedsAll(p.sub);else if(pg=='trackers')renderTrackers(p.sub);else if(pg=='files')renderFiles();else if(pg=='photos'&&typeof renderPhotosHub==='function')renderPhotosHub();else if(pg=='chat')renderChat();else if(pg=='bidroom'&&typeof renderBidRoom==='function')renderBidRoom(p);else renderHome();window.scrollTo(0,0)}
 
 /* Investor view. Section 13: one invited job, no trade book, no intake,
    and no dollar figures unless the owner approved the summary.
