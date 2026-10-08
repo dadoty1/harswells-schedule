@@ -590,7 +590,12 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 .aassign{display:flex;align-items:center;gap:10px;min-height:48px;margin-top:6px;padding:0 10px;border-radius:12px;background:var(--soft);color:var(--navy2);font-weight:650;text-decoration:none!important}.aassign span{flex:1}
 .aseg{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px 12px;padding:2px}
 .aseg a{flex:none;min-height:40px;display:flex;align-items:center;padding:0 14px;border-radius:20px;background:#fff;border:1px solid #dde3ec;color:#344054;font-weight:650;font-size:14px;text-decoration:none!important}.aseg a.on{background:var(--navy);border-color:var(--navy);color:#fff}
-.hub-attention .sh2 a{color:inherit;text-decoration:none!important;display:flex;align-items:center;gap:6px;min-height:40px}
+.hub-attention .sh2 a{color:inherit;text-decoration:none!important;display:flex;align-items:center;gap:6px;min-height:48px}
+/* At 820 the fixed tab bar covers the This week heading. The extra top margin
+   drops that heading below the bar without moving the Today list. */
+@media (min-width:761px) and (max-width:899px) and (min-height:501px){
+ .hub-attention h2.att-week{margin-top:88px}
+}
 .arow{display:flex;align-items:center;gap:10px;width:100%;min-height:60px;padding:9px 12px 9px 0;border:0;border-top:1px solid #edf0f4;background:#fff;color:var(--ink);text-align:left;font:inherit;cursor:pointer}
 .rows>.arow:first-child{border-top:0}.arow:active{background:#f3f6fb}
 .arow .abar{flex:none;align-self:stretch;width:5px;border-radius:0 4px 4px 0;background:#d0d5dd}
@@ -1161,6 +1166,13 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
  body.has-tabs{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 }
 .pad-field .pad-qnote button,.pad-field .home-sec-h a{min-height:44px;min-width:44px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center}
+/* The first tab stays a 44px-or-larger target, but its box stops before the
+   104px content inset so an even six-column bar does not cover Home. */
+@media (min-width:761px) and (max-width:1366px) and (orientation:portrait),
+       (min-width:761px) and (max-width:899px) and (min-height:501px){
+ body.has-tabs .tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+ body.has-tabs .tabbar a:first-child{width:100px;max-width:100px;justify-self:start;box-sizing:border-box;padding-left:37px}
+}
 
 .qsheet{--qfoot:160px;display:flex;flex-direction:column;gap:8px;min-height:0}
 .qsheet .qbody{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding-bottom:calc(var(--qfoot) + env(safe-area-inset-bottom));scroll-padding-bottom:calc(var(--qfoot) + env(safe-area-inset-bottom))}
@@ -1192,6 +1204,13 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .qsheet button.qhandle{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;margin:0;border:3px solid #2563eb;background:#fff;border-radius:10px;box-sizing:border-box;touch-action:none;pointer-events:auto;box-shadow:0 1px 4px rgba(16,24,40,.28);z-index:2}
 .qsheet canvas{display:block;width:100%;height:min(42vh,340px);min-height:220px;background:#fff;border:1px solid #d0d5dd;border-radius:8px;touch-action:none;-ms-touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .qsheet button.on{background:#15233b;color:#fff}
+.qsheet .qdraw,.qsheet .qacts{display:flex;flex-wrap:nowrap;align-items:center;gap:4px;overflow:visible}
+.qsheet .qdraw button,.qsheet .qacts button{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#15233b}
+.qsheet .qdraw svg,.qsheet .qacts svg{width:22px;height:22px;display:block;pointer-events:none}
+.qsheet .qacts [data-qnote-clear]{margin-left:auto}
+.qsheet .qacts .qzoom{flex:none}
+.qsheet .qacts button:disabled{opacity:.38}
+.qsheet .qdraw button.on{background:#15233b;color:#fff;border-color:#15233b;box-shadow:0 0 0 2px #fff,0 0 0 4px #15233b}
 .qsheet .qfoot{position:sticky;bottom:0;z-index:3;flex:none;background:#fff;display:flex;flex-direction:column;gap:8px;padding-top:8px;padding-bottom:max(8px, env(safe-area-inset-bottom));box-shadow:0 -10px 16px #fff}
 .qsheet .qfoot .qroll,.qsheet .qfoot .qsave{width:100%}
 .qsheet .qsave{position:static;background:transparent;padding-top:0;z-index:auto}
@@ -1683,6 +1702,7 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
     padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
   }
   body.phone-shell:has(.walk-layer) .modal-bg.phone-sheet { visibility: hidden; }
+  body.phone-shell:has(.walk-layer) .tabbar.phone-tabs { visibility: hidden; pointer-events: none; }
   body.phone-shell.modal-open .filedrop-upbtn,
   body.phone-shell.modal-open .ask-float,
   body.phone-shell:has(.walk-layer) .filedrop-upbtn,
@@ -2049,6 +2069,7 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
     border:0.5px solid rgba(60,60,67,.29);border-radius:14px;box-shadow:none;overflow:hidden;
   }
   body.phone-shell .logcompose .logdate{padding:10px 16px 0;font-size:13px;font-weight:600;color:#3a3a3c}
+  body.phone-shell.has-tabs .logcompose .logdate{padding-top:120px}
   body.phone-shell .logcompose input, body.phone-shell .logcompose textarea{
     border:0;border-radius:0;background:#fff;font-size:17px;
   }
@@ -2302,15 +2323,15 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
     padding: 0 10px;
   }
   body.phone-shell.has-tabs .ask-float {
-    top: 10px;
-    bottom: auto;
-    left: 168px;
-    right: auto;
+    top: auto;
+    bottom: calc(108px + env(safe-area-inset-bottom));
+    left: auto;
+    right: 16px;
     width: 44px;
     max-width: 44px;
     z-index: 70;
-    flex-direction: column-reverse;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-end;
   }
   body.phone-shell.has-tabs .ask-bubble {
     width: 44px;
@@ -2319,14 +2340,15 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
   body.phone-shell.has-tabs .ask-float.ask-open {
     left: 8px;
     right: 8px;
-    top: 64px;
+    top: auto;
+    bottom: calc(108px + env(safe-area-inset-bottom));
     width: auto;
     max-width: none;
   }
   body.phone-shell.has-tabs .ask-float.ask-open .ask-bubble {
-    position: fixed;
-    top: 10px;
-    left: 168px;
+    position: static;
+    top: auto;
+    left: auto;
     width: 44px;
     height: 44px;
   }
@@ -2612,7 +2634,8 @@ body.has-tabs .ask-float{bottom:calc(76px + env(safe-area-inset-bottom))}
   display: flex;
   flex-direction: column;
 }
-.walk { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.walk { display: flex; flex-direction: column; height: 100%; min-height: 0; box-sizing: border-box; }
+body.phone-shell .walk { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 .walk-top {
   display: flex;
   align-items: center;
@@ -2621,8 +2644,8 @@ body.has-tabs .ask-float{bottom:calc(76px + env(safe-area-inset-bottom))}
 }
 .walk-top strong { flex: 1 1 auto; font-size: 17px; font-weight: 650; }
 .walk-top button, .walk-actions button, .walk-caption input {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 48px;
+  min-width: 48px;
   border: 0;
   border-radius: 12px;
   background: rgba(255, 255, 255, .16);
@@ -12240,6 +12263,26 @@ try {
   function jobChoices() {
     return jobList().map(function (j) { let f = ""; try { f = j && j.slug ? jobFolder(j.slug) : ""; } catch (e) { f = ""; } return f ? {slug: j.slug, name: j.name || j.slug, folder: f} : null; }).filter(Boolean);
   }
+  function markIcon(kind) {
+    const body = {
+      pen: '<path fill="currentColor" d="M14.1 4.2 19.8 9.9 8.7 21H3v-5.7L14.1 4.2zm1.4-1.4 2.1-2.1a1.5 1.5 0 0 1 2.1 0l2.6 2.6a1.5 1.5 0 0 1 0 2.1l-2.1 2.1-4.7-4.7z"/>',
+      arrow: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M18 6H9M18 6v9"/>',
+      box: '<rect x="5" y="5" width="14" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>',
+      circle: '<circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/>',
+      text: '<path fill="currentColor" d="M4.5 5h15v2.8h-6v11.2h-3V7.8h-6z"/>',
+      hand: '<path fill="currentColor" d="M9 11.2V6.4a1.35 1.35 0 0 1 2.7 0v4.8h.7V4.8a1.35 1.35 0 0 1 2.7 0v6.4h.7V7a1.35 1.35 0 0 1 2.7 0v7.2A5.4 5.4 0 0 1 13.1 19.6h-1.8a4.2 4.2 0 0 1-3.4-1.7L4.6 14.4a1.25 1.25 0 0 1 1.8-1.7L9 15.1v-3.9z"/>',
+      pointer: '<path fill="currentColor" d="M5 3.2 18.2 12H12l-1.6 8.2L5 3.2z"/>',
+      undo: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 14 4 9m0 0 5-5M4 9h11a5 5 0 0 1 0 10h-2"/>',
+      redo: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 14 20 9m0 0-5-5M20 9H9a5 5 0 0 0 0 10h2"/>',
+      x: '<path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/>',
+      fit: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5"/>',
+      trash: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V4.5h6V7M7.5 7l.8 13h7.4l.8-13"/>'
+    }[kind] || "";
+    return '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">' + body + "</svg>";
+  }
+  function markBtn(attrs, label, kind) {
+    return '<button type="button" ' + attrs + ' aria-label="' + label + '" title="' + label + '">' + markIcon(kind) + "</button>";
+  }
   function sheetHtml(opts) {
     opts = opts || {};
     const job = esc(opts.job || "This job");
@@ -12248,20 +12291,34 @@ try {
     return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qbody"><div class="qhead"><div><h2>Quick note</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
       pick +
       '<div class="qtools"><button type="button" data-qnote-mode="sketch" class="on">Sketch</button><button type="button" data-qnote-mode="photo">Photo</button></div>' +
-      '<div class="qrow" data-qnote-photo-tools hidden><button type="button" data-qnote-cam>Take photo</button><button type="button" data-qnote-file>Choose photo</button></div>' +
       '<div class="qrow"><button type="button" data-qnote-import>Import page</button></div>' +
       '<div class="qimport" data-qnote-import-panel hidden><div class="qrow"><button type="button" data-qnote-import-phone>From this phone</button><button type="button" data-qnote-import-plans>Plan Room</button><button type="button" data-qnote-import-close>Close</button></div><p class="small mut" data-qnote-import-msg></p><div class="qpages" data-qnote-pages></div></div>' +
       '<div class="qconfirm" data-qnote-replace hidden><span>Replace this photo and clear the markup?</span><button type="button" data-qnote-replace-yes>Replace</button><button type="button" data-qnote-replace-no>Keep</button></div>' +
       '<div class="qmarkup" data-qnote-markup>' +
-      '<div class="qscroll qwrap"><button type="button" data-qnote-tool="ink" class="on">Pen</button><button type="button" data-qnote-tool="arrow">Arrow</button><button type="button" data-qnote-tool="box">Box</button><button type="button" data-qnote-tool="circle">Circle</button><button type="button" data-qnote-tool="text">Text</button><button type="button" data-qnote-tool="hand">Move</button><button type="button" data-qnote-tool="select">Select</button></div>' +
-      '<div class="qscroll qwrap"><button type="button" data-qnote-undo disabled>Undo</button><button type="button" data-qnote-redo disabled>Redo</button><button type="button" data-qnote-fit>Fit page</button><span class="qzoom" data-qnote-zoom>1×</span><button type="button" data-qnote-clear>Clear</button></div>' +
+      '<div class="qdraw" role="toolbar" aria-label="Drawing tools">' +
+      markBtn('data-qnote-tool="ink" class="on" aria-pressed="true"', "Pen", "pen") +
+      markBtn('data-qnote-tool="arrow" aria-pressed="false"', "Arrow", "arrow") +
+      markBtn('data-qnote-tool="box" aria-pressed="false"', "Box", "box") +
+      markBtn('data-qnote-tool="circle" aria-pressed="false"', "Circle", "circle") +
+      markBtn('data-qnote-tool="text" aria-pressed="false"', "Text", "text") +
+      markBtn('data-qnote-tool="hand" aria-pressed="false"', "Move", "hand") +
+      markBtn('data-qnote-tool="select" aria-pressed="false"', "Select", "pointer") +
+      "</div>" +
+      '<div class="qacts" role="toolbar" aria-label="Markup actions">' +
+      markBtn("data-qnote-undo disabled", "Undo", "undo") +
+      markBtn("data-qnote-redo disabled", "Redo", "redo") +
+      markBtn("data-qnote-delete disabled", "Delete", "x") +
+      markBtn("data-qnote-fit", "Fit page", "fit") +
+      '<span class="qzoom" data-qnote-zoom>1×</span>' +
+      markBtn("data-qnote-clear", "Clear", "trash") +
+      "</div>" +
       '<div class="qconfirm" data-qnote-confirm hidden><span>Clear all markup on this photo?</span><button type="button" data-qnote-clear-yes>Clear</button><button type="button" data-qnote-clear-no>Keep</button></div></div>' +
-      '<input data-qnote-cam-input type="file" accept="image/*" capture="environment" hidden><input data-qnote-file-input type="file" accept="image/*" hidden><input data-qnote-import-input type="file" accept="application/pdf,image/*" hidden>' +
+      '<input data-qnote-file-input type="file" accept="image/*" hidden><input data-qnote-import-input type="file" accept="application/pdf,image/*" hidden>' +
       '<div data-qnote-draft><label class="qtext">Note<textarea data-qnote-text rows="3" placeholder="Type the note"></textarea></label>' +
       (v2On() && root.HWSFieldNote ? '<p class="small" data-qnote-draft-hint hidden>Edit the draft, then save.</p>' : '') +
       "</div>" +
       '<div class="qstage" data-qnote-stage><canvas data-qnote-pad></canvas></div>' +
-      '<div class="qinspect" data-qnote-inspect hidden><div class="qscroll">' + swatch("#15233b", "Navy") + swatch("#b42318", "Red") + swatch("#b54708", "Amber") + swatch("#067647", "Green") + '</div><div class="qscroll"><button type="button" data-qnote-size="2">Thin</button><button type="button" data-qnote-size="5">Medium</button><button type="button" data-qnote-size="9">Thick</button><button type="button" data-qnote-delete>Delete</button></div><label class="qtext">Edit text<input data-qnote-edit-text placeholder="Edit text"></label></div>' +
+      '<div class="qinspect" data-qnote-inspect hidden><div class="qscroll">' + swatch("#15233b", "Navy") + swatch("#b42318", "Red") + swatch("#b54708", "Amber") + swatch("#067647", "Green") + '</div><div class="qscroll"><button type="button" data-qnote-size="2">Thin</button><button type="button" data-qnote-size="5">Medium</button><button type="button" data-qnote-size="9">Thick</button></div><label class="qtext">Edit text<input data-qnote-edit-text placeholder="Edit text"></label></div>' +
       '<label class="qtext">Text on the photo<input data-qnote-label placeholder="Text on the photo"></label>' +
       '<div class="qrow"><button type="button" data-qnote-clear-text>Clear note</button></div>' +
       '<div class="qconfirm" data-qnote-text-confirm hidden><span>Clear the note text?</span><button type="button" data-qnote-text-yes>Clear note</button><button type="button" data-qnote-text-no>Keep</button></div>' +
@@ -12343,6 +12400,8 @@ try {
       const field = host.querySelector("[data-qnote-edit-text]");
       const mark = selectedMark();
       if (box) box.hidden = !mark;
+      const del = host.querySelector("[data-qnote-delete]");
+      if (del) del.disabled = !mark;
       if (!field) return;
       const wrap = field.closest("label");
       if (mark && mark.tool === "text") {
@@ -12718,13 +12777,15 @@ try {
     canvas.addEventListener("pointercancel", endPointer);
     function setTool(name) {
       draw.tool = name || "ink";
-      host.querySelectorAll("[data-qnote-tool]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-qnote-tool") === draw.tool); });
+      host.querySelectorAll("[data-qnote-tool]").forEach(function (b) {
+        const on = b.getAttribute("data-qnote-tool") === draw.tool;
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
     }
     function setMode(mode) {
       draw.mode = mode;
       host.querySelectorAll("[data-qnote-mode]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-qnote-mode") === mode); });
-      const tools = host.querySelector("[data-qnote-photo-tools]");
-      if (tools) tools.hidden = mode !== "photo";
       if (mode === "photo" && !draw.toolPicked) setTool("arrow");
     }
     function blankBoard(w, h) {
@@ -12758,8 +12819,6 @@ try {
         if (saveBtn) saveBtn.textContent = draw.kind === "question" ? "Send" : "Save";
         return;
       }
-      if (t.hasAttribute("data-qnote-cam")) { const input = host.querySelector("[data-qnote-cam-input]"); if (input) input.click(); return; }
-      if (t.hasAttribute("data-qnote-file")) { const input = host.querySelector("[data-qnote-file-input]"); if (input) input.click(); return; }
       if (t.hasAttribute("data-qnote-fit")) { setView(fitView()); return; }
       if (t.hasAttribute("data-qnote-undo")) { if (text) draw.noteText = text.value; useEdit(historyUndo(hist, draw)); return; }
       if (t.hasAttribute("data-qnote-redo")) { if (text) draw.noteText = text.value; useEdit(historyRedo(hist, draw)); return; }
@@ -12991,7 +13050,7 @@ try {
         }).catch(function () {});
       }
     }
-    host.querySelectorAll("[data-qnote-cam-input],[data-qnote-file-input]").forEach(function (input) {
+    host.querySelectorAll("[data-qnote-file-input]").forEach(function (input) {
       input.addEventListener("change", function () { useFile(input.files && input.files[0]); });
     });
     const importInput = host.querySelector("[data-qnote-import-input]");
@@ -15038,20 +15097,22 @@ function logFileForget(id){
  }).catch(function(){});
 }
 function logFilePost(packed,onProgress){
- return new Promise(function(resolve,reject){
-  const xhr=new XMLHttpRequest();
-  xhr.open('POST','/api/file/upload');
-  xhr.withCredentials=true;
-  xhr.setRequestHeader('Content-Type','application/json');
-  xhr.upload.onprogress=function(ev){if(ev.lengthComputable&&onProgress)onProgress(Math.round(40+(ev.loaded/ev.total)*60))};
-  xhr.onload=function(){
+ const body=JSON.stringify({page:'job',slug:(J&&J.slug)||'',files:[packed]});
+ return window.fetch('/api/file/upload',{
+  method:'POST',
+  credentials:'include',
+  headers:{'Content-Type':'application/json'},
+  body:body
+ }).then(function(res){
+  return res.text().then(function(text){
    let data={};
-   try{data=JSON.parse(xhr.responseText||'{}')}catch(e){}
-   if(xhr.status>=200&&xhr.status<300)resolve(data);
-   else reject(new Error('upload'));
-  };
-  xhr.onerror=function(){reject(new Error('upload'))};
-  xhr.send(JSON.stringify({page:'job',slug:(J&&J.slug)||'',files:[packed]}));
+   try{data=JSON.parse(text||'{}')}catch(e){}
+   if(res.status>=200&&res.status<300)return data;
+   throw new Error('upload');
+  });
+ }).catch(function(err){
+  if(err&&err.message==='upload')throw err;
+  throw new Error('upload');
  });
 }
 function logFileFinish(item,data){
@@ -17858,7 +17919,7 @@ function renderAttention(sub){if(!AT()){hubShell('attention',`<div class="hph"><
  const [key0,q]=String(sub||'').split('?');const key=ATT_KEYS[key0]?key0:'';const M=attModel();const td=attToday();const jf=new URLSearchParams(q||'').get('job');
  const seg=`<div class="aseg">${[['','Overview'],['today','Today'],['week','Week'],['drift','Drift'],['quiet','Quiet'],['assigned','Assigned'],['flagged','Flagged']].map(([k,l])=>`<a href="#/attention${k?'/'+k:''}" class="${key==k?'on':''}">${l}</a>`).join('')}</div>`;
  let body='';
- if(!key){const sec=(k,title,L,f,n)=>`<h2 class="sh2"><a href="#/attention/${k}">${title} <span>${n==null?L.length:n}</span>${ico('chev','sm')}</a></h2><div class="rows">${L.slice(0,5).map(f).join('')||'<div class="none">Nothing here</div>'}${L.length>5?`<a class="more" href="#/attention/${k}">All ${L.length} ${ico('chev','sm')}</a>`:''}</div>`;
+ if(!key){const sec=(k,title,L,f,n)=>`<h2 class="sh2 att-${k}"><a href="#/attention/${k}">${title} <span>${n==null?L.length:n}</span>${ico('chev','sm')}</a></h2><div class="rows">${L.slice(0,5).map(f).join('')||'<div class="none">Nothing here</div>'}${L.length>5?`<a class="more" href="#/attention/${k}">All ${L.length} ${ico('chev','sm')}</a>`:''}</div>`;
   body=`<div class="acounts big">${attCount('today',M.today.length,'Today',M.today.some(i=>i.sev<=2)?'red':'')}${attCount('week',M.week.length,'This week')}${attCount('overdue',M.overdue.length,'Overdue',M.overdue.length?'red':'')}${attCount('critical',M.critical.length,'Critical','amber')}</div>
   <div class="acounts">${attCount('red',M.red.length,'Red','red')}${attCount('amber',M.amber.length,'Amber','amber')}${attCount('green',M.green.length,'Green','green')}${attCount('quiet',M.quiet.length,'Quiet','amber')}${attCount('flagged',M.flagged.length,'Flagged','red')}</div>
   <div class="acounts">${attCount('inspections',M.inspections.length,'Inspections')}${attCount('deliveries',M.deliveries.length,'Deliveries (info)')}${attCount('stale',M.stale.length,'Schedules not updated')}${attCount('nobase',M.nobase.length,'No baseline, no schedule')}</div>
@@ -20953,35 +21014,6 @@ function renderPlanIndex() {
 function injectMainNav() {
   if (typeof featureOn === "function" && !featureOn("plan_room")) {
     document.querySelectorAll("[data-hws-plans]").forEach((el) => el.remove());
-    return;
-  }
-  let on = false;
-  try { const p = parseHash(); on = p.page === "plans" || p.mod === "plans"; } catch (e) { on = false; }
-  const dnav = document.querySelector("nav.dnav");
-  if (dnav && !dnav.querySelector("[data-hws-plans]")) {
-    const a = document.createElement("a");
-    a.setAttribute("href", "#/plans");
-    a.setAttribute("data-hws-plans", "");
-    a.textContent = "Plan Room";
-    if (on) a.className = "on";
-    dnav.appendChild(a);
-  } else if (dnav) {
-    const a = dnav.querySelector("[data-hws-plans]");
-    if (a) a.classList.toggle("on", on);
-  }
-  const gt = document.querySelector("nav.gtabs");
-  const phoneBar = typeof phoneOn === "function" && phoneOn();
-  if (!phoneBar && gt && !gt.querySelector("[data-hws-plans]")) {
-    const a = document.createElement("a");
-    a.setAttribute("href", "#/plans");
-    a.setAttribute("data-hws-plans", "");
-    a.setAttribute("data-g", "plans");
-    a.innerHTML = ico("doc") + "<span>Plan Room</span>";
-    if (on) { a.className = "on"; a.setAttribute("aria-current", "page"); }
-    gt.appendChild(a);
-  } else if (gt) {
-    const a = gt.querySelector("[data-hws-plans]");
-    if (a) a.classList.toggle("on", on);
   }
 }
 function injectJobChrome() {
@@ -20989,14 +21021,6 @@ function injectJobChrome() {
     document.querySelectorAll("[data-hws-plans],[data-hws-takeoffs],.hws-planbtn").forEach((el) => el.remove());
     injectMainNav();
     return;
-  }
-  const row = document.querySelector(".jh .jrow");
-  if (row && !row.querySelector(".hws-planbtn")) {
-    const a = document.createElement("a");
-    a.className = "btn hws-planbtn";
-    a.setAttribute("href", modHref("plans"));
-    a.textContent = "Plan Room";
-    row.appendChild(a);
   }
   const side = document.querySelector("nav.side");
   const logsLink = side && side.querySelector('a[href$="/logs"]');
@@ -26714,6 +26738,7 @@ function jobListPrepared(rows){if(typeof HWSJobOrder==='undefined'||!HWSJobOrder
  const jobs=(DATA&&DATA.jobs)||{};
  const activity=(((DATA||{}).common||{}).attention||{}).activity||{};
  return HWSJobOrder.list(rows||[],{jobs:jobs,activity:activity,closed:closed})}
+function jobTaskLine(j){const tasks=j&&j.tasks;if(Array.isArray(tasks)){const n=tasks.filter(t=>t&&!t.done).length;return n+' open task'+(n===1?'':'s')}const n=+tasks||0;return n+' task'+(n===1?'':'s')}
 function jobDeskCard(j,q){const pe=STORE.pending(j.slug);const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';
  const g=typeof jobGroupOf==='function'?jobGroupOf(j):3;const alerts=typeof jobServiceOf==='function'?jobServiceOf(j)==='active':(g!==4&&!j.closed);
  const wn=typeof warrantyOpenCount==='function'?warrantyOpenCount(j):null;
@@ -26721,7 +26746,7 @@ function jobDeskCard(j,q){const pe=STORE.pending(j.slug);const wm=q&&typeof wdMa
  const thumb=typeof coverThumbHtml==='function'?coverThumbHtml(j):'';
  return `<a class="jcard" data-group="${g}"${typeof jobShowsUnconfirmed==='function'&&jobShowsUnconfirmed(j)?' data-unconfirmed="1"':''} href="${jobHref(j.slug,wm?'whodid':'')}"${wm?` data-wdq="${esc(st.lq||'')}"`:''}>${thumb}<h4>${esc(j.name)}${pe?' '+chip(pe+' unsent','medium'):''}</h4><div class="small mut">${esc(j.address||'address not on file')}</div><div class="row"><span>${typeof jobStatusChip==='function'?jobStatusChip(j):chip(j.stage||'—','low')}${phrase?(' '+esc(phrase)):''}</span></div>
  <div class="row"><span>${j.start?mdy(j.start)+' → '+mdy(j.finish):'<span class="mut">no schedule yet</span>'}</span><span><span class="pbar" style="width:70px"><b style="width:${j.pct}%"></b></span> ${j.pct||0}%</span></div>
- <div class="row"><span class="mut">${j.tasks} tasks${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${alerts&&j.overdue?chip(j.overdue+' overdue','overdue'):''} ${alerts&&j.high?chip(j.high+' high','high'):''}${wn?`<span class="jwar" aria-label="${wn} open warranty items">${wn} warranty</span>`:''}</span></div>
+ <div class="row"><span class="mut">${jobTaskLine(j)}${j.pm?' · PM '+esc(j.pm):''}</span><span>${j.needs_slack?chip('no Slack channel yet','medium'):''}${alerts&&j.overdue?chip(j.overdue+' overdue','overdue'):''} ${alerts&&j.high?chip(j.high+' high','high'):''}${wn?`<span class="jwar" aria-label="${wn} open warranty items">${wn} warranty</span>`:''}</span></div>
  ${j.next?`<div class="small mut" style="margin-top:4px">Next: ${md(j.next.date)} ${esc(j.next.task)}</div>`:''}${wm}</a>`}
 function jobListCard(j,q){const pe=STORE&&STORE.pending?STORE.pending(j.slug):0;const wm=q&&typeof wdMatchHtml=='function'?wdMatchHtml(j.slug,q):'';
  if(typeof isPhone==='function'&&isPhone()&&typeof jobPhoneRow==='function')return jobPhoneRow(j,{pending:pe,href:jobHref(j.slug,wm?'whodid':''),extra:wm?` data-wdq="${esc(st.lq||'')}"`:''});
@@ -27769,14 +27794,7 @@ function dustCsv(doc) {
   return lines.join("\n");
 }
 function dustLogBadgeHtml() {
-  if (typeof J === "undefined" || !J || !J.slug) return "";
-  if (typeof dustTabOn === "function" && !dustTabOn()) return "";
-  const n = dustTabBadge();
-  const y = dustDoc().derived.yesterday_missing;
-  const href = typeof modHref === "function" ? modHref("dust") : "#";
-  return '<a class="dust-log-link" data-dust-log href="' + href + '">Dust control' +
-    (n ? ' <i class="dot">' + n + "</i>" : "") +
-    (y ? ' <span class="dust-miss">Yesterday missing.</span>' : "") + "</a>";
+  return "";
 }
 function dustHomeHtml() {
   if (typeof dustTabOn === "function" && !dustTabOn()) return "";
@@ -30304,8 +30322,15 @@ function phoneIcon(name) {
   };
   return '<svg class="phone-ico" viewBox="0 0 24 24" aria-hidden="true">' + (paths[name] || paths.more) + '</svg>';
 }
-function phonePlansOn() {
-  return typeof featureOn !== 'function' || featureOn('plan_room') !== false;
+function phoneFilesHref() {
+  let slug = '';
+  try {
+    slug = phoneInsideSlug();
+    if (!slug || typeof J === 'undefined' || !J || J.slug !== slug) slug = '';
+  } catch (e) { slug = ''; }
+  if (!slug) return '#/files';
+  if (typeof jobHref === 'function') return jobHref(slug, 'files');
+  return '#/job/' + slug + '/files';
 }
 function phoneTabHtml(page) {
   function item(id, href, label, icon, extra) {
@@ -30314,8 +30339,7 @@ function phoneTabHtml(page) {
     return '<a href="' + href + '" data-g="' + id + '"' + (extra || '') + ' class="' + on.trim() + '"' + cur + '>' + phoneIcon(icon) + '<span>' + label + '</span></a>';
   }
   const left = [item('home', '#/', 'Home', 'home'), item('jobs', '#/jobs', 'Jobs', 'jobs')];
-  const right = [item('trackers', '#/trackers', 'Trackers', 'trackers'), item('files', '#/files', 'Files', 'files')];
-  if (phonePlansOn()) right.push(item('plans', '#/plans', 'Plan Room', 'plans', ' data-hws-plans=""'));
+  const right = [item('trackers', '#/trackers', 'Trackers', 'trackers'), item('files', phoneFilesHref(), 'Files', 'files')];
   return '<nav class="tabbar gtabs phone-tabs" aria-label="Main">' +
     '<div class="phone-side">' + left.join('') + '</div>' +
     '<button type="button" class="phone-capture" data-phone-capture data-g="capture" aria-label="Capture"><span class="phone-plus" aria-hidden="true"></span><span>Capture</span></button>' +
@@ -30633,17 +30657,15 @@ function phoneGridHtml() {
 }
 function phoneHubLinks() {
   const rows = [
-    {label:'Plan Room', href:'#/plans', plans:true, feature:'plan_room'},
     {label:'Trackers', href:'#/trackers'},
     {label:'Files', href:'#/files'},
     {label:'Attention', href:'#/attention'}
   ];
-  if (typeof chatNavOn !== 'function' || chatNavOn()) rows.splice(3, 0, {label:'Chat', href:'#/chat'});
-  if (!phoneHideMoney() && phoneFeatureOk('money')) rows.splice(1, 0, {label:'Money', href:'#/money'});
+  if (typeof chatNavOn !== 'function' || chatNavOn()) rows.splice(2, 0, {label:'Chat', href:'#/chat'});
+  if (!phoneHideMoney() && phoneFeatureOk('money')) rows.splice(0, 0, {label:'Money', href:'#/money'});
   try { if (typeof isOwner === 'function' && isOwner()) rows.push({label:'Features', href:'#/settings'}); } catch (e) {}
   return rows.filter(function (row) { return !row.feature || phoneFeatureOk(row.feature); }).map(function (row) {
-    const attr = row.plans ? ' data-hws-plans=""' : '';
-    return '<a class="phone-mod" href="' + esc(row.href) + '"' + attr + '>' + esc(row.label) + '</a>';
+    return '<a class="phone-mod" href="' + esc(row.href) + '">' + esc(row.label) + '</a>';
   }).join('');
 }
 function phoneMoreHtml() {
@@ -31629,51 +31651,141 @@ function phoneJobChrome() {
   if (tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
   else if (mod && mod.parentNode) mod.parentNode.insertBefore(bar, mod);
 }
+function phoneClearHeaderChips() {
+  const head = document.querySelector('.jh');
+  const tabs = document.querySelector('nav.jtabs');
+  if (!head || !tabs) return;
+  head.style.paddingBottom = '';
+  const band = tabs.getBoundingClientRect();
+  if (band.height < 1) return;
+  let lowest = band.top;
+  head.querySelectorAll('a, button, .fchip, span').forEach(function (el) {
+    const style = getComputedStyle(el);
+    if (style.display === 'none' || style.visibility === 'hidden') return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    const over = Math.min(rect.bottom, band.bottom) - Math.max(rect.top, band.top);
+    const width = Math.min(rect.right, band.right) - Math.max(rect.left, band.left);
+    if (over > 0 && width > 0) lowest = Math.max(lowest, rect.bottom);
+  });
+  const extra = Math.ceil(lowest - band.top + 4);
+  if (extra <= 4) return;
+  const cur = parseFloat(getComputedStyle(head).paddingBottom) || 0;
+  head.style.paddingBottom = (cur + extra) + 'px';
+}
+function phoneBottomBar() {
+  const bar = document.querySelector('.tabbar');
+  if (!bar) return null;
+  const style = getComputedStyle(bar);
+  if (style.display === 'none' || style.visibility === 'hidden') return null;
+  if (style.position !== 'fixed' && style.position !== 'sticky') return null;
+  const rect = bar.getBoundingClientRect();
+  if (rect.height < 1 || rect.width < 1 || rect.top < window.innerHeight * 0.45) return null;
+  return bar;
+}
+/* Page controls that meet the bottom bar get padded inside their own block so the
+   job title stays under the banner. The bar itself is not a reason to open a gap there. */
+function phonePushPast(bar) {
+  const sel = 'button, a[href], input, select, textarea, summary, [role="button"], [role="link"], [role="tab"], .fchip, .logpick';
+  document.querySelectorAll('[data-phone-push]').forEach(function (el) {
+    el.style.paddingTop = '';
+    el.style.marginTop = '';
+    el.removeAttribute('data-phone-push');
+  });
+  const br = bar.getBoundingClientRect();
+  for (let pass = 0; pass < 8; pass++) {
+    let hit = null;
+    document.querySelectorAll(sel).forEach(function (el) {
+      if (bar.contains(el) || el.closest('.jh, .phone-jobbar, nav.jtabs, header.top, [data-walk-layer]')) return;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return;
+      if (style.position === 'fixed' || style.position === 'absolute') return;
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 1 || rect.height < 1) return;
+      const over = Math.min(rect.bottom, br.bottom) - Math.max(rect.top, br.top);
+      const width = Math.min(rect.right, br.right) - Math.max(rect.left, br.left);
+      if (over > 0 && width > 0 && (!hit || rect.top < hit.top)) hit = {el: el, top: rect.top};
+    });
+    if (!hit) return;
+    let host = null;
+    let node = hit.el.parentElement;
+    while (node && node !== document.body) {
+      if (node.matches && node.matches('.jh, .phone-jobbar, nav.jtabs, header.top, .tabbar')) break;
+      const top = node.getBoundingClientRect().top;
+      if (hit.top - top >= 8) { host = node; break; }
+      node = node.parentElement;
+    }
+    const shift = Math.ceil(br.bottom - hit.top + 1);
+    const target = host || hit.el;
+    const prop = host ? 'paddingTop' : 'marginTop';
+    const cur = parseFloat(target.style[prop]) || 0;
+    target.style[prop] = (cur + shift) + 'px';
+    target.setAttribute('data-phone-push', '1');
+  }
+}
 function phoneClearTab(follow) {
-  if (!phoneOn()) return;
-  const bar = document.querySelector('.tabbar.phone-tabs');
+  const phone = phoneOn();
+  const bar = phone ? document.querySelector('.tabbar.phone-tabs') : phoneBottomBar();
+  if (!bar) return;
   const jobhead = document.querySelector('.jh');
   const jobbar = document.querySelector('.phone-jobbar');
   const tabs = document.querySelector('nav.jtabs');
   const anchor = jobhead || jobbar || tabs;
-  if (!bar || !anchor || !anchor.parentNode) return;
   const y = window.scrollY || 0;
   window.scrollTo(0, 0);
-  let spacer = anchor.previousElementSibling;
-  if (!spacer || spacer.getAttribute('data-phone-clear') !== '1') {
-    spacer = document.createElement('div');
-    spacer.setAttribute('data-phone-clear', '1');
-    spacer.setAttribute('aria-hidden', 'true');
-    anchor.parentNode.insertBefore(spacer, anchor);
+  if (phone && anchor && anchor.parentNode) {
+    let spacer = anchor.previousElementSibling;
+    if (!spacer || spacer.getAttribute('data-phone-clear') !== '1') {
+      spacer = document.createElement('div');
+      spacer.setAttribute('data-phone-clear', '1');
+      spacer.setAttribute('aria-hidden', 'true');
+      anchor.parentNode.insertBefore(spacer, anchor);
+    }
+    spacer.style.cssText = 'display:block;height:0;margin:0;padding:0;border:0';
+    void spacer.offsetHeight;
+    const br = bar.getBoundingClientRect();
+    if (br.height >= 1) {
+      const sel = 'button, a[href], input, select, textarea, summary, .fchip';
+      const roots = [jobhead, jobbar, tabs].filter(Boolean);
+      let overlap = 0;
+      roots.forEach(function (root) {
+        root.querySelectorAll(sel).forEach(function (el) {
+          if (bar.contains(el) || spacer.contains(el)) return;
+          const style = getComputedStyle(el);
+          if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return;
+          if (style.position === 'fixed' || style.position === 'absolute') return;
+          const rect = el.getBoundingClientRect();
+          if (rect.width < 1 || rect.height < 1) return;
+          const over = Math.min(rect.bottom, br.bottom) - Math.max(rect.top, br.top);
+          const width = Math.min(rect.right, br.right) - Math.max(rect.left, br.left);
+          if (over > 0 && width > 0) overlap = Math.max(overlap, over);
+        });
+      });
+      if (overlap > 0) spacer.style.height = Math.ceil(overlap) + 'px';
+    }
   }
-  spacer.style.cssText = 'display:block;height:0;margin:0;padding:0;border:0';
-  void spacer.offsetHeight;
-  const br = bar.getBoundingClientRect();
-  if (br.height < 1) { window.scrollTo(0, y); if (!follow) requestAnimationFrame(function () { phoneClearTab(true); }); return; }
-  const sel = 'button, a[href], input, select, textarea, summary, .fchip';
-  const roots = [jobhead, jobbar, tabs, document.getElementById('mod')].filter(Boolean);
-  let topmost = null;
-  let hit = false;
-  roots.forEach(function (root) {
-    root.querySelectorAll(sel).forEach(function (el) {
-      if (bar.contains(el) || spacer.contains(el)) return;
-      const style = getComputedStyle(el);
-      if (style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none') return;
-      const rect = el.getBoundingClientRect();
-      if (rect.width < 1 || rect.height < 1) return;
-      if (topmost === null || rect.top < topmost) topmost = rect.top;
-      const overlap = Math.min(rect.bottom, br.bottom) - Math.max(rect.top, br.top);
-      const width = Math.min(rect.right, br.right) - Math.max(rect.left, br.left);
-      if (overlap > 0 && width > 0) hit = true;
-    });
-  });
-  if (hit && topmost !== null) {
-    const shift = Math.ceil(br.bottom - topmost + 1);
-    if (shift > 0) spacer.style.height = shift + 'px';
-  }
+  phoneClearHeaderChips();
+  const bottom = phoneBottomBar();
+  if (bottom) phonePushPast(bottom);
   window.scrollTo(0, y);
   if (!follow) requestAnimationFrame(function () { phoneClearTab(true); });
 }
+function phoneWatchClear() {
+  if (phoneWatchClear.done || typeof document === 'undefined' || !document.body) return;
+  if (typeof MutationObserver !== 'function') return;
+  phoneWatchClear.done = true;
+  let pending = false;
+  const obs = new MutationObserver(function () {
+    if (pending || document.body.dataset.pg !== 'job') return;
+    pending = true;
+    requestAnimationFrame(function () {
+      pending = false;
+      phoneClearTab(true);
+    });
+  });
+  obs.observe(document.body, {childList: true, subtree: true});
+}
+phoneWatchClear();
 function phoneBind() {
   if (phoneBind.done || typeof document === 'undefined') return;
   phoneBind.done = true;
@@ -31751,7 +31863,8 @@ if (typeof renderJob === 'function') {
   const _phoneJob = renderJob;
   renderJob = function () {
     _phoneJob();
-    if (phoneOn()) { phoneJobChrome(); phoneClearTab(); }
+    if (phoneOn()) phoneJobChrome();
+    phoneClearTab();
     phoneMark();
   };
 }
