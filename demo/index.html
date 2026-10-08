@@ -2375,6 +2375,7 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
 .ask-float .ask-panel,.ask-float .ask-bubble{pointer-events:auto}
 body.has-tabs .ask-float{bottom:calc(76px + env(safe-area-inset-bottom))}
 .ask-bubble{display:flex;align-items:center;justify-content:center;width:56px;height:56px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:var(--navy,#15233b);color:#fff;box-shadow:0 6px 18px rgba(16,24,40,.22);cursor:pointer}
+.ask-bubble[hidden]{display:none !important}
 .ask-panel{display:none;box-sizing:border-box;width:min(420px,calc(100vw - 24px));max-height:min(70vh,560px);overflow:auto;padding:12px;background:#fff;border:1px solid #dde3ec;border-radius:16px;box-shadow:0 12px 32px rgba(16,24,40,.18)}
 .ask-float.ask-open .ask-panel{display:block}
 .ask-panel-h{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
@@ -2742,6 +2743,81 @@ body.has-tabs .ask-float{bottom:calc(76px + env(safe-area-inset-bottom))}
 .walk-kept, .walk-meta, [data-walk-status] { margin: 8px 0 0; font-size: 14px; line-height: 1.35; }
 .walk-meta { color: #3a3a3c; }
 [data-phone-walks] { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* Layout 2026 chrome. Rules apply only while body.layout2026 is set. */
+.l26-set { margin: 14px 0 2px; font-size: 14px; line-height: 1.4; }
+.l26-set a { font-weight: 650; }
+
+@media (min-width: 761px) {
+  body.layout2026 .l26-row { display: flex; align-items: stretch; min-width: 0; }
+  body.layout2026 .l26-main { flex: 1 1 auto; min-width: 0; }
+  body.layout2026 .l26-side {
+    width: 240px;
+    flex: none;
+    box-sizing: border-box;
+    background: #f4f2ee;
+    color: #142033;
+    border-right: 1px solid #e4e0d8;
+    padding: 12px 0 24px;
+    position: sticky;
+    top: 52px;
+    align-self: flex-start;
+    height: calc(100vh - 52px);
+    overflow: auto;
+  }
+  body.layout2026 .l26-side select {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 0 16px 8px;
+    min-height: 44px;
+    height: 44px;
+    padding: 0 28px 0 12px;
+    box-sizing: border-box;
+    background: #fff;
+    color: #142033;
+    border: 1px solid #d9d4cc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 650;
+  }
+  body.layout2026 .l26-side nav { display: flex; flex-direction: column; margin-top: 8px; }
+  body.layout2026 .l26-side nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin: 0 8px;
+    padding: 0 12px;
+    border-radius: 8px;
+    color: #142033;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  body.layout2026 .l26-side nav a.on { background: #fff; color: #0b3d91; font-weight: 700; }
+  body.layout2026.has-tabs .tabbar,
+  body.layout2026.has-tabs .gtabs { display: none !important; }
+  body.layout2026.has-tabs { padding-bottom: 0; }
+}
+
+@media (max-width: 760px) {
+  body.layout2026 header.top { flex-wrap: wrap; height: auto; }
+  body.layout2026 header.top .sp { display: none; }
+  body.layout2026 header.top #jsw {
+    display: block !important;
+    order: 5;
+    flex: 1 0 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 44px;
+    height: 44px;
+    margin: 8px 0 0;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  body.layout2026 header.top .jmenu { display: none !important; }
+  body.layout2026 .l26-side { display: none !important; }
+}
 </style></head><body>
 <div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
 <h2 style="margin:0 0 8px">Sample Builders schedule</h2><p>Loading&hellip;</p>
@@ -7854,7 +7930,8 @@ function renderFeatures() {
   const scanMax = scanCfg.unlimited || !scanCfg.photo_scan_max_days ? "" : String(scanCfg.photo_scan_max_days);
   const scanMb = scanCfg.photo_scan_cellular_mb || 500;
   const scanAdmin = '<h2>Scan photos</h2><p class="hint">Blank max range means a scan can go back to the start of the photo library. A number of days is the farthest this company allows. Daily Log, Capture, Dust Control, and imports under 500 items and under the cellular size upload on cellular right away. Blank cellular size uses 500 MB. The first-sign-in import stays off until the box is checked.</p><form id="scanadmin"><label>Max range in days<input name="max" inputmode="numeric" placeholder="Unlimited" value="' + esc(scanMax) + '"></label><label>Cellular size in MB<input name="cellular" inputmode="numeric" placeholder="500" value="' + esc(String(scanMb)) + '"></label><label class="feat-row"><span class="feat-label">Show the import on first sign-in</span><span class="feat-toggle"><input type="checkbox" name="onboarding"' + (scanCfg.photo_scan_onboarding ? " checked" : "") + '><i aria-hidden="true"></i></span></label><div class="mbtns"><button class="pri" type="submit">Save scan settings</button></div></form>';
-  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1><p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  const layoutLink = typeof layout2026SettingsHtml === 'function' ? layout2026SettingsHtml() : '';
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1>' + layoutLink + '<p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
   if (typeof hubShell === 'function') hubShell('settings', body);
   else document.getElementById('root').innerHTML = body;
   const scanForm = document.getElementById('scanadmin');
@@ -14409,7 +14486,7 @@ function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
  const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
  return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
-function topHtml(page){const jobs=orderedJobs();const n=STORE?STORE.pendingTotal():0;
+function topHtml(page){if(typeof layout2026==='function'&&layout2026()&&typeof layout2026Top==='function')return layout2026Top(page);if(typeof layout2026Mark==='function')layout2026Mark();const jobs=orderedJobs();const n=STORE?STORE.pendingTotal():0;
  const open=jobs.filter(j=>jobListed(j)&&jobServiceOf(j)==='active'),service=jobs.filter(j=>jobListed(j)&&jobOnWarrantyTab(j));
  const opt=j=>`<option value="${esc(j.slug)}" ${J&&J.slug==j.slug?'selected':''}>${esc(j.name||j.slug)}</option>`;
  const picker=jobs.length?`<select id="jsw" aria-label="Switch job"><option value="">Jobs…</option>${open.map(opt).join('')}${service.length?`<optgroup label="Warranty">${service.map(opt).join('')}</optgroup>`:''}</select><button type="button" id="jmenu" class="hbtn jmenu" aria-haspopup="dialog" aria-label="Jobs menu">Jobs</button>`:'';
@@ -14417,7 +14494,7 @@ function topHtml(page){const jobs=orderedJobs();const n=STORE?STORE.pendingTotal
  ${picker}
  <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes${n?` <span class="badge">${n}</span>`:''}</button>
  <span class="meta">${MODE==='share'?'offline file':'app'} · ${syncOn()?esc(SY.A.describe())+(STORE&&STORE.live?' · live':''):'saved in this browser'}</span></header>${bannerHtml()}`}
-function bindTop(){if(window.hwsMountAccount)window.hwsMountAccount();const s=$('#jsw');if(s)s.onchange=e=>{if(e.target.value)location.hash=jobHref(e.target.value)};
+function bindTop(){if(window.hwsMountAccount)window.hwsMountAccount();const s=$('#jsw');if(s)s.onchange=e=>{const v=e.target.value;if(!v)return;if(v==='*all'){location.hash='#/jobs';return}location.hash=jobHref(v)};
  const menu=$('#jmenu');if(menu)menu.onclick=e=>{e.preventDefault();openJobMenu()};
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
@@ -14469,7 +14546,7 @@ function moveJobStage(toWarranty){if(typeof canSeeMoney!=='function'||!canSeeMon
  info.stage_by=who;info.stage_at=when;
  const summary=(who||'hub')+' set stage to '+info.status+' at '+when;
  J=STORE.setSettings(J.slug,{info:info},summary);renderJob();toast(summary);if(typeof liveSaved==='function')liveSaved(J.slug)}
-function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><b>No data for this job.</b></div>'+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
+function renderJob(){if(!J){const empty='<div class="empty"><b>No data for this job.</b></div>';const row=typeof layout2026Wrap==='function'?layout2026Wrap('job',empty):'';$('#root').innerHTML=topHtml()+(row||empty)+((typeof gnavHtml==='function')?gnavHtml('jobs'):'');document.body.classList.add('has-tabs');bindTop();return}
  if(typeof HWSFeatures!=='undefined'&&HWSFeatures.stripJob)J=HWSFeatures.stripJob(J);
  EDIT=canEditJob();const ph=isPhone();const mod=curMod();const i=J.info||{};const c=J.counts||{};const gates=(typeof hidesIntake==='function'&&hidesIntake())?[]:(J.gates||[]).filter(g=>g.status!='done');
  const kd=(J.key_dates||[]).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${mdy(k.date)}</div>${k.note?`<div class="n">${esc(k.note)}</div>`:''}</div>`).join('');
@@ -14496,10 +14573,11 @@ function renderJob(){if(!J){$('#root').innerHTML=topHtml()+'<div class="empty"><
  const bottom=(typeof gnavHtml==='function')?gnavHtml('jobs'):'';
  const tier=padTier();
  let chrome;
- if(tier){const rail=tier==='pad'?'':jobRailHtml();const log=tier==='wide'&&mod==='schedule';
+ if(tier){const rail=(tier==='pad'||(typeof layout2026==='function'&&layout2026()))?'':jobRailHtml();const log=tier==='wide'&&mod==='schedule';
   chrome=`<div class="pad-frame${rail?' has-rail':''}">${rail}<div class="pad-detail">${head}${tabs}<div class="pad-work${log?' has-log':''}"><main class="main" id="mod"></main>${log?'<aside class="pad-log" id="padlog" aria-label="Daily log"></aside>':''}</div></div></div>`}
  else chrome=head+(ph?tabs:'')+(ph?`<main class="main" id="mod"></main>`:`<div class="layout">${side}<main class="main" id="mod"></main></div>`);
- $('#root').innerHTML=topHtml()+chrome+bottom;
+ const l26=typeof layout2026Wrap==='function'?layout2026Wrap('job',chrome):'';
+ $('#root').innerHTML=topHtml()+(l26||chrome)+bottom;
  if(typeof coverBind==='function')coverBind(document.getElementById('root'));
  document.body.classList.add('has-tabs');document.body.classList.remove('hubp');document.body.dataset.pg='job';
  bindTop();const M=$('#mod');
@@ -17179,9 +17257,57 @@ function askSyncInline() {
     else el.setAttribute('hidden', '');
   }
 }
+function askRootHidden(el) {
+  if (!el) return true;
+  if (el.hasAttribute) return el.hasAttribute('hidden');
+  return !!(el.attrs && Object.prototype.hasOwnProperty.call(el.attrs, 'hidden'));
+}
+function askRootShown(el) {
+  if (!el || askRootHidden(el)) return false;
+  if (el.closest && el.closest('#ask-float')) return false;
+  if (typeof getComputedStyle !== 'function') return true;
+  let node = el;
+  while (node && node.nodeType === 1) {
+    let style = null;
+    try { style = getComputedStyle(node); } catch (e) { style = null; }
+    if (style && (style.display === 'none' || style.visibility === 'hidden')) return false;
+    node = node.parentElement;
+  }
+  return true;
+}
+function askInlineShown() {
+  if (typeof document === 'undefined' || !document.querySelectorAll) return false;
+  const nodes = document.querySelectorAll('[data-ask-root]');
+  for (let i = 0; i < nodes.length; i++) {
+    if (askRootShown(nodes[i])) return true;
+  }
+  return false;
+}
+function askSyncBubble() {
+  if (typeof document === 'undefined' || !document.getElementById) return;
+  const wrap = document.getElementById('ask-float');
+  if (!wrap || !wrap.querySelector) return;
+  const bubble = wrap.querySelector('.ask-bubble');
+  if (!bubble) return;
+  if (askInlineShown()) {
+    if (bubble.setAttribute) {
+      bubble.setAttribute('hidden', '');
+      bubble.setAttribute('aria-expanded', 'false');
+    }
+    if (wrap.classList && wrap.classList.remove) wrap.classList.remove('ask-open');
+    return;
+  }
+  if (bubble.removeAttribute) bubble.removeAttribute('hidden');
+}
+function askWatchResize() {
+  if (askWatchResize.done || typeof window === 'undefined' || !window.addEventListener) return;
+  askWatchResize.done = true;
+  window.addEventListener('resize', function () { askSyncBubble(); });
+}
 function askMount() {
   if (typeof document === 'undefined' || !document.body) return;
   askSyncInline();
+  askWatchResize();
   const existing = document.getElementById('ask-float');
   if (!askInternal()) {
     if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
@@ -17190,7 +17316,8 @@ function askMount() {
   const job = askPageJob();
   if (existing) {
     const box = existing.querySelector('[data-ask-root]');
-    if (box) box.setAttribute('data-ask-job', job);
+    if (box && box.setAttribute) box.setAttribute('data-ask-job', job);
+    askSyncBubble();
     return;
   }
   const holder = document.createElement('div');
@@ -17211,6 +17338,7 @@ function askMount() {
   if (bubble) bubble.addEventListener('click', function () { setOpen(!wrap.classList.contains('ask-open')); });
   if (close) close.addEventListener('click', function () { setOpen(false); });
   askBind(wrap);
+  askSyncBubble();
 }
 if (typeof window !== 'undefined') {
   window.askBoxHtml = askBoxHtml;
@@ -17298,7 +17426,9 @@ function gnavHtml(page){const it=hubNav();
 function dnavHtml(page){const it=hubNav();
  return `<nav class="dnav hide-sm" aria-label="Main">${it.map(([k,l,h])=>`<a href="${h}" class="${k==page?'on':''}">${l}</a>`).join('')}</nav>`}
 function hubShell(page,body){document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg=page;
- $('#root').innerHTML=topHtml(page)+`<main class="hub hub-${page}${page=='home'?' hub-home':''}">${body}</main>`+gnavHtml(page);bindTop()}
+ const hubMain=`<main class="hub hub-${page}${page=='home'?' hub-home':''}">${body}</main>`;
+ const hubRow=typeof layout2026Wrap==='function'?layout2026Wrap(page,hubMain):'';
+ $('#root').innerHTML=topHtml(page)+(hubRow||hubMain)+gnavHtml(page);bindTop()}
 function hostedRow(x,extra,cls){if(btFace(x)||typeof fileHosted!=='function'||!x||!fileHosted(x.url,x.kind))return '';return fileLinkHtml(Object.assign({},x,{cls:cls}),extra)}
 function lbtn(x,big){if(btFace(x))return '';const h=hostedRow(x,'','lbtn'+(big?' big':''));if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lbtn${big?' big':''}" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(x.sub||x.label)}">${ico(linkIcon(x))}<span class="lt">${esc(x.label)}</span>${big&&x.sub?`<span class="ls">${esc(x.sub)}</span>`:''}</a>`}
 function lrow(x,extra){if(btFace(x))return '';const h=hostedRow(x,extra,'lrow');if(h)return h;const u=safeUrl(x.url);if(!u)return '';return `<a class="lrow" href="${esc(u)}" target="_blank" rel="noopener">${ico(linkIcon(x),'k-'+(x.kind||''))}<span class="lb"><span class="lt">${esc(x.label)}</span>${x.sub||extra?`<span class="ls">${esc(extra||x.sub)}</span>`:''}</span>${ico('ext','go')}</a>`}
@@ -20657,7 +20787,6 @@ function prDraw(M) {
     return `<button type="button" data-prfilter="${pair[0]}" class="${filter === pair[0] ? "on" : ""}">${pair[1]}</button>`;
   }).join("");
   M.innerHTML = `<div class="planroom" data-pr-browser="1"><h2 class="sh2 first">Plan Room</h2>
-    <div data-talk-host></div>
     <button type="button" class="pr-back" data-prback>Back</button>
     <div class="pr-crumbs">${prCrumbs(slug)}</div>
     <div class="ftools pr-tools"><label class="sbox">${typeof ico === "function" ? ico("search") : ""}<input type="search" id="prq" placeholder="Search this job" value="${esc(q)}" autocomplete="off"></label></div>
@@ -22803,9 +22932,44 @@ function fileChip(row) { return fileChips(row); }
     }).catch(function () { showError("Could not file that"); });
   }
 
+  let syncFrame = 0;
+  function captureOnScreen() {
+    const node = document.querySelector(".phone-capture");
+    if (!node || !node.getBoundingClientRect) return false;
+    const style = window.getComputedStyle(node);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return false;
+    const box = node.getBoundingClientRect();
+    return box.width > 0 && box.height > 0;
+  }
+  function syncUpload() {
+    const button = el("filedrop-upload");
+    if (!button) return;
+    if (captureOnScreen()) button.style.setProperty("display", "none", "important");
+    else button.style.removeProperty("display");
+  }
+  function queueSync() {
+    if (syncFrame) return;
+    syncFrame = requestAnimationFrame(function () {
+      syncFrame = 0;
+      syncUpload();
+    });
+  }
+  function watchBar() {
+    if (!window.MutationObserver) return;
+    const root = document.getElementById("root");
+    const target = root || document.body;
+    if (!target) return;
+    const observer = new MutationObserver(function () { queueSync(); });
+    observer.observe(target, { childList: true });
+  }
+
   function boot() {
     if (!document.body) return;
     ensure();
+    watchBar();
+    queueSync();
+    window.addEventListener("hashchange", queueSync);
+    window.addEventListener("resize", queueSync);
     window.addEventListener("dragenter", function (event) {
       if (!hasFiles(event)) return;
       event.preventDefault();
@@ -26279,6 +26443,164 @@ function mCommitments(root) {
   };
 })(typeof window !== "undefined" ? window : globalThis);
 
+/* Layout 2026 chrome. Off unless this browser stored hws-layout2026=1.
+   Flows never set that key. The query and the Settings link are the only switches. */
+function layout2026() {
+  try { return localStorage.getItem('hws-layout2026') === '1'; } catch (e) { return false; }
+}
+function layout2026Mark() {
+  if (typeof document === 'undefined' || !document.body || !document.body.classList) return;
+  document.body.classList.toggle('layout2026', layout2026());
+}
+function layout2026Roles() {
+  const roles = [];
+  function add(v) {
+    const s = String(v || '').trim().toLowerCase();
+    if (s && roles.indexOf(s) < 0) roles.push(s);
+  }
+  try { if (typeof roleOf === 'function') add(roleOf()); } catch (e) {}
+  try { if (typeof homeSessionRole === 'function') add(homeSessionRole()); } catch (e) {}
+  try { if (typeof homeRole === 'function') add(homeRole()); } catch (e) {}
+  return roles;
+}
+function layout2026AllJobs() {
+  return layout2026Roles().some(function (r) {
+    return r === 'owner' || r === 'owner_money' || r === 'office' || r === 'pm' || r === 'accounting' || r === 'admin';
+  });
+}
+function layout2026HideMoney() {
+  return layout2026Roles().some(function (r) {
+    return r === 'field' || r === 'sub' || r === 'trade' || r === 'client' || r === 'customer';
+  });
+}
+function layout2026OnJob() {
+  return !!(typeof J !== 'undefined' && J && J.slug);
+}
+function layout2026Mod() {
+  if (!layout2026OnJob() || typeof curMod !== 'function') return '';
+  try { return curMod() || ''; } catch (e) { return ''; }
+}
+function layout2026Href(key) {
+  const slug = layout2026OnJob() ? J.slug : '';
+  if (key === 'home') return '#/';
+  if (key === 'jobs') return '#/jobs';
+  if (key === 'schedule') {
+    if (slug && typeof jobHref === 'function') return jobHref(slug, 'schedule');
+    return '#/trackers';
+  }
+  if (key === 'files') return '#/files';
+  if (key === 'messages') return '#/chat';
+  if (key === 'money') return '#/money';
+  return '#/';
+}
+function layout2026On(key, page) {
+  const mod = layout2026Mod();
+  const onJob = layout2026OnJob();
+  const moneyMod = mod === 'money' || mod === 'bids' || mod === 'pos' || mod === 'budget' || mod === 'cos';
+  const fileMod = mod === 'files' || mod === 'plans';
+  const msgMod = mod === 'messages' || mod === 'slack';
+  if (key === 'schedule') return mod === 'schedule' || (!onJob && page === 'trackers');
+  if (key === 'files') return page === 'files' || fileMod;
+  if (key === 'messages') return page === 'chat' || msgMod;
+  if (key === 'money') return page === 'money' || moneyMod;
+  if (key === 'jobs') return page === 'jobs' || (onJob && mod !== 'schedule' && !fileMod && !msgMod && !moneyMod);
+  if (key === 'home') return !onJob && (page === 'home' || page === 'attention' || page === 'needs' || !page);
+  return false;
+}
+function layout2026PickerHtml() {
+  const jobs = typeof orderedJobs === 'function' ? orderedJobs() : [];
+  const open = jobs.filter(function (j) { return jobListed(j) && jobServiceOf(j) === 'active'; });
+  const service = jobs.filter(function (j) { return jobListed(j) && jobOnWarrantyTab(j); });
+  const onJob = layout2026OnJob();
+  const all = layout2026AllJobs();
+  const opt = function (j) {
+    return '<option value="' + esc(j.slug) + '"' + (onJob && J.slug == j.slug ? ' selected' : '') + '>' + esc(j.name || j.slug) + '</option>';
+  };
+  const allOpt = all ? '<option value="*all"' + (onJob ? '' : ' selected') + '>All jobs</option>' : '';
+  if (!jobs.length && !all) return '';
+  const label = !onJob && all ? 'All jobs' : 'Switch job';
+  return '<select id="jsw" class="l26-jsw" aria-label="' + label + '"><option value="">Jobs…</option>' + allOpt + open.map(opt).join('') + (service.length ? '<optgroup label="Warranty">' + service.map(opt).join('') + '</optgroup>' : '') + '</select>';
+}
+function layout2026SideHtml(page) {
+  const rows = [['home', 'Home'], ['jobs', 'Jobs'], ['schedule', 'Schedule'], ['files', 'Files'], ['messages', 'Messages']];
+  if (!layout2026HideMoney()) rows.push(['money', 'Money']);
+  const nav = rows.map(function (row) {
+    const on = layout2026On(row[0], page);
+    return '<a href="' + layout2026Href(row[0]) + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + row[1] + '</a>';
+  }).join('');
+  return '<aside class="l26-side" aria-label="Main">' + layout2026PickerHtml() + '<nav>' + nav + '</nav></aside>';
+}
+function layout2026Wrap(page, inner) {
+  if (!layout2026()) return '';
+  if (typeof isPhone === 'function' && isPhone()) return '';
+  return '<div class="l26-row">' + layout2026SideHtml(page) + '<div class="l26-main">' + inner + '</div></div>';
+}
+function layout2026Top(page) {
+  layout2026Mark();
+  const n = STORE ? STORE.pendingTotal() : 0;
+  const phone = typeof isPhone === 'function' && isPhone();
+  const nav = phone ? dnavHtml(page || (J ? 'jobs' : 'home')) : '';
+  const picker = phone ? layout2026PickerHtml() : '';
+  return '<header class="top"><a class="brand" href="' + homeHref() + '" aria-label="Home">Sample Builders</a>' + nav + '<span class="sp"></span> ' + picker +
+    ' <button id="chg" class="hbtn" aria-label="My changes: export, import, reset, sync">Changes' + (n ? ' <span class="badge">' + n + '</span>' : '') + '</button>' +
+    ' <span class="meta">' + (MODE === 'share' ? 'offline file' : 'app') + ' · ' + (syncOn() ? esc(SY.A.describe()) + (STORE && STORE.live ? ' · live' : '') : 'saved in this browser') + '</span></header>' + bannerHtml();
+}
+function layout2026SettingsHtml() {
+  const label = layout2026() ? 'Back to current layout' : 'Try the new layout';
+  return '<p class="l26-set"><a href="#" data-layout2026-toggle>' + label + '</a></p>';
+}
+function layout2026Toggle() {
+  try {
+    if (layout2026()) localStorage.removeItem('hws-layout2026');
+    else localStorage.setItem('hws-layout2026', '1');
+  } catch (e) { return; }
+  location.reload();
+}
+function layout2026ReadQuery() {
+  function take(value) {
+    if (value === '1') localStorage.setItem('hws-layout2026', '1');
+    else if (value === '0') localStorage.removeItem('hws-layout2026');
+  }
+  try {
+    const url = new URL(location.href);
+    let changed = false;
+    if (url.searchParams.has('layout2026')) {
+      take(url.searchParams.get('layout2026'));
+      url.searchParams.delete('layout2026');
+      changed = true;
+    }
+    const hash = url.hash || '';
+    const q = hash.indexOf('?');
+    if (q >= 0) {
+      const hparams = new URLSearchParams(hash.slice(q + 1));
+      if (hparams.has('layout2026')) {
+        take(hparams.get('layout2026'));
+        hparams.delete('layout2026');
+        const rest = hparams.toString();
+        url.hash = hash.slice(0, q) + (rest ? '?' + rest : '');
+        changed = true;
+      }
+    }
+    if (changed) {
+      const next = url.pathname + url.search + url.hash;
+      history.replaceState(history.state, '', next);
+    }
+  } catch (e) {}
+  layout2026Mark();
+}
+function layout2026BindToggle() {
+  if (layout2026BindToggle.done || typeof document === 'undefined') return;
+  layout2026BindToggle.done = true;
+  document.addEventListener('click', function (e) {
+    const a = e.target && e.target.closest ? e.target.closest('[data-layout2026-toggle]') : null;
+    if (!a) return;
+    e.preventDefault();
+    layout2026Toggle();
+  });
+}
+layout2026ReadQuery();
+layout2026BindToggle();
+
 function mHistory(M){const h=(J.history||[]).slice().reverse();M.innerHTML=panel('Edit history',STORE.live?'every edit saved to the shared Dropbox (newest first); “waiting to upload” = still on this device':(syncOn()?'edits in this browser + change sets checked in to the shared store':'edits made in this browser (saved in localStorage)'),`<div class="list">${h.map(e=>`<div class="it"><div class="dt">#${e.n}<br>${esc(String(e.ts).slice(5,16))}</div><div class="bd"><div class="t">${chip(e.kind,'low')} ${e.undone?chip('undone','medium'):''} ${e.failed?chip('could not apply','high'):''} <span class="mut small">${esc(e.who||'')} · ${esc(e.where)}</span></div><div class="s" style="color:#1d2330">${esc(e.summary)}</div>${e.failed?`<div class="s red">${esc(e.failed)}</div>`:''}${EDIT&&e.auto&&!e.undone?`<button class="hundo" data-hid="${esc(e.id)}">Undo this automatic change</button>`:''}</div></div>`).join('')||emptyState('No edits yet','')}</div>`,EDIT?'<button id="hu">Undo last edit</button>':'');const hu=$('#hu');if(hu)hu.onclick=undo;M.querySelectorAll('.hundo').forEach(b=>b.onclick=()=>{if(!canEditJob()){needCheckout();return}try{const r=STORE.undoEntry(J.slug,b.dataset.hid);J=r.J;renderJob();toast(r.summary);liveSaved(J.slug)}catch(e){toast('Undo: '+e.message)}})}
 function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'disabled';const pcs=Object.entries(J.phase_colors||{});
  const seeMoney=typeof canSeeMoney==='function'&&canSeeMoney();
@@ -26293,7 +26615,7 @@ function mSettings(M){const s=J.settings||{},i=J.info||{};const dis=EDIT?'':'dis
  <label>Status (shown in header)<input name="status" value="${esc(i.status)}" placeholder="${esc(J.stage)}" ${seeMoney?dis:'disabled'}></label><label>Contract<input name="contract" value="${esc(contractShow)}" ${seeMoney?dis:'disabled'}></label>
  <label class="w">Notes<textarea name="notes" rows="2" ${dis}>${esc(i.notes)}</textarea></label>
  <div class="w"><div class="small mut" style="margin:6px 0 4px">Phase colors</div><div style="display:flex;flex-wrap:wrap;gap:8px">${pcs.map(([p,c])=>`<label class="cb small" style="border:1px solid var(--line);border-radius:6px;padding:3px 6px"><input type="color" data-pc="${esc(p)}" value="${esc(c)}" ${dis} style="width:34px;padding:0;border:0"> ${esc(p)}</label>`).join('')||'<span class="mut small">No phases yet</span>'}</div></div></div>
- ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>`);
+ ${EDIT?'<div class="mbtns"><button class="pri" type="submit">Save settings</button></div>':''}</form>${typeof layout2026SettingsHtml==='function'?layout2026SettingsHtml():''}`);
  if(!EDIT)return;$('#sf').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);const pc={};M.querySelectorAll('[data-pc]').forEach(x=>{if(x.value!=(J.phase_colors||{})[x.dataset.pc])pc[x.dataset.pc]=x.value});
   const info={pm:f.get('pm'),client:f.get('client'),notes:f.get('notes')};
   if(seeMoney)info.status=f.get('status');
@@ -26466,8 +26788,10 @@ function renderJobsList(container,opts){opts=opts||{};const host=jobsListHost(co
  ${statCard('#/jobs/scheduled','scheduled',view==='scheduled',false,schedN,'Jobs with a schedule','dated work on the hub')}</div>`;
  if(embed){host.innerHTML=`<div class="hub-jobs jobs-embed" data-jobs-list="1" data-jobs-view="${view}"><h1>Jobs</h1>${counts}${panel}</div>`}
  else{document.body.classList.add('has-tabs');document.body.classList.add('hubp');document.body.dataset.pg='jobs';
-  host.innerHTML=topHtml('jobs')+`<main class="main hub-jobs" data-jobs-list="1" data-jobs-view="${view}" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div>${counts}
- ${panel}</main>`+gnavHtml('jobs');bindTop();document.title='Sample Builders · Job workspaces'}
+  const jobsMain=`<main class="main hub-jobs" data-jobs-list="1" data-jobs-view="${view}" style="max-width:1400px;margin:0 auto"><div class="hph"><h1>Jobs</h1></div>${counts}
+ ${panel}</main>`;
+  const jobsRow=typeof layout2026Wrap==='function'?layout2026Wrap('jobs',jobsMain):'';
+  host.innerHTML=topHtml('jobs')+(jobsRow||jobsMain)+gnavHtml('jobs');bindTop();document.title='Sample Builders · Job workspaces'}
  if(typeof coverBind==='function')coverBind(host);
  host.querySelectorAll('.jcard[data-wdq]').forEach(a=>a.addEventListener('click',()=>{st.wdq=a.dataset.wdq;saveUi()}));const lq=host.querySelector('#lq');if(lq)lq.oninput=e=>{st.lq=e.target.value;saveUi();const p=lq.selectionStart;if(embed)renderJobsList(host,opts);else renderList();const n=(embed?host:document).querySelector('#lq');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}}
 function renderList(){renderJobsList(document.getElementById('root'),{page:true})}
