@@ -2765,7 +2765,7 @@ Open the file on a computer in Chrome, Edge or Safari, or use the hosted Harswel
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'510bba664b',built:'10/9/2026 7:59 AM AZ'};
+const HWS_BUILD={version:'8453a35511',built:'10/9/2026 8:58 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -16547,10 +16547,26 @@ function homeAttnRow(role) {
   if (role !== 'owner' && role !== 'owner_money' && role !== 'pm' && role !== 'staff') return '';
   return '<a class="hrow home-attn" href="#/attention"><span class="lb"><span class="lt">Attention</span><span class="ls">Drift, quiet jobs, and who is assigned</span></span></a>';
 }
+function homeNeedsEmpty() {
+  const role = homeRole();
+  if (role !== 'guest' && role !== 'client' && role !== 'investor' && role !== 'customer') {
+    return '<div class="none">Nothing needs you today</div>';
+  }
+  const jobs = (typeof listedJobRows === 'function') ? listedJobRows() : [];
+  const only = homeGuestSlug();
+  let slug = only;
+  if (!slug && jobs.length) slug = jobs[0].slug || '';
+  const whyStyle = 'margin:0;padding:16px 14px 4px;font-size:16px;line-height:1.4;color:#1c2430';
+  if (!slug) {
+    return '<div class="home-empty" data-home-empty="needs"><p class="home-empty-why" style="' + whyStyle + '">Nothing needs you today. Your builder will post the next step here.</p></div>';
+  }
+  const href = (typeof jobHref === 'function') ? jobHref(slug, 'schedule') : ('#/job/' + homeSlug(slug) + '/schedule');
+  return '<div class="home-empty" data-home-empty="needs"><p class="home-empty-why" style="' + whyStyle + '">Nothing needs you on this job today.</p><a class="home-go" data-home-empty-next href="' + esc(href) + '">Open the schedule</a></div>';
+}
 function homeNeedsHtml(shown, all) {
   const n = all.length;
   const sub = n ? `<p class="home-rank">${Math.min(shown.length, n)} of ${n} · ranked by due date, then what blocks the work, then schedule risk, then age</p>` : '';
-  const rows = shown.map(homeRow).join('') || '<div class="none">Nothing needs you today</div>';
+  const rows = shown.map(homeRow).join('') || homeNeedsEmpty();
   const go = shown.length ? `<a class="home-go" data-kind="primary" href="${esc(homeHrefFor(shown[0]))}">Start with #1</a>` : '';
   const see = n ? `<a class="home-see" href="#/needs">See all ${n}</a>` : '';
   const attn = homeAttnRow(homeRole());
@@ -16767,7 +16783,7 @@ function renderNeedsAll(sub) {
   const chips = `<a class="fchip ${filter ? '' : 'on'}" href="#/needs">All <b>${ranked.all.length}</b></a>` + filters.map(function (pair) {
     return `<a class="fchip ${filter === pair[0] ? 'on' : ''}" href="#/needs/${pair[0]}">${esc(pair[1])} <b>${counts[pair[0]] || 0}</b></a>`;
   }).join('');
-  const list = rows.map(homeRow).join('') || '<div class="none">Nothing in this filter</div>';
+  const list = rows.map(homeRow).join('') || (ranked.all.length ? '<div class="none">Nothing in this filter</div>' : homeNeedsEmpty());
   if (typeof hubShell === 'function') {
     hubShell('needs', `<div class="home-v3"><div class="hph"><h1>Needs you</h1><a href="#/">Home</a></div><div class="chips home-filters">${chips}</div><div class="needs-list">${list}</div></div>`);
   }
