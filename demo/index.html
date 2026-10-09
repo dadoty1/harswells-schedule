@@ -144,7 +144,9 @@ svg .bar.armed .bx,svg .bar.armed path{filter:drop-shadow(0 0 3px #f79009);strok
 .gwrap,.gsvg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 svg.edit .bar.mv{touch-action:auto}svg.edit .rh{touch-action:auto}
 @media (hover:hover) and (pointer:fine){svg.edit .bar.mv{touch-action:none}svg.edit .rh{touch-action:none}}
-.mlist a{display:flex;justify-content:space-between;padding:14px 6px;border-bottom:1px solid var(--line);font-size:16px;color:var(--ink)}.mlist .cnt{color:var(--mut);font-size:13px}
+.mlist a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:14px 6px;border-bottom:1px solid var(--line);font-size:16px;line-height:1.25;color:var(--ink);box-sizing:border-box}.mlist .cnt{color:var(--mut);font-size:13px}
+/* The phone shell pads controls that meet the tab bar. On this sheet that padding stacks and the rows open below the fold. The sheet already covers the bar. Row padding stays. */
+.modal[data-phone-push],.modal :not(a)[data-phone-push]{padding-top:0!important;margin-top:0!important}
 .modal .grab{display:none}.modal h3.sh{font-size:14px;margin:18px 0 6px;padding-top:12px;border-top:1px solid var(--line)}
 .filebtn{cursor:pointer}.pcrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pcrow input[type=range]{flex:1;min-width:140px}.pcq button{padding:3px 8px}
 details summary{cursor:pointer;color:var(--mut);margin-bottom:6px}
@@ -14570,15 +14572,34 @@ function revealJobTab(){const nav=document.querySelector('nav.jtabs');const stri
  const left=on.offsetLeft;const right=left+on.offsetWidth;
  if(left<strip.scrollLeft+8)strip.scrollLeft=Math.max(0,left-10);
  else if(right>strip.scrollLeft+view-reserve)strip.scrollLeft=Math.max(0,right-(view-reserve))}
+function moreBoxShown(el){let node=el;while(node&&node.nodeType===1){if(node.hidden||node.hasAttribute('hidden'))return false;const style=getComputedStyle(node);if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;node=node.parentElement}const box=el.getBoundingClientRect();return box.width>1&&box.height>1}
+function moreHrefOf(el){const href=(el.getAttribute&&el.getAttribute('href'))||'';if(!href||href==='#')return '';return href.split('?')[0]}
+function moreModOf(href){href=String(href||'');const parts=href.split('/').filter(Boolean);if(href.indexOf('/job/')<0||!parts.length)return '';return parts[parts.length-1]}
+/* Tabs, the header, and the bottom bar already on screen. Brand is not a Home row. */
+function moreCovered(){const covered={mod:{},href:{},purpose:{}};const sel='nav.jtabs a, header.top a, header.top button, header.top select, nav.tabbar a, nav.tabbar button, nav.dnav a, nav.side a, a.backjobs, .jh a, .jh button';
+ document.querySelectorAll(sel).forEach(function(el){if(!moreBoxShown(el))return;if(el.closest&&(el.closest('.modal')||el.closest('a.brand')||el.classList.contains('brand')))return;if(el.closest&&el.closest('aside.pad-jobs')){covered.purpose.jobs=1;return}
+  const tab=el.getAttribute('data-tab')||'';if(tab&&tab!=='more')covered.mod[tab]=1;
+  const href=moreHrefOf(el);if(href)covered.href[href]=1;
+  const mod=moreModOf(href);if(mod)covered.mod[mod]=1;
+  const id=el.id||'';const g=el.getAttribute('data-g')||'';const label=(el.innerText||'').replace(/\s+/g,' ').trim().toLowerCase();
+  if(id==='chg'||el.getAttribute('data-open')==='changes'||label==='changes'||label.indexOf('my changes')===0)covered.purpose.changes=1;
+  if(id==='jmenu'||id==='jsw'||el.classList.contains('backjobs')||g==='jobs'||href==='#/jobs'||label==='jobs'||label==='all jobs'||label==='back to jobs')covered.purpose.jobs=1;
+  if(g==='home'||href==='#/'||label==='home')covered.purpose.home=1});
+ return covered}
+function moreCount(k,c){if(k==='slack')return typeof slackRows==='function'?slackRows().length||'':'';if(k==='history')return (J.history||[]).length||'';return (c&&c[k])||''}
+function moreLink(k,label,href,purpose,close){const c=J.counts||{};const id=k==='changes'?' id="mm-chg"':'';const shut=close?' data-close':'';
+ return `<a href="${href}" data-purpose="${purpose}"${id}${shut}>${label}<span class="cnt">${moreCount(k,c)}</span></a>`}
 function openMore(){const c=J.counts||{};let items=[['property','Property info'],['slack','Slack'],['selections','Selections'],['whodid','Who did it (warranty & service)'],['conflicts','Conflicts'],['bids','Bids'],['pos','Purchase Orders'],['cos','Change Orders'],['budget','Budget'],['rfis','RFIs'],['specs','Specs']].concat((typeof seesJobMoney!=='function'||seesJobMoney())&&typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money'))?[['money','Budget vs actual']]:[]).concat([['messages','Messages'],['exports','Exports'],['settings','Settings'],['history','History']]).filter(([k,l])=>!/buildertrend/i.test(l)&&(typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k))));
  if(typeof feedNavOn==='function'&&feedNavOn())items.unshift(['feed','Key Updates']);
- const strip=(typeof jobPhoneTabs==='function'?jobPhoneTabs():[]).filter(row=>row&&row[0]&&row[0]!=='more');
- const seen={};const ordered=[];
- strip.concat(items).forEach(row=>{if(!row||!row[0]||seen[row[0]])return;seen[row[0]]=1;ordered.push(row)});
- items=ordered;
  if(typeof jobMenuItems==='function')items=jobMenuItems(items);
- openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${items.map(([k,l])=>`<a href="${modHref(k)}" data-close>${l}<span class="cnt">${k==='slack'?(typeof slackRows==='function'?slackRows().length||'':''):(c[k]||(k=='history'?(J.history||[]).length||'':''))}</span></a>`).join('')}<a href="#" id="mm-chg">My changes · export / import / sync</a><a href="${homeHref()}" data-close>Home</a><a href="#/jobs" data-close>All jobs</a></div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
- m=>{m.querySelector('#mm-chg').onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
+ const covered=moreCovered();
+ items=items.filter(function(row){if(!row||!row[0])return false;if(covered.mod[row[0]])return false;if(covered.href[modHref(row[0])])return false;return true});
+ const rows=items.map(function(row){return moreLink(row[0],row[1],modHref(row[0]),row[0],true)});
+ if(!covered.purpose.changes)rows.push(moreLink('changes','My changes · export / import / sync','#','changes',false));
+ if(!covered.purpose.home&&!covered.href[homeHref()])rows.push(moreLink('home','Home',homeHref(),'home',true));
+ if(!covered.purpose.jobs&&!covered.href['#/jobs'])rows.push(moreLink('jobs','All jobs','#/jobs','jobs',true));
+ openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${rows.join('')}</div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
+ m=>{const ch=m.querySelector('#mm-chg');if(ch)ch.onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
 function panel(title,sub,body,right){return `<div class="panel"><h3>${title} ${sub?`<span class="mut small">${sub}</span>`:''}<span class="sp"></span>${right||''}</h3>${body}</div>`}
 function csvBtn(mod,cls){return `<button class="noprint small${cls?' '+cls:''}" data-csv="${mod}">CSV</button>`}
@@ -21001,23 +21022,14 @@ openMore = function () {
   const list = document.querySelector(".modal .mlist");
   if (!list || !J) return;
   if (typeof featureOn === "function" && !featureOn("plan_room")) return;
-  if (!list.querySelector("[data-hws-plans]")) {
-    const a = document.createElement("a");
-    a.setAttribute("href", modHref("plans"));
-    a.setAttribute("data-close", "");
-    a.setAttribute("data-hws-plans", "");
-    a.textContent = "Plan Room";
-    list.insertBefore(a, list.firstChild);
-  }
   if (!list.querySelector("[data-hws-takeoffs]")) {
     const a = document.createElement("a");
     a.setAttribute("href", modHref("takeoffs"));
     a.setAttribute("data-close", "");
     a.setAttribute("data-hws-takeoffs", "");
+    a.setAttribute("data-purpose", "takeoffs");
     a.textContent = "Takeoffs";
-    const plans = list.querySelector("[data-hws-plans]");
-    if (plans && plans.nextSibling) list.insertBefore(a, plans.nextSibling);
-    else list.insertBefore(a, list.firstChild);
+    list.insertBefore(a, list.firstChild);
   }
 };
 if (typeof window !== "undefined") {
