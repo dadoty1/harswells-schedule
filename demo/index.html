@@ -135,7 +135,26 @@ body.busy .hws-rec-bar,body.busy .hws-rec-bar *{opacity:1;pointer-events:auto}
 body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 header.top{padding-top:calc(8px + env(safe-area-inset-top))}
 .hbtn{position:relative}.badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:#f79009;color:#15233b;font-size:11px;font-weight:700;text-align:center}
-.banner a{color:#6b4e00;text-decoration:underline}.banner #syncbar{margin-top:3px;color:#6b4e00}.banner #syncbar .sync{color:#fff}
+.banner a{color:#1845a8;text-decoration:underline}.banner #syncbar{margin-top:3px;color:#1c1c1e}.banner #syncbar .sync{color:#fff}
+.boot-screen{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;margin:0!important;max-width:none!important;padding:24px;background:#f6f6f7!important;color:#1c1c1e!important;color-scheme:light only;min-height:100vh;min-height:100dvh;font:16px/1.45 -apple-system,Segoe UI,Arial,sans-serif}
+.boot-logo{width:min(240px,72vw);height:auto;background:transparent}
+.boot-spin{width:36px;height:36px;border-radius:50%;border:3px solid #d0d5dd;border-top-color:#0F6E56;background:transparent;animation:bootspin .8s linear infinite}
+@keyframes bootspin{to{transform:rotate(360deg)}}
+#boot-help{max-width:420px;margin:0;text-align:center;color:#1c1c1e;font-size:16px;line-height:1.45}
+#boot-help[hidden]{display:none!important}
+@media (prefers-color-scheme:dark){.boot-screen{background:#f6f6f7!important;color:#1c1c1e!important}}
+.banner:has(#syncbar){background:#f6f6f7;border-bottom:1px solid #e3e6ea;color:#1c1c1e}
+#syncbar{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+button.sync-line{min-height:48px;width:100%;box-sizing:border-box;padding:10px 14px;font-size:16px;line-height:1.3;text-align:left;white-space:normal;background:#f6f6f7;color:#1c1c1e;border:1px solid #d0d5dd;border-radius:10px}
+button.sync-line.stale{background:#fff4e8;color:#4a1d09;border-color:#e8c4a8}
+.sync-places{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.sync-places button,.modal #dsrc,.modal #offmgr{display:block!important;min-height:48px;width:100%;box-sizing:border-box;padding:12px 14px;font-size:16px;text-align:left}
+.sync-where p{margin:0 0 8px;font-size:16px;color:#1c1c1e}
+.sync-where button,.mbtns [data-open-places]{min-height:48px;font-size:16px;padding:10px 14px}
+.sync-warn{color:#4a1d09}
+.slack-note{display:flex;align-items:center;gap:12px;max-height:none;overflow:visible;margin:0 0 12px}
+.slack-note p{margin:0;flex:1;min-width:0}
+.slack-note button{flex:none;min-height:48px;min-width:48px;padding:10px 14px;font-size:16px}
 .jrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.jrow .sp{flex:1}
 .pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:12px;font-weight:600;background:#eef1f5;color:#344054}.pill.mine{background:#dcfae6;color:#067647}.pill.other{background:#fde4e2;color:#b42318}
 .c-lk{width:30px;text-align:center}.lk{border:0;background:transparent;padding:0 2px;font-size:13px;line-height:1;cursor:pointer;opacity:.55}.lk.on{opacity:1}.lk:hover{opacity:1}
@@ -387,8 +406,8 @@ body.has-tabs .slack-foot{bottom:calc(62px + env(safe-area-inset-bottom))}
 @media(min-width:761px) and (max-width:1000px){.tiles{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){
  body.hubp .banner{font-size:0;padding:5px 12px;line-height:1.2}body.hubp .banner>*:not(#syncbar){display:none}
- body.hubp .banner #syncbar{font-size:12px;margin:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
- body.hubp .banner #syncbar button{min-height:32px;padding:2px 10px;font-size:13px}
+ body.hubp .banner #syncbar{font-size:16px;margin:0;display:flex;flex-direction:column;align-items:stretch;gap:8px}
+ body.hubp .banner #syncbar button.sync-line{min-height:48px;padding:10px 14px;font-size:16px;line-height:1.3}
 }
 @media(max-width:760px){
  body[data-pg=home] #dsrc,body[data-pg=trackers] #dsrc,body[data-pg=files] #dsrc,body[data-pg=chat] #dsrc{display:none}
@@ -897,9 +916,15 @@ button.lbtn,button.msgopen,button.to-link,button.fold.flink{border:0;background:
   left: 16px;
   bottom: calc(24px + env(safe-area-inset-bottom));
   z-index: 75;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.2;
   background: #15233b;
   color: #fff;
 }
+body:has(nav .phone-capture) .filedrop-upbtn { display: none !important; }
 body.has-tabs .filedrop-upbtn { bottom: calc(78px + env(safe-area-inset-bottom)); }
 @media (max-width: 1180px) {
   .filedrop-upbtn { display: inline-flex; }
@@ -1019,6 +1044,10 @@ a.seljobt .bmeta{font-size:14px;color:#344054;line-height:1.35}
 .home-edit{flex:none;border:0;background:transparent;color:var(--navy2);font-weight:700;font-size:15px;min-height:44px;padding:0 4px;cursor:pointer}
 .home-fresh{color:var(--mut);font-size:13px;margin-top:4px}
 .home-fresh.stale{color:#b54708;font-weight:650}
+.home-links{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-top:8px}
+@media(max-width:760px){body.has-tabs .home-v3{padding-top:32px}}
+@media(min-width:761px) and (max-width:1100px){body.has-tabs .home-v3{padding-top:36px}}
+.home-links .proplink{display:inline-flex;align-items:center;min-height:48px;padding:8px 4px;font-size:16px;font-weight:700;color:#1845a8}
 .home-sec{margin:0 0 16px;min-width:0}
 .home-sec-h{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
 .home-sec-h h2{margin:0;font-size:18px;color:var(--navy);letter-spacing:-.01em}
@@ -1832,22 +1861,34 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
   }
   body.phone-shell .phone-cap-job {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
     margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 650;
+    color: #101014;
   }
-  body.phone-shell .phone-cap-job strong { font-size: 17px; font-weight: 650; }
-  body.phone-shell .phone-cap-job button {
-    min-height: 44px;
-    min-width: 44px;
+  body.phone-shell .phone-cap-job select {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 48px;
     margin: 0;
     padding: 8px 12px;
-    border: 0;
-    background: transparent;
-    color: #007AFF;
+    border: 1px solid #ececef;
+    border-radius: 12px;
+    background: #fff;
+    color: #101014;
+    font: inherit;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 650;
+  }
+  body.phone-shell [data-phone-cap-job-find][hidden] { display: none !important; }
+  body.phone-shell [data-phone-cap-library] {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 10px;
+    font-size: 16px;
   }
   body.phone-shell [data-phone-which][hidden],
   body.phone-shell [data-phone-cap-main][hidden],
@@ -1915,7 +1956,7 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
     color: #101014;
     border-color: #ececef;
   }
-  body.phone-shell .phone-cap .mbtns button { min-height: 44px; min-width: 44px; }
+  body.phone-shell .phone-cap .mbtns button { min-height: 48px; min-width: 48px; font-size: 16px; }
   body.phone-shell .phone-action-cancel {
     display: flex;
     flex-direction: column;
@@ -2233,13 +2274,15 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
 /* Tall phones: keep Upload and Ask in the empty header band so they never sit on page text. */
 @media (max-width: 760px) and (min-height: 501px) {
   body.phone-shell.has-tabs .filedrop-upbtn {
-    top: 10px;
-    bottom: auto;
-    left: 92px;
+    top: auto;
+    bottom: calc(108px + env(safe-area-inset-bottom));
+    left: 16px;
     right: auto;
     z-index: 70;
-    height: 40px;
-    padding: 0 10px;
+    min-height: 48px;
+    height: auto;
+    padding: 12px 16px;
+    font-size: 16px;
   }
   body.phone-shell.has-tabs .ask-float {
     top: auto;
@@ -2286,6 +2329,87 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
 .qstills{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;flex-shrink:0;align-items:flex-start}
 .qstill{flex:0 0 148px;margin:0}
 .qstill img,.qstill-ph{display:block;width:148px;height:96px;object-fit:cover;border-radius:8px;background:#e4e7ec}
+@media (max-width:760px){
+  .jh .kd{flex-wrap:wrap;overflow:visible}
+  .jh .kd .k{flex:1 1 42%;min-width:140px;max-width:100%}
+  .jh .kd .k .l,.jh .kd .k .v,.jh .kd .k .n{font-size:16px;letter-spacing:0;text-transform:none}
+  .note.gates.slack-note{display:flex;align-items:center;gap:12px;max-height:none;overflow:visible;font-size:16px;line-height:1.4;color:#1c1c1e;margin:0 0 12px;padding:12px 14px}
+  .note.gates.slack-note p{margin:0;flex:1;min-width:0;font-size:16px;line-height:1.4;color:#1c1c1e}
+  .note.gates.slack-note button{flex:none;min-height:48px;min-width:48px;padding:10px 14px;font-size:16px}
+  body.phone-shell img.jbanner{height:72px;max-height:72px;object-fit:cover}
+  body.phone-shell span.jmark.jbanner{width:48px;height:48px;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center;margin:0 0 8px;border-radius:10px;overflow:hidden}
+  body.hubp .banner #syncbar button.sync-line,body.phone-shell .banner #syncbar button.sync-line{min-height:48px;font-size:16px;padding:10px 14px}
+}
+/* Capture sheet at every width. One job dropdown, one Close, 16px type, 48px targets. */
+.modal-bg.phone-sheet:has(.phone-cap) {
+  background: rgba(16, 24, 40, .35);
+  z-index: 160;
+}
+.modal-bg.phone-sheet:has(.phone-cap) .modal {
+  background: #fff;
+  color: #101014;
+  opacity: 1;
+  animation: none;
+  box-shadow: 0 20px 50px rgba(16, 24, 40, .3);
+  border-radius: 16px 16px 0 0;
+}
+.phone-cap { background: #fff; color: #101014; font-size: 16px; }
+.phone-cap h2 { font-size: 22px; margin: 0 0 10px; }
+.phone-cap .phone-lead { font-size: 16px; }
+.phone-cap-job {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 650;
+}
+.phone-cap-job select,
+.phone-cap [data-phone-job-search] {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid #ececef;
+  border-radius: 12px;
+  background: #fff;
+  color: #101014;
+}
+.phone-cap [data-phone-cap-job-find][hidden],
+.phone-cap [data-phone-cap-panel][hidden],
+.phone-cap [data-phone-cap-actions][hidden],
+.phone-cap [data-phone-cap-main][hidden] { display: none !important; }
+.phone-cap-actions { display: flex; flex-direction: column; gap: 10px; }
+.phone-cap-actions button,
+.phone-cap [data-phone-cap-library],
+.phone-cap .mbtns button,
+.walk-top .phone-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 650;
+}
+.phone-cap-actions button {
+  border: 1px solid #ececef;
+  border-radius: 16px;
+  background: #fff;
+  color: #101014;
+  box-shadow: 0 4px 14px rgba(17, 17, 19, .04);
+}
+.phone-cap .mbtns button { min-height: 48px; }
+.walk-top .phone-file { position: relative; width: auto; min-width: 48px; padding: 8px 12px; }
+.walk-top .phone-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+body:has([data-walk-layer]) .modal-bg.phone-sheet { visibility: hidden; }
 
 /* Ask the hub. Phone first: a 390px screen keeps one column and 44px rows. */
 .ask-hub{box-sizing:border-box;max-width:100%;margin:0 0 14px;padding:12px;background:#fff;border:1px solid #dde3ec;border-radius:16px}
@@ -2761,10 +2885,16 @@ body.phone-shell .walk { padding-bottom: calc(76px + env(safe-area-inset-bottom)
   body.layout2026 .l26-side { display: none !important; }
 }
 </style></head><body>
-<div id="root"><div id="boot-msg" style="font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 18px;color:#1d2330">
-<h2 style="margin:0 0 8px">Sample Builders schedule</h2><p>Loading&hellip;</p>
-<p style="color:#667085;font-size:13px">If this message stays, this viewer cannot run the app (for example the iPhone Mail or Files <i>preview</i>).
-Open the file on a computer in Chrome, Edge or Safari, or use the hosted Sample Builders app on iPhone.</p></div></div>
+<div id="root"><div id="boot-msg" class="boot-screen">
+<svg class="boot-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" role="img" aria-label="Figra IQ">
+<rect x="0" y="2" width="44" height="44" rx="12" fill="#0F6E56"/>
+<path fill="#ffffff" d="M12 14h19v5.2H17.8V23h9.6v5H17.8V36H12V14z"/>
+<text x="56" y="32" fill="#1c1c1e" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="23" font-weight="600">Figra IQ</text>
+</svg>
+<div class="boot-spin" role="status" aria-label="Loading"></div>
+<p id="boot-help" hidden>If this message stays, this viewer cannot run the app (for example the iPhone Mail or Files preview). Open the file on a computer in Chrome, Edge or Safari, or use the hosted Sample Builders app on iPhone.</p>
+</div>
+<script>setTimeout(function(){var msg=document.getElementById('boot-msg');var help=document.getElementById('boot-help');if(msg&&help)help.hidden=false;},8000);</script></div>
 <noscript><p style="padding:20px">This file needs JavaScript. Open it in Chrome, Edge or Safari.</p></noscript>
 
 <script>window.HWS_CONFIG={"dropbox":{"appKey":"","syncRoot":"","dataPath":"","pathRoot":"root"},"lockHours":12,"hubUrl":"","live":false,"demo":true};const BOOT={"mode":"pwa"};</script>
@@ -3066,6 +3196,58 @@ function down(){return window.HWSOffline?HWSOffline.offlineNow():!navigator.onLi
 function mark(on){if(window.HWSOffline)HWSOffline.markNet(on)}
 function paint(){const el=document.getElementById('syncbar');if(el){el.innerHTML=W.statusHtml();W.bind()}
  const b=document.getElementById('offline-banner');if(down()&&b)b.setAttribute('role','status');paintVersion()}
+function builtMs(){
+ const raw=String((data&&data.built)||'').replace(/\s*AZ\s*$/i,'').trim();
+ if(!/\d{4}/.test(raw))return 0;
+ const zoned=/[zZ]|[+-]\d{2}:?\d{2}$/.test(raw)?raw:(raw+' GMT-0700');
+ const ms=Date.parse(zoned);
+ if(!isFinite(ms)||ms<Date.parse('2000-01-01T00:00:00Z'))return 0;
+ return ms;
+}
+function azClock(ms){try{return new Intl.DateTimeFormat('en-US',{timeZone:'America/Phoenix',hour:'numeric',minute:'2-digit'}).format(new Date(ms))}catch(e){return ''}}
+function azYmd(ms){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Phoenix',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms))}catch(e){return ''}}
+function azHour(ms){try{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Phoenix',hour:'numeric',hourCycle:'h23'}).formatToParts(new Date(ms));const h=parts.find(p=>p.type==='hour');return h?parseInt(h.value,10)||0:0}catch(e){return 0}}
+function freshPhrase(){
+ const built=builtMs();
+ const synced=syncedAt||0;
+ const stale=!!(built&&Date.now()-built>12*3600*1000);
+ if(!stale){const clock=azClock(synced||built||Date.now());return {stale:false,text:clock?('Up to date · '+clock):'Up to date'}}
+ const clock=azClock(built);
+ const day=azYmd(built);
+ const yest=azYmd(Date.now()-24*3600*1000);
+ if(day&&day===yest&&azHour(built)>=17)return {stale:true,text:'Showing data from '+clock+' last night, Sync now'};
+ if(day&&day===yest)return {stale:true,text:'Showing data from '+clock+' yesterday, Sync now'};
+ let when=clock;
+ try{when=new Intl.DateTimeFormat('en-US',{timeZone:'America/Phoenix',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(built))}catch(e){}
+ return {stale:true,text:'Showing data from '+when+', Sync now'};
+}
+function statusLineHtml(){
+ if(syncing)return '<button type="button" class="sync-line" id="syn">Syncing…</button>';
+ const phrase=freshPhrase();
+ return `<button type="button" class="sync-line${phrase.stale?' stale':''}" id="syn">${esc2(phrase.text)}</button>`;
+}
+function placesOnBar(){return !!(W.demo||W.preview||needsSignIn())}
+function syncPlaceHtml(){
+ if(placesOnBar())return '';
+ return '<button type="button" id="offmgr">Saved files</button><button type="button" id="dsrc">Data source</button>';
+}
+function openPlaces(){
+ if(typeof closeModal==='function')closeModal();
+ setTimeout(function(){
+  const job=document.body&&document.body.dataset&&document.body.dataset.pg==='job';
+  if(job&&typeof openMore==='function')openMore();
+  else if(typeof phoneOpenMore==='function')phoneOpenMore();
+  else if(typeof openMore==='function')openMore();
+ },30);
+}
+function openSyncDetail(){
+ const phrase=freshPhrase();
+ const live=(W.liveMode&&typeof liveBadge==='function')?`<p>${liveBadge()}</p>`:'';
+ const err=lastErr?`<p class="sync-warn">${esc2(lastErr)}</p>`:'';
+ const html=`<h2>Sync</h2><p class="${phrase.stale?'sync-warn':''}">${esc2(phrase.text)}</p><p>Last synced ${esc2(fmtTime(syncedAt))}.</p>${live}${err}<p>Saved files and Data source are in More.</p><div class="mbtns"><button type="button" class="pri" id="sync-go">Sync now</button><button type="button" data-open-places>Open More</button><button type="button" data-close>Close</button></div>`;
+ if(typeof openModal==='function')openModal(html,function(){W.bind()});
+}
+function runSync(){return sync(true).then(ok=>{toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:''));return ok})}
 function applySetup(){const h=location.hash;const i=h.indexOf('setup=');if(i<0)return false;let v=h.slice(i+6);try{v=decodeURIComponent(v)}catch(e){}
  const c=v=='same-origin'?{source:'same-origin'}:(v=='dropbox-api'?{source:'dropbox-api'}:null);
  history.replaceState(null,'',location.pathname+location.search+'#/');if(!okSource(c))return false;cfg=c;saveCfg();return true}
@@ -3075,11 +3257,14 @@ function versionText(){
   return 'Version '+HWS_BUILD.version+' · built '+(HWS_BUILD.built||'');
 }
 function paintVersion(){
+  const booting=!!(document.getElementById&&document.getElementById('boot-msg'));
+  const el=document.getElementById('hws-ver');
+  if(booting){if(el)el.remove();return}
   const text=versionText();
   if(!text||!document.body)return;
-  let el=document.getElementById('hws-ver');
-  if(!el){el=document.createElement('p');el.id='hws-ver';el.className='hws-ver';document.body.appendChild(el)}
-  el.textContent=text;
+  let node=el;
+  if(!node){node=document.createElement('p');node.id='hws-ver';node.className='hws-ver';document.body.appendChild(node)}
+  node.textContent=text;
 }
 function showUpdate(){
   if(document.getElementById('hws-update')||!document.body)return;
@@ -3205,25 +3390,27 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
  statusHtml(){if(W.demo)return `<b class="demob">DEMO — sample data</b> <span class="small">Made-up jobs, people and numbers. Edits stay in this browser only; nothing is sent or saved anywhere else.</span> <button class="small" id="demoreset">Reset demo</button>`;
   if(W.preview)return `<b>LOCAL PREVIEW</b> · data inlined · no network`;
   const files=` <button type="button" class="small" id="offmgr">Saved files</button>`;
-  if(authNeeded)return `<button type="button" class="sync" id="auth-banner">${esc2(SIGNIN)}</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`;
+  if(authNeeded)return `<button type="button" class="sync" id="auth-banner">${esc2(SIGNIN)}</button>`;
   /* No source or no Dropbox sign-in is not an offline phone. Sync now stays hidden; Load from Dropbox is the action. */
   if(needsSignIn())return `<span class="sync" id="signin-prompt">${esc2(NEED)}</span> <button type="button" class="pri load-dbx" id="load-dbx">Load from Dropbox</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`;
   const on=navigator.onLine;
   const off=down();
-  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))} <button type="button" class="small" id="retry">Retry now</button></span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
-  if(W.liveMode&&typeof liveBadge=='function')return `${liveBadge()}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="dsrc">Data source</button>${files}`;
-  return `<span class="sync">Online</span> Last synced ${esc2(fmtTime(syncedAt))}${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''} <button type="button" class="small" id="syn">Sync now</button> <button type="button" class="small" id="dsrc">Data source</button>${files}`},
+  if(!on||off)return `<span class="sync off" id="offline-banner" role="status">Offline, last updated ${esc2(fmtTime(syncedAt))} <button type="button" class="small" id="retry">Retry now</button></span>${syncing?' · refreshing…':''}${lastErr?` · <span class="red">${esc2(lastErr)}</span>`:''}`;
+  return statusLineHtml()},
  errorHtml(e){const setup=!data;const msg=(e&&e.message&&e.message!='setup')?e.message:(lastErr&&lastErr.indexOf('Offline')<0?lastErr:'');
   if(hostedMode())return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${setup?'Could not load schedule':'Could not load'}</h3><div class="pb">
   ${msg?`<div class="note">${esc2(msg)}</div>`:''}<p>Jobs load from your Sample Builders account on this site after you sign in. Dropbox is not used on the hosted phone shell.</p>
-  <p><button class="pri" type="button" id="syn">Try again</button></p></div></div>`;
+  <p><button class="pri" type="button" id="syn-again">Try again</button></p></div></div>`;
   const ask=setup&&!canLoad();const dbxOk=window.HWSSync&&HWSSync.DropboxBackend().configured();
   return `<div class="panel" style="max-width:640px;margin:20px auto"><h3>${ask?NEED:(setup?'Connect your schedule data':'Could not load')}</h3><div class="pb">
   ${msg?`<div class="note">${esc2(msg)}</div>`:''}<p>${ask?'Load the Sample Builders job schedules from the company Dropbox. Nothing is stored in the app until you do.':'This app shows and edits the Sample Builders job schedules. It holds no data itself; it reads one data file from the company Dropbox after the PIN and keeps an encrypted copy on this device for offline use.'}</p>
   <form id="srcf" action="#/" method="get">${dbxOk?`<p><button class="pri load-dbx" type="button">${ask||HWSSync.DropboxBackend().ready()?'Load from Dropbox':'Sign in with Dropbox'}</button></p><p class="small mut">Sign-in also enables check-out/check-in. Only people whose Dropbox can see the Sample Builders schedule file can load it.</p>`:'<p class="mut">Dropbox sign-in is not configured in this build (App key missing).</p>'}</form></div></div>`},
  bind(){const dr=document.getElementById('demoreset');if(dr)dr.onclick=()=>{if(confirm('Reset the demo? This clears your demo edits, flags and approvals in this browser.'))window.HWS_DEMO_RESET()};
-  const s=document.getElementById('syn');if(s)s.onclick=()=>sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')));
-  const retry=document.getElementById('retry');if(retry)retry.onclick=ev=>{ev.preventDefault();ev.stopPropagation();sync(true).then(ok=>toast(ok?'Synced':'Sync failed'+(lastErr?': '+lastErr:'')))};
+  const s=document.getElementById('syn');if(s)s.onclick=ev=>{ev.preventDefault();if(s.classList.contains('sync-line'))openSyncDetail();else runSync()};
+  const again=document.getElementById('syn-again');if(again)again.onclick=ev=>{ev.preventDefault();runSync()};
+  const go=document.getElementById('sync-go');if(go)go.onclick=ev=>{ev.preventDefault();runSync().then(function(){if(typeof closeModal==='function')closeModal()})};
+  document.querySelectorAll('[data-open-places]').forEach(b=>{b.onclick=ev=>{ev.preventDefault();openPlaces()}});
+  const retry=document.getElementById('retry');if(retry)retry.onclick=ev=>{ev.preventDefault();ev.stopPropagation();runSync()};
   document.querySelectorAll('button.load-dbx').forEach(b=>{b.type='button';b.onclick=ev=>{ev.preventDefault();loadDropbox()}});
   const ab=document.getElementById('auth-banner');if(ab)ab.onclick=async()=>{try{const A=HWSSync.DropboxBackend();HWSSync.LS.set('hws-sync-kind','dropbox');cfg={source:'dropbox-api'};saveCfg();await A.connect()}catch(e){toast(e.message)}};
   const d=document.getElementById('dsrc');if(d)d.onclick=()=>openModal(W.errorHtml(null),()=>W.bind());
@@ -3231,6 +3418,7 @@ const W={onUpdate:null,preview:false,liveMode:false,sync:f=>sync(f),syncedAt:()=
   const f=document.getElementById('srcf');if(f)f.onsubmit=ev=>{ev.preventDefault();loadDropbox()}},
  _dev:DEV};
 try{paintVersion()}catch(e){}
+try{window.syncPlaceHtml=syncPlaceHtml}catch(e){}
 window.WSData=W;
 })();
 </script>
@@ -7873,9 +8061,11 @@ function renderFeatures() {
   const scanMb = scanCfg.photo_scan_cellular_mb || 500;
   const scanAdmin = '<h2>Scan photos</h2><p class="hint">Blank max range means a scan can go back to the start of the photo library. A number of days is the farthest this company allows. Daily Log, Capture, Dust Control, and imports under 500 items and under the cellular size upload on cellular right away. Blank cellular size uses 500 MB. The first-sign-in import stays off until the box is checked.</p><form id="scanadmin"><label>Max range in days<input name="max" inputmode="numeric" placeholder="Unlimited" value="' + esc(scanMax) + '"></label><label>Cellular size in MB<input name="cellular" inputmode="numeric" placeholder="500" value="' + esc(String(scanMb)) + '"></label><label class="feat-row"><span class="feat-label">Show the import on first sign-in</span><span class="feat-toggle"><input type="checkbox" name="onboarding"' + (scanCfg.photo_scan_onboarding ? " checked" : "") + '><i aria-hidden="true"></i></span></label><div class="mbtns"><button class="pri" type="submit">Save scan settings</button></div></form>';
   const layoutLink = typeof layout2026SettingsHtml === 'function' ? layout2026SettingsHtml() : '';
-  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1>' + layoutLink + '<p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p><form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  const places = '<div class="sync-where"><p>Saved files and Data source are in More.</p><button type="button" data-open-places>Open More</button></div>';
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1>' + layoutLink + '<p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p>' + places + '<form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
   if (typeof hubShell === 'function') hubShell('settings', body);
   else document.getElementById('root').innerHTML = body;
+  if (window.WSData && WSData.bind) WSData.bind();
   const scanForm = document.getElementById('scanadmin');
   if (scanForm) scanForm.onsubmit = function (ev) {
     ev.preventDefault();
@@ -12205,9 +12395,10 @@ try {
   function sheetHtml(opts) {
     opts = opts || {};
     const job = esc(opts.job || "This job");
+    const title = esc(opts.title || "Quick note");
     const pick = opts.slug ? "" : ('<label class="qtext">Job<select data-qnote-job>' + jobChoices().map(function (j) { return '<option value="' + esc(j.slug) + '">' + esc(j.name) + "</option>"; }).join("") + "</select></label>");
     const swatch = function (hex, name) { return '<button type="button" data-qnote-color="' + hex + '" style="background:' + hex + '">' + name + "</button>"; };
-    return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qbody"><div class="qhead"><div><h2>Quick note</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
+    return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qbody"><div class="qhead"><div><h2>' + title + '</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
       pick +
       '<div class="qtools"><button type="button" data-qnote-mode="sketch" class="on">Sketch</button><button type="button" data-qnote-mode="photo">Photo</button></div>' +
       '<div class="qrow"><button type="button" data-qnote-import>Import page</button></div>' +
@@ -13350,7 +13541,7 @@ try {
     if (extra.job) name = extra.job;
     if (extra.folder) folder = extra.folder;
     if (slug && !folder) { try { folder = jobFolder(slug); } catch (e) { folder = ""; } }
-    const opts = {slug: slug, job: name || "Quick note", folder: folder, who: currentWho(), note: note, importPage: !!extra.import};
+    const opts = {slug: slug, job: name || "Quick note", folder: folder, who: currentWho(), note: note, importPage: !!extra.import, title: extra.title || ""};
     const html = sheetHtml(opts);
     if (typeof openModal === "function") openModal(html, function (m) {
       if (document.body && document.body.classList.contains("phone-shell")) m.classList.add("phone-sheet");
@@ -14458,12 +14649,12 @@ function builtShort(){return String((DATA&&DATA.built)||'').replace(/^[A-Z][a-z]
 /* Signed out there is no data yet: say so instead of 'Data as of  AZ' with no time. */
 function asOfHtml(label){const b=builtShort();return b?`<b>${label} ${esc(b)} AZ</b>`:'<b>No schedule data loaded yet</b>'}
 function bannerHtml(){const n=STORE?STORE.pendingTotal():0;
- if(STORE&&STORE.live)return `<div class="banner" id="banner">${asOfHtml('Data as of')} · edits save to the shared Sample Builders Dropbox automatically${STORE.persist?'':' · <span class="red"><b>this viewer can\'t keep offline edits</b></span>'}<div class="small" id="syncbar">${window.WSData?WSData.statusHtml():liveBadge()}</div></div>`;
- const main=(window.WSData&&WSData.demo)?`<b>Sample data</b> · edits stay in this browser`:MODE==='share'?`${asOfHtml('Snapshot as of')} · your edits save in this browser only · Export to send changes back to the office`
-  :`${asOfHtml('Data as of')} · your edits save on this device${syncOn()?' until you check in':''} · Export or check in to send changes back to the office`;
- const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
- const pwa=MODE!=='share'&&window.WSData?`<div class="small" id="syncbar">${WSData.statusHtml()}</div>`:'';
- return `<div class="banner" id="banner">${main}${warn}${n?` · <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:''}${pwa}</div>`}
+ const unsent=n?` <a href="#" data-open="changes"><b>${n} unsent edit${n>1?'s':''}</b></a>`:'';
+ if(MODE==='share'){const main=`${asOfHtml('Snapshot as of')} · your edits save in this browser only · Export to send changes back to the office`;
+  const warn=STORE&&!STORE.persist?` · <span class="red"><b>this viewer can't save edits</b> (storage blocked); export before closing</span>`:'';
+  return `<div class="banner" id="banner">${main}${warn}${unsent}</div>`}
+ const status=window.WSData?WSData.statusHtml():(STORE&&STORE.live&&typeof liveBadge==='function'?liveBadge():'');
+ return `<div class="banner" id="banner"><div class="small" id="syncbar">${status}${unsent}</div></div>`}
 function topHtml(page){if(typeof layout2026==='function'&&layout2026()&&typeof layout2026Top==='function')return layout2026Top(page);if(typeof layout2026Mark==='function')layout2026Mark();const jobs=orderedJobs();const n=STORE?STORE.pendingTotal():0;
  const open=jobs.filter(j=>jobListed(j)&&jobServiceOf(j)==='active'),service=jobs.filter(j=>jobListed(j)&&jobOnWarrantyTab(j));
  const opt=j=>`<option value="${esc(j.slug)}" ${J&&J.slug==j.slug?'selected':''}>${esc(j.name||j.slug)}</option>`;
@@ -14488,7 +14679,7 @@ function orderJobNav(mods){const rows=(mods||[]).map(function(row){return row.sl
  if(typeof conciergeHasItems==='function'&&conciergeHasItems())out.push(['concierge','Concierge']);
  out.push(schedule);return out}
 const MODFN=()=>{const m={schedule:mSchedule,selections:mSel,bids:mBids,pos:mPos,cos:mCos,budget:mBudget,money:(typeof mMoney=='function'?mMoney:mBudget),logs:mLogs,messages:mMsgs,slack:(typeof mSlack==='function'?mSlack:mMsgs),todos:mTodos,rfis:(typeof mRfis==='function'?mRfis:mSchedule),specs:(typeof mSpecs==='function'?mSpecs:mSchedule),conflicts:mConf,whodid:(typeof mWhoDid=='function'?mWhoDid:mSchedule),files:mFiles,exports:mExports,settings:mSettings,history:mHistory,property:(typeof mProperty==='function'?mProperty:mSchedule),feed:(typeof mFeed==='function'?mFeed:mSchedule),commitments:(typeof mCommitments==='function'?mCommitments:mSchedule),jobinfo:(typeof mJobInfo==='function'?mJobInfo:mSchedule),concierge:(typeof mConcierge==='function'?mConcierge:mSchedule),dust:(typeof mDust==='function'?mDust:mSchedule)};if(typeof mPlans==='function'&&typeof mPlanRoom!=='function')m.plans=mPlans;return m};
-function lockPill(){if(STORE&&STORE.live)return `<span class="pill livepill" id="livepill">${liveBadge(J.slug)}</span>`;if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
+function lockPill(){if(STORE&&STORE.live)return '';if(!syncOn())return '';const co=STORE.checkout(J.slug);const ls=lockCache[J.slug];
  if(co&&co.kind==SY.kind)return `<span class="pill mine">✏️ Checked out by you</span><button class="pri small" id="ci">Check in${J.pending?` (${J.pending})`:''}</button>`;
  const other=ls&&ls.state=='other'?`<span class="pill other">🔒 ${esc(ls.lock.holder)} has it checked out</span>`:(ls&&ls.state=='expired'?`<span class="pill">lock by ${esc(ls.lock.holder)} expired</span>`:'');
  return `${other}<button class="pri small" id="co">Check out to edit</button>`}
@@ -14533,7 +14724,7 @@ function renderJob(){if(!J){const empty='<div class="empty"><b>No data for this 
  const head=banner+`<div class="jh"><a class="backjobs" href="#/jobs">Back to Jobs</a><div class="jrow"><h1>${esc(J.name)}</h1><span class="sp"></span>${typeof noteButtonHtml==='function'?noteButtonHtml():''}${lockPill()}</div><div class="sub"><span class="hide-sm">${esc(J.address||'address not on file')}</span><a class="proplink" href="${modHref('property')}">Property info</a>${jobStatusChip(J,i.status||J.stage)}<span class="hide-sm">${chip(J.kind)}</span>
  <a class="wdlink" href="${modHref('whodid')}">${chip('Who did it'+(typeof wdTrades=='function'&&wdTrades(J.slug).length?' · '+wdTrades(J.slug).length:''),'low')}</a>${(typeof needsSlack==='function'&&needsSlack(J.slug,J.channel))?chip('no Slack channel yet','medium'):''}<span class="hide-sm">PM: <b>${esc(i.pm||'not set')}</b></span><span class="hide-sm">Client/owner: <b>${esc(i.client||'not set')}</b></span>${i.contract?`<span class="hide-sm">Contract: <b>${esc(i.contract)}</b></span>`:''}<span><span class="pbar"><b style="width:${J.pct||0}%"></b></span> ${J.pct||0}%</span>${hc?`<a href="${modHref('conflicts')}">${chip(hc+' high','high')}</a>`:''}${J.pending?`<a href="#" data-open="changes">${chip(J.pending+' unsent','medium')}</a>`:''}</div>
  <div class="kd">${kd||'<span class="mut small">No schedule dates yet.</span>'}<div class="k hide-sm"><div class="l">Calendar</div><div class="v small">${esc((J.cal||{}).describe||'')}</div></div></div>
- ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div><div id="qnote-slot"></div>${typeof askBarHtml==='function'?askBarHtml(J.slug):''}</div>`;
+ ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div><div id="qnote-slot"></div>${typeof askBarHtml==='function'&&!(typeof isPhone==='function'&&isPhone())?askBarHtml(J.slug):''}</div>`;
  let sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  if(typeof withFeedMod==='function')sideMods=withFeedMod(sideMods);
  sideMods=sideMods.filter(([k])=>typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k)));
@@ -14612,8 +14803,9 @@ function openMore(){const c=J.counts||{};let items=[['property','Property info']
  if(!covered.purpose.changes)rows.push(moreLink('changes','My changes · export / import / sync','#','changes',false));
  if(!covered.purpose.home&&!covered.href[homeHref()])rows.push(moreLink('home','Home',homeHref(),'home',true));
  if(!covered.purpose.jobs&&!covered.href['#/jobs'])rows.push(moreLink('jobs','All jobs','#/jobs','jobs',true));
- openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${rows.join('')}</div><div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
- m=>{const ch=m.querySelector('#mm-chg');if(ch)ch.onclick=e=>{e.preventDefault();closeModal();openChanges()}})}
+ const places=typeof syncPlaceHtml==='function'?syncPlaceHtml():'';
+ openModal(`<h2>${esc(J.name)}</h2><div class="mlist">${rows.join('')}</div>${places?`<div class="sync-places">${places}</div>`:''}<div class="mbtns"><span class="sp"></span><button data-close>Close</button></div>`,
+ m=>{const ch=m.querySelector('#mm-chg');if(ch)ch.onclick=e=>{e.preventDefault();closeModal();openChanges()};if(window.WSData&&WSData.bind)WSData.bind()})}
 function emptyState(title,hint){return `<div class="empty"><b>${esc(title)}</b>${esc(hint||'')}</div>`}
 function panel(title,sub,body,right){return `<div class="panel"><h3>${title} ${sub?`<span class="mut small">${sub}</span>`:''}<span class="sp"></span>${right||''}</h3>${body}</div>`}
 function csvBtn(mod,cls){return `<button class="noprint small${cls?' '+cls:''}" data-csv="${mod}">CSV</button>`}
@@ -16747,6 +16939,12 @@ function homeBind(root) {
   if (see) see.addEventListener('click', function () { homeLog('home_tap', 'see_all'); });
   const edit = root.querySelector('.home-edit');
   if (edit) edit.addEventListener('click', homeEditOpen);
+  const dismiss = root.querySelector('[data-slack-dismiss]');
+  if (dismiss) dismiss.addEventListener('click', function () {
+    try { sessionStorage.setItem('hws-slack-note', '1'); } catch (e) {}
+    const note = dismiss.closest('.slack-note');
+    if (note) note.remove();
+  });
 }
 function homeEditOpen() {
   if (typeof openModal !== 'function') return;
@@ -16822,10 +17020,9 @@ function renderHomeV3() {
     else rest.push(kind);
   });
   const who = homeWho();
-  const fresh = homeFresh();
   const featLink = (typeof isOwner === 'function' && isOwner()) ? '<a class="proplink" href="#/settings">Features</a>' : '';
   const approvals = '<a class="proplink" href="#/approvals" data-home-approvals>Approvals</a>';
-  const hello = `<div class="hello"><div class="home-hello-row"><h1>${typeof greet === 'function' ? greet() : 'Hello'}${who ? ', ' + esc(who) : ''}</h1><button type="button" class="home-edit">Edit home</button></div><div class="date">${typeof longDate === 'function' ? longDate(homeAzDay()) : ''}</div><div class="home-fresh${fresh.stale ? ' stale' : ''}">${esc(fresh.text)}</div>${approvals}${featLink}</div>`;
+  const hello = `<div class="hello"><div class="home-hello-row"><h1>${typeof greet === 'function' ? greet() : 'Hello'}${who ? ', ' + esc(who) : ''}</h1><button type="button" class="home-edit">Edit home</button></div><div class="date">${typeof longDate === 'function' ? longDate(homeAzDay()) : ''}</div><div class="home-links">${approvals}${featLink}</div></div>`;
   const needs = blocks.needs || '';
   const sideHtml = side.map(function (kind) { return blocks[kind] || ''; }).join('');
   const top = sideHtml ? `<div class="home-split"><div class="home-col">${needs}</div><div class="home-col">${sideHtml}</div></div>` : needs;
@@ -17296,7 +17493,16 @@ function askInlineShown() {
   for (let i = 0; i < nodes.length; i++) {
     if (askRootShown(nodes[i])) return true;
   }
+  let phones = [];
+  try { phones = document.querySelectorAll('[data-phone-ask]'); } catch (e) { phones = []; }
+  for (let j = 0; j < phones.length; j++) {
+    if (askRootShown(phones[j])) return true;
+  }
   return false;
+}
+function askBooting() {
+  if (typeof document === 'undefined' || !document.getElementById) return false;
+  try { return !!document.getElementById('boot-msg'); } catch (e) { return false; }
 }
 function askSyncBubble() {
   if (typeof document === 'undefined' || !document.getElementById) return;
@@ -17305,6 +17511,11 @@ function askSyncBubble() {
   const bubble = wrap.querySelector('.ask-bubble');
   if (!bubble) return;
   if (askInlineShown()) {
+    const phone = typeof isPhone === 'function' && isPhone();
+    if (phone && wrap.parentNode) {
+      wrap.parentNode.removeChild(wrap);
+      return;
+    }
     if (bubble.setAttribute) {
       bubble.setAttribute('hidden', '');
       bubble.setAttribute('aria-expanded', 'false');
@@ -17321,6 +17532,11 @@ function askWatchResize() {
 }
 function askMount() {
   if (typeof document === 'undefined' || !document.body) return;
+  if (askBooting()) {
+    const stuck = document.getElementById('ask-float');
+    if (stuck && stuck.parentNode) stuck.parentNode.removeChild(stuck);
+    return;
+  }
   askSyncInline();
   askWatchResize();
   const existing = document.getElementById('ask-float');
@@ -17408,8 +17624,9 @@ function HL(){return (DATA&&DATA.common&&DATA.common.links)||{company:[]}}
 function JL(slug){return ((DATA&&DATA.common&&DATA.common.job_links)||{})[slug]||{items:[],permits:[]}}
 function needsSlack(slug, channel){if(!slug||slug==='general')return false;return !(channel||'').trim()}
 function slackChannelNote(){const rows=(H().needs_slack||[]).filter(x=>x&&(x.name||x.slug));if(!rows.length)return '';
+ try{if(sessionStorage.getItem('hws-slack-note')==='1')return ''}catch(e){}
  const names=rows.map(x=>esc(x.name||x.slug)).join(', ');
- return `<div class="note gates" style="margin:0 0 12px"><b>${rows.length===1?'A new job has':'New jobs have'} no Slack channel yet.</b> ${names}. Channels are not created from here.</div>`}
+ return `<div class="note gates slack-note"><p><b>${rows.length===1?'A new job has':'New jobs have'} no Slack channel yet.</b> ${names}. Channels are not created from here.</p><button type="button" data-slack-dismiss>Dismiss</button></div>`}
 function hubToday(){return H().today||(DATA&&DATA.today)||iso(Date.now()-7*3600e3)}
 function jobSearch(slug){const j=slug&&((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j&&j.search||''}
 function jobName(slug){const j=((DATA.common||{}).all_jobs||[]).find(x=>x.slug==slug);return j?j.name:''}
@@ -22788,6 +23005,7 @@ function fileChip(row) { return fileChips(row); }
 
   function ensure() {
     if (!document.body || el("filedrop-overlay")) return;
+    if (document.getElementById("boot-msg")) return;
     const overlay = document.createElement("div");
     overlay.id = "filedrop-overlay";
     overlay.className = "filedrop-overlay";
@@ -22806,13 +23024,20 @@ function fileChip(row) { return fileChips(row); }
     button.type = "button";
     button.className = "filedrop-upbtn";
     button.id = "filedrop-upload";
-    button.textContent = "Upload";
+    button.textContent = "Capture";
+    button.setAttribute("aria-label", "Capture");
     const input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
     input.id = "filedrop-input";
     input.hidden = true;
-    button.addEventListener("click", function () { input.click(); });
+    button.addEventListener("click", function () {
+      if (typeof window.phoneOpenCapture === "function") {
+        window.phoneOpenCapture("");
+        return;
+      }
+      input.click();
+    });
     input.addEventListener("change", function () {
       if (input.files && input.files.length) take(input.files);
       input.value = "";
@@ -23011,13 +23236,26 @@ function fileChip(row) { return fileChips(row); }
     observer.observe(target, { childList: true });
   }
 
-  function boot() {
-    if (!document.body) return;
+  let started = false;
+  function arm() {
+    if (started || !document.body) return false;
+    if (document.getElementById("boot-msg")) return false;
+    started = true;
     ensure();
     watchBar();
     queueSync();
     window.addEventListener("hashchange", queueSync);
     window.addEventListener("resize", queueSync);
+    return true;
+  }
+  function boot() {
+    if (!document.body) return;
+    if (!arm() && window.MutationObserver) {
+      const observer = new MutationObserver(function () {
+        if (arm()) observer.disconnect();
+      });
+      observer.observe(document.documentElement, {childList: true, subtree: true});
+    }
     window.addEventListener("dragenter", function (event) {
       if (!hasFiles(event)) return;
       event.preventDefault();
@@ -27288,6 +27526,16 @@ if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',b
   function currentJob() {
     return state.job ? {slug: state.job.slug, name: state.job.name} : null;
   }
+  function useJob(job) {
+    if (!job || !job.slug) return null;
+    state.job = {slug: job.slug, name: job.name || job.slug};
+    saveSession();
+    return state.job;
+  }
+  function setViewer(role, who) {
+    if (role) state.role = roleOfName(role);
+    if (who != null && String(who)) state.who = String(who);
+  }
   function stamp() {
     if (state.permission !== "granted" || !state.fix) return null;
     const job = state.job || {};
@@ -27680,6 +27928,8 @@ if(document.readyState=='loading')document.addEventListener('DOMContentLoaded',b
     consentHtml: consentHtml,
     crewMapHtml: crewMapHtml,
     currentJob: currentJob,
+    useJob: useJob,
+    setViewer: setViewer,
     stamp: stamp,
     attachRecord: attachRecord,
     attachOp: attachOp,
@@ -30705,21 +30955,26 @@ function phoneMoreHtml() {
     }).join('') || '<p class="phone-empty">' + ((typeof jobsEmptyText === 'function') ? jobsEmptyText('No jobs yet.') : 'No jobs yet.') + '</p>';
     return '<div class="phone-mod-block"><h3>' + esc(mod.label) + '</h3><div class="phone-mods">' + links + '</div></div>';
   }).join('');
+  const places = (typeof syncPlaceHtml === 'function') ? syncPlaceHtml() : '';
   return '<div class="phone-more" data-phone-more-sheet><h2>More</h2><p class="phone-lead">Every part of the hub.</p><div class="phone-mods">' + phoneHubLinks() + '</div>' + blocks +
+    (places ? '<div class="sync-places">' + places + '</div>' : '') +
     '<div class="mbtns"><button type="button" data-close>Close</button></div></div>';
 }
 function phoneOpenMore() {
   if (typeof openModal !== 'function') return;
-  openModal(phoneMoreHtml(), function (m) { m.classList.add('phone-sheet'); });
+  openModal(phoneMoreHtml(), function (m) {
+    m.classList.add('phone-sheet');
+    if (window.WSData && WSData.bind) WSData.bind();
+  });
 }
 function phoneOpenQuickNote() {
   const ctx = phoneCapContext();
   if (typeof noteOpen === 'function') {
-    try { noteOpen(null, {slug: ctx.slug, job: ctx.name, folder: ctx.folder}); return true; } catch (e) {}
+    try { noteOpen(null, {slug: ctx.slug, job: ctx.name, folder: ctx.folder, title: 'Note'}); return true; } catch (e) {}
   }
   if (!window.HWSNotes || typeof HWSNotes.sheetHtml !== 'function' || typeof openModal !== 'function') return false;
   const slug = ctx.slug, name = ctx.name, folder = ctx.folder;
-  const opts = {slug:slug, job:name || 'Quick note', folder:folder, who:phoneWho()};
+  const opts = {slug:slug, job:name || 'Note', folder:folder, who:phoneWho(), title:'Note'};
   try {
     openModal(HWSNotes.sheetHtml(opts), function (m) {
       m.classList.add('phone-sheet');
@@ -30987,12 +31242,104 @@ function phonePaintJobs(root) {
   if (rest.length) html += rest.map(function (job) { return btn(job, ''); }).join('');
   list.innerHTML = html || '<p class="phone-empty">No jobs match.</p>';
 }
-function phoneShowJobBar(root) {
+function phoneJobOptions() {
+  const jobs = phonePhotoJobs();
+  const nearby = {};
+  (phoneCapNearby || []).forEach(function (row, i) { if (row && row.slug) nearby[row.slug] = i; });
+  const recent = {};
+  phoneRecentSlugs().forEach(function (slug, i) { recent[slug] = i; });
+  function rank(job) {
+    if (nearby[job.slug] != null) return 0;
+    if (recent[job.slug] != null) return 1;
+    return 2;
+  }
+  return jobs.slice().sort(function (a, b) {
+    const diff = rank(a) - rank(b);
+    if (diff) return diff;
+    if (rank(a) === 0) return nearby[a.slug] - nearby[b.slug];
+    if (rank(a) === 1) return recent[a.slug] - recent[b.slug];
+    return String(a.name || a.slug).localeCompare(String(b.name || b.slug));
+  });
+}
+function phonePreferredSlug() {
+  const inside = phoneInsideSlug();
+  if (inside) return inside;
+  if (phoneCapJob && phoneCapJob.slug) return phoneCapJob.slug;
+  const locate = window.HWSLocate;
+  if (locate && typeof locate.currentJob === 'function') {
+    try {
+      const current = locate.currentJob();
+      if (current && current.slug) return current.slug;
+    } catch (e) {}
+  }
+  const recent = phoneRecentSlugs();
+  if (recent.length) return recent[0];
+  const near = phoneCapNearby || [];
+  if (near.length && near[0].slug) return near[0].slug;
+  const jobs = phonePhotoJobs();
+  return jobs.length ? jobs[0].slug : '';
+}
+function phoneSyncJob(slug) {
+  if (!slug) return;
+  const job = phoneJobBySlug(slug);
+  if (!job || !job.slug) return;
+  phoneRememberJob(job);
+  if (window.HWSLocate && typeof HWSLocate.useJob === 'function') {
+    try { HWSLocate.useJob({slug: job.slug, name: job.name || job.slug}); } catch (e) {}
+  }
+  if (phoneWalk && phoneWalk.setJob) phoneWalk.setJob(phoneCapJob);
+  const label = document.querySelector('[data-walk-job]');
+  if (label && phoneCapJob) label.textContent = phoneCapJob.name;
+}
+function phoneFillJobSelect(root) {
+  const select = root && root.querySelector && root.querySelector('[data-phone-cap-job-select]');
+  if (!select) return;
+  const search = root.querySelector('[data-phone-job-search]');
+  const q = String((search && search.value) || '').trim().toLowerCase();
+  const all = phoneJobOptions();
+  const jobs = all.filter(function (job) {
+    if (!q) return true;
+    return String((job.name || job.slug) || '').toLowerCase().indexOf(q) >= 0;
+  });
+  const preferred = select.value || phonePreferredSlug();
+  let html = '';
+  jobs.forEach(function (job) {
+    html += '<option value="' + esc(job.slug) + '"' + (job.slug === preferred ? ' selected' : '') + '>' + esc(job.name || job.slug) + '</option>';
+  });
+  if (!html) html = '<option value="">No jobs</option>';
+  select.innerHTML = html;
+  const find = root.querySelector('[data-phone-cap-job-find]');
+  if (find) find.hidden = all.length <= 10;
+  if (select.value) phoneSyncJob(select.value);
+}
+function phoneStripSecondJob(root) {
   if (!root) return;
-  const bar = root.querySelector('[data-phone-cap-job]');
-  const name = root.querySelector('[data-phone-cap-job-name]');
-  if (name) name.textContent = (phoneCapJob && phoneCapJob.name) || '';
-  if (bar) bar.hidden = !(phoneCapJob && phoneCapJob.slug);
+  root.querySelectorAll('[data-loc-switch], [data-phone-switch-job]').forEach(function (el) { el.remove(); });
+}
+function phoneFieldCrew() {
+  return phoneRoles().some(function (r) { return r === 'field'; });
+}
+function phoneArmFieldCheckIn() {
+  if (!phoneFieldCrew() || !window.HWSLocate || typeof HWSLocate.setViewer !== 'function') return;
+  try { HWSLocate.setViewer('field', phoneWho()); } catch (e) {}
+}
+function phoneEnsureFieldCheckIn(root) {
+  if (!root || !phoneFieldCrew()) return;
+  if (root.querySelector('[data-loc-manual-in], [data-loc-manual-out]')) return;
+  const slot = root.querySelector('[data-loc-capture]');
+  if (!slot) return;
+  let wrap = slot.querySelector('.loc-capture');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'loc-capture';
+    wrap.setAttribute('data-loc-current-wrap', '');
+    slot.appendChild(wrap);
+  }
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.setAttribute('data-loc-manual-in', '');
+  button.textContent = 'Check in';
+  wrap.appendChild(button);
 }
 function phoneShowWhich(root) {
   const walk = document.querySelector('[data-walk-layer] [data-walk]');
@@ -31033,7 +31380,7 @@ function phoneShowCaptureMain(root) {
   if (which) which.hidden = true;
   if (main) main.hidden = false;
   if (title) title.hidden = false;
-  phoneShowJobBar(root);
+  phoneFillJobSelect(root);
 }
 function phoneChooseJob(slug, root) {
   phoneRememberJob(phoneJobBySlug(slug));
@@ -31073,26 +31420,43 @@ function phoneResolveCapJob(done) {
 }
 function phoneCaptureHtml() {
   return '<div class="phone-cap" data-phone-cap><h2 data-phone-cap-title>Capture</h2>' +
-    '<div class="phone-cap-job" data-phone-cap-job hidden><strong data-phone-cap-job-name></strong><button type="button" data-phone-switch-job>Switch job</button></div>' +
-    '<div data-phone-which hidden><h2>Which job?</h2><input type="search" data-phone-job-search placeholder="Search jobs" aria-label="Search jobs" autocomplete="off">' +
-    '<div class="phone-cap-actions" data-phone-job-list></div></div>' +
-    '<div data-phone-cap-main><p class="phone-lead">A note with text and markup, a photo, audio, video, or an imported page. Nothing is sent on its own.</p>' +
+    '<label class="phone-cap-job" data-phone-cap-job>Job<select data-phone-cap-job-select aria-label="Job"></select></label>' +
+    '<div data-phone-cap-job-find hidden><input type="search" data-phone-job-search placeholder="Search jobs" aria-label="Search jobs" autocomplete="off"></div>' +
+    '<div data-phone-cap-main><p class="phone-lead">Nothing is sent on its own.</p>' +
     '<div data-loc-capture></div>' +
     '<div class="phone-cap-actions" data-phone-cap-actions>' +
-    '<button type="button" data-phone-cap-go="walk">Walkthrough</button>' +
-    '<button type="button" data-phone-cap-go="note">Note</button>' +
     '<button type="button" data-phone-cap-go="photo">Photo</button>' +
-    '<button type="button" data-phone-cap-go="scan">Scan photos</button>' +
-    '<button type="button" data-phone-cap-go="audio">Audio</button>' +
     '<button type="button" data-phone-cap-go="video">Video</button>' +
-    '<button type="button" data-phone-cap-go="import">Import page</button></div></div>' +
+    '<button type="button" data-phone-cap-go="audio">Audio</button>' +
+    '<button type="button" data-phone-cap-go="note">Note</button>' +
+    '<button type="button" data-phone-cap-go="import">Import</button></div></div>' +
     '<div class="phone-cap-panel" data-phone-cap-panel hidden></div>' +
-    '<div class="mbtns"><button type="button" data-phone-cap-back hidden>Back</button><button type="button" data-close>Close</button></div></div>';
+    '<div class="mbtns"><button type="button" data-close>Close</button></div></div>';
+}
+function phoneShowScan(root) {
+  const panel = root && root.querySelector && root.querySelector('[data-phone-cap-panel]');
+  const actions = root.querySelector('[data-phone-cap-actions]');
+  const main = root.querySelector('[data-phone-cap-main]');
+  if (!panel) return;
+  if (actions) actions.hidden = true;
+  if (main) main.hidden = true;
+  panel.hidden = false;
+  panel.innerHTML = '<div data-phone-scan-host></div>';
+  if (window.HWSScan && typeof HWSScan.mount === 'function') {
+    let scanRole = '';
+    try { if (typeof roleOf === 'function') scanRole = roleOf() || ''; } catch (e) { scanRole = ''; }
+    if (!scanRole) {
+      const roles = phoneRoles();
+      scanRole = roles.length ? roles[0] : '';
+    }
+    HWSScan.mount(panel.querySelector('[data-phone-scan-host]'), {who: phoneWho(), role: scanRole, jobs: phonePhotoJobs()});
+  } else {
+    panel.innerHTML = '<p class="phone-empty">Photo library is not on this copy yet.</p>';
+  }
 }
 function phoneShowCap(root, mode) {
   const actions = root.querySelector('[data-phone-cap-actions]');
   const panel = root.querySelector('[data-phone-cap-panel]');
-  const back = root.querySelector('[data-phone-cap-back]');
   const main = root.querySelector('[data-phone-cap-main]');
   if (!panel) return;
   if (!mode) {
@@ -31100,32 +31464,19 @@ function phoneShowCap(root, mode) {
     panel.innerHTML = '';
     if (actions) actions.hidden = false;
     if (main) main.hidden = false;
-    if (back) back.hidden = true;
     phoneStopVoice();
     return;
   }
   if (actions) actions.hidden = true;
   if (main) main.hidden = true;
-  if (back) back.hidden = false;
   panel.hidden = false;
   if (mode === 'photo') {
-    panel.innerHTML = '<div data-phone-photo-host></div>';
+    panel.innerHTML = '<div data-phone-photo-host></div><button type="button" data-phone-cap-library>Library</button>';
     phoneMountPhoto(panel.querySelector('[data-phone-photo-host]'));
     return;
   }
   if (mode === 'scan') {
-    panel.innerHTML = '<div data-phone-scan-host></div>';
-    if (window.HWSScan && typeof HWSScan.mount === 'function') {
-      let scanRole = '';
-      try { if (typeof roleOf === 'function') scanRole = roleOf() || ''; } catch (e) { scanRole = ''; }
-      if (!scanRole) {
-        const roles = phoneRoles();
-        scanRole = roles.length ? roles[0] : '';
-      }
-      HWSScan.mount(panel.querySelector('[data-phone-scan-host]'), {who: phoneWho(), role: scanRole, jobs: phonePhotoJobs()});
-    } else {
-      panel.innerHTML = '<p class="phone-empty">Scan photos is not on this copy yet.</p>';
-    }
+    phoneShowScan(root);
     return;
   }
   if (mode === 'note') {
@@ -31133,7 +31484,7 @@ function phoneShowCap(root, mode) {
     return;
   }
   if (mode === 'import') {
-    if (!phoneOpenImport()) panel.innerHTML = '<p class="phone-empty">Import page is not on this copy yet.</p>';
+    if (!phoneOpenImport()) panel.innerHTML = '<p class="phone-empty">Import is not on this copy yet.</p>';
     return;
   }
   if (mode === 'video') {
@@ -31152,10 +31503,43 @@ function phoneShowCap(root, mode) {
     if (msg) msg.textContent = 'Last voice is saved on this phone. Nothing is sent.';
   }
 }
+function phoneAttachImportFile() {
+  const sheet = document.querySelector('[data-qnote-sheet]');
+  if (!sheet || sheet.querySelector('[data-phone-import-file]')) return;
+  const row = document.createElement('div');
+  row.className = 'qrow';
+  row.innerHTML = '<label class="phone-file">Choose a file<input type="file" multiple data-phone-import-file></label>';
+  const tools = sheet.querySelector('.qtools');
+  if (tools && tools.parentNode) tools.parentNode.insertBefore(row, tools);
+  else sheet.appendChild(row);
+  const input = row.querySelector('[data-phone-import-file]');
+  if (!input) return;
+  input.addEventListener('change', function () {
+    const files = input.files;
+    if (files && files.length && window.HWSFileDrop && typeof HWSFileDrop.take === 'function') {
+      try { HWSFileDrop.take(files); } catch (err) {}
+    }
+  });
+}
 function phoneOpenImport() {
-  if (typeof noteOpen !== 'function') return false;
   const ctx = phoneCapContext();
-  try { noteOpen(null, {import: true, slug: ctx.slug, job: ctx.name, folder: ctx.folder}); return true; } catch (e) { return false; }
+  if (typeof noteOpen === 'function') {
+    try {
+      noteOpen(null, {import: true, slug: ctx.slug, job: ctx.name, folder: ctx.folder, title: 'Import'});
+      phoneAttachImportFile();
+      return true;
+    } catch (e) {}
+  }
+  if (!window.HWSNotes || typeof HWSNotes.sheetHtml !== 'function' || typeof openModal !== 'function') return false;
+  const opts = {slug: ctx.slug, job: ctx.name || 'Import', folder: ctx.folder, who: phoneWho(), title: 'Import'};
+  try {
+    openModal(HWSNotes.sheetHtml(opts), function (m) {
+      m.classList.add('phone-sheet');
+      if (typeof HWSNotes.bindSheet === 'function') HWSNotes.bindSheet(m, opts);
+      phoneAttachImportFile();
+    });
+    return true;
+  } catch (e) { return false; }
 }
 function phoneMaybeScanOnboarding() {
   if (!phoneOn() || !window.HWSScan || typeof HWSScan.shouldOfferOnboarding !== 'function') return;
@@ -31185,10 +31569,36 @@ function phoneOpenWalk() {
   }
   phoneWalk = HWSWalk.mount(layer, {
     slug: phoneCapJob.slug, name: phoneCapJob.name, folder: phoneCapJob.folder, who: phoneWho(),
-    onSwitch: function () { phoneRefreshNearby(function () { phoneShowWhich(); }); },
     onDone: function (shots, text) { phoneFinishWalk(shots, text); }
   });
   layer.__walk = phoneWalk;
+  const switched = layer.querySelector('[data-walk-switch]');
+  if (switched) switched.remove();
+  phoneAttachVideoFile(layer);
+  return true;
+}
+function phoneAttachVideoFile(root) {
+  if (!root || root.querySelector('[data-phone-video]')) return;
+  const top = root.querySelector('.walk-top') || root;
+  const label = document.createElement('label');
+  label.className = 'phone-file';
+  label.appendChild(document.createTextNode('Choose a video'));
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'video/*';
+  input.setAttribute('data-phone-video', '');
+  label.appendChild(input);
+  top.appendChild(label);
+  input.addEventListener('change', function () {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (typeof openVideoCapture === 'function') {
+      try { openVideoCapture(file); } catch (err) {}
+    }
+    if (window.HWSLocate && typeof HWSLocate.attachRecord === 'function') {
+      try { HWSLocate.attachRecord({kind: 'video', who: phoneWho()}); } catch (err) {}
+    }
+  });
 }
 function phoneFinishWalk(shots, text) {
   const job = phoneCapJob || {};
@@ -31240,32 +31650,34 @@ function phoneOpenCaptureNow(mode, action) {
   if (typeof openModal !== 'function') return;
   openModal(phoneCaptureHtml(), function (m) {
     m.classList.add('phone-sheet');
+    phoneArmFieldCheckIn();
     const slot = m.querySelector('[data-loc-capture]');
     if (slot && window.HWSLocate && typeof HWSLocate.fillCapture === 'function') HWSLocate.fillCapture(slot);
-    if (action === 'ask') phoneShowWhich(m);
-    else phoneShowCaptureMain(m);
-    const search = m.querySelector('[data-phone-which] [data-phone-job-search]');
-    if (search) search.addEventListener('input', function () { phonePaintJobs(m.querySelector('[data-phone-which]')); });
+    phoneStripSecondJob(m);
+    phoneEnsureFieldCheckIn(m);
+    phoneShowCaptureMain(m);
+    const search = m.querySelector('[data-phone-job-search]');
+    if (search) search.addEventListener('input', function () { phoneFillJobSelect(m); });
+    const select = m.querySelector('[data-phone-cap-job-select]');
+    if (select) select.addEventListener('change', function () { phoneSyncJob(select.value); });
     const go = function (name) {
-      if (name === 'walk') { phoneOpenWalk(); return; }
+      if (name === 'video' || name === 'walk') {
+        if (phoneOpenWalk()) return;
+        phoneShowCap(m, 'video');
+        return;
+      }
+      if (name === 'scan') { phoneShowScan(m); return; }
       phoneShowCap(m, name);
     };
     m.addEventListener('click', function (e) {
       const t = e.target.closest('button');
       if (!t || !m.contains(t)) return;
-      if (t.hasAttribute('data-phone-job')) {
-        phoneChooseJob(t.getAttribute('data-phone-job'), m);
-        if (mode === 'note') phoneOpenQuickNote();
-        else if (mode === 'import') phoneOpenImport();
-        else if (mode) go(mode);
+      if (t.hasAttribute('data-loc-manual-in') || t.hasAttribute('data-loc-manual-out')) {
+        setTimeout(function () { phoneStripSecondJob(m); }, 0);
         return;
       }
-      if (t.hasAttribute('data-phone-switch-job')) {
-        phoneRefreshNearby(function () { phoneShowWhich(m); });
-        return;
-      }
+      if (t.hasAttribute('data-phone-cap-library')) { phoneShowScan(m); return; }
       if (t.hasAttribute('data-phone-cap-go')) go(t.getAttribute('data-phone-cap-go'));
-      else if (t.hasAttribute('data-phone-cap-back')) go('');
       else if (t.hasAttribute('data-phone-stop')) phoneStopVoice();
       else if (t.hasAttribute('data-phone-shutter')) phoneGrabStill(m);
       else if (t.hasAttribute('data-phone-voice')) phoneToggleVoice(m);
@@ -31546,8 +31958,12 @@ function phoneWalkLink(href) {
   if (!href) return '';
   return '<a class="phone-walk" data-phone-walks href="' + href + '">Walkthroughs</a>';
 }
+function phoneWalkChipOn() {
+  try { return !!document.querySelector('[data-lf="walk"]'); } catch (e) { return false; }
+}
 function phoneAskFormHtml(href) {
-  return '<form class="phone-ask" data-phone-ask action="#"><input type="text" name="q" placeholder="Ask about this job…" aria-label="Ask about this job" autocomplete="off" enterkeyhint="search">' + phoneWalkLink(href) + '<button type="submit">Ask</button></form><div class="phone-draft" data-phone-draft hidden></div>';
+  const walk = phoneWalkChipOn() ? '' : phoneWalkLink(href);
+  return '<form class="phone-ask" data-phone-ask action="#"><input type="text" name="q" placeholder="Ask about this job…" aria-label="Ask about this job" autocomplete="off" enterkeyhint="search">' + walk + '<button type="submit">Ask</button></form><div class="phone-draft" data-phone-draft hidden></div>';
 }
 function phonePlaceAsk(bar, html) {
   const holder = document.createElement('div');
@@ -31565,13 +31981,21 @@ function phoneSyncJobAsk() {
   if (!phoneAskAllowed()) {
     if (form) form.remove();
     if (draft) draft.remove();
-    if (href && !bar.querySelector('[data-phone-walks]')) phonePlaceAsk(bar, phoneWalkLink(href));
+    const have = bar.querySelector('[data-phone-walks]');
+    if (phoneWalkChipOn()) {
+      if (have) have.remove();
+    } else if (href && !have) {
+      phonePlaceAsk(bar, phoneWalkLink(href));
+    }
     return;
   }
   const stray = bar.querySelector(':scope > [data-phone-walks]');
   if (stray) stray.remove();
   if (form) {
-    if (href && !form.querySelector('[data-phone-walks]')) {
+    const have = form.querySelector('[data-phone-walks]');
+    if (phoneWalkChipOn()) {
+      if (have) have.remove();
+    } else if (href && !have) {
       const button = form.querySelector('button');
       const holder = document.createElement('div');
       holder.innerHTML = phoneWalkLink(href);
@@ -31664,16 +32088,21 @@ function phoneJobChrome() {
   try { job = typeof J !== 'undefined' ? J : null; } catch (e) { job = null; }
   if (!job) return;
   const root = document.getElementById('root');
-  if (!root || root.querySelector('[data-phone-job]')) return;
-  const bar = document.createElement('div');
-  bar.className = 'phone-jobbar';
-  bar.setAttribute('data-phone-job', '1');
-  const walkHref = phoneWalkHref();
-  bar.innerHTML = phoneAskAllowed() ? phoneAskFormHtml(walkHref) : phoneWalkLink(walkHref);
-  const tabs = root.querySelector('nav.jtabs');
-  const mod = document.getElementById('mod');
-  if (tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
-  else if (mod && mod.parentNode) mod.parentNode.insertBefore(bar, mod);
+  if (!root) return;
+  let bar = root.querySelector('[data-phone-job]');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.className = 'phone-jobbar';
+    bar.setAttribute('data-phone-job', '1');
+    const walkHref = phoneWalkHref();
+    bar.innerHTML = phoneAskAllowed() ? phoneAskFormHtml(walkHref) : (phoneWalkChipOn() ? '' : phoneWalkLink(walkHref));
+    const tabs = root.querySelector('nav.jtabs');
+    const mod = document.getElementById('mod');
+    if (tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
+    else if (mod && mod.parentNode) mod.parentNode.insertBefore(bar, mod);
+  }
+  phoneSyncJobAsk();
+  if (bar.parentNode && !bar.querySelector('form, a, button, input')) bar.remove();
 }
 function phoneClearHeaderChips() {
   const head = document.querySelector('.jh');
