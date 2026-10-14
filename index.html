@@ -2409,6 +2409,25 @@ button.csv-mini{min-height:28px;height:28px;padding:0 8px;font-size:12px;font-we
   opacity: 0;
 }
 body:has([data-walk-layer]) .modal-bg.phone-sheet { visibility: hidden; }
+.phone-audio-tags { display: flex; gap: 8px; margin: 0 0 12px; }
+.phone-audio-tags button {
+  flex: 1 1 0;
+  min-height: 48px;
+  min-width: 48px;
+  border: 1px solid #ececef;
+  border-radius: 12px;
+  background: #fff;
+  color: #101014;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 650;
+}
+.phone-audio-tags button[aria-pressed="true"] {
+  background: #15233b;
+  color: #fff;
+  border-color: #15233b;
+}
+.phone-cap .phone-import .phone-file { width: 100%; min-height: 48px; box-sizing: border-box; }
 
 /* Ask the hub. Phone first: a 390px screen keeps one column and 44px rows. */
 .ask-hub{box-sizing:border-box;max-width:100%;margin:0 0 14px;padding:12px;background:#fff;border:1px solid #dde3ec;border-radius:16px}
@@ -2752,6 +2771,35 @@ body.phone-shell .walk { padding-bottom: calc(76px + env(safe-area-inset-bottom)
   padding: 0;
 }
 .walk-shutter[data-recording="1"] { background: #ff3b30; border-color: #ff3b30; }
+.walk-embed {
+  background: #fff;
+  color: #101014;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.walk-embed .walk { height: auto; min-height: 0; }
+body.phone-shell .walk-embed .walk { padding-bottom: 0; }
+.walk-embed .walk-top { padding-top: 4px; }
+.walk-embed .walk-top strong { color: #101014; }
+.walk-embed video[data-walk-preview] {
+  flex: 0 0 auto;
+  height: 140px;
+  min-height: 120px;
+  max-height: 160px;
+  background: #f2f2f7;
+}
+.walk-embed .walk-fallback { color: #101014; }
+.walk-embed .walk-caption input {
+  background: #fff;
+  color: #101014;
+  border: 1px solid #ececef;
+}
+.walk-embed .walk-strip figcaption { color: #3a3a3c; }
+.walk-embed .walk-count { color: #101014; }
+.walk-embed .walk-shutter { border-color: #8e8e93; }
+.walk-embed .walk-summary { color: #101014; margin: 12px 0; }
 .walk-summary {
   margin: auto 16px;
   text-align: center;
@@ -2909,7 +2957,7 @@ body.phone-shell .walk { padding-bottom: calc(76px + env(safe-area-inset-bottom)
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'2799595437',built:'10/12/2026 7:43 AM AZ'};
+const HWS_BUILD={version:'01b830f015',built:'10/14/2026 6:19 AM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -9489,10 +9537,10 @@ try {
         const last = state.shots[state.shots.length - 1];
         if (last) html += '<p class="photo-note" data-photo-saved>' + esc(shotWhen(last)) + "</p>";
         html += '<input data-photo-note type="text" aria-label="Note" value="' + esc(state.shotNote || "") + '">';
-        html += '<button type="button" data-photo-end' + ((state.filing || state.ending) ? " disabled" : "") + ">End</button>";
+        if (!opts.embedded) html += '<button type="button" data-photo-end' + ((state.filing || state.ending) ? " disabled" : "") + ">End</button>";
         if (opts.surface === "home" && role === "field") html += '<button type="button" data-photo-add>Add file</button><p class="photo-note" data-photo-add-note></p>';
         if (opts.surface === "home" && role === "field" && typeof noteFieldHomeHtml === "function") html += noteFieldHomeHtml();
-        if (setSite) html += '<button type="button" data-photo-set-site>Set site location here</button>';
+        if (setSite && !opts.embedded) html += '<button type="button" data-photo-set-site>Set site location here</button>';
       } else if (state.screen === "confirm") {
         const guessed = jobBy(state.guess);
         html += "<h2>File to this project?</h2>";
@@ -12341,11 +12389,14 @@ try {
     const title = esc(opts.title || "Quick note");
     const pick = opts.slug ? "" : ('<label class="qtext">Job<select data-qnote-job>' + jobChoices().map(function (j) { return '<option value="' + esc(j.slug) + '">' + esc(j.name) + "</option>"; }).join("") + "</select></label>");
     const swatch = function (hex, name) { return '<button type="button" data-qnote-color="' + hex + '" style="background:' + hex + '">' + name + "</button>"; };
+    const captureNote = opts.capture === "note";
+    const modeRow = captureNote ? "" : '<div class="qtools"><button type="button" data-qnote-mode="sketch" class="on">Sketch</button><button type="button" data-qnote-mode="photo">Photo</button></div>';
+    const importBlock = captureNote ? "" : '<div class="qrow"><button type="button" data-qnote-import>Import page</button></div>' +
+      '<div class="qimport" data-qnote-import-panel hidden><div class="qrow"><button type="button" data-qnote-import-phone>From this phone</button><button type="button" data-qnote-import-plans>Plan Room</button><button type="button" data-qnote-import-close>Close</button></div><p class="small mut" data-qnote-import-msg></p><div class="qpages" data-qnote-pages></div></div>';
     return '<div class="qsheet" data-qnote-sheet data-role="' + esc(opts.role || "") + '"><div class="qbody"><div class="qhead"><div><h2>' + title + '</h2><div class="small mut">' + job + "</div></div><button type=\"button\" data-qnote-close>Close</button></div>" +
       pick +
-      '<div class="qtools"><button type="button" data-qnote-mode="sketch" class="on">Sketch</button><button type="button" data-qnote-mode="photo">Photo</button></div>' +
-      '<div class="qrow"><button type="button" data-qnote-import>Import page</button></div>' +
-      '<div class="qimport" data-qnote-import-panel hidden><div class="qrow"><button type="button" data-qnote-import-phone>From this phone</button><button type="button" data-qnote-import-plans>Plan Room</button><button type="button" data-qnote-import-close>Close</button></div><p class="small mut" data-qnote-import-msg></p><div class="qpages" data-qnote-pages></div></div>' +
+      modeRow +
+      importBlock +
       '<div class="qconfirm" data-qnote-replace hidden><span>Replace this photo and clear the markup?</span><button type="button" data-qnote-replace-yes>Replace</button><button type="button" data-qnote-replace-no>Keep</button></div>' +
       '<div class="qmarkup" data-qnote-markup>' +
       '<div class="qdraw" role="toolbar" aria-label="Drawing tools">' +
@@ -12363,10 +12414,10 @@ try {
       markBtn("data-qnote-delete disabled", "Delete", "x") +
       markBtn("data-qnote-fit", "Fit page", "fit") +
       '<span class="qzoom" data-qnote-zoom>1×</span>' +
-      markBtn("data-qnote-clear", "Clear", "trash") +
+      markBtn("data-qnote-clear", captureNote ? "Clear sketch" : "Clear", "trash") +
       "</div>" +
       '<div class="qconfirm" data-qnote-confirm hidden><span>Clear all markup on this photo?</span><button type="button" data-qnote-clear-yes>Clear</button><button type="button" data-qnote-clear-no>Keep</button></div></div>' +
-      '<input data-qnote-file-input type="file" accept="image/*" hidden><input data-qnote-import-input type="file" accept="application/pdf,image/*" hidden>' +
+      (captureNote ? "" : '<input data-qnote-file-input type="file" accept="image/*" hidden><input data-qnote-import-input type="file" accept="application/pdf,image/*" hidden>') +
       '<div data-qnote-draft><label class="qtext">Note<textarea data-qnote-text rows="3" placeholder="Type the note"></textarea></label>' +
       (v2On() && root.HWSFieldNote ? '<p class="small" data-qnote-draft-hint hidden>Edit the draft, then save.</p>' : '') +
       "</div>" +
@@ -12378,8 +12429,10 @@ try {
       '<p class="small mut">Use the iPad keyboard to dictate or write with Scribble.</p>' +
       (v2On() && root.HWSFieldNote ? '<div class="qcards" data-qnote-cards></div>' : '') +
       '<div class="qtags"><button type="button" data-qnote-kind="note" class="on">Note</button><button type="button" data-qnote-kind="question">Question</button><label data-qnote-ask-wrap hidden>For <select data-qnote-ask><option value="">Choose</option><option value="pm">PM</option><option value="superintendent">Superintendent</option><option value="office">Office</option></select></label></div>' +
-      (v2On() && root.HWSFieldNote ? root.HWSFieldNote.sheetExtras() : "") +
-      '</div><div class="qfoot"><div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div><p class="qroll-link" data-qnote-roll-link hidden></p>' +
+      (captureNote ? "" : (v2On() && root.HWSFieldNote ? root.HWSFieldNote.sheetExtras() : "")) +
+      '</div><div class="qfoot">' + (captureNote
+        ? '<div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button></div>'
+        : '<div class="qrow qroll"><button type="button" data-qnote-roll>Save to camera roll</button><label class="qcheck"><input type="checkbox" data-qnote-roll-toggle> Also save to camera roll</label></div>') + '<p class="qroll-link" data-qnote-roll-link hidden></p>' +
       '<div class="qrow qsave"><button type="button" class="pri" data-qnote-save>Save</button><span class="small" data-qnote-msg></span></div></div></div>';
   }
   function fitNoteSheet(host) {
@@ -13484,7 +13537,7 @@ try {
     if (extra.job) name = extra.job;
     if (extra.folder) folder = extra.folder;
     if (slug && !folder) { try { folder = jobFolder(slug); } catch (e) { folder = ""; } }
-    const opts = {slug: slug, job: name || "Quick note", folder: folder, who: currentWho(), note: note, importPage: !!extra.import, title: extra.title || ""};
+    const opts = {slug: slug, job: name || "Quick note", folder: folder, who: currentWho(), note: note, importPage: !!extra.import, title: extra.title || "", capture: extra.capture === "note" ? "note" : ""};
     const html = sheetHtml(opts);
     if (typeof openModal === "function") openModal(html, function (m) {
       if (document.body && document.body.classList.contains("phone-shell")) m.classList.add("phone-sheet");
@@ -20184,6 +20237,9 @@ if (typeof window !== 'undefined') window.BidRoom = BidRoom;
     }).join("") + "</div>";
   }
   function paint(host, slug, upload) {
+    const opts = upload || {};
+    const embed = !!opts.embed;
+    const showMic = opts.mic !== false;
     const b = bucket(slug);
     const saved = loadSaved(slug);
     const speech = !!speechCtor();
@@ -20194,7 +20250,11 @@ if (typeof window !== 'undefined') window.BidRoom = BidRoom;
       const saved = recorder.takeRecovery("talk");
       if (saved && !b.text) b.text = saved;
     }
-    host.innerHTML = '<section class="talk" data-talk="1" data-talk-prices="' + (pricesHidden() ? "hidden" : "shown") + '" data-job="' + esc(slug) + '"><h3>Talk to Takeoff</h3><p class="hint">' + hint + " Spoken lines stay drafts until you save them. Nothing is ordered.</p><div class=\"talk-row\"><button type=\"button\" class=\"talk-mic" + (b.listening ? " on" : "") + "\" data-talk-mic aria-pressed=\"" + (b.listening ? "true" : "false") + "\">" + (b.listening ? "Listening…" : "Mic") + '</button><button type="button" class="talk-stop" data-talk-stop' + (b.listening ? "" : " hidden") + '>Stop</button><span data-talk-timer' + (b.listening ? "" : " hidden") + '>00:00</span><button type="button" data-talk-add>Add rows</button></div><textarea data-talk-text placeholder="master bath floor, 8 by 12, porcelain tile, 10 percent waste">' + esc(b.text) + "</textarea>" +
+    const title = embed ? "" : "<h3>Talk to Takeoff</h3>";
+    const mic = showMic
+      ? '<button type="button" class="talk-mic' + (b.listening ? " on" : "") + '" data-talk-mic aria-pressed="' + (b.listening ? "true" : "false") + '">' + (b.listening ? "Listening…" : "Mic") + '</button><button type="button" class="talk-stop" data-talk-stop' + (b.listening ? "" : " hidden") + '>Stop</button><span data-talk-timer' + (b.listening ? "" : " hidden") + '>00:00</span>'
+      : "";
+    host.innerHTML = '<section class="talk" data-talk="1" data-talk-prices="' + (pricesHidden() ? "hidden" : "shown") + '" data-job="' + esc(slug) + '">' + title + '<p class="hint">' + hint + " Spoken lines stay drafts until you save them. Nothing is ordered.</p><div class=\"talk-row\">" + mic + '<button type="button" data-talk-add>Add rows</button></div><textarea data-talk-text placeholder="master bath floor, 8 by 12, porcelain tile, 10 percent waste">' + esc(b.text) + "</textarea>" +
       (b.drafts.length ? '<div data-talk-drafts>' + b.drafts.map(draftHtml).join("") + '<button type="button" class="pri" data-talk-save>Save takeoff lines</button></div>' : "") +
       savedHtml(saved.rows) + "</section>";
     bind(host, slug, upload);
@@ -29849,7 +29909,9 @@ function mDust(M) {
     let recorder = null;
     let voiceRec = null;
     let voiceStream = null;
-    let mode = "photo";
+    const light = !!opts.light;
+    const videoOnly = !!opts.videoOnly;
+    let mode = videoOnly ? "video" : "photo";
     let useFile = false;
     let closed = false;
     let pressed = false;
@@ -29858,22 +29920,34 @@ function mDust(M) {
     let ignoreClick = false;
     const walkId = "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     const job = {slug: opts.slug || "", name: opts.name || opts.slug || "", folder: opts.folder || opts.slug || ""};
+    const slim = light && videoOnly;
 
-    el.classList.add("walk-layer");
-    el.setAttribute("data-walk-layer", "1");
+    if (light) {
+      el.classList.add("walk-embed");
+      el.setAttribute("data-walk-embed", "1");
+    } else {
+      el.classList.add("walk-layer");
+      el.setAttribute("data-walk-layer", "1");
+    }
+    const top = slim
+      ? '<div class="walk-top"><strong data-walk-job>' + esc(job.name) + "</strong></div>"
+      : '<div class="walk-top"><strong data-walk-job>' + esc(job.name) + '</strong>' +
+        '<button type="button" data-walk-switch>Switch job</button>' +
+        '<button type="button" data-walk-done>Done</button></div>';
+    const file = slim ? "" : '<input data-walk-file type="file" accept="image/*" capture="environment" hidden>';
+    const actions = slim ? "" :
+      '<div class="walk-actions"><button type="button" data-walk-voice>Voice note</button>' +
+      '<button type="button" data-walk-mode aria-pressed="false">Video</button></div>';
     el.innerHTML = '<div class="walk" data-walk>' +
-      '<div class="walk-top"><strong data-walk-job>' + esc(job.name) + '</strong>' +
-      '<button type="button" data-walk-switch>Switch job</button>' +
-      '<button type="button" data-walk-done>Done</button></div>' +
+      top +
       '<video data-walk-preview playsinline autoplay muted></video>' +
       '<p class="walk-fallback" data-walk-fallback hidden>The live camera is not available. Use the shutter to capture from this phone.</p>' +
-      '<input data-walk-file type="file" accept="image/*" capture="environment" hidden>' +
+      file +
       '<div class="walk-bottom">' +
       '<div class="walk-strip" data-walk-strip></div>' +
       '<p class="walk-count" data-walk-count>0</p>' +
       '<label class="walk-caption">Caption<input type="text" data-walk-caption aria-label="Caption" placeholder="Caption"></label>' +
-      '<div class="walk-actions"><button type="button" data-walk-voice>Voice note</button>' +
-      '<button type="button" data-walk-mode aria-pressed="false">Video</button></div>' +
+      actions +
       '<button type="button" class="walk-shutter" data-walk-shutter aria-label="Shutter"></button>' +
       '</div></div>';
 
@@ -30386,6 +30460,7 @@ function mDust(M) {
     paint();
     return {
       release: release,
+      finish: finish,
       shots: shots,
       job: job,
       setJob: function (next) {
@@ -30913,11 +30988,11 @@ function phoneOpenMore() {
 function phoneOpenQuickNote() {
   const ctx = phoneCapContext();
   if (typeof noteOpen === 'function') {
-    try { noteOpen(null, {slug: ctx.slug, job: ctx.name, folder: ctx.folder, title: 'Note'}); return true; } catch (e) {}
+    try { noteOpen(null, {slug: ctx.slug, job: ctx.name, folder: ctx.folder, title: 'Note', capture: 'note'}); return true; } catch (e) {}
   }
   if (!window.HWSNotes || typeof HWSNotes.sheetHtml !== 'function' || typeof openModal !== 'function') return false;
   const slug = ctx.slug, name = ctx.name, folder = ctx.folder;
-  const opts = {slug:slug, job:name || 'Note', folder:folder, who:phoneWho(), title:'Note'};
+  const opts = {slug:slug, job:name || 'Note', folder:folder, who:phoneWho(), title:'Note', capture:'note'};
   try {
     openModal(HWSNotes.sheetHtml(opts), function (m) {
       m.classList.add('phone-sheet');
@@ -31077,7 +31152,8 @@ function phoneMountPhoto(host) {
   try { if (typeof photoRole === 'function') role = photoRole() || role; } catch (e) {}
   HWSPhotos.mount(host, {
     role: role, surface: slug ? 'job' : 'home', slug: slug, who: phoneWho(),
-    jobs: phonePhotoJobs(), sites: [], store: typeof STORE !== 'undefined' ? STORE : null
+    jobs: phonePhotoJobs(), sites: [], store: typeof STORE !== 'undefined' ? STORE : null,
+    embedded: true
   });
 }
 let phoneCapJob = null;
@@ -31284,6 +31360,49 @@ function phoneEnsureFieldCheckIn(root) {
   button.textContent = 'Check in';
   wrap.appendChild(button);
 }
+function phoneCapRole() {
+  try {
+    if (window.HWSPhotos && typeof HWSPhotos.photoRole === 'function') {
+      const role = HWSPhotos.photoRole();
+      if (role) return String(role).toLowerCase();
+    }
+  } catch (e) {}
+  const roles = phoneRoles();
+  const preferred = roles.filter(function (r) { return r === 'owner' || r === 'office' || r === 'field'; });
+  return String((preferred[0] || roles[0] || '')).toLowerCase();
+}
+function phoneEnsureSetSite(root) {
+  if (!root || !window.HWSPhotos || typeof HWSPhotos.canSetSite !== 'function') return;
+  if (!HWSPhotos.canSetSite(phoneCapRole())) return;
+  const slot = root.querySelector('[data-loc-capture]');
+  if (!slot || slot.querySelector('[data-photo-set-site]')) return;
+  let wrap = slot.querySelector('.loc-capture');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'loc-capture';
+    slot.appendChild(wrap);
+  }
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.setAttribute('data-photo-set-site', '');
+  button.textContent = 'Set site location here';
+  wrap.appendChild(button);
+}
+function phoneSetSiteHere() {
+  const slug = phoneCapSlug();
+  if (!slug || !window.HWSPhotos || typeof HWSPhotos.saveSitePin !== 'function') return;
+  const geo = navigator.geolocation;
+  if (!geo || !geo.getCurrentPosition) return;
+  geo.getCurrentPosition(function (pos) {
+    const coords = pos && pos.coords;
+    if (!coords || !isFinite(+coords.latitude) || !isFinite(+coords.longitude)) return;
+    const store = typeof STORE !== 'undefined' ? STORE : null;
+    if (!store || !store.setSettings) return;
+    try {
+      HWSPhotos.saveSitePin(store, slug, {lat: +coords.latitude, lon: +coords.longitude}, phoneWho(), phoneCapRole());
+    } catch (e) {}
+  }, function () {}, {enableHighAccuracy: true, timeout: 8000, maximumAge: 30000});
+}
 function phoneShowWhich(root) {
   const walk = document.querySelector('[data-walk-layer] [data-walk]');
   if (walk) {
@@ -31414,7 +31533,7 @@ function phoneShowCap(root, mode) {
   if (main) main.hidden = true;
   panel.hidden = false;
   if (mode === 'photo') {
-    panel.innerHTML = '<div data-phone-photo-host></div><button type="button" data-phone-cap-library>Library</button>';
+    panel.innerHTML = '<div data-phone-photo-host></div>';
     phoneMountPhoto(panel.querySelector('[data-phone-photo-host]'));
     return;
   }
@@ -31427,20 +31546,14 @@ function phoneShowCap(root, mode) {
     return;
   }
   if (mode === 'import') {
-    if (!phoneOpenImport()) panel.innerHTML = '<p class="phone-empty">Import is not on this copy yet.</p>';
+    panel.innerHTML = '<div class="phone-import" data-phone-import><p class="phone-lead">Pick a photo, a video, or a PDF page. Nothing is sent on its own.</p><label class="phone-file">Choose a file<input type="file" accept="image/*,video/*,application/pdf,.pdf" data-phone-import-file></label><p class="phone-empty" data-phone-import-name hidden></p></div>';
     return;
   }
   if (mode === 'video') {
-    if (window.HWSFieldNote && HWSFieldNote.pageOn && HWSFieldNote.pageOn() && typeof HWSFieldNote.mountRecorder === 'function') {
-      const slug = phoneCapSlug();
-      panel.innerHTML = '<div data-field-note-rec></div>';
-      HWSFieldNote.mountRecorder(panel.querySelector('[data-field-note-rec]'), {slug: slug});
-      return;
-    }
-    panel.innerHTML = '<p class="phone-lead">Video stays on this phone. Nothing is sent.</p><label class="phone-file">Choose a video<input type="file" accept="video/*" data-phone-video></label><p class="phone-empty" data-phone-video-name hidden></p>';
+    phoneMountLightVideo(panel);
     return;
   }
-  panel.innerHTML = '<p class="phone-lead">Voice stays on this phone. Nothing is sent.</p><label class="phone-photos"><input type="checkbox" data-phone-photos-while> Photos while recording</label><button type="button" class="pri" data-phone-voice>Record</button><button type="button" data-phone-stop hidden>Stop</button><button type="button" data-phone-shutter hidden>Shutter</button><span data-phone-timer hidden>00:00</span><div class="phone-stills" data-phone-stills></div><p class="phone-empty" data-phone-voice-msg></p>';
+  panel.innerHTML = '<p class="phone-lead">Voice stays on this phone. Nothing is sent.</p><div class="phone-audio-tags" role="group" aria-label="Audio tag"><button type="button" data-phone-audio-tag="voice" aria-pressed="true">Voice</button><button type="button" data-phone-audio-tag="takeoff" aria-pressed="false">Talk to Takeoff</button></div><label class="phone-photos"><input type="checkbox" data-phone-photos-while> Photos while recording</label><button type="button" class="pri" data-phone-voice>Record</button><button type="button" data-phone-stop hidden>Stop</button><button type="button" data-phone-shutter hidden>Shutter</button><span data-phone-timer hidden>00:00</span><div class="phone-stills" data-phone-stills></div><div data-phone-talk hidden></div><p class="phone-empty" data-phone-voice-msg></p>';
   if (phoneVoiceSaved) {
     const msg = panel.querySelector('[data-phone-voice-msg]');
     if (msg) msg.textContent = 'Last voice is saved on this phone. Nothing is sent.';
@@ -31502,6 +31615,45 @@ function phoneRefreshNearby(done) {
     phoneCapNearby = choice.nearby || [];
     done();
   }).catch(function () { phoneCapNearby = []; done(); });
+}
+function phoneMountLightVideo(panel) {
+  if (!panel) return;
+  const slug = phoneCapSlug();
+  const job = (phoneCapJob && phoneCapJob.slug) ? phoneCapJob : (slug ? phoneJobBySlug(slug) : null);
+  if (job && job.slug && window.HWSWalk && typeof HWSWalk.mount === 'function') {
+    panel.innerHTML = '<div data-phone-video-host></div>';
+    phoneWalk = HWSWalk.mount(panel.querySelector('[data-phone-video-host]'), {
+      slug: job.slug, name: job.name, folder: job.folder, who: phoneWho(),
+      light: true, videoOnly: true,
+      onDone: function (shots, text) { phoneFinishWalk(shots, text); }
+    });
+    return;
+  }
+  if (window.HWSFieldNote && HWSFieldNote.pageOn && HWSFieldNote.pageOn() && typeof HWSFieldNote.mountRecorder === 'function') {
+    panel.innerHTML = '<div data-field-note-rec></div>';
+    HWSFieldNote.mountRecorder(panel.querySelector('[data-field-note-rec]'), {slug: slug});
+    return;
+  }
+  panel.innerHTML = '<p class="phone-empty">Video is not on this copy yet.</p>';
+}
+function phoneAudioIsTakeoff(root) {
+  return !!(root && root.querySelector && root.querySelector('[data-phone-audio-tag="takeoff"][aria-pressed="true"]'));
+}
+function phoneAudioTag(root, tag) {
+  if (!root) return;
+  const name = tag === 'takeoff' ? 'takeoff' : 'voice';
+  root.querySelectorAll('[data-phone-audio-tag]').forEach(function (btn) {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-phone-audio-tag') === name ? 'true' : 'false');
+  });
+  const host = root.querySelector('[data-phone-talk]');
+  if (!host) return;
+  if (name !== 'takeoff') { host.hidden = true; return; }
+  host.hidden = false;
+  if (host.getAttribute('data-phone-talk-on') === '1') return;
+  const slug = phoneCapSlug();
+  if (!slug || !window.HWSTalkTakeoff || typeof HWSTalkTakeoff.mount !== 'function') return;
+  host.setAttribute('data-phone-talk-on', '1');
+  HWSTalkTakeoff.mount(host, slug, {mic: false, embed: true});
 }
 function phoneOpenWalk() {
   if (!phoneCapJob || !phoneCapJob.slug || !window.HWSWalk || typeof HWSWalk.mount !== 'function') return;
@@ -31589,7 +31741,6 @@ function phoneOpenCapture(mode) {
 }
 function phoneOpenCaptureNow(mode, action) {
   if (action === 'use' && mode === 'note' && phoneOpenQuickNote()) return;
-  if (action === 'use' && mode === 'import' && phoneOpenImport()) return;
   if (typeof openModal !== 'function') return;
   openModal(phoneCaptureHtml(), function (m) {
     m.classList.add('phone-sheet');
@@ -31598,6 +31749,7 @@ function phoneOpenCaptureNow(mode, action) {
     if (slot && window.HWSLocate && typeof HWSLocate.fillCapture === 'function') HWSLocate.fillCapture(slot);
     phoneStripSecondJob(m);
     phoneEnsureFieldCheckIn(m);
+    phoneEnsureSetSite(m);
     phoneShowCaptureMain(m);
     const search = m.querySelector('[data-phone-job-search]');
     if (search) search.addEventListener('input', function () { phoneFillJobSelect(m); });
@@ -31605,7 +31757,6 @@ function phoneOpenCaptureNow(mode, action) {
     if (select) select.addEventListener('change', function () { phoneSyncJob(select.value); });
     const go = function (name) {
       if (name === 'video' || name === 'walk') {
-        if (phoneOpenWalk()) return;
         phoneShowCap(m, 'video');
         return;
       }
@@ -31613,12 +31764,24 @@ function phoneOpenCaptureNow(mode, action) {
       phoneShowCap(m, name);
     };
     m.addEventListener('click', function (e) {
+      const closer = e.target && e.target.closest ? e.target.closest('[data-close]') : null;
+      if (closer && m.contains(closer) && phoneWalk && typeof phoneWalk.finish === 'function' && !phoneWalk.finishing) {
+        phoneWalk.finishing = true;
+        e.stopPropagation();
+        e.preventDefault();
+        try { phoneWalk.finish(); } catch (err) { phoneWalk = null; }
+        return;
+      }
+    }, true);
+    m.addEventListener('click', function (e) {
       const t = e.target.closest('button');
       if (!t || !m.contains(t)) return;
       if (t.hasAttribute('data-loc-manual-in') || t.hasAttribute('data-loc-manual-out')) {
         setTimeout(function () { phoneStripSecondJob(m); }, 0);
         return;
       }
+      if (t.hasAttribute('data-photo-set-site')) { phoneSetSiteHere(); return; }
+      if (t.hasAttribute('data-phone-audio-tag')) { phoneAudioTag(m, t.getAttribute('data-phone-audio-tag')); return; }
       if (t.hasAttribute('data-phone-cap-library')) { phoneShowScan(m); return; }
       if (t.hasAttribute('data-phone-cap-go')) go(t.getAttribute('data-phone-cap-go'));
       else if (t.hasAttribute('data-phone-stop')) phoneStopVoice();
@@ -31629,6 +31792,20 @@ function phoneOpenCaptureNow(mode, action) {
     m.addEventListener('change', function (e) {
       const input = e.target;
       if (input && input.hasAttribute('data-phone-photos-while') && phoneVoice) phoneVoiceUi(m, true);
+      if (input && input.hasAttribute('data-phone-import-file')) {
+        const picked = input.files && input.files[0];
+        const pickedName = m.querySelector('[data-phone-import-name]');
+        if (!picked) return;
+        if (pickedName) {
+          pickedName.hidden = false;
+          pickedName.textContent = picked.name + ' stays on this phone. Nothing is sent.';
+        }
+        const kind = (picked.type || '').indexOf('video') === 0 ? 'video' : ((picked.type || '').indexOf('image') === 0 ? 'photo' : '');
+        if (kind && window.HWSLocate && typeof HWSLocate.attachRecord === 'function') {
+          try { HWSLocate.attachRecord({kind: kind, who: phoneWho()}); } catch (err) {}
+        }
+        return;
+      }
       if (!input || !input.hasAttribute('data-phone-video')) return;
       const file = input.files && input.files[0];
       const name = m.querySelector('[data-phone-video-name]');
@@ -31641,7 +31818,7 @@ function phoneOpenCaptureNow(mode, action) {
         try { HWSLocate.attachRecord({kind: 'video', who: phoneWho()}); } catch (err) {}
       }
     });
-    if (action === 'use' && mode && mode !== 'note' && mode !== 'import') go(mode);
+    if (action === 'use' && mode && mode !== 'note') go(mode);
   }, phoneStopVoice);
 }
 function phoneLocalVoice(root) {
@@ -31728,7 +31905,54 @@ function phoneLocalVoice(root) {
     if (msg) msg.textContent = 'The microphone stayed off. Nothing is sent.';
   });
 }
+function phoneToggleTalk(root) {
+  const msg = root.querySelector('[data-phone-voice-msg]');
+  const host = root.querySelector('[data-phone-talk]');
+  if ((window.HWSRecorder && typeof HWSRecorder.active === 'function' && HWSRecorder.active()) || phoneVoice) {
+    phoneStopVoice();
+    return;
+  }
+  if (!window.HWSRecorder || typeof HWSRecorder.start !== 'function') {
+    if (msg) msg.textContent = 'Type the measurements. Nothing is sent.';
+    const box = host && host.querySelector('[data-talk-text]');
+    if (box) box.focus();
+    return;
+  }
+  const session = HWSRecorder.start({
+    kind: 'talk',
+    audio: true,
+    forceAudio: true,
+    replace: true,
+    onText: function (full) {
+      const live = host && host.querySelector('[data-talk-text]');
+      if (live) live.value = full;
+    },
+    onTick: function (label) {
+      const timer = root.querySelector('[data-phone-timer]');
+      if (timer) timer.textContent = label;
+    },
+    onStop: function (info) {
+      phoneVoice = null;
+      const live = host && host.querySelector('[data-talk-text]');
+      if (live && info && info.text) live.value = info.text;
+      const add = host && host.querySelector('[data-talk-add]');
+      if (add && live && String(live.value || '').trim()) add.click();
+      phoneReleaseCamera();
+      phoneVoiceUi(root, false, 'Saved on this phone. Nothing is sent.');
+    }
+  });
+  if (session && session.active && session.active()) {
+    session.started = Date.now();
+    phoneVoicePhotos = [];
+    phoneVoice = session;
+    phoneVoiceUi(root, true, 'Recording. Nothing is sent.');
+  } else if (msg) {
+    phoneVoice = null;
+    msg.textContent = 'Type the measurements. Nothing is sent.';
+  }
+}
 function phoneToggleVoice(root) {
+  if (phoneAudioIsTakeoff(root)) { phoneToggleTalk(root); return; }
   const msg = root.querySelector('[data-phone-voice-msg]');
   if ((window.HWSRecorder && typeof HWSRecorder.active === 'function' && HWSRecorder.active()) || phoneVoice) {
     phoneStopVoice();
