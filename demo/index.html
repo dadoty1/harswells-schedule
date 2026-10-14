@@ -317,6 +317,12 @@ button.bjobt{display:flex;flex-direction:column;align-items:flex-start;gap:4px;w
 .loglines{display:flex;flex-direction:column;margin-top:8px}
 .logline{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;border:0;background:transparent;padding:8px 0;font:inherit;color:#1d2330;cursor:pointer;border-top:1px solid #edf0f4}
 .logtxt{flex:1;min-width:0;line-height:1.35}
+.logpeople{display:flex;flex-direction:column}
+.logperson{padding:8px 0;border-top:1px solid #edf0f4}
+.logperson:first-child{padding-top:0;border-top:0}
+.logperson .logwho{font-weight:700;line-height:1.35}
+.logperson .logkind{font-weight:600;color:#475467}
+.logperson .logsum{display:block;margin-top:2px;line-height:1.4;font-weight:400}
 .logbullet{display:flex;align-items:flex-start;gap:8px;padding:8px 0 8px 2px;border-top:1px solid #edf0f4;line-height:1.35}
 .logbullet .logtxt::before{content:"• ";color:var(--navy2);font-weight:700}
 .logpending .logtxt{color:#667085;font-weight:600}
@@ -9812,6 +9818,22 @@ try {
             shot.queued = true;
             shot.stored = true;
             shot.failed = false;
+            try {
+              if (typeof fetch === "function" && job.slug) {
+                fetch("/api/job/" + encodeURIComponent(job.slug) + "/capture", {
+                  method: "POST",
+                  credentials: "same-origin",
+                  headers: {"Content-Type": "application/json"},
+                  body: JSON.stringify({
+                    kind: "photo",
+                    id: shot.id,
+                    text: shot.note || "",
+                    name: "photo." + (kind.ext || "jpg"),
+                    at: shot.at || ""
+                  })
+                }).catch(function () {});
+              }
+            } catch (err) {}
           } catch (e) {
             shot.queued = false;
             shot.failed = true;
@@ -15119,7 +15141,7 @@ function logEmailLink(x){const href=logEmailHref(x);if(!href)return '';return `<
 function logShownSource(x){if(isTeamEmailLog(x))return 'Team update';return x.source||''}
 function isFieldNoteLog(x){return !!x&&(x.source==='Field Note'||x.src==='field_note')}
 function noteGate(){if(window.HWSNotes&&typeof HWSNotes.noteAllowed==='function')return !!HWSNotes.noteAllowed();if(typeof noteAllowed==='function')return !!noteAllowed();return true}
-function showLog(x){if(isFieldNoteLog(x)&&!noteGate())return false;return true}
+function showLog(x){if(isFieldNoteLog(x)&&!noteGate())return false;if(!isTypedLog(x))return true;const kind=logViewerKind();if((kind==='client'||kind==='guest'||kind==='investor'||kind==='customer')&&(x.draft||(x.entries&&x.entries.length))&&!logVisibleText(x))return false;if((kind==='sub'||kind==='trade')&&!logVisibleText(x))return false;return true}
 function fieldNoteHref(path){
  const raw=String(path||'');
  if(/^https?:\/\//.test(raw))return raw;
@@ -15217,13 +15239,24 @@ function logPublicWhen(ts){
   return /^\d{4}-\d{2}-\d{2}T/.test(clock)?'':clock;
  }catch(e){return ''}
 }
-function logTypedMeta(x){const bits=[];if(x&&x.pending)bits.push('Pending approval');bits.push('Hub (typed)',logPublicName((x&&(x.who||x.author))||''),String((x&&x.time)||'').trim());return bits.filter(Boolean).join(' · ')}
+function logViewerKind(){try{if(typeof scopeKind==='function')return String(scopeKind()||'').toLowerCase()}catch(e){}return logSessionRole()}
+function logViewerName(){try{if(typeof STORE!=='undefined'&&STORE&&STORE.who)return String(STORE.who()||'')}catch(e){}return ''}
+function logSameWho(a,b){return String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase()&&!!String(a||'').trim()}
+function logEntryLine(entry){const who=String((entry&&entry.who)||'').trim();const text=String((entry&&entry.text)||'').trim();if(who&&text)return who+': '+text;return text||who}
+function logEntryKindLabel(kind){const map={photo:'Photo',video:'Video',audio:'Audio',note:'Note',import:'Import'};return map[String(kind||'').trim().toLowerCase()]||''}
+function logEntryParts(entry){const who=String((entry&&entry.who)||'').trim();let text=String((entry&&entry.text)||'').trim();let label=logEntryKindLabel(entry&&entry.kind);const lead=/^(Photo|Video|Audio|Note|Import):\s*/i.exec(text);if(lead){if(!label)label=lead[1].charAt(0).toUpperCase()+lead[1].slice(1).toLowerCase();text=text.slice(lead[0].length).trim()}return {who:who,kind:label,summary:text}}
+function logShownEntries(x){const kind=logViewerKind();const all=Array.isArray(x&&x.entries)?x.entries:[];if((kind==='client'||kind==='guest'||kind==='investor'||kind==='customer')&&isTypedLog(x)&&(x.draft||all.length))return [];if(kind==='sub'||kind==='trade'){const own=logOwnEntries(x);if(own.length)return own;if(!all.length&&logSameWho(x&&(x.who||x.author),logViewerName()))return [{who:(x.who||x.author),text:(x.text||x.title||''),kind:x.kind||''}];return []}return all}
+function logEntryRows(x){const entries=logShownEntries(x);if(!entries.length){const text=logVisibleText(x);return text?'<div class="logtxt">'+esc(text)+'</div>':''}return '<div class="logpeople">'+entries.map(function(entry){const part=logEntryParts(entry);return '<div class="logperson"><div class="logwho">'+esc(part.who)+(part.kind?' <span class="logkind">'+esc(part.kind)+'</span>':'')+'</div><div class="logsum">'+esc(part.summary)+'</div></div>'}).join('')+'</div>'}
+function logPeopleIn(x){const entries=logShownEntries(x);const seen={};entries.forEach(function(entry){const who=String((entry&&entry.who)||'').trim().toLowerCase();if(who)seen[who]=1});const n=Object.keys(seen).length;if(n)return n;if(isTypedLog(x)&&logSameWho(x&&(x.who||x.author),logViewerName()||x.who||x.author))return 1;return 0}
+function logOwnEntries(x){const who=logViewerName();return (Array.isArray(x&&x.entries)?x.entries:[]).filter(function(entry){return logSameWho(entry&&entry.who,who)})}
+function logVisibleText(x){const kind=logViewerKind();if((kind==='client'||kind==='guest'||kind==='investor'||kind==='customer')&&isTypedLog(x)&&(x.draft||(x.entries&&x.entries.length)))return '';if(kind==='sub'||kind==='trade'){const lines=logOwnEntries(x).map(logEntryLine).filter(Boolean);if(lines.length)return lines.join('\n');if(!(x&&x.entries&&x.entries.length)&&logSameWho(x&&(x.who||x.author),logViewerName()))return String((x&&(x.text||x.title))||'');return ''}return String((x&&(x.text||x.title))||'')}
+function logTypedMeta(x){const bits=[];if(x&&x.draft)bits.push('Draft');if(x&&x.pending)bits.push('Pending approval');bits.push('Hub (typed)',logPublicName((x&&(x.who||x.author))||''),String((x&&x.time)||'').trim());return bits.filter(Boolean).join(' · ')}
 function logTypedActs(x){if(!logMine(x)||!logHubOpen()||!logWriteAllowed()||!x.id)return '';return `<div class="logacts"><button type="button" class="msgopen" data-log-open="${esc(x.id)}">Open</button><button type="button" class="fchip" data-log-edit="${esc(x.id)}">Edit</button><button type="button" class="fchip" data-log-del="${esc(x.id)}">Delete</button></div>`}
 function logSavedFiles(x){const files=Array.isArray(x&&x.files)?x.files:[];if(!files.length)return '';return '<div class="logfiles">'+files.map(function(f){const kind=f&&f.kind==='pdf'?'PDF':(f&&f.kind==='photo'?'Photo':'File');return '<span class="logfile">'+esc(kind)+' '+esc((f&&f.name)||'')+'</span>'}).join('')+'</div>'}
 function logAt(x){if(!window.HWSLocate||typeof HWSLocate.atTagHtml!=='function')return '';const name=(x&&(x.at_job||(x.location&&x.location.job_name)))||'';return name?HWSLocate.atTagHtml(name,x):''}
 function logCsvRow(row){const w=(row&&row.weather)||{};return Object.assign({},row,{weather_high:w.high==null?'':w.high,weather_low:w.low==null?'':w.low,weather_conditions:w.conditions||'',weather_precipitation:w.precipitation||'',weather_wind:w.wind||'',weather_morning:w.morning||'',weather_afternoon:w.afternoon||'',weather_delay:w.delay?'yes':''})}
 function logWeatherLine(x){const w=x&&x.weather;if(!w)return '';const bits=[];if(w.high!=null&&w.high!=='')bits.push(w.high+'°');if(w.low!=null&&w.low!=='')bits.push(w.low+'°');if(w.conditions)bits.push(w.conditions);if(w.precipitation)bits.push(w.precipitation);if(w.wind)bits.push(w.wind);if(w.morning)bits.push('Morning '+w.morning);if(w.afternoon)bits.push('Afternoon '+w.afternoon);if(w.delay)bits.push('Weather delay');return bits.length?'<div class="logwx">'+esc(bits.join(' · '))+'</div>':''}
-function logTypedBlock(x){return `<div class="logtyped" data-log-id="${esc(x.id||'')}"><div class="logtxt">${esc(x.text||x.title||'')}</div>${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div>`}
+function logTypedBlock(x){return `<div class="logtyped" data-log-id="${esc(x.id||'')}">${logEntryRows(x)}${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div>`}
 const LOG_PICK_IC={
  camera:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 6.2l1.1-1.4h3.8L15 6.2h2.4A1.8 1.8 0 0 1 19.2 8v8.2a1.8 1.8 0 0 1-1.8 1.8H6.6a1.8 1.8 0 0 1-1.8-1.8V8a1.8 1.8 0 0 1 1.8-1.8H9zm3 2.2a3.4 3.4 0 1 0 .01 6.81A3.4 3.4 0 0 0 12 8.4z"/></svg>',
  library:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="5" width="17.6" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8.2" cy="9.2" r="1.2" fill="currentColor"/><path d="M3.6 15.2l4.6-3.6 3.4 2.6 2.6-2 5.6 4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -15647,7 +15680,7 @@ function bindLogCompose(M){
  M.querySelectorAll('[data-log-del]').forEach(function(b){b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();logDelete(b.getAttribute('data-log-del'))}});
 }
 function logDayAttr(x){if(!logV2())return '';const day=String((x&&x.date)||'').slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(day))return '';return ' data-log-day="'+esc(day)+'" tabindex="0" role="link"'}
-function logDesk(x){if(isTypedLog(x))return `<div class="it logtyped" data-log-id="${esc(x.id||'')}"${logDayAttr(x)}><div class="dt">${mdy(x.date)}</div><div class="bd"><div class="t">${esc(x.text||x.title||'')}</div>${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div></div>`;const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
+function logDesk(x){if(isTypedLog(x))return `<div class="it logtyped" data-log-id="${esc(x.id||'')}"${logDayAttr(x)}><div class="dt">${mdy(x.date)}</div><div class="bd">${logEntryRows(x)}${logWeatherLine(x)}${logSavedFiles(x)}${logAt(x)}<div class="logmeta">${esc(logTypedMeta(x))}</div>${logTypedActs(x)}</div></div>`;const pending=!!x.pending;const n=asList(x.sources).length;const summary=pending||x.src==='summary';
  const teamUpdate=isTeamEmailLog(x);
  const head=teamUpdate?logSummary(x):(x.title||x.text||'');
  const extra=pending?`<div class="s">${esc(logCountsLabel(x.counts))}</div>`:(summary?(n?`<div class="s">${n} source${n==1?'':'s'}</div>`:''):(teamUpdate?'':(x.text&&x.text!==head?`<div class="s">${esc(x.text)}</div>`:'')));
@@ -15698,9 +15731,11 @@ function logSourceLabel(s){const k=logKind(s);return k==='email'?'Open in Gmail'
 function logSourceRow(s){const href=/^https:\/\//.test(s.ref||'')?s.ref:'';
  const open=(href&&typeof fileHosted==='function'&&fileHosted(href,''))?fileLinkHtml({url:href,label:s.label||'File',kind:'',cls:'msgopen'}):(href?`<a class="msgopen" href="${esc(href)}" target="_blank" rel="noopener">${esc(logSourceLabel(s))}</a>`:`<button type="button" class="msgopen" data-logsrc="${esc(s.src||'')}" data-logref="${esc(s.ref||'')}">${esc(logSourceLabel(s))}</button>`);
  return `<div class="logsrc">${logIco(logKind(s))}<span class="logwhen">${esc(logWhen(s.time))}</span>${open}</div>`}
+function logTeamUnits(x){if(isTypedLog(x)){const n=logPeopleIn(x);return n||0}return 1}
 function logDayCounts(items){const auto=items.find(x=>x.source==='auto'&&x.counts&&typeof x.counts==='object'&&Object.keys(x.counts).length);
- if(auto){const counts=Object.assign({},auto.counts);const team=items.filter(x=>x.source!=='auto').length;if(team)counts.team=(counts.team||0)+team;delete counts.trade;return counts}
- const fallback={};items.forEach(x=>{const k=x.source==='auto'?(x.src||'auto'):'team';if(k==='trade')return;fallback[k]=(fallback[k]||0)+1});return fallback}
+ function addTeam(counts,list){let team=0;(list||[]).forEach(function(x){if(x.source==='auto')return;team+=logTeamUnits(x)});if(team)counts.team=(counts.team||0)+team}
+ if(auto){const counts=Object.assign({},auto.counts);addTeam(counts,items);delete counts.trade;return counts}
+ const fallback={};items.forEach(x=>{if(isTypedLog(x)){const n=logPeopleIn(x);if(n)fallback.team=(fallback.team||0)+n;return}const k=x.source==='auto'?(x.src||'auto'):'team';if(k==='trade')return;fallback[k]=(fallback[k]||0)+1});return fallback}
 function logSourcesBlock(items){const groups=items.filter(x=>!x.pending&&asList(x.sources).length);if(!groups.length)return '';
  const n=groups.reduce((a,x)=>a+asList(x.sources).length,0);
  const body=groups.map(x=>`<div class="logsrcgrp"><div class="logsrctitle">${esc(x.title||x.text||'')}</div>${asList(x.sources).map(logSourceRow).join('')}</div>`).join('');
@@ -31101,19 +31136,39 @@ function phonePaintStills(root) {
     return '<figure><img alt="" src="' + src + '"><figcaption>' + phoneVoiceStamp(photo.t) + '</figcaption></figure>';
   }).join('');
 }
+function phoneStoreCapture(kind, fields) {
+  const slug = phoneCapSlug();
+  if (!slug || typeof fetch !== 'function') return false;
+  const src = fields || {};
+  const body = {kind: kind};
+  ['id', 'text', 'name', 'summary', 'transcript'].forEach(function (key) {
+    if (src[key] == null || src[key] === '') return;
+    body[key] = String(src[key]).slice(0, 4000);
+  });
+  if (src.at != null && src.at !== '') body.at = src.at;
+  fetch('/api/job/' + encodeURIComponent(slug) + '/capture', {
+    method: 'POST', credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  }).catch(function () {});
+  return true;
+}
 function phoneCommitVoice(blob) {
   const lines = phoneVoicePhotos.map(function (photo) {
     return {t: phoneVoiceStamp(photo.t), note: '', frame: photo.url || '', order: photo.t};
   });
   phoneLastVoice = {audio: blob ? 'saved' : '', lines: lines, photos: phoneVoicePhotos.slice()};
-  if (!blob || !lines.length || typeof fetch !== 'function') return;
+  if (!blob || typeof fetch !== 'function') return;
+  phoneStoreCapture('audio', {name: 'voice'});
   const slug = phoneCapSlug();
   if (!slug) return;
   const params = new URLSearchParams();
-  params.set('mode', 'voice');
-  params.set('photos', JSON.stringify(phoneVoicePhotos.map(function (photo) {
-    return {t: photo.t, name: photo.name || 'photo.jpg', at: photo.at || '', source: 'device'};
-  })));
+  params.set('mode', lines.length ? 'voice' : 'audio');
+  if (lines.length) {
+    params.set('photos', JSON.stringify(phoneVoicePhotos.map(function (photo) {
+      return {t: photo.t, name: photo.name || 'photo.jpg', at: photo.at || '', source: 'device'};
+    })));
+  }
   fetch('/api/job/' + encodeURIComponent(slug) + '/field-note/video?' + params.toString(), {
     method: 'POST', credentials: 'same-origin', body: blob
   }).catch(function () {});
@@ -31755,6 +31810,7 @@ function phoneAttachVideoFile(root) {
 function phoneFinishWalk(shots, text) {
   const job = phoneCapJob || {};
   phoneSavedPhotos = {slug: job.slug || '', name: job.name || '', shots: (shots || []).slice(), summary: text || ''};
+  if (job.slug) phoneStoreCapture('video', {name: 'video', text: text || '', summary: text || ''});
   const layer = document.querySelector('[data-walk-layer]');
   if (layer) layer.remove();
   phoneWalk = null;
@@ -31855,7 +31911,8 @@ function phoneOpenCaptureNow(mode, action) {
         if (!picked) return;
         if (pickedName) {
           pickedName.hidden = false;
-          pickedName.textContent = picked.name + ' stays on this phone. Nothing is sent.';
+          const stored = phoneStoreCapture('import', {name: picked.name, text: picked.name});
+          pickedName.textContent = stored ? (picked.name + ' is saved on this job. Nothing is sent.') : (picked.name + ' stays on this phone. Nothing is sent.');
         }
         const kind = (picked.type || '').indexOf('video') === 0 ? 'video' : ((picked.type || '').indexOf('image') === 0 ? 'photo' : '');
         if (kind && window.HWSLocate && typeof HWSLocate.attachRecord === 'function') {
@@ -31870,7 +31927,8 @@ function phoneOpenCaptureNow(mode, action) {
       if (typeof openVideoCapture === 'function') {
         try { openVideoCapture(file); } catch (err) {}
       }
-      if (name) { name.hidden = false; name.textContent = file.name + ' stays on this phone. Nothing is sent.'; }
+      const storedVideo = phoneStoreCapture('video', {name: file.name, text: file.name});
+      if (name) { name.hidden = false; name.textContent = storedVideo ? (file.name + ' is saved on this job. Nothing is sent.') : (file.name + ' stays on this phone. Nothing is sent.'); }
       if (window.HWSLocate && typeof HWSLocate.attachRecord === 'function') {
         try { HWSLocate.attachRecord({kind: 'video', who: phoneWho()}); } catch (err) {}
       }
@@ -31924,7 +31982,7 @@ function phoneLocalVoice(root) {
       phoneCommitVoice(blob);
       if (phoneVoice === session) phoneVoice = null;
       phoneReleaseCamera();
-      phoneVoiceUi(root, false, blob ? 'Saved on this phone. Nothing is sent.' : 'Voice stays on this phone. Nothing is sent.');
+      phoneVoiceUi(root, false, blob ? (phoneCapSlug() ? 'Saved on this job. Nothing is sent.' : 'Saved on this phone. Nothing is sent.') : 'Voice stays on this phone. Nothing is sent.');
     }
     session.stop = function () {
       try { if (rec.state !== 'inactive') { rec.stop(); return; } } catch (e) {}
@@ -31995,7 +32053,9 @@ function phoneToggleTalk(root) {
       const add = host && host.querySelector('[data-talk-add]');
       if (add && live && String(live.value || '').trim()) add.click();
       phoneReleaseCamera();
-      phoneVoiceUi(root, false, 'Saved on this phone. Nothing is sent.');
+      const spoken = String((info && info.text) || (live && live.value) || '').trim();
+      const storedTalk = phoneStoreCapture('audio', {name: 'voice', text: spoken});
+      phoneVoiceUi(root, false, storedTalk ? 'Saved on this job. Nothing is sent.' : 'Saved on this phone. Nothing is sent.');
     }
   });
   if (session && session.active && session.active()) {
@@ -32031,7 +32091,7 @@ function phoneToggleVoice(root) {
         phoneReleaseCamera();
         const saved = phoneVoiceSaved || (info && info.text);
         const failed = info && (info.why === 'error' || info.why === 'unsupported');
-        const label = saved ? 'Saved on this phone. Nothing is sent.' : (failed ? 'The microphone stayed off. Nothing is sent.' : 'Voice stays on this phone. Nothing is sent.');
+        const label = saved ? (phoneCapSlug() ? 'Saved on this job. Nothing is sent.' : 'Saved on this phone. Nothing is sent.') : (failed ? 'The microphone stayed off. Nothing is sent.' : 'Voice stays on this phone. Nothing is sent.');
         phoneVoiceUi(root, false, label);
       }
     });
