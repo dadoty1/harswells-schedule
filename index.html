@@ -579,8 +579,7 @@ button.load-dbx{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:7
 .jgrid>.jclient,.pad-jobs>.jclient{grid-column:1 / -1;display:flex;align-items:center;min-height:44px;margin:0;padding:8px 12px;font-size:17px;font-weight:700;line-height:1.25;color:#344054;background:#f4f6f9;box-sizing:border-box}
 @media(max-width:760px){
  header.top #jsw{display:none!important}
- header.top .jmenu{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:0 14px;font-size:16px;font-weight:700}
- body.hubp header.top .jmenu{display:none}
+ header.top .jmenu{display:none}
  .hub-jobs,.job-menu{max-width:100%;min-width:0;overflow-x:hidden}
  .hub-jobs .pb{padding-left:0;padding-right:0}
  .hub-jobs .jgrid,.job-menu .jgrid{display:flex;flex-direction:column;grid-template-columns:none;gap:0;width:100%;min-width:0;max-width:100%}
@@ -2963,7 +2962,7 @@ body.phone-shell .walk-embed .walk { padding-bottom: 0; }
 /* If this document was opened on a .pdf path (an old link, or Dropbox returning ?code= there),
    leave that address before Safari treats the app as a PDF. */
 try{const leaf=location.pathname.split('/').pop()||'';if(/\.pdf$/i.test(leaf)){const dir=location.pathname.replace(/[^/]*$/,'');location.replace(location.origin+dir+location.search+location.hash)}}catch(e){}
-const HWS_BUILD={version:'9f099cb97f',built:'10/14/2026 4:14 PM AZ'};
+const HWS_BUILD={version:'6a070b2ca9',built:'10/14/2026 9:17 PM AZ'};
 try{window.HWS_BUILD=HWS_BUILD}catch(e){}
 const CFG_KEY='hws-cfg-v1',DB='hws-pwa',STORE='kv';
 const DEV=/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
@@ -8059,7 +8058,8 @@ function renderFeatures() {
   const scanAdmin = '<h2>Scan photos</h2><p class="hint">Blank max range means a scan can go back to the start of the photo library. A number of days is the farthest this company allows. Daily Log, Capture, Dust Control, and imports under 500 items and under the cellular size upload on cellular right away. Blank cellular size uses 500 MB. The first-sign-in import stays off until the box is checked.</p><form id="scanadmin"><label>Max range in days<input name="max" inputmode="numeric" placeholder="Unlimited" value="' + esc(scanMax) + '"></label><label>Cellular size in MB<input name="cellular" inputmode="numeric" placeholder="500" value="' + esc(String(scanMb)) + '"></label><label class="feat-row"><span class="feat-label">Show the import on first sign-in</span><span class="feat-toggle"><input type="checkbox" name="onboarding"' + (scanCfg.photo_scan_onboarding ? " checked" : "") + '><i aria-hidden="true"></i></span></label><div class="mbtns"><button class="pri" type="submit">Save scan settings</button></div></form>';
   const layoutLink = typeof layout2026SettingsHtml === 'function' ? layout2026SettingsHtml() : '';
   const places = '<div class="sync-where"><p>Saved files and Data source are in More.</p><button type="button" data-open-places>Open More</button></div>';
-  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1>' + layoutLink + '<p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p>' + places + '<form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
+  const accessLink = '<p class="hint"><a href="/admin/access">Access</a></p>';
+  const body = '<div class="feat-page" data-edit-home="features"><h1>Features</h1>' + accessLink + layoutLink + '<p class="hint">Turn a feature off for the whole company, or for one person. Off hides it and does not send its data.</p>' + places + '<form id="featco">' + rows + '<div class="mbtns"><button class="pri" type="submit">Save company</button></div></form>' + scanAdmin + '<h2>People</h2>' + (people || '<p class="hint">No people on this company file yet.</p>') + '<form id="featadd" class="feat-add"><label>Name<input name="name" autocomplete="name" required></label><label>Role<select name="role"><option value="member">Member</option><option value="pm">Project manager</option><option value="owner">Owner</option><option value="admin">Admin</option><option value="warranty coordinator">Warranty coordinator</option><option value="field">Field</option><option value="client">Client</option></select></label><button class="pri" type="submit">Add person</button></form></div>';
   if (typeof hubShell === 'function') hubShell('settings', body);
   else document.getElementById('root').innerHTML = body;
   if (window.WSData && WSData.bind) WSData.bind();
@@ -8219,9 +8219,10 @@ function scopeKind() {
 }
 function jobAllowed(slug) {
   const block = scopeBlock();
+  const id = (typeof resolveJobSlug === 'function') ? resolveJobSlug(slug) : slug;
   // null jobs means every job (owner, office). An empty list means none.
   if (!block || block.jobs == null) return true;
-  return block.jobs.indexOf(slug) >= 0;
+  return block.jobs.indexOf(id) >= 0;
 }
 function jobsEmptyText(fallback) {
   const block = scopeBlock();
@@ -14642,9 +14643,44 @@ function settleJobLanding(){
  const next='#/job/'+p[1]+'/'+land;
  if(location.hash===next)return false;
  location.replace(next);return true}
-function jobHref(slug,mod){return '#/job/'+slug+'/'+(mod||jobLandingMod())}
+function slugifyJobName(name){return String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')}
+function officeRouteId(storage){
+ const jobs=(typeof DATA!=='undefined'&&DATA&&DATA.jobs)||{};
+ const job=jobs[storage];
+ if(!job)return storage||'';
+ const pub=slugifyJobName(job.name);
+ if(!pub||pub===storage)return storage;
+ const keys=Object.keys(jobs);
+ const same=keys.filter(function(s){return slugifyJobName((jobs[s]||{}).name)===pub});
+ if(same.length!==1)return storage;
+ if(jobs[pub]&&pub!==storage)return storage;
+ return pub}
+function jobRouteId(storage){
+ const pub=officeRouteId(storage);
+ if(!pub||pub===storage)return storage||'';
+ if(pub.indexOf(storage)>=0)return storage;
+ return pub}
+function resolveJobSlug(token){
+ const jobs=(typeof DATA!=='undefined'&&DATA&&DATA.jobs)||{};
+ if(!token)return token;
+ if(jobs[token])return token;
+ const hits=Object.keys(jobs).filter(function(s){return officeRouteId(s)===token||jobRouteId(s)===token});
+ return hits.length===1?hits[0]:token}
+function linkSlug(storage){
+ try{
+  const raw=(location.hash.replace(/^#\/?/,'')||'').split('/');
+  if(raw[0]!=='job'||!raw[1])return storage;
+  const token=decodeURIComponent(raw[1]);
+  if(token&&resolveJobSlug(token)===storage)return token;
+ }catch(e){}
+ return storage}
+function jobHref(slug,mod){
+ const storage=resolveJobSlug(slug)||slug;
+ const current=linkSlug(storage);
+ const id=current!==storage?current:jobRouteId(storage);
+ return '#/job/'+id+'/'+(mod||jobLandingMod())}
 function homeHref(){return '#/'}
-function modHref(mod){return '#/job/'+J.slug+'/'+mod}
+function modHref(mod){return '#/job/'+linkSlug(J.slug)+'/'+mod}
 function parseHash(){const h=location.hash.replace(/^#\/?/,'');const p=h.split('/');const focus=p.slice(3).map(decodeURIComponent).join('/');if(p[0]=='job'&&p[1])return {slug:decodeURIComponent(p[1]),mod:p[2]||jobLandingMod(),focus,page:'job'};if(p[0]==='client'&&p[1])return {slug:null,page:'client',sub:decodeURIComponent(p[1]),focus:''};const pg=(p[0]||'home').split('?')[0]||'home';return {slug:null,page:pg,sub:p[1]||'',focus:''}}
 function curMod(){const named=explicitJobMod();if(named===null)return jobLandingMod();if(!named||named==='logs')return jobLandingMod();return named}
 /* ---------- calendar helpers (job workday calendar) ---------- */
@@ -14686,7 +14722,7 @@ function bindTop(){if(window.hwsMountAccount)window.hwsMountAccount();const s=$(
  const c=$('#chg');if(c)c.onclick=openChanges;document.querySelectorAll('[data-open=changes]').forEach(a=>a.onclick=e=>{e.preventDefault();openChanges()});if(window.WSData&&WSData.bind)WSData.bind()}
 /* ---------- job page ---------- */
 function dustTabOn(){const block=typeof scopeBlock==='function'?scopeBlock():null;if(!block||!block.kind)return true;const kind=String(block.kind);return kind!=='client'&&kind!=='guest'&&kind!=='investor'&&kind!=='sub'}
-function jobPhoneTabs(){const tabs=[];if(logTabOn())tabs.push(['logs','Job Logs']);if(dustTabOn())tabs.push(['dust','Dust Control']);tabs.push(['slack','Slack'],['todos','To-Dos'],['files','Files'],['jobinfo','Job Information']);
+function jobPhoneTabs(){const tabs=[];if(logTabOn())tabs.push(['logs','Job Logs']);if(dustTabOn())tabs.push(['dust','Dust Control']);tabs.push(['slack','Slack'],['todos','To-Dos'],['jobinfo','Job Information']);
  if(typeof conciergeHasItems==='function'&&conciergeHasItems())tabs.push(['concierge','Concierge']);
  tabs.push(['schedule','Schedule'],['more','More']);return tabs}
 function orderJobNav(mods){const rows=(mods||[]).map(function(row){return row.slice?row.slice():row});
@@ -14745,14 +14781,14 @@ function renderJob(){if(!J){const empty='<div class="empty"><b>No data for this 
  ${gates.length?`<div class="note gates" style="margin:10px 0 0"><b>Open prerequisites:</b> ${gates.map(g=>esc(g.item)).join(' · ')}</div>`:''}${typeof selectionJobAlert==='function'?selectionJobAlert():''}<div id="photo-slot"></div><div id="qnote-slot"></div>${typeof askBarHtml==='function'&&!(typeof isPhone==='function'&&isPhone())?askBarHtml(J.slug):''}</div>`;
  let sideMods=(typeof withSlackMod==='function'?withSlackMod(J.modules):J.modules)||[];
  if(typeof withFeedMod==='function')sideMods=withFeedMod(sideMods);
- sideMods=sideMods.filter(([k])=>typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k)));
+ sideMods=sideMods.filter(([k])=>k!=='files'&&(typeof modFeature!=='function'||!modFeature(k)||typeof featureOn!=='function'||featureOn(modFeature(k))));
  sideMods=orderJobNav(sideMods);
  if(typeof jobMenuItems==='function')sideMods=jobMenuItems(sideMods);
  const tabList=(typeof jobMenuItems==='function'?jobMenuItems(jobPhoneTabs()):jobPhoneTabs());
  const slackN=(typeof slackRows==='function'?slackRows().length:0);
  const showJobMoney=typeof seesJobMoney!=='function'||seesJobMoney();
  const side=`<nav class="side">${sideMods.map(([k,l])=>{const dustN=k==='dust'&&typeof dustTabBadge==='function'?dustTabBadge():0;return `<a href="${modHref(k)}" class="${k==mod?'on':''}">${l}<span class="cnt">${k==='slack'?(slackN||''):(k==='dust'?(dustN||''):(c[k]||''))}</span></a>`}).join('')}${(showJobMoney&&typeof canSeeMoney==='function'&&canSeeMoney()&&(typeof featureOn!=='function'||featureOn('money')))?`<a href="${modHref('money')}" class="${mod=='money'?'on':''}">Budget vs actual</a>`:''}
- <div class="grp">Job</div><a href="${modHref('commitments')}" class="${mod=='commitments'?'on':''}">Commitments</a><a href="${modHref('property')}" class="${mod=='property'?'on':''}">Property info</a><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('files')}" class="${mod=='files'?'on':''}">Files<span class="cnt">${(typeof HWSFiles!=='undefined'&&HWSFiles.count&&HWSFiles.count(J.slug))||(JL(J.slug).items||[]).length||''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
+ <div class="grp">Job</div><a href="${modHref('commitments')}" class="${mod=='commitments'?'on':''}">Commitments</a><a href="${modHref('property')}" class="${mod=='property'?'on':''}">Property info</a><a href="${modHref('whodid')}" class="${mod=='whodid'?'on':''}">Who did it<span class="cnt">${typeof wdTrades=='function'?wdTrades(J.slug).length||'':''}</span></a><a href="${modHref('exports')}" class="${mod=='exports'?'on':''}">Exports</a><a href="${modHref('settings')}" class="${mod=='settings'?'on':''}">Settings</a><a href="${modHref('history')}" class="${mod=='history'?'on':''}">History<span class="cnt">${(J.history||[]).length||''}</span></a></nav>`;
  const primary=tabList.some(t=>t[0]==mod);
  const tabLink=([k,l])=>{const on=k==mod||(k=='more'&&!primary&&mod!=='plans');const n=k==='slack'?slackN:(k==='dust'&&typeof dustTabBadge==='function'?dustTabBadge():(k==='more'?hc:0));const menu=k==='more'?'<svg class="jtabs-menu" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6.2" width="16" height="1.8" rx=".9"/><rect x="4" y="11.1" width="16" height="1.8" rx=".9"/><rect x="4" y="16" width="16" height="1.8" rx=".9"/></svg>':'';
   return `<a href="${k=='more'?'#':modHref(k)}" data-tab="${k}" class="${on?'on':''}${k=='more'?' jtabs-more':''}" ${on?'aria-current="page"':''}${k==='more'?' aria-label="More"':''}>${menu}<span>${l}</span>${n?`<i class="dot">${n}</i>`:''}</a>`};
@@ -27126,11 +27162,12 @@ if(typeof window!=='undefined'){window.renderJobsList=renderJobsList;window.rend
 function route(){document.querySelectorAll('.toast').forEach(function(x){x.remove()});closeModal();if(!DATA)return;if(typeof applyFeatureStrip==='function')applyFeatureStrip();const p=parseHash();
  try{
  if(p.slug){
-  if(typeof jobAllowed==='function'&&!jobAllowed(p.slug)){if(typeof showUnavailable==='function')showUnavailable();return}
-  if(!DATA.jobs[p.slug]){location.hash='#/';return}
+  const storage=typeof resolveJobSlug==='function'?resolveJobSlug(p.slug):p.slug;
+  if(typeof jobAllowed==='function'&&!jobAllowed(storage)){if(typeof showUnavailable==='function')showUnavailable();return}
+  if(!DATA.jobs[storage]){location.hash='#/';return}
   if(typeof scopeKind==='function'&&scopeKind()==='investor'&&typeof renderInvestorJob==='function'){J=null;L=null;renderInvestorJob(p);window.scrollTo(0,0);return}
-  if(typeof settleJobLanding==='function'&&settleJobLanding()){if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0);return}
-  if(!J||J.slug!=p.slug)J=STORE.getJob(p.slug);L=null;renderJob();window.scrollTo(0,0);return}
+  if(typeof settleJobLanding==='function'&&settleJobLanding()){if(!J||J.slug!=storage)J=STORE.getJob(storage);L=null;renderJob();window.scrollTo(0,0);return}
+  if(!J||J.slug!=storage)J=STORE.getJob(storage);L=null;renderJob();window.scrollTo(0,0);return}
  if(p.page==='client'){
   J=null;L=null;
   if(typeof jobAllowed==='function'&&!jobAllowed(p.sub)){if(typeof showUnavailable==='function')showUnavailable();return}
@@ -27164,12 +27201,13 @@ setInterval(()=>{if(LIVE)paintLive()},20000);
 function busyTyping(){if(modalEl||ptrDown)return true;if(typeof photoWalkOpen==='function'&&photoWalkOpen())return true;const a=document.activeElement;const r=document.getElementById('root');return !!(a&&a!==document.body&&r&&r.contains(a)&&(a.tagName=='TEXTAREA'||a.tagName=='SELECT'||(a.tagName=='INPUT'&&!/^(checkbox|radio|button|submit|range|color)$/.test(a.type))))}
 /* re-render after a remote change without touching an open edit sheet or a field someone is typing in (retries until they are done) */
 function safeRender(){clearTimeout(rrT);if(busyTyping()){rrT=setTimeout(safeRender,700);return}if(!DATA||!STORE)return;const p=parseHash();const y=window.scrollY;
- if(p.slug&&DATA.jobs[p.slug]){J=STORE.getJob(p.slug);renderJob()}else if(!p.slug){J=null;if(p.page=='jobs'){L=STORE.getList();renderList()}else if(p.page=='client'&&typeof renderClientSelections==='function')renderClientSelections(p.sub);else{renderHub(p)}}window.scrollTo(0,y);if(typeof askMount==='function')askMount()}
+ const storage=p.slug&&typeof resolveJobSlug==='function'?resolveJobSlug(p.slug):p.slug;
+ if(storage&&DATA.jobs[storage]){J=STORE.getJob(storage);renderJob()}else if(!p.slug){J=null;if(p.page=='jobs'){L=STORE.getList();renderList()}else if(p.page=='client'&&typeof renderClientSelections==='function')renderClientSelections(p.sub);else{renderHub(p)}}window.scrollTo(0,y);if(typeof askMount==='function')askMount()}
 function dataUpdated(){const pend=STORE?STORE.pendingTotal():0;DATA=WSData.data();openStore();if(!STORE.live&&pend&&!STORE.pendingTotal())toast('New data arrived; open “Changes” to bring your unsent edits over');J=null;if(LIVE)safeRender();else route()}
 function startLive(){if(!liveOn()||!STORE||!STORE.live){if(window.WSData)WSData.liveMode=false;return}if(!STORE.who()&&SY.A.who)STORE.setWho(SY.A.who());if(LIVE)return;
  if(window.WSData)WSData.liveMode=true;
  LIVE=HWSLive.create({A:SY.A,store:()=>STORE,data:()=>DATA,who:()=>STORE&&STORE.who(),onStatus:()=>paintLive(),
-  onChange:(slugs,why)=>{const p=parseHash();if(why=='saved'){paintLive();if(p.slug&&slugs.includes(p.slug)&&J&&J.pending){safeRender()}return}if(!p.slug||slugs.includes(p.slug))safeRender();paintLive()},
+  onChange:(slugs,why)=>{const p=parseHash();const storage=p.slug&&typeof resolveJobSlug==='function'?resolveJobSlug(p.slug):p.slug;if(why=='saved'){paintLive();if(storage&&slugs.includes(storage)&&J&&J.pending){safeRender()}return}if(!storage||slugs.includes(storage))safeRender();paintLive()},
   onSnapshot:async()=>{if(window.WSData)await WSData.sync(true)}});
  window.LIVE_DBG=LIVE;LIVE.start()}
 async function boot(){try{
@@ -30653,7 +30691,8 @@ function phoneFilesHref() {
   let slug = '';
   try {
     slug = phoneInsideSlug();
-    if (!slug || typeof J === 'undefined' || !J || J.slug !== slug) slug = '';
+    const storage = typeof resolveJobSlug === 'function' ? resolveJobSlug(slug) : slug;
+    if (!slug || typeof J === 'undefined' || !J || J.slug !== storage) slug = '';
   } catch (e) { slug = ''; }
   if (!slug) return '#/files';
   if (typeof jobHref === 'function') return jobHref(slug, 'files');
